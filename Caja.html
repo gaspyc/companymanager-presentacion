@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caja y Flujo de Fondos - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;      
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;    
+            --text-muted: #94a3b8;   
+            --border-glass: rgba(255, 255, 255, 0.05);
+            
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-indigo: #4f46e5; 
+            --kpi-purple: #a855f7; 
+            --kpi-orange: #f59e0b;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* =========================================
+           MOTOR FULLSCREEN NATIVO
+           ========================================= */
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px; 
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo (Glow) */
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-red { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(239, 68, 68, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        
+        /* Controles Flotantes */
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace;}
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;}
+        .ctrl-btn:hover { background: var(--kpi-green); }
+
+        /* Tipografía */
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left;}
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left;}
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left;}
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left;}
+        
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        /* =========================================
+           SLIDE 2: KPI GRID Y GRÁFICOS MOCKUP
+           ========================================= */
+        .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 25px;}
+        .kpi-card { padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; border-left-width: 4px; border-left-style: solid; background: rgba(15, 23, 42, 0.8); border-radius: 12px; border-right: 1px solid var(--border-glass); border-top: 1px solid var(--border-glass); border-bottom: 1px solid var(--border-glass); box-shadow: 0 4px 20px rgba(0,0,0,0.2);}
+        .kpi-header { display: flex; justify-content: space-between; align-items: center; }
+        .kpi-header small { color: #94a3b8; font-weight: bold; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+        .kpi-val { font-size: 32px; font-weight: 900; color: white;}
+        .kpi-icon { opacity: 0.5; font-size: 20px; }
+
+        .kpi-green { border-left-color: #22c55e; } .kpi-green .kpi-val { color: #4ade80; } .kpi-green .kpi-icon { color: #22c55e; }
+        .kpi-red { border-left-color: #ef4444; } .kpi-red .kpi-val { color: #f87171; } .kpi-red .kpi-icon { color: #ef4444; }
+        .kpi-blue { border-left-color: #3b82f6; } .kpi-blue .kpi-val { color: #60a5fa; } .kpi-blue .kpi-icon { color: #3b82f6; }
+        .kpi-emerald { border-left-color: #10b981; } .kpi-emerald .kpi-val { color: #34d399; }
+        .kpi-action { border-left-color: #ef4444; cursor: pointer; transition: all 0.2s ease; background: rgba(239, 68, 68, 0.05); align-items: center; text-align: center; justify-content: center; gap: 15px;}
+        
+        .charts-container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        /* CSS Bar Chart Mockup */
+        .chart-mockup { height: 250px; display: flex; align-items: flex-end; justify-content: space-between; padding: 20px 10px 0 10px; border-bottom: 1px dashed rgba(255,255,255,0.1); gap: 15px;}
+        .bar-group { display: flex; gap: 4px; align-items: flex-end; height: 100%; flex: 1; justify-content: center; position: relative;}
+        .bar { width: 30px; border-radius: 6px 6px 0 0; position: relative; transition: 0.3s;}
+        .bar-inc { background: rgba(16, 185, 129, 0.8); }
+        .bar-exp { background: rgba(239, 68, 68, 0.8); }
+        .bar:hover { filter: brightness(1.2); transform: scaleY(1.02); transform-origin: bottom;}
+        .bar-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--text-muted); font-weight: bold;}
+
+        /* CSS Doughnut Chart Mockup */
+        .doughnut-mockup { width: 180px; height: 180px; border-radius: 50%; background: conic-gradient(#10b981 0% 50%, #3b82f6 50% 75%, #f59e0b 75% 90%, #8b5cf6 90% 100%); margin: 0 auto; position: relative; display: flex; align-items: center; justify-content: center;}
+        .doughnut-inner { width: 130px; height: 130px; background: rgba(15, 23, 42, 0.95); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column;}
+        .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; font-size: 12px; color: var(--text-muted); font-weight: bold;}
+        .legend-item { display: flex; align-items: center; gap: 5px;}
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+        /* =========================================
+           SLIDE 3: RANKING DE PRODUCTOS (DOBLE BARRA)
+           ========================================= */
+        .top-products-list { display: flex; flex-direction: column; gap: 20px; padding: 10px;}
+        .product-item { display: flex; flex-direction: column; gap: 8px; }
+        .prod-info { display: flex; align-items: center; font-size: 16px; font-weight: 700; gap: 12px; color: white;}
+        .prod-rank { color: var(--text-muted); font-size: 14px;}
+        .prod-qty { margin-left: auto; font-size: 12px; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px;}
+        .prod-stats { display: flex; align-items: center; gap: 15px; }
+        .prod-amount { color: var(--kpi-green); font-size: 18px; font-weight: 900; min-width: 90px;}
+        .progress-track { flex: 1; height: 12px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 10px; display: flex; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.5);}
+        .segment-cost { height: 100%; background-color: #8b5cf6; } /* Violeta = Costo */
+        .segment-profit { height: 100%; background: linear-gradient(90deg, #f59e0b, #fbbf24); } /* Naranja/Amarillo = Ganancia */
+
+        /* =========================================
+           SLIDE 4: HEATMAPS (GITHUB STYLE)
+           ========================================= */
+        .heatmaps-wrapper { display: flex; flex-direction: column; gap: 30px; }
+        .heatmap-card { width: 100%; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .hm-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .hm-header h4 { margin: 0; font-size: 18px; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px;}
+        .hm-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--text-muted); font-weight: bold; margin-bottom: 5px;}
+        .hm-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+        .hm-cell { aspect-ratio: 1; border-radius: 6px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .hm-cell:not(.is-empty):hover { transform: scale(1.15); box-shadow: 0 0 15px rgba(255, 255, 255, 0.3); z-index: 10; border-color: rgba(255,255,255,0.8); }
+        .hm-cell.is-empty { border: none; background: transparent !important; cursor: default; }
+
+        /* =========================================
+           SLIDE 5: LIBRO DIARIO Y EGRESOS
+           ========================================= */
+        .ledger-table { width: 100%; border-collapse: collapse; margin-top: 10px;}
+        .ledger-table th { padding: 15px 20px; background: rgba(0,0,0,0.4); color: var(--text-muted); font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid var(--border-glass);}
+        .ledger-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; font-size: 15px;}
+        .ledger-table tr:hover { background: rgba(255,255,255,0.02); }
+
+        .btn-export { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;}
+        
+        .badge { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; border: 1px solid transparent;}
+        .badge-cash { background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);}
+        .badge-mp { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border-color: rgba(14, 165, 233, 0.3);}
+        .badge-card { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border-color: rgba(245, 158, 11, 0.3);}
+        
+        .tx-desc { font-weight: 700; color: white; }
+        .tx-client { font-size: 12px; color: var(--kpi-blue); font-weight: bold; margin-top: 4px; display: flex; align-items: center; gap: 6px;}
+
+        .modal-mockup { position: absolute; right: 40px; top: 150px; width: 380px; background: #0f172a; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.8); overflow: hidden; z-index: 5;}
+        .mm-header { padding: 20px; background: rgba(239, 68, 68, 0.1); border-bottom: 1px solid rgba(239, 68, 68, 0.2); color: var(--kpi-red); font-weight: 800; font-size: 18px; display: flex; align-items: center; gap: 10px;}
+        .mm-body { padding: 25px; display: flex; flex-direction: column; gap: 15px;}
+        .mm-input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 15px; border-radius: 10px; color: white; font-size: 16px; font-weight: bold;}
+        .mm-input-money { display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid var(--kpi-red); padding: 15px; border-radius: 10px; color: white; font-size: 24px; font-weight: 900;}
+
+        /* =========================================
+           SLIDE 6: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
+        .qa-btn { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s;}
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+        
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+
+        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="scroll-hint">
+        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+
+    <!-- CONTROLES NATIVOS -->
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 6</span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRODUCCIÓN -->
+    <div class="slide active">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide grid-split">
+            <div style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-green);">El Pulso del Negocio</h3>
+                <h1>Flujo de Caja <br><span style="color: white;">y Rendimiento</span></h1>
+                <p>La vista táctica para el dueño del local. Mientras la Auditoría te muestra el cierre mensual, la Caja te muestra qué está pasando <strong>hoy, en este preciso instante.</strong></p>
+                <p>Monitoreá ingresos vs. egresos, identificá qué métodos de pago dominan tu facturación y registrá gastos operativos al vuelo sin salir del sistema.</p>
+            </div>
+            
+            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-cash-register" style="font-size: 80px; color: var(--kpi-green); margin-bottom: 30px;"></i>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-chart-line text-muted mr-2"></i> KPIs en Vivo</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-fire text-muted mr-2"></i> Heatmaps (Días Pico)</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-balance-scale text-muted mr-2"></i> Costo vs Ganancia</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-book text-muted mr-2"></i> Libro Diario (Ledger)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: DASHBOARD EN TIEMPO REAL (KPIS & CHARTS) -->
+    <div class="slide">
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            
+            <!-- KPI GRID -->
+            <div class="kpi-grid">
+                <div class="kpi-card kpi-green">
+                    <div class="kpi-header"><small>Ingresos</small></div>
+                    <div class="kpi-val">$ 1.450.000</div>
+                    <i class="fas fa-arrow-trend-up kpi-icon text-green-400" style="color: var(--kpi-green);"></i>
+                </div>
+                <div class="kpi-card kpi-red">
+                    <div class="kpi-header"><small>Egresos (Gastos)</small></div>
+                    <div class="kpi-val">-$ 320.000</div>
+                    <i class="fas fa-arrow-trend-down kpi-icon text-red-400" style="color: var(--kpi-red);"></i>
+                </div>
+                <div class="kpi-card kpi-blue">
+                    <div class="kpi-header"><small>Ganancia Neta</small></div>
+                    <div class="kpi-val">$ 1.130.000</div>
+                    <i class="fas fa-coins kpi-icon text-blue-400" style="color: var(--kpi-blue);"></i>
+                </div>
+                <div class="kpi-card kpi-emerald">
+                    <div class="kpi-header"><small>Margen Real</small></div>
+                    <div class="kpi-val">77.9%</div>
+                    <i class="fas fa-percentage kpi-icon" style="color: var(--kpi-green);"></i>
+                </div>
+                <div class="kpi-card kpi-action">
+                    <i class="fas fa-plus-circle text-red-400 mb-2" style="font-size: 32px; color: var(--kpi-red);"></i>
+                    <div style="font-size: 18px; font-weight: 800; color: var(--kpi-red);">Registrar Gasto</div>
+                </div>
+            </div>
+
+            <!-- CHARTS -->
+            <div class="charts-container mt-4">
+                <div class="glass-panel" style="display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;">
+                        <h3 style="margin: 0; font-size: 20px;"><i class="fas fa-chart-area text-blue-400 mr-2" style="color: var(--kpi-blue);"></i> Evolución del Flujo</h3>
+                        <div style="background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: var(--text-muted);"><i class="fas fa-calendar-day mr-2"></i> Últimos 7 Días</div>
+                    </div>
+                    
+                    <div class="chart-mockup">
+                        <div class="bar-group">
+                            <div class="bar bar-inc" style="height: 40%;"></div>
+                            <div class="bar bar-exp" style="height: 10%;"></div>
+                            <span class="bar-label">Lun</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar bar-inc" style="height: 60%;"></div>
+                            <div class="bar bar-exp" style="height: 15%;"></div>
+                            <span class="bar-label">Mar</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar bar-inc" style="height: 30%;"></div>
+                            <div class="bar bar-exp" style="height: 50%;"></div>
+                            <span class="bar-label">Mie</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar bar-inc" style="height: 80%;"></div>
+                            <div class="bar bar-exp" style="height: 20%;"></div>
+                            <span class="bar-label">Jue</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar bar-inc" style="height: 95%;"></div>
+                            <div class="bar bar-exp" style="height: 5%;"></div>
+                            <span class="bar-label">Vie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="display: flex; flex-direction: column; align-items: center;">
+                    <h3 style="margin: 0 0 30px 0; font-size: 20px; align-self: flex-start;">Métodos de Cobro</h3>
+                    
+                    <div class="doughnut-mockup">
+                        <div class="doughnut-inner">
+                            <span style="font-size: 24px; font-weight: 900; color: white;">100%</span>
+                            <span style="font-size: 10px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Facturado</span>
+                        </div>
+                    </div>
+
+                    <div class="legend-grid">
+                        <div class="legend-item"><div class="legend-dot" style="background: #10b981;"></div> Efectivo (50%)</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #3b82f6;"></div> Transf. (25%)</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #f59e0b;"></div> Tarjeta (15%)</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: #8b5cf6;"></div> MP (10%)</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 3: PRODUCTOS TOP (DOBLE BARRA) -->
+    <div class="slide">
+        <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-orange);">Desnudando el Inventario</h3>
+                <h2>El Verdadro "Top Ventas"</h2>
+                <p>Muchos sistemas te dicen qué producto se vende más, pero ocultan si ese producto es realmente rentable.</p>
+                <p>Nuestra barra de progreso dual divide visualmente el ingreso bruto de cada producto estrella: <strong>la franja violeta muestra el Costo (COGS)</strong> que le pagaste al proveedor, y <strong>la franja naranja/amarilla muestra tu Ganancia Neta real</strong>. Así detectás rápido qué producto te conviene empujar y cuál es pura facturación vacía.</p>
+            </div>
+            
+            <div class="glass-panel" style="padding: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 25px;">
+                    <h3 style="margin: 0; font-size: 22px;"><i class="fas fa-fire" style="color: var(--kpi-orange); margin-right: 8px;"></i> Ranking de Rentabilidad</h3>
+                </div>
+
+                <div class="top-products-list">
+                    
+                    <div class="product-item">
+                        <div class="prod-info">
+                            <span class="prod-rank">#1</span>
+                            <span>Set Velas Premium</span>
+                            <span class="prod-qty">142 un.</span>
+                        </div>
+                        <div class="prod-stats">
+                            <span class="prod-amount">$ 350.000</span>
+                            <div class="progress-track" title="Costo vs Ganancia">
+                                <div class="progress-fill" style="width: 100%;">
+                                    <div class="segment-cost" style="flex: 20;" title="Costo"></div>
+                                    <div class="segment-profit" style="flex: 80;" title="Ganancia"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <div class="prod-info">
+                            <span class="prod-rank">#2</span>
+                            <span>Difusor Vainilla (Bajo Margen)</span>
+                            <span class="prod-qty">95 un.</span>
+                        </div>
+                        <div class="prod-stats">
+                            <span class="prod-amount">$ 285.000</span>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 81%;">
+                                    <div class="segment-cost" style="flex: 70;"></div>
+                                    <div class="segment-profit" style="flex: 30;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <div class="prod-info">
+                            <span class="prod-rank">#3</span>
+                            <span>Aceite Esencial Lavanda</span>
+                            <span class="prod-qty">60 un.</span>
+                        </div>
+                        <div class="prod-stats">
+                            <span class="prod-amount">$ 120.000</span>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 34%;">
+                                    <div class="segment-cost" style="flex: 15;"></div>
+                                    <div class="segment-profit" style="flex: 85;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 4: HEATMAPS -->
+    <div class="slide">
+        <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div class="heatmaps-wrapper">
+                
+                <!-- Heatmap Productos -->
+                <div class="heatmap-card glass-panel">
+                    <div class="hm-header">
+                        <h4><i class="fas fa-box" style="color: var(--kpi-orange);"></i> Intensidad de Ventas Físicas</h4>
+                        <span style="font-size: 12px; font-weight: bold; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px;">Marzo 2026</span>
+                    </div>
+                    <div class="hm-weekdays"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+                    <div class="hm-grid">
+                        <div class="hm-cell is-empty"></div><div class="hm-cell is-empty"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.3);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.5);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.4);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.8);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.9);"></div>
+                        
+                        <div class="hm-cell" style="background: rgba(239, 68, 68, 0.5);" title="Día en Negativo (Devoluciones)"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.4);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.3);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.6);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.8);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 1);"></div>
+                        <div class="hm-cell" style="background: rgba(249, 115, 22, 0.7);"></div>
+                    </div>
+                </div>
+
+                <!-- Heatmap Turnos -->
+                <div class="heatmap-card glass-panel">
+                    <div class="hm-header">
+                        <h4><i class="fas fa-calendar-check" style="color: var(--kpi-blue);"></i> Intensidad de Turnos (Servicios)</h4>
+                    </div>
+                    <div class="hm-grid">
+                        <div class="hm-cell is-empty"></div><div class="hm-cell is-empty"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.8);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.9);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.5);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.3);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.4);"></div>
+                        
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.7);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.9);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.6);"></div>
+                        <div class="hm-cell" style="background: rgba(239, 68, 68, 0.7);" title="Día en Negativo (Cancelaciones masivas)"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.3);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.4);"></div>
+                        <div class="hm-cell" style="background: rgba(59, 130, 246, 0.5);"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-blue); text-align: left;">Business Intelligence</h3>
+                <h2 style="text-align: left;">Mapas de Calor (Heatmaps)</h2>
+                <p style="text-align: left;">Inspirados en las herramientas de desarrollo corporativas (como GitHub), los Heatmaps te permiten <strong>visualizar patrones de comportamiento</strong> de un solo vistazo.</p>
+                <p style="text-align: left;">El color se intensifica según el volumen de ventas, turnos o clases de ese día específico. Además, <strong style="color: var(--kpi-red);">si un día arroja saldo negativo (por devoluciones o cancelaciones masivas), la celda se vuelve roja automáticamente</strong> alertándote de un problema operativo.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 5: LIBRO DIARIO Y EGRESOS -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-green); text-align: left;">Trazabilidad Total</h3>
+                <h2 style="text-align: left;">Libro Diario y Egresos</h2>
+                <p style="text-align: left;">Cada movimiento que ocurre en el sistema (ventas físicas, reservas online, cobros recurrentes) queda grabado inmutablemente en el Libro Diario.</p>
+                <p style="text-align: left;">Podés exportar el historial completo a un Excel contable (.csv) en un clic. Y si necesitás asentar el pago del alquiler o de internet, la herramienta de <strong>"Registro de Gastos"</strong> te permite deducirlo directamente del flujo de caja del día para que el margen de ganancia siga siendo exacto.</p>
+            </div>
+            
+            <div style="position: relative; width: 100%;">
+                
+                <div class="glass-panel" style="padding: 0; overflow: hidden; width: 100%; height: 400px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);">
+                        <h3 style="margin: 0; font-size: 18px; color: white;"><i class="fas fa-list-ul mr-2 text-slate-400"></i> Libro Diario</h3>
+                        <button class="btn-export"><i class="fas fa-file-excel" style="color: #10b981;"></i> Exportar a Excel (.csv)</button>
+                    </div>
+                    
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha y Hora</th>
+                                <th>Descripción / Cliente</th>
+                                <th style="text-align: center;">Método</th>
+                                <th style="text-align: right;">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 14:30</td>
+                                <td>
+                                    <div class="tx-desc">Ticket #1045</div>
+                                    <div class="tx-client"><i class="fas fa-user"></i> Juan Pérez</div>
+                                </td>
+                                <td style="text-align: center;"><span class="badge badge-cash"><i class="fas fa-money-bill-wave"></i> Efectivo</span></td>
+                                <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 15.000</td>
+                            </tr>
+                            <tr>
+                                <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 15:10</td>
+                                <td>
+                                    <div class="tx-desc">Reserva #1046</div>
+                                    <div class="tx-client"><i class="fas fa-globe text-blue-400"></i> Cliente Web</div>
+                                </td>
+                                <td style="text-align: center;"><span class="badge badge-mp"><i class="fas fa-handshake"></i> MercadoPago</span></td>
+                                <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 22.000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- OVERLAPPING EXPENSE MODAL -->
+                <div class="modal-mockup">
+                    <div class="mm-header"><i class="fas fa-receipt"></i> Registrar Gasto Operativo</div>
+                    <div class="mm-body">
+                        <div>
+                            <span style="font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Descripción del Gasto</span>
+                            <div class="mm-input" style="margin-top: 5px; font-weight: normal; color: var(--text-muted);">Ej: Pago de Internet, Limpieza...</div>
+                        </div>
+                        <div>
+                            <span style="font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Monto</span>
+                            <div class="mm-input-money" style="margin-top: 5px;">$ 0</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <div style="flex: 1; text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 12px; font-weight: bold; color: var(--text-muted);">Efectivo</div>
+                            <div style="flex: 1; text-align: center; padding: 10px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; font-size: 12px; font-weight: bold; color: var(--kpi-red);">Transf.</div>
+                        </div>
+                        <div style="background: var(--kpi-red); color: white; padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; font-size: 16px; margin-top: 10px;">Guardar Gasto</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <h3 style="color: var(--kpi-blue);">Fin de la Presentación</h3>
+            <h2>El Ecosistema Completo</h2>
+            <p style="max-width: 900px; margin: 0 auto;">Hemos auditado todo el circuito de gestión: desde el alta del producto en el catálogo hasta el control diario del flujo de caja.</p>
+            
+            <div class="quick-actions-grid" style="margin: 40px auto 0 auto;">
+                
+                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
+                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                </a>
+
+                <a href="presentacionFinanzas.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-search-dollar"></i></div>
+                    <div class="qa-text" style="color: white;">Ir a la<br>Auditoría (LTV)</div>
+                </a>
+                
+                <a href="presentacionPOS.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Ir a la<br>Caja (POS)</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        let currentIndex = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+
+</body>
+</html>

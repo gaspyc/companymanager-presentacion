@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Operaciones - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;      
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;    
+            --text-muted: #94a3b8;   
+            --border-glass: rgba(255, 255, 255, 0.05);
+            
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #d946ef; 
+            --kpi-orange: #f59e0b;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* =========================================
+           MOTOR FULLSCREEN NATIVO
+           ========================================= */
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px; 
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo (Glow) */
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(217, 70, 239, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+
+        /* Controles Flotantes */
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace;}
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;}
+        .ctrl-btn:hover { background: var(--kpi-blue); }
+
+        /* Tipografía */
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left;}
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left;}
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left;}
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left;}
+        
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; height: 100%; align-items: center; }
+
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        /* =========================================
+           SLIDE 2: KANBAN & HEADER MOCKUP
+           ========================================= */
+        .ops-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; border-radius: 16px; margin-bottom: 30px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); }
+        
+        .btn-allocate { background: rgba(245, 158, 11, 0.15); color: var(--kpi-orange); border: 1px solid rgba(245, 158, 11, 0.4); padding: 10px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px;}
+        .btn-bot { background: rgba(59, 130, 246, 0.15); color: var(--kpi-blue); border: 1px solid rgba(59, 130, 246, 0.4); padding: 10px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px;}
+        
+        .context-switcher { display: flex; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px; border: 1px solid var(--border-glass);}
+        .ctx-btn { background: transparent; border: none; color: var(--text-muted); padding: 10px 20px; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 10px;}
+        .ctx-btn.active { background: rgba(59, 130, 246, 0.2); color: var(--kpi-blue); border: 1px solid rgba(59, 130, 246, 0.3);}
+
+        .kanban-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .k-col { background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: 350px;}
+        .k-header { padding: 15px 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass);}
+        .k-header.orange { border-bottom-color: var(--kpi-orange); background: rgba(245, 158, 11, 0.05); }
+        .k-header.green { border-bottom-color: var(--kpi-green); background: rgba(16, 185, 129, 0.05); }
+        .k-header.gray { border-bottom-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); }
+        
+        .k-badge { padding: 4px 10px; border-radius: 10px; font-size: 13px; font-weight: 800; color: white;}
+        .k-badge.orange { background: var(--kpi-orange); }
+        .k-badge.green { background: var(--kpi-green); }
+
+        .k-body { padding: 15px; display: flex; flex-direction: column; gap: 15px;}
+        .k-card { background: rgba(255,255,255,0.05); border-left: 4px solid transparent; border-radius: 10px; padding: 15px; }
+        .k-card.wait { border-left-color: var(--kpi-orange); }
+        .k-card.ready { border-left-color: var(--kpi-green); }
+
+        /* =========================================
+           SLIDE 3: BARRAS DE PROGRESO Y COMBOS
+           ========================================= */
+        .zoom-card { background: rgba(30, 41, 59, 0.8); border: 1px solid var(--kpi-orange); border-radius: 16px; padding: 25px; box-shadow: 0 15px 40px rgba(245, 158, 11, 0.15);}
+        .zc-header { border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 20px;}
+        
+        .progress-row { margin-bottom: 15px; }
+        .p-info { display: flex; justify-content: space-between; align-items: center; font-size: 15px; color: var(--text-muted); margin-bottom: 8px;}
+        .bar-bg { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 4px; }
+        .bg-orange { background: var(--kpi-orange); }
+        .bg-fuchsia { background: var(--kpi-purple); }
+        
+        .sub-row { padding-left: 20px; border-left: 2px solid rgba(217, 70, 239, 0.3); margin-top: 10px; }
+        
+        /* =========================================
+           SLIDE 4: COBRO DINÁMICO
+           ========================================= */
+        .btn-deliver-dynamic { width: 100%; padding: 15px 20px; border-radius: 10px; font-weight: 700; font-size: 16px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px;}
+        .btn-deliver-dynamic.is-paid { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .btn-deliver-dynamic.is-pending { background: rgba(245, 158, 11, 0.15); color: var(--kpi-orange); border: 1px dashed rgba(245, 158, 11, 0.4); }
+
+        /* =========================================
+           SLIDE 5: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
+        .qa-btn { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s;}
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+        
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+        
+        /* Scroller hint */
+        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
+        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="scroll-hint">
+        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+
+    <!-- CONTROLES NATIVOS -->
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 5</span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRODUCCIÓN -->
+    <div class="slide active">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+            <div style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-blue);">Logística y Empaque</h3>
+                <h1>Centro de <br><span style="color: white;">Operaciones</span></h1>
+                <p>El puente entre la venta y la entrega. Cuando un ticket se cierra (en Mostrador o en la Tienda Online), viaja instantáneamente a este tablero Kanban.</p>
+                <p>Diseñado para organizar el depósito: automatiza la asignación de inventario, desarma combos en ingredientes base y alerta sobre cobros pendientes.</p>
+            </div>
+            
+            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-boxes" style="font-size: 80px; color: var(--kpi-blue); margin-bottom: 30px;"></i>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-project-diagram text-muted mr-2"></i> Desarme de Combos</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-magic text-muted mr-2"></i> Asignación Masiva</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-robot text-muted mr-2"></i> Filtro IA (Bots)</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-mobile-alt text-muted mr-2"></i> Depósito Móvil</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: KANBAN Y OMNICANALIDAD -->
+    <div class="slide">
+        <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange);">Omnicanalidad Real</h3>
+                <h2>Tablero de Empaque (Fulfillment)</h2>
+                <p>Divide el ruido visual separando las órdenes por contexto (Mostrador, Online, Envíos). El sistema procesa el inventario global y asigna unidades a las reservas de forma masiva con un solo clic.</p>
+            </div>
+            
+            <div class="ops-header">
+                <div style="display: flex; gap: 15px;">
+                    <div class="btn-allocate"><i class="fas fa-boxes"></i> Asignar Stock</div>
+                    <div class="btn-bot"><i class="fas fa-robot"></i> 3 por revisar</div>
+                </div>
+                <div class="context-switcher">
+                    <div class="ctx-btn"><i class="fas fa-cash-register"></i> Mostrador</div>
+                    <div class="ctx-btn active"><i class="fas fa-globe"></i> Tienda Online</div>
+                    <div class="ctx-btn"><i class="fas fa-motorcycle"></i> Envíos</div>
+                </div>
+            </div>
+
+            <div class="kanban-grid">
+                <div class="k-col">
+                    <div class="k-header orange">
+                        <span><i class="fas fa-clock mr-2 text-muted"></i> Esperando Stock</span>
+                        <span class="k-badge orange">12</span>
+                    </div>
+                    <div class="k-body">
+                        <div class="k-card wait">
+                            <strong style="color: white; display: block;">Martín Domínguez</strong>
+                            <span style="color: var(--text-muted); font-size: 12px;">#ORD-1045</span>
+                            <div style="margin-top: 15px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px;"><div style="width: 40%; height: 100%; background: var(--kpi-orange); border-radius: 4px;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="k-col">
+                    <div class="k-header green">
+                        <span><i class="fas fa-box-open mr-2 text-muted"></i> Listos para Entregar</span>
+                        <span class="k-badge green">4</span>
+                    </div>
+                    <div class="k-body">
+                        <div class="k-card ready">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <strong style="color: white; display: block;">Lucía Fernández</strong>
+                                    <span style="color: var(--text-muted); font-size: 12px;">#ORD-1044</span>
+                                </div>
+                                <span style="background: var(--kpi-green); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">LISTO</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="k-col">
+                    <div class="k-header gray">
+                        <span><i class="fas fa-history mr-2 text-muted"></i> Historial Reciente</span>
+                    </div>
+                    <div class="k-body">
+                        <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div><strong style="color: white; display: block;">Juan Pérez</strong><span style="color: var(--text-muted); font-size: 12px;">#ORD-1042</span></div>
+                            <strong style="color: var(--kpi-green);">$4,500</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 3: DESARME DE COMBOS Y ASIGNACIÓN -->
+    <div class="slide">
+        <div class="glow-purple" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-purple);">Ingeniería de Stock</h3>
+                <h2>Desarme Inteligente de Combos</h2>
+                <p>Las reservas muestran una radiografía exacta de tu depósito. Si un cliente compra "1 Combo Día de la Madre", el sistema no busca el SKU del combo.</p>
+                <p>Cruza datos con el Catálogo, <strong>desarma el combo en sus ingredientes base</strong> (ej: Velas y Difusores), verifica la disponibilidad física de cada sub-ítem y llena las barras de progreso automáticamente para el armador del paquete.</p>
+            </div>
+            
+            <div class="zoom-card">
+                <div class="zc-header">
+                    <strong style="color: white; font-size: 22px; display: block;">Pedido #ORD-1088</strong>
+                    <span style="color: var(--text-muted); font-size: 14px;">Cliente: Sofía López</span>
+                </div>
+                
+                <!-- Ítem normal -->
+                <div class="progress-row">
+                    <div class="p-info">
+                        <span style="color: white; font-weight: bold;">Caja de Sahumerios</span>
+                        <span style="font-family: monospace; font-size: 13px;">2/5</span>
+                    </div>
+                    <div class="bar-bg"><div class="bar-fill bg-orange" style="width: 40%;"></div></div>
+                </div>
+
+                <!-- Ítem Combo desarmado -->
+                <div class="progress-row" style="margin-top: 30px;">
+                    <div class="p-info" style="color: var(--kpi-purple); font-weight: 900;">
+                        <span><i class="fas fa-gift mr-2"></i> Combo Relax Total (x2)</span>
+                    </div>
+                    
+                    <div class="sub-row">
+                        <div class="p-info">
+                            <span style="color: var(--text-main);">Vela Aromática</span>
+                            <span style="font-family: monospace; font-size: 13px;">4/4</span>
+                        </div>
+                        <div class="bar-bg" style="height: 4px;"><div class="bar-fill bg-fuchsia" style="width: 100%;"></div></div>
+                    </div>
+                    <div class="sub-row">
+                        <div class="p-info">
+                            <span style="color: var(--text-main);">Difusor Lavanda</span>
+                            <span style="font-family: monospace; font-size: 13px;">1/2</span>
+                        </div>
+                        <div class="bar-bg" style="height: 4px;"><div class="bar-fill bg-fuchsia" style="width: 50%;"></div></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: COBRO AL ENTREGAR -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div style="display: flex; flex-direction: column; gap: 30px;">
+                <!-- Card ya Pagada -->
+                <div class="glass-panel" style="border-left: 4px solid var(--kpi-green);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: white; font-size: 18px;">Pedido #ORD-1090</strong>
+                        <span style="background: var(--kpi-green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">LISTO</span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">3 productos reservados. (Abonado online)</div>
+                    <div class="btn-deliver-dynamic is-paid">
+                        <span><i class="fas fa-box-open mr-2"></i> Entregar al Cliente</span>
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+
+                <!-- Card Pendiente de Pago -->
+                <div class="glass-panel" style="border-left: 4px solid var(--kpi-orange);">
+                    <div style="display: flex; justify-content: space-between;">
+                        <strong style="color: white; font-size: 18px;">Pedido #ORD-1092</strong>
+                        <span style="background: var(--kpi-green); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold;">LISTO</span>
+                    </div>
+                    <div style="color: var(--text-muted); font-size: 14px; margin-top: 5px;">1 producto reservado. (Pendiente de pago)</div>
+                    <div class="btn-deliver-dynamic is-pending">
+                        <span><i class="fas fa-hand-holding-usd mr-2"></i> Cobrar y Entregar</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-green);">Seguridad Financiera</h3>
+                <h2>Prevención de Fugas</h2>
+                <p>Una vez que el paquete está armado y listo para entregarse, el sistema cruza el estado de Fulfillment con el estado Financiero del Ticket.</p>
+                <p>Las órdenes <strong>Abonadas</strong> muestran un botón verde seguro ("Entregar").</p>
+                <p>Las reservas o <strong>Pedidos Mixtos impagos</strong> cambian el botón a una alerta naranja ("Cobrar y Entregar"), bloqueando la salida de la mercadería hasta que se registre el pago en la caja.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 5: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
+            <h2>Continuar Recorrido</h2>
+            <p style="max-width: 900px; margin: 0 auto;">El ecosistema de control de stock y operativa de caja está cerrado. ¿Continuamos hacia la Gestión de Turnos o Promociones?</p>
+            
+            <div class="quick-actions-grid">
+                
+                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
+                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                </a>
+
+                <a href="presentacionPOS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
+                </a>
+                
+                <a href="#" class="qa-btn purple" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-tags"></i></div>
+                    <div class="qa-text" style="color: white;">Reglas y<br>Combos</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        let currentIndex = 0;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+    </script>
+
+</body>
+</html>
