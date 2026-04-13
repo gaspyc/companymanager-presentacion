@@ -48,7 +48,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -93,11 +93,16 @@
 
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
         /* =========================================
            SLIDE 2: TABLA DE FACTURACIÓN (MOCKUP)
            ========================================= */
         .header-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .filters-bar { display: flex; gap: 10px; }
+        .filters-bar { display: flex; gap: 10px; flex-wrap: wrap;}
         .filter-btn { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .filter-btn.active { background: rgba(59, 130, 246, 0.15); color: var(--kpi-blue); border-color: rgba(59, 130, 246, 0.3); }
         .icon-yellow { color: var(--kpi-orange); margin-right: 5px; }
@@ -187,20 +192,77 @@
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
 
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split, .grid-split-large-left { grid-template-columns: 1fr; gap: 40px; }
+            
+            /* Textos apilados arriba */
+            .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
+            .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            /* Fix Tabla Slide 2 */
+            .sales-table-container { width: 100%; overflow-x: auto; border-radius: 12px; }
+            .sales-table { min-width: 700px; }
+            .header-controls { flex-direction: column; gap: 15px; align-items: flex-start;}
+
+            /* Fix Animación AFIP Slide 3 */
+            .afip-bridge { flex-direction: column; gap: 20px; }
+            .bridge-line { width: 4px; height: 60px; }
+            .bridge-packet { width: 4px; height: 30px; left: 0; top: 0; animation: transfer-mob 2s infinite ease-in-out; }
+            @keyframes transfer-mob { 0% { top: -30px; } 100% { top: 100%; } }
+
+            /* Fix Slide 4 Python/PDF */
+            .pdf-engine-container { flex-direction: column; gap: 30px; width: 100%; }
+            .python-code-box { max-width: 100%; overflow-x: auto; }
+            .pdf-document { max-width: 100%; }
+
+            /* Botones Nav Slide 5 */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0;}
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
-
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 5</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">5</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -208,14 +270,14 @@
     <div class="slide active">
         <div class="glow-blue"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-blue);">El Cierre del Flujo</h3>
                 <h1>Facturación y <br><span style="color: white;">Comprobantes</span></h1>
                 <p>Cobrar es solo la mitad del trabajo. La carga administrativa de registrar remitos y emitir facturas en los portales gubernamentales consume horas vitales del negocio.</p>
                 <p>Construimos un módulo que centraliza todas las órdenes pagadas y se <strong>comunica nativamente con AFIP/ARCA</strong> para emitir facturas en un solo clic, sin salir del sistema.</p>
             </div>
             
-            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-file-invoice-dollar" style="font-size: 80px; color: var(--kpi-blue); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-shield-alt text-muted mr-2"></i> Integración AFIP/ARCA</span>
@@ -231,13 +293,13 @@
     <div class="slide">
         <div class="glow-indigo" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-indigo);">Auditoría Fiscal Inmediata</h3>
                 <h2>El Tablero de Comprobantes</h2>
                 <p>El sistema detecta automáticamente qué ventas ya fueron cobradas pero aún no tienen un comprobante legal emitido. El <strong>indicador de "Pendientes"</strong> evita omisiones a la hora de cerrar el mes.</p>
             </div>
             
-            <div style="width: 100%;">
+            <div class="visual-block" style="width: 100%;">
                 
                 <div class="header-controls">
                     <div class="filters-bar">
@@ -253,52 +315,54 @@
                     </div>
                 </div>
 
-                <table class="sales-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>N° Orden</th>
-                            <th>Cliente</th>
-                            <th>Total</th>
-                            <th style="text-align: center;">Estado Pago</th>
-                            <th style="text-align: center;">AFIP / ARCA</th>
-                            <th style="text-align: right;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Fila 1: Pendiente de Facturar -->
-                        <tr>
-                            <td class="text-date">12/04/2026 14:30</td>
-                            <td class="text-mono">#1045</td>
-                            <td class="text-customer">Juan Pérez</td>
-                            <td class="text-price">$ 45.000</td>
-                            <td style="text-align: center;"><span class="badge badge-paid">Cobrado</span></td>
-                            <td style="text-align: center;"><span class="status-afip-none">Sin Emitir</span></td>
-                            <td style="text-align: right;">
-                                <div class="actions-wrapper">
-                                    <button class="btn-action btn-remito"><i class="fas fa-box-open"></i> Remito</button>
-                                    <button class="btn-action btn-bill"><i class="fas fa-file-invoice"></i> Facturar</button>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        <!-- Fila 2: Ya Facturada -->
-                        <tr>
-                            <td class="text-date">11/04/2026 10:15</td>
-                            <td class="text-mono">#1042</td>
-                            <td class="text-customer">Consumidor Final</td>
-                            <td class="text-price">$ 12.500</td>
-                            <td style="text-align: center;"><span class="badge badge-paid">Cobrado</span></td>
-                            <td style="text-align: center;"><span class="status-afip-ok"><i class="fas fa-shield-check"></i> CAE OK</span></td>
-                            <td style="text-align: right;">
-                                <div class="actions-wrapper">
-                                    <button class="btn-action btn-remito"><i class="fas fa-box-open"></i> Remito</button>
-                                    <button class="btn-action btn-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="sales-table-container custom-scrollbar">
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>N° Orden</th>
+                                <th>Cliente</th>
+                                <th>Total</th>
+                                <th style="text-align: center;">Estado Pago</th>
+                                <th style="text-align: center;">AFIP / ARCA</th>
+                                <th style="text-align: right;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Fila 1: Pendiente de Facturar -->
+                            <tr>
+                                <td class="text-date">12/04/2026 14:30</td>
+                                <td class="text-mono">#1045</td>
+                                <td class="text-customer">Juan Pérez</td>
+                                <td class="text-price">$ 45.000</td>
+                                <td style="text-align: center;"><span class="badge badge-paid">Cobrado</span></td>
+                                <td style="text-align: center;"><span class="status-afip-none">Sin Emitir</span></td>
+                                <td style="text-align: right;">
+                                    <div class="actions-wrapper">
+                                        <button class="btn-action btn-remito"><i class="fas fa-box-open"></i> Remito</button>
+                                        <button class="btn-action btn-bill"><i class="fas fa-file-invoice"></i> Facturar</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Fila 2: Ya Facturada -->
+                            <tr>
+                                <td class="text-date">11/04/2026 10:15</td>
+                                <td class="text-mono">#1042</td>
+                                <td class="text-customer">Consumidor Final</td>
+                                <td class="text-price">$ 12.500</td>
+                                <td style="text-align: center;"><span class="badge badge-paid">Cobrado</span></td>
+                                <td style="text-align: center;"><span class="status-afip-ok"><i class="fas fa-shield-check"></i> CAE OK</span></td>
+                                <td style="text-align: right;">
+                                    <div class="actions-wrapper">
+                                        <button class="btn-action btn-remito"><i class="fas fa-box-open"></i> Remito</button>
+                                        <button class="btn-action btn-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
             </div>
         </div>
@@ -309,14 +373,14 @@
         <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
             
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-blue); text-align: left;">Automatización Fiscal</h3>
                 <h2 style="text-align: left;">Webservices (API) Integrados</h2>
                 <p style="text-align: left;">Se acabaron las transcripciones manuales en el portal gubernamental. Al presionar "Facturar", el backend toma el subtotal, los impuestos y el DNI del cliente, y construye la petición criptográfica exacta que requiere ARCA/AFIP.</p>
                 <p style="text-align: left;">La respuesta se procesa instantáneamente, almacenando el <strong>CAE (Código de Autorización Electrónico)</strong> y su vencimiento directo en la base de datos de la orden.</p>
             </div>
 
-            <div>
+            <div class="visual-block">
                 <div class="afip-bridge">
                     <div class="app-node">
                         <i class="fas fa-server text-blue-400" style="font-size: 40px; color: var(--kpi-blue); margin-bottom: 15px;"></i>
@@ -351,16 +415,16 @@
         <div class="glow-green" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide">
             
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-green);">Sin Dependencias de Terceros</h3>
                 <h2>Motor de PDF Nativo en Python</h2>
                 <p>No pagamos licencias costosas ni usamos servicios inestables para renderizar documentos. El sistema cuenta con su propia librería (<strong>FPDF</strong>) que "dibuja" matemáticamente Facturas B y Remitos (R) al vuelo, insertando los datos de la base de datos y devolviendo un archivo binario listo para imprimir o enviar por WhatsApp.</p>
             </div>
 
-            <div class="pdf-engine-container">
+            <div class="visual-block pdf-engine-container">
                 
                 <!-- Python Code Mockup -->
-                <div class="python-code-box">
+                <div class="python-code-box custom-scrollbar">
 <span class="code-keyword">class</span> InvoicePDF(FPDF):
     <span class="code-keyword">def</span> <span class="code-func">header</span>(self):
         <span class="code-comment"># Dibujando Cabecera</span>
@@ -443,23 +507,25 @@
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
-            <h2>Continuar Recorrido</h2>
-            <p style="max-width: 900px; margin: 0 auto;">Este módulo cierra el ciclo operativo y financiero. Todas las piezas del ecosistema están interconectadas para garantizar el flujo de información.</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Este módulo cierra el ciclo operativo y financiero. Todas las piezas del ecosistema están interconectadas para garantizar el flujo de información.</p>
+            </div>
             
-            <div class="quick-actions-grid" style="margin: 40px auto 0 auto;">
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="presentacionCaja.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                <a href="Caja.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
                     <div class="qa-text" style="color: white;">Ir al<br>Flujo de Caja</div>
                 </a>
                 
-                <a href="presentacionFinanzas.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                <a href="Auditoria.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
                     <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-search-dollar"></i></div>
                     <div class="qa-text" style="color: white;">Ir a<br>Auditoría (LTV)</div>
                 </a>
@@ -470,13 +536,20 @@
 
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
+        const pageId = 'facturacion'; // Identificador único
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -485,12 +558,24 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            // Al cambiar de slide en mobile, sube el scroll arriba
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -505,12 +590,31 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>

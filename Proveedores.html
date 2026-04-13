@@ -47,7 +47,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -91,6 +91,11 @@
 
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
         /* =========================================
            MOCKUP: SUGERENCIAS INTELIGENTES (SLIDE 2)
            ========================================= */
@@ -98,8 +103,8 @@
         .controls-mock { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
         .styled-slider { -webkit-appearance: none; width: 120px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; outline: none; }
         .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--kpi-blue); cursor: pointer; }
-        .math-breakdown { display: flex; gap: 20px; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border-left: 3px solid var(--kpi-blue);}
-        .math-item { display: flex; flex-direction: column;}
+        .math-breakdown { display: flex; gap: 20px; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border-left: 3px solid var(--kpi-blue); align-items: center;}
+        .math-item { display: flex; flex-direction: column; align-items: center;}
         .math-lbl { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
         .math-val { font-size: 18px; font-weight: 900; color: white;}
 
@@ -108,16 +113,16 @@
            ========================================= */
         .provider-group { background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 20px; border-radius: 16px; margin-bottom: 20px;}
         .group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 15px;}
-        .shop-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid transparent;}
+        .shop-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid transparent; flex-wrap: wrap; gap: 10px;}
         .row-urgent { border-left-color: var(--kpi-orange); }
-        .btn-create-order { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #e2e8f0; padding: 12px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px; justify-content: center; width: 100%; transition: 0.2s;}
+        .btn-create-order { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #e2e8f0; padding: 12px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px; justify-content: center; width: 100%; transition: 0.2s; cursor: pointer;}
         .btn-create-order:hover { background: rgba(59, 130, 246, 0.2); border-color: var(--kpi-blue); color: var(--kpi-blue);}
 
         /* =========================================
            MOCKUP: HISTORIAL Y LOTES (SLIDE 4)
            ========================================= */
         .history-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; }
-        .detail-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;}
+        .detail-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 600px;}
         .detail-table th { text-align: left; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border-glass); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;}
         .detail-table td { padding: 10px 0; color: white; border-bottom: 1px solid rgba(255,255,255,0.02); vertical-align: middle;}
         .lot-badge { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; border: 1px solid rgba(168, 85, 247, 0.3);}
@@ -130,14 +135,75 @@
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s;}
         .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+        
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            
+            /* Textos apilados arriba */
+            .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
+            .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            /* Fix Slide 2: Math Breakdown */
+            .top-bar-mock { flex-direction: column; gap: 15px; align-items: flex-start; }
+            .math-breakdown { flex-wrap: wrap; justify-content: center; text-align: center; gap: 15px; }
+
+            /* Fix Slide 4: Table con Scroll Lateral */
+            .history-card { padding: 15px; width: 100%; overflow: hidden;}
+            .table-responsive { width: 100%; overflow-x: auto; }
+
+            /* Botones apilados verticalmente */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0;}
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- CONTROLES NATIVOS (FLOTANTES) -->
+    <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 5</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">5</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -145,15 +211,15 @@
     <div class="slide active">
         <div class="glow-blue"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-blue); text-align: left;">Supply Chain Simplificado</h3>
                 <h1 style="text-align: left;">Gestión de <br><span style="color: white;">Abastecimiento</span></h1>
                 <p style="text-align: left;">Comprar mercadería no debería basarse en la intuición ni en revisar góndolas a ojo. Convertimos el dolor de cabeza del stock en un proceso matemático automatizado.</p>
                 <p style="text-align: left;">El sistema cruza el inventario actual, las reservas pendientes y la velocidad de ventas histórica para decirte <strong>exactamente qué pedir, a quién y cuándo.</strong></p>
             </div>
             
-            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <div style="display: flex; gap: 30px; margin-bottom: 40px;">
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="display: flex; gap: 30px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center;">
                     <div style="text-align: center;">
                         <i class="fas fa-database text-muted" style="font-size: 40px; margin-bottom: 10px;"></i>
                         <div style="font-size: 14px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Stock Físico</div>
@@ -181,14 +247,14 @@
     <div class="slide">
         <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-purple);">Optimización de Capital</h3>
                 <h2>Compras Predictivas</h2>
                 <p>No compres "para rellenar". Ajustá el slider de "Meta de Días" y el sistema analizará la velocidad de ventas de los últimos 30 días para proyectar exactamente cuánto necesitas para no quebrar stock en el futuro.</p>
                 <p style="font-size: 16px; color: var(--kpi-purple); font-weight: bold;"><i class="fas fa-project-diagram mr-2"></i> Magia Operativa: Si un cliente reserva un "Combo Armado", el sistema lo desarma y te pide los ingredientes base sueltos automáticamente.</p>
             </div>
             
-            <div class="glass-panel" style="max-width: 900px; margin: 0 auto; width: 100%;">
+            <div class="visual-block glass-panel" style="max-width: 900px; margin: 0 auto; width: 100%;">
                 <div class="top-bar-mock">
                     <div style="font-size: 18px; font-weight: bold; color: var(--text-main);"><i class="fas fa-magic" style="color: var(--kpi-blue); margin-right: 8px;"></i> Sugerencias Inteligentes</div>
                     <div class="controls-mock">
@@ -229,14 +295,14 @@
         <div class="glow-orange" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
             
-            <div>
+            <div class="text-block">
                 <h3 style="color: var(--kpi-orange);">Logística sin Fricción</h3>
                 <h2>Multi-Carrito Automatizado</h2>
                 <p>Armar listas de compras a mano es un dolor de cabeza. El sistema procesa todas las sugerencias inteligentes y las divide automáticamente en órdenes de compra independientes agrupadas por Proveedor.</p>
                 <p>Con un clic, mandas la orden por WhatsApp, y con otro clic confirmas el ingreso monetario y de stock en tu sistema.</p>
             </div>
 
-            <div class="glass-panel" style="padding: 30px;">
+            <div class="visual-block glass-panel" style="padding: 30px;">
                 <div class="provider-group">
                     <div class="group-header">
                         <span style="font-size: 20px; color: white;">Aromas S.A.</span>
@@ -260,9 +326,9 @@
                         <span style="font-size: 22px; font-weight: 900; color: white;">$ 624.500</span>
                     </div>
 
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn-create-order" style="flex: 0 0 auto; width: 50px;"><i class="fas fa-copy"></i></button>
-                        <button class="btn-create-order" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: var(--kpi-blue);">Confirmar Ingreso de Stock <i class="fas fa-check"></i></button>
+                        <button class="btn-create-order" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: var(--kpi-blue); flex: 1;">Confirmar Ingreso de Stock <i class="fas fa-check"></i></button>
                     </div>
                 </div>
             </div>
@@ -274,14 +340,14 @@
     <div class="slide">
         <div class="glow-blue" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-blue);">Cumplimiento Normativo</h3>
                 <h2>Historial y Trazabilidad (Lotes)</h2>
                 <p>Confirmar la orden no solo suma unidades al inventario. Registra el remito financiero y habilita la trazabilidad forense del ingreso.</p>
                 <p>Fundamental para rubros de estética o alimentos: registra el <strong>Número de Lote</strong> y la <strong>Fecha de Vencimiento</strong> de la mercadería entrante para activar alertas automáticas futuras.</p>
             </div>
 
-            <div class="glass-panel" style="max-width: 1100px; margin: 0 auto; width: 100%;">
+            <div class="visual-block glass-panel" style="max-width: 1100px; margin: 0 auto; width: 100%;">
                 <div class="history-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 15px;">
                         <div>
@@ -294,27 +360,29 @@
                         </div>
                     </div>
 
-                    <table class="detail-table">
-                        <thead>
-                            <tr>
-                                <th>Producto / SKU</th>
-                                <th style="text-align: center;">Cant. Ingresada</th>
-                                <th style="text-align: right;">Costo Unitario</th>
-                                <th style="text-align: right; color: var(--kpi-purple);"><i class="fas fa-tag"></i> Trazabilidad (Lote/Vto)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong style="color: white;">Aceite AMBAR</strong> <br><span style="font-size: 12px; color: var(--text-muted); font-family: monospace;">SKU: ACEITE-AMB</span></td>
-                                <td style="text-align: center; color: var(--kpi-blue); font-weight: bold;">+ 40</td>
-                                <td style="text-align: right; color: var(--kpi-green); font-weight: bold;">$ 1.110,06</td>
-                                <td style="text-align: right;">
-                                    <div class="lot-badge" style="display: inline-block;">LOTE-A845</div>
-                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vence: Oct 2027</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive custom-scrollbar" style="overflow-x: auto;">
+                        <table class="detail-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto / SKU</th>
+                                    <th style="text-align: center;">Cant. Ingresada</th>
+                                    <th style="text-align: right;">Costo Unitario</th>
+                                    <th style="text-align: right; color: var(--kpi-purple);"><i class="fas fa-tag"></i> Trazabilidad (Lote/Vto)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color: white;">Aceite AMBAR</strong> <br><span style="font-size: 12px; color: var(--text-muted); font-family: monospace;">SKU: ACEITE-AMB</span></td>
+                                    <td style="text-align: center; color: var(--kpi-blue); font-weight: bold;">+ 40</td>
+                                    <td style="text-align: right; color: var(--kpi-green); font-weight: bold;">$ 1.110,06</td>
+                                    <td style="text-align: right;">
+                                        <div class="lot-badge" style="display: inline-block;">LOTE-A845</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vence: Oct 2027</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -324,15 +392,17 @@
     <div class="slide">
         <div class="glow-purple"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
-            <h2>Continuar Recorrido</h2>
-            <p style="max-width: 900px; margin: 0 auto;">Ya tenemos el stock controlado y abastecido gracias a los proveedores. Es momento de venderlo.</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Ya tenemos el stock controlado y abastecido gracias a los proveedores. Es momento de venderlo.</p>
+            </div>
             
-            <div class="quick-actions-grid">
+            <div class="visual-block quick-actions-grid">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
                     <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                    <div class="qa-text" style="color: white;">Volver al<br>Índice (Mapa)</div>
                 </a>
 
                 <a href="introduccionCatalogo.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
@@ -340,7 +410,7 @@
                     <div class="qa-text" style="color: white;">Volver a<br>Catálogo</div>
                 </a>
                 
-                <a href="#" class="qa-btn green" style="border-color: var(--kpi-green);">
+                <a href="presentacionPOS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
                     <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
                 </a>
@@ -351,13 +421,20 @@
 
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
+        const pageId = 'proveedores';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -366,12 +443,23 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -386,12 +474,31 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'presentacionPOS.html'; break;
+                        case 'i': window.location.href = 'presentacionInventario.html'; break;
+                        case 'c': window.location.href = 'introduccionCatalogo.html'; break;
+                        case 'f': window.location.href = 'presentacionFacturacion.html'; break;
+                        case 'd': window.location.href = 'introduccionBranchDashoard.html'; break;
+                        case 't': window.location.href = 'presentacionTienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>

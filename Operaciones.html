@@ -29,9 +29,6 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* =========================================
-           MOTOR FULLSCREEN NATIVO
-           ========================================= */
         html, body {
             height: 100vh;
             width: 100vw;
@@ -47,7 +44,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -68,13 +65,11 @@
             justify-content: center;
         }
 
-        /* Luces de fondo (Glow) */
         .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
         .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(217, 70, 239, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
         .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
         .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
 
-        /* Controles Flotantes */
         .presentation-controls {
             position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
         }
@@ -82,7 +77,6 @@
         .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;}
         .ctrl-btn:hover { background: var(--kpi-blue); }
 
-        /* Tipografía */
         h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left;}
         h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left;}
         h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left;}
@@ -154,24 +148,74 @@
         .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
-        
-        /* Scroller hint */
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
 
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                /* 🔴 PADDING INFERIOR AMPLIO PARA QUE NO CHOQUE LA NAVEGACIÓN */
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
+            .visual-block { order: 2; width: 100%; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            /* 🔴 FIXES ESPECÍFICOS DE OPERACIONES */
+            .ops-header { flex-direction: column; gap: 15px; padding: 15px; }
+            .ops-header > div { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;}
+            .context-switcher { width: 100%; display: flex; flex-wrap: wrap; justify-content: center; }
+            .ctx-btn { flex: 1; justify-content: center; font-size: 12px; padding: 8px;}
+            .btn-allocate, .btn-bot { flex: 1; justify-content: center; font-size: 12px; padding: 10px;}
+            
+            .kanban-grid { grid-template-columns: 1fr; gap: 20px; }
+            .k-col { min-height: auto; height: auto; }
+
+            /* 🔴 BOTONES APILADOS EN MOBILE */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 5</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">5</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -179,14 +223,14 @@
     <div class="slide active">
         <div class="glow-blue"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-blue);">Logística y Empaque</h3>
                 <h1>Centro de <br><span style="color: white;">Operaciones</span></h1>
                 <p>El puente entre la venta y la entrega. Cuando un ticket se cierra (en Mostrador o en la Tienda Online), viaja instantáneamente a este tablero Kanban.</p>
                 <p>Diseñado para organizar el depósito: automatiza la asignación de inventario, desarma combos en ingredientes base y alerta sobre cobros pendientes.</p>
             </div>
             
-            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-boxes" style="font-size: 80px; color: var(--kpi-blue); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-project-diagram text-muted mr-2"></i> Desarme de Combos</span>
@@ -202,65 +246,67 @@
     <div class="slide">
         <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-orange);">Omnicanalidad Real</h3>
                 <h2>Tablero de Empaque (Fulfillment)</h2>
                 <p>Divide el ruido visual separando las órdenes por contexto (Mostrador, Online, Envíos). El sistema procesa el inventario global y asigna unidades a las reservas de forma masiva con un solo clic.</p>
             </div>
             
-            <div class="ops-header">
-                <div style="display: flex; gap: 15px;">
-                    <div class="btn-allocate"><i class="fas fa-boxes"></i> Asignar Stock</div>
-                    <div class="btn-bot"><i class="fas fa-robot"></i> 3 por revisar</div>
-                </div>
-                <div class="context-switcher">
-                    <div class="ctx-btn"><i class="fas fa-cash-register"></i> Mostrador</div>
-                    <div class="ctx-btn active"><i class="fas fa-globe"></i> Tienda Online</div>
-                    <div class="ctx-btn"><i class="fas fa-motorcycle"></i> Envíos</div>
-                </div>
-            </div>
-
-            <div class="kanban-grid">
-                <div class="k-col">
-                    <div class="k-header orange">
-                        <span><i class="fas fa-clock mr-2 text-muted"></i> Esperando Stock</span>
-                        <span class="k-badge orange">12</span>
+            <div class="visual-block">
+                <div class="ops-header">
+                    <div>
+                        <div class="btn-allocate"><i class="fas fa-boxes"></i> Asignar Stock</div>
+                        <div class="btn-bot"><i class="fas fa-robot"></i> 3 por revisar</div>
                     </div>
-                    <div class="k-body">
-                        <div class="k-card wait">
-                            <strong style="color: white; display: block;">Martín Domínguez</strong>
-                            <span style="color: var(--text-muted); font-size: 12px;">#ORD-1045</span>
-                            <div style="margin-top: 15px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px;"><div style="width: 40%; height: 100%; background: var(--kpi-orange); border-radius: 4px;"></div></div>
+                    <div class="context-switcher">
+                        <div class="ctx-btn"><i class="fas fa-cash-register"></i> Mostrador</div>
+                        <div class="ctx-btn active"><i class="fas fa-globe"></i> Tienda Online</div>
+                        <div class="ctx-btn"><i class="fas fa-motorcycle"></i> Envíos</div>
+                    </div>
+                </div>
+
+                <div class="kanban-grid">
+                    <div class="k-col">
+                        <div class="k-header orange">
+                            <span><i class="fas fa-clock mr-2 text-muted"></i> Esperando Stock</span>
+                            <span class="k-badge orange">12</span>
                         </div>
-                    </div>
-                </div>
-
-                <div class="k-col">
-                    <div class="k-header green">
-                        <span><i class="fas fa-box-open mr-2 text-muted"></i> Listos para Entregar</span>
-                        <span class="k-badge green">4</span>
-                    </div>
-                    <div class="k-body">
-                        <div class="k-card ready">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div>
-                                    <strong style="color: white; display: block;">Lucía Fernández</strong>
-                                    <span style="color: var(--text-muted); font-size: 12px;">#ORD-1044</span>
-                                </div>
-                                <span style="background: var(--kpi-green); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">LISTO</span>
+                        <div class="k-body">
+                            <div class="k-card wait">
+                                <strong style="color: white; display: block;">Martín Domínguez</strong>
+                                <span style="color: var(--text-muted); font-size: 12px;">#ORD-1045</span>
+                                <div style="margin-top: 15px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 4px;"><div style="width: 40%; height: 100%; background: var(--kpi-orange); border-radius: 4px;"></div></div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="k-col">
-                    <div class="k-header gray">
-                        <span><i class="fas fa-history mr-2 text-muted"></i> Historial Reciente</span>
+                    <div class="k-col">
+                        <div class="k-header green">
+                            <span><i class="fas fa-box-open mr-2 text-muted"></i> Listos para Entregar</span>
+                            <span class="k-badge green">4</span>
+                        </div>
+                        <div class="k-body">
+                            <div class="k-card ready">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                    <div>
+                                        <strong style="color: white; display: block;">Lucía Fernández</strong>
+                                        <span style="color: var(--text-muted); font-size: 12px;">#ORD-1044</span>
+                                    </div>
+                                    <span style="background: var(--kpi-green); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold;">LISTO</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="k-body">
-                        <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <div><strong style="color: white; display: block;">Juan Pérez</strong><span style="color: var(--text-muted); font-size: 12px;">#ORD-1042</span></div>
-                            <strong style="color: var(--kpi-green);">$4,500</strong>
+
+                    <div class="k-col">
+                        <div class="k-header gray">
+                            <span><i class="fas fa-history mr-2 text-muted"></i> Historial Reciente</span>
+                        </div>
+                        <div class="k-body">
+                            <div style="display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <div><strong style="color: white; display: block;">Juan Pérez</strong><span style="color: var(--text-muted); font-size: 12px;">#ORD-1042</span></div>
+                                <strong style="color: var(--kpi-green);">$4,500</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -273,14 +319,14 @@
     <div class="slide">
         <div class="glow-purple" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-purple);">Ingeniería de Stock</h3>
                 <h2>Desarme Inteligente de Combos</h2>
                 <p>Las reservas muestran una radiografía exacta de tu depósito. Si un cliente compra "1 Combo Día de la Madre", el sistema no busca el SKU del combo.</p>
                 <p>Cruza datos con el Catálogo, <strong>desarma el combo en sus ingredientes base</strong> (ej: Velas y Difusores), verifica la disponibilidad física de cada sub-ítem y llena las barras de progreso automáticamente para el armador del paquete.</p>
             </div>
             
-            <div class="zoom-card">
+            <div class="visual-block zoom-card">
                 <div class="zc-header">
                     <strong style="color: white; font-size: 22px; display: block;">Pedido #ORD-1088</strong>
                     <span style="color: var(--text-muted); font-size: 14px;">Cliente: Sofía López</span>
@@ -326,7 +372,7 @@
         <div class="glow-green" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
             
-            <div style="display: flex; flex-direction: column; gap: 30px;">
+            <div class="visual-block" style="display: flex; flex-direction: column; gap: 30px;">
                 <!-- Card ya Pagada -->
                 <div class="glass-panel" style="border-left: 4px solid var(--kpi-green);">
                     <div style="display: flex; justify-content: space-between;">
@@ -354,7 +400,7 @@
                 </div>
             </div>
 
-            <div style="padding-left: 40px;">
+            <div class="text-block" style="padding-left: 40px;">
                 <h3 style="color: var(--kpi-green);">Seguridad Financiera</h3>
                 <h2>Prevención de Fugas</h2>
                 <p>Una vez que el paquete está armado y listo para entregarse, el sistema cruza el estado de Fulfillment con el estado Financiero del Ticket.</p>
@@ -369,24 +415,26 @@
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
-            <h2>Continuar Recorrido</h2>
-            <p style="max-width: 900px; margin: 0 auto;">El ecosistema de control de stock y operativa de caja está cerrado. ¿Continuamos hacia la Gestión de Turnos o Promociones?</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">El ecosistema de control de stock y operativa de caja está cerrado. ¿Continuamos hacia la Gestión de Turnos o Promociones?</p>
+            </div>
             
-            <div class="quick-actions-grid">
+            <div class="visual-block quick-actions-grid">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="presentacionPOS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
-                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
-                    <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
+                <a href="Agenda.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="far fa-calendar-check"></i></div>
+                    <div class="qa-text" style="color: white;">Agenda<br>y Turnos</div>
                 </a>
                 
-                <a href="#" class="qa-btn purple" style="border-color: var(--kpi-purple);">
-                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-tags"></i></div>
+                <a href="Promociones.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-tags"></i></div>
                     <div class="qa-text" style="color: white;">Reglas y<br>Combos</div>
                 </a>
 
@@ -394,15 +442,22 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
+    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN Y ATAJOS -->
     <script>
+        const pageId = 'operaciones'; // Identificador único
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -411,12 +466,23 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            // Al cambiar de slide en mobile, sube el scroll arriba
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // En la última diapositiva, volver al índice
+                window.location.href = 'index.html';
             }
         }
 
@@ -431,12 +497,32 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            // Atajos de teclado
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>

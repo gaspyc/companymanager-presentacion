@@ -31,7 +31,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* =========================================
-           MOTOR FULLSCREEN NATIVO
+           MOTOR FULLSCREEN RESPONSIVE
            ========================================= */
         html, body {
             height: 100vh;
@@ -48,7 +48,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -94,8 +94,13 @@
 
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
         /* =========================================
-           SLIDE 2: FILTROS MOCKUP (LA NUEVA DIAPOSITIVA)
+           SLIDE 2: FILTROS MOCKUP
            ========================================= */
         .mockup-toolbar { display: flex; flex-direction: column; gap: 20px; padding: 30px;}
         .mockup-search { display: flex; align-items: center; background: rgba(0, 0, 0, 0.4); padding: 15px 25px; border-radius: 16px; border: 1px solid var(--kpi-blue); width: 100%; color: white; font-size: 18px; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);}
@@ -175,15 +180,15 @@
         .modal-box { background: #1e293b; width: 100%; max-width: 450px; border-radius: 20px; border: 1px solid var(--border-glass); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column; margin: 0 auto;}
         .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border-glass); display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: white; font-size: 18px; background: rgba(0,0,0,0.2);}
         .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 20px;}
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
         .form-group label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .custom-select { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-glass); color: white; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; outline: none; appearance: none;}
+        .custom-select { width: 100%; max-width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-glass); color: white; padding: 14px; border-radius: 10px; font-size: 15px; font-weight: bold; outline: none; appearance: none;}
         .custom-select.focus-red { border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1); }
         .qty-control { display: flex; align-items: center; gap: 12px; background: rgba(0, 0, 0, 0.3); padding: 8px; border-radius: 12px; border: 1px solid var(--border-glass); }
-        .btn-qty { width: 44px; height: 44px; background: rgba(255, 255, 255, 0.05); border: none; color: white; border-radius: 8px; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .input-qty { flex: 1; background: transparent; border: none; text-align: center; color: white; font-weight: 900; font-size: 24px; outline: none; }
+        .btn-qty { width: 44px; height: 44px; background: rgba(255, 255, 255, 0.05); border: none; color: white; border-radius: 8px; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .input-qty { flex: 1; background: transparent; border: none; text-align: center; color: white; font-weight: 900; font-size: 24px; outline: none; width: 100%;}
         .modal-footer { padding: 20px 24px; background: rgba(0, 0, 0, 0.2); border-top: 1px solid var(--border-glass); display: flex; gap: 12px; }
-        .btn-confirm { flex: 1; border: none; color: white; padding: 15px; border-radius: 10px; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--kpi-red); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);}
+        .btn-confirm { flex: 1; border: none; color: white; padding: 15px; border-radius: 10px; font-weight: 800; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--kpi-red); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); cursor: pointer;}
 
         .history-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px;}
         .history-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 12px; }
@@ -207,22 +212,81 @@
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
 
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto !important; height: auto !important; }
+            .slide {
+                position: relative !important;
+                width: 100%;
+                height: auto !important;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split, .grid-split-large-left { grid-template-columns: 1fr; gap: 40px; }
+            
+            /* Textos apilados arriba */
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
+            .visual-block { order: 2; width: 100%; }
 
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            /* Fix Slide 2: Filtros Inteligentes */
+            .mockup-toolbar { padding: 15px; }
+            .m-controls { flex-direction: column; gap: 15px; align-items: flex-start;}
+
+            /* Fix Slide 3: Grilla y Categoría */
+            .category-section { flex-direction: column; }
+            .category-sidebar { width: 100%; flex-direction: row; align-items: center; justify-content: center; }
+            .category-color-line { width: 100%; height: 4px; min-height: 4px; margin-bottom: 0; margin-right: 16px;}
+            .category-title-rotated { writing-mode: horizontal-tb; transform: none; }
+            .cards-grid { grid-template-columns: 1fr; }
+
+            /* Fix Slide 4 & 5: Paneles y Modal para evitar recortes */
+            .detail-panel { width: 100%; max-width: 100%; }
+            .action-buttons-row { flex-wrap: wrap; justify-content: flex-end;}
+            
+            /* 🔴 FIX MODAL DE MERMAS PARA QUE NO SE CORTE EN MOBILE */
+            .modal-box { width: 100%; max-width: 100%; margin: 0; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .modal-body, .modal-header, .modal-footer { padding: 15px; }
+
+            /* Botones Nav Slide 6 */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0;}
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 6</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -230,14 +294,14 @@
     <div class="slide active">
         <div class="glow-blue"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-blue);">El Guardián del Capital</h3>
                 <h1>Inventario <br><span style="color: white;">Físico y Stock</span></h1>
                 <p>La principal fuga de dinero en un local ocurre por mal manejo de depósito: robos, vencimientos y sobreventas.</p>
                 <p>Este no es un listado estático. Es un sistema vivo que divide tu inventario entre lo que realmente está en la estantería y lo que ya fue comprometido a un cliente, manteniendo trazabilidad forense de cada movimiento.</p>
             </div>
             
-            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-boxes" style="font-size: 80px; color: var(--kpi-blue); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-layer-group text-muted mr-2"></i> Agrupación Visual</span>
@@ -249,18 +313,18 @@
         </div>
     </div>
 
-    <!-- SLIDE 2: FILTROS Y BÚSQUEDA AVANZADA (NUEVA) -->
+    <!-- SLIDE 2: FILTROS Y BÚSQUEDA AVANZADA -->
     <div class="slide">
         <div class="glow-purple"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-purple);">Auditoría Proactiva</h3>
                 <h1>Filtros <br><span style="color: white;">Inteligentes</span></h1>
                 <p>A medida que tu catálogo crece, encontrar los productos críticos se vuelve un desafío. Nuestra barra de herramientas funciona como un <strong>panel de alertas integrado</strong>.</p>
                 <p>Los botones no solo ordenan la vista, sino que te avisan en tiempo real con <strong style="color: white;">indicadores de colores</strong> cuántos productos están por agotarse, cuántos ya no tienen stock físico y cuáles están próximos a vencer, antes de que siquiera busques nada.</p>
             </div>
             
-            <div class="glass-panel mockup-toolbar">
+            <div class="visual-block glass-panel mockup-toolbar">
                 <div class="mockup-search">
                     <i class="fas fa-search text-muted mr-3"></i> Buscar por Producto, SKU o Categoría...
                 </div>
@@ -292,14 +356,14 @@
     <div class="slide">
         <div class="glow-green" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-green);">Visualización Inteligente</h3>
                 <h2>Tarjetas y Barras de Disponibilidad</h2>
                 <p>Rompimos la aburrida tabla de Excel. El sistema agrupa los productos por categoría de forma visual, ideal para hacer control de inventario caminando por el depósito con una tablet o celular.</p>
                 <p style="font-size: 16px; color: var(--kpi-green); font-weight: bold;"><i class="fas fa-shield-alt mr-2"></i> Escudo Anti-Sobreventas: La doble barra separa el stock "Físico" (Verde) del que ya está "Reservado" (Naranja) en carritos online o turnos pendientes.</p>
             </div>
             
-            <div class="category-section">
+            <div class="visual-block category-section">
                 <div class="category-sidebar">
                     <div class="category-color-line" style="background-color: #8b5cf6;"></div>
                     <div class="category-title-rotated">Aromatizantes</div>
@@ -358,14 +422,14 @@
     <div class="slide">
         <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide grid-split-large-left">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-orange); text-align: left;">Compliance Normativo</h3>
                 <h2 style="text-align: left;">Lotes y Vencimientos</h2>
                 <p style="text-align: left;">Para negocios de estética, salud o alimentos, controlar la fecha de vencimiento no es opcional, es legal.</p>
                 <p style="text-align: left;">Al seleccionar un producto, el panel de detalle te muestra qué Lotes específicos conforman ese stock físico. El sistema vigila el calendario en silencio y arroja <strong>alertas de color naranja ("Pronto a Vencer")</strong> 30 días antes de que un producto caduque.</p>
             </div>
             
-            <div class="detail-panel">
+            <div class="visual-block detail-panel">
                 <div class="panel-header">
                     <div class="header-product-info">
                         <div class="icon-box"><i class="fas fa-box-open"></i></div>
@@ -381,7 +445,7 @@
                     <span class="total-badge">10 Físicos Totales</span>
                 </div>
                 
-                <div class="lot-list">
+                <div class="lot-list custom-scrollbar" style="overflow-y: auto; max-height: 300px;">
                     <div class="lot-item">
                         <div class="lot-info">
                             <span class="lot-badge">LOTE-V88</span>
@@ -422,7 +486,7 @@
         <div class="glow-red" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
             
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="visual-block" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
                 <div class="modal-box">
                     <div class="modal-header">
                         <span style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-sliders-h" style="color: var(--kpi-blue);"></i> Ajuste de Inventario</span>
@@ -467,7 +531,7 @@
                 </div>
             </div>
 
-            <div style="padding-left: 40px;">
+            <div class="text-block" style="padding-left: 40px;">
                 <h3 style="color: var(--kpi-red); text-align: left;">Control Forense</h3>
                 <h2 style="text-align: left;">Auditoría de Movimientos</h2>
                 <p style="text-align: left;">Los empleados no pueden simplemente "corregir el número" para tapar un faltante. Cualquier modificación fuera de una venta requiere un <strong>Ajuste de Inventario</strong>.</p>
@@ -498,23 +562,25 @@
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
-            <h2>Continuar Recorrido</h2>
-            <p style="max-width: 900px; margin: 0 auto;">El inventario ya está estructurado y protegido. ¿Cómo querés seguir? Podemos ir al Catálogo (donde le damos precio y reglas a estos productos) o a Operaciones (donde gestionamos su empaque).</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">El inventario ya está estructurado y protegido. ¿Cómo querés seguir? Podemos ir al Catálogo (donde le damos precio y reglas a estos productos) o a Operaciones (donde gestionamos su empaque).</p>
+            </div>
             
-            <div class="quick-actions-grid" style="margin: 40px auto 0 auto;">
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="introduccionCatalogo.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
+                <a href="Catalogo.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
                     <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-sitemap"></i></div>
                     <div class="qa-text" style="color: white;">Ir al<br>Catálogo</div>
                 </a>
                 
-                <a href="presentacionOperaciones.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                <a href="Operaciones.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
                     <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-boxes"></i></div>
                     <div class="qa-text" style="color: white;">Ir a<br>Operaciones</div>
                 </a>
@@ -525,13 +591,20 @@
 
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
+        const pageId = 'inventario';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -540,12 +613,23 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -560,12 +644,31 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>

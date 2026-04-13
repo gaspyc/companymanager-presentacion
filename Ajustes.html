@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración y Core - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;      
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;    
+            --text-muted: #94a3b8;   
+            --border-glass: rgba(255, 255, 255, 0.05);
+            
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-indigo: #4f46e5; 
+            --kpi-purple: #a855f7; 
+            --kpi-orange: #f59e0b;
+            --kpi-red: #ef4444;
+            --kpi-mp: #009EE3; 
+            --kpi-pink: #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* =========================================
+           MOTOR FULLSCREEN RESPONSIVE
+           ========================================= */
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px; 
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo (Glow) */
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-emerald { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-pink { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
+        .glow-mp { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(0, 158, 227, 0.15) 0%, rgba(0,0,0,0) 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; z-index: 1; pointer-events: none;}
+
+        /* Controles Flotantes */
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace;}
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;}
+        .ctrl-btn:hover { background: var(--kpi-blue); }
+
+        /* Tipografía */
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left;}
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left;}
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left;}
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left;}
+        
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; height: 100%; align-items: center; }
+
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        /* =========================================
+           SLIDE 2: PERFIL Y TIENDA ONLINE (CORREGIDO)
+           ========================================= */
+        .visibility-banner { display: flex; align-items: center; gap: 15px; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px;}
+        .visibility-banner.is-public { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .visibility-banner .icon-box { width: 45px; height: 45px; background: rgba(16, 185, 129, 0.2); color: var(--kpi-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        .banner-text h4 { margin: 0 0 4px 0; font-size: 16px; font-weight: 800; color: white;}
+        .banner-text p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.3;}
+
+        /* FIX: Logo y Banner misma altura y en fila */
+        .image-uploads-row { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-end;}
+        .upload-wrapper { display: flex; flex-direction: column; gap: 8px;}
+        .upload-wrapper label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;}
+        
+        .logo-wrapper-flex { flex: 0 0 auto; }
+        .banner-wrapper-flex { flex: 1; min-width: 0;}
+        
+        .image-upload-box { height: 90px; background: rgba(0,0,0,0.3); border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;}
+        .logo-box { width: 90px; border-style: solid; border-color: rgba(255,255,255,0.1); background: var(--kpi-blue); font-size: 32px; font-weight: 900; color: white;}
+        .banner-box { width: 100%; border-style: solid; border-color: rgba(255,255,255,0.1); background: url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=600&h=200') center/cover;}
+        
+        .schedule-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2);}
+        .schedule-row:last-child { border-bottom: none; border-radius: 0 0 12px 12px;}
+        .schedule-row:first-child { border-radius: 12px 12px 0 0;}
+        .day-toggle { display: flex; align-items: center; gap: 15px; width: 140px; }
+        .day-name { font-weight: 700; font-size: 14px; color: white; }
+        .time-inputs { display: flex; align-items: center; gap: 10px;}
+        .time-field { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 13px;}
+
+        /* =========================================
+           SLIDE 3: MERCADO PAGO INTEGRATION
+           ========================================= */
+        .visibility-banner.is-mp { background: rgba(0, 158, 227, 0.1); border: 1px solid rgba(0, 158, 227, 0.3); }
+        .visibility-banner.is-mp .icon-box { background: rgba(0, 158, 227, 0.2); color: var(--kpi-mp); }
+        
+        .mp-connect-box { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 40px 30px; text-align: center; margin-top: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);}
+        .btn-mp { background: var(--kpi-mp); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-weight: 800; font-size: 18px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 350px; box-shadow: 0 10px 20px rgba(0, 158, 227, 0.3); margin-top: 20px;}
+        
+        .help-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 20px; border-radius: 12px; margin-top: 30px;}
+        .help-box h5 { margin: 0 0 10px 0; color: white; font-size: 16px;}
+        .help-list { margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 14px; line-height: 1.6;}
+
+        /* =========================================
+           SLIDE 4: ADAPTERS MOCKUP
+           ========================================= */
+        .settings-layout { display: grid; grid-template-columns: 350px 1fr; gap: 40px; height: 450px;}
+        .sidebar-mockup { display: flex; flex-direction: column; gap: 12px; }
+        
+        .slot-card { background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; cursor: pointer; }
+        .slot-card.active { border-color: var(--kpi-blue); background: rgba(59, 130, 246, 0.1); box-shadow: 0 0 0 1px var(--kpi-blue); }
+        .slot-card.has-adapter { border-color: rgba(16, 185, 129, 0.4); }
+        
+        .slot-info { display: flex; gap: 14px; align-items: center; }
+        .slot-icon { width: 42px; height: 42px; background: rgba(0,0,0,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--kpi-blue); }
+        .slot-text h4 { margin: 0; font-size: 15px; color: white; font-weight: 700; }
+        .slot-text p { margin: 2px 0 0; font-size: 12px; color: var(--text-muted); }
+        
+        .slot-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; display: flex; gap: 5px; align-items: center; }
+        .badge-manual { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+        .badge-active-plugin { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--kpi-green); border-radius: 20px;}
+
+        /* Dropdown Overlay Mockup */
+        .plugin-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; border-radius: 16px; z-index: 10;}
+        .plugin-modal { background: #1e293b; width: 450px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;}
+        .pm-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; font-weight: 800; display: flex; align-items: center; gap: 10px;}
+        .pm-list { padding: 15px; display: flex; flex-direction: column; gap: 10px;}
+        .pm-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px;}
+        .pm-item:hover { background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); cursor: pointer;}
+        
+        /* =========================================
+           SLIDE 5: WAHA BOT Y AUTONOMÍA 
+           ========================================= */
+        .bot-mockup-container { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 500px; margin: 0 auto; }
+        
+        .bot-panel { background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
+        .status-pill { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; letter-spacing: 0.5px;}
+        .bot-panel p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4;}
+        .wa-icon-box { width: 80px; height: 80px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #e2e8f0; flex-shrink: 0;}
+
+        .bot-section-title { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: -10px; display: flex; align-items: center; gap: 8px;}
+        
+        .autonomy-grid { display: flex; gap: 15px; }
+        .autonomy-card { flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; transition: 0.3s;}
+        .autonomy-card.active { background: rgba(16, 185, 129, 0.1); border-color: var(--kpi-green); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);}
+        .autonomy-card strong { font-size: 15px; color: white; }
+        .autonomy-card.active strong { color: var(--kpi-green); }
+        .autonomy-card span { font-size: 11px; color: var(--text-muted); }
+
+        .limit-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-left: 4px solid var(--kpi-green); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px;}
+        .limit-panel p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; flex: 1;}
+        .limit-input { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; width: 140px;}
+        .limit-input span { color: var(--kpi-blue); font-weight: 800;}
+        .limit-input strong { color: white; font-size: 18px; font-weight: 900;}
+
+        /* =========================================
+           SLIDE 6: BLINDAJE FISCAL Y PSICOLOGÍA
+           ========================================= */
+        .rules-grid { display: grid; grid-template-columns: 1fr; gap: 20px; height: 100%; align-content: center;}
+        .rule-card { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 25px; display: flex; gap: 20px;}
+        .rule-icon { width: 50px; height: 50px; background: rgba(0,0,0,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;}
+        .rule-content { flex: 1; }
+        .rule-content h4 { font-size: 18px; color: white; margin: 0 0 5px 0;}
+        .rule-content p { font-size: 14px; color: var(--text-muted); margin: 0 0 15px 0; line-height: 1.4;}
+        
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0;}
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--kpi-green); transition: .4s; border-radius: 34px;}
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; transform: translateX(20px);}
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
+        .qa-btn { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s;}
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center;}
+        
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 100px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
+            .visual-block { order: 2; width: 100%; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .settings-layout { grid-template-columns: 1fr; height: auto; }
+            .sidebar-mockup { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px;}
+            
+            /* 🔴 BOTONES APILADOS EN MOBILE */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; }
+            .qa-text { text-align: left; font-size: 14px; }
+            
+            /* Resto de fixes de paneles en Mobile */
+            .bot-panel { flex-direction: column; text-align: center;}
+            .limit-panel { flex-direction: column; gap: 15px; text-align: center;}
+            .limit-input { width: 100%; justify-content: center;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CONTROLES NATIVOS -->
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRODUCCIÓN -->
+    <div class="slide active">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-indigo);">El Cerebro del Sistema</h3>
+                <h1>Settings y <br><span style="color: white;">Sistema Operativo</span></h1>
+                <p>Las empresas no quieren adaptarse al software; quieren que el software se adapte a ellas. Construimos un módulo de ajustes que se comporta como un Sistema Operativo completo.</p>
+                <p>Definí la identidad del negocio, vinculá pasarelas de pago. Pero, sobre todo, moldeá la lógica profunda de cómo querés que funcione tu comercio usando adaptadores intercambiables.</p>
+            </div>
+            
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-cogs" style="font-size: 80px; color: var(--kpi-indigo); margin-bottom: 30px;"></i>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-store text-muted mr-2"></i> Identidad y Tienda</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-handshake text-muted mr-2"></i> Cobros Automáticos</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-plug text-muted mr-2"></i> Ecosistema Plug & Play</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-brain text-muted mr-2"></i> Reglas de Negocio</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: PERFIL Y TIENDA ONLINE (CORREGIDO) -->
+    <div class="slide">
+        <div class="glow-pink"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-pink);">La Cara Visible</h3>
+                <h2>Identidad y <br>Tienda Pública</h2>
+                <p>Tu local físico necesita una vidriera digital a la altura. Desde acá configurás en tiempo real el logo, el banner y las vías de contacto oficiales.</p>
+                <p>Al completar el perfil y establecer tus horarios de atención (con un calendario interactivo fácil de usar), el sistema <strong>habilita tu Tienda Pública en el Mall</strong>, permitiendo que nuevos clientes te encuentren, reserven turnos o compren online.</p>
+            </div>
+            
+            <div class="visual-block glass-panel p-0" style="padding: 24px;">
+                <div class="visibility-banner is-public">
+                    <div class="icon-box"><i class="fas fa-globe-americas"></i></div>
+                    <div class="banner-text">
+                        <h4>Tienda Pública en el Mall</h4>
+                        <p>Tu local es visible para nuevos clientes en la plataforma.</p>
+                    </div>
+                </div>
+
+                <div class="image-uploads-row">
+                    <div class="upload-wrapper logo-wrapper-flex">
+                        <label>Logo</label>
+                        <div class="image-upload-box logo-box">ML</div>
+                    </div>
+                    <div class="upload-wrapper banner-wrapper-flex">
+                        <label>Banner de Portada</label>
+                        <div class="image-upload-box banner-box"></div>
+                    </div>
+                </div>
+
+                <div style="border: 1px solid var(--border-glass); border-radius: 12px; overflow: hidden; margin-top: 20px;">
+                    <div class="schedule-row">
+                        <div class="day-toggle"><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label><span class="day-name">Lunes</span></div>
+                        <div class="time-inputs"><div class="time-field">09:00</div><span style="color:var(--text-muted);">a</span><div class="time-field">18:00</div></div>
+                    </div>
+                    <div class="schedule-row">
+                        <div class="day-toggle"><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label><span class="day-name">Martes</span></div>
+                        <div class="time-inputs"><div class="time-field">09:00</div><span style="color:var(--text-muted);">a</span><div class="time-field">18:00</div></div>
+                    </div>
+                    <div class="schedule-row" style="opacity: 0.5;">
+                        <div class="day-toggle"><label class="switch"><input type="checkbox"><span class="slider round" style="background: #475569;"></span></label><span class="day-name">Domingo</span></div>
+                        <div class="time-inputs"><span style="color: var(--kpi-red); font-weight: bold; font-size: 14px; text-transform: uppercase;">Cerrado</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: MERCADO PAGO INTEGRATION -->
+    <div class="slide">
+        <div class="glow-mp"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; justify-content: center;">
+                <div class="visibility-banner is-mp">
+                    <div class="icon-box"><i class="fas fa-handshake"></i></div>
+                    <div class="banner-text">
+                        <h4>Integración Automática con Mercado Pago</h4>
+                        <p>Conectá tu cuenta de forma 100% segura para empezar a cobrar online.</p>
+                    </div>
+                </div>
+
+                <div class="mp-connect-box">
+                    <i class="fas fa-check-circle" style="color: #34d399; font-size: 40px; margin-bottom: 15px;"></i>
+                    <h3 style="color: #34d399; margin: 0 0 5px 0; font-size: 20px;">¡Mercado Pago Conectado!</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; margin: 0;">Ya puedes procesar pagos online y links automáticos.</p>
+                    
+                    <button class="btn-mp"><i class="fas fa-sync-alt"></i> Re-vincular Cuenta</button>
+                </div>
+
+                <div class="help-box">
+                    <h5><i class="fas fa-lock text-emerald-400 mr-2" style="color: var(--kpi-green);"></i> Seguridad Directa</h5>
+                    <ul class="help-list">
+                        <li>El dinero de los cobros online se destina directamente a tu cuenta de Mercado Pago.</li>
+                        <li>No guardamos contraseñas. El login se hace en los servidores oficiales (OAuth).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="text-block" style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-mp); text-align: left;">Cobro en Piloto Automático</h3>
+                <h2 style="text-align: left;">Pasarelas de Pago</h2>
+                <p style="text-align: left;">Olvidate de generar links de pago a mano por WhatsApp o pedir comprobantes de transferencia por Instagram.</p>
+                <p style="text-align: left;">Al vincular tu cuenta oficial de <strong>MercadoPago</strong> mediante nuestra integración OAuth certificada, el sistema genera automáticamente los links de pago para las reservas online, verifica la acreditación del dinero en tiempo real y cambia el estado de la venta en la Caja (POS) a "Cobrado" sin intervención humana.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 4: ADAPTERS MOCKUP -->
+    <div class="slide">
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div class="visual-block glass-panel" style="padding: 0; overflow: hidden; position: relative;">
+                <div class="settings-layout">
+                    
+                    <!-- Sidebar Mockup -->
+                    <div class="sidebar-mockup" style="padding: 20px; background: rgba(0,0,0,0.2);">
+                        <div class="slot-card">
+                            <div class="slot-info">
+                                <div class="slot-icon" style="color: var(--text-muted);"><i class="fas fa-calculator"></i></div>
+                                <div class="slot-text"><h4>Lógica de Precios</h4><p>Algoritmos de costos.</p></div>
+                            </div>
+                            <div class="slot-badge badge-manual">DEFAULT</div>
+                        </div>
+
+                        <div class="slot-card has-adapter active">
+                            <div class="slot-info">
+                                <div class="slot-icon"><i class="fas fa-receipt text-emerald-400" style="color: var(--kpi-green);"></i></div>
+                                <div class="slot-text"><h4>Facturación AFIP</h4><p>Emisión y comprobantes.</p></div>
+                            </div>
+                            <div class="slot-badge badge-active-plugin"><i class="fas fa-bolt"></i> AFIP v2.1</div>
+                        </div>
+
+                        <div class="slot-card">
+                            <div class="slot-info">
+                                <div class="slot-icon" style="color: var(--kpi-blue);"><i class="fas fa-robot"></i></div>
+                                <div class="slot-text"><h4>Asistente Virtual</h4><p>Atención automatizada.</p></div>
+                            </div>
+                            <div class="slot-badge badge-manual">DEFAULT</div>
+                        </div>
+                    </div>
+
+                    <!-- Main Panel Mockup -->
+                    <div style="padding: 30px;">
+                        <h2 style="font-size: 24px; margin-top: 0; display: flex; align-items: center; gap: 10px;"><i class="fas fa-receipt text-emerald-400" style="color: var(--kpi-green);"></i> Facturación Fiscal AFIP</h2>
+                        <p style="font-size: 14px; color: var(--text-muted);">El plugin actual está controlando la emisión de comprobantes B y C en la caja.</p>
+                    </div>
+
+                </div>
+
+                <!-- Overlay Selector Mockup -->
+                <div class="plugin-overlay">
+                    <div class="plugin-modal">
+                        <div class="pm-header"><i class="fas fa-plug text-blue-400 mr-2"></i> Seleccionar Facturación AFIP</div>
+                        <div class="pm-list">
+                            <div class="pm-item">
+                                <div style="width: 40px; height: 40px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-shield-alt text-green-400"></i></div>
+                                <div style="flex: 1;">
+                                    <strong style="display: block; font-size: 16px; color: white;">ARCA/AFIP WebServices</strong>
+                                    <span style="font-size: 12px; color: var(--text-muted);">Integración Oficial v2.1</span>
+                                </div>
+                                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                            </div>
+                            <div class="pm-item" style="opacity: 0.5;">
+                                <div style="width: 40px; height: 40px; background: rgba(0,0,0,0.3); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;"><i class="fas fa-file-invoice"></i></div>
+                                <div style="flex: 1;">
+                                    <strong style="display: block; font-size: 16px; color: white;">Facturante (Third-Party)</strong>
+                                    <span style="font-size: 12px; color: var(--text-muted);">Requiere API Key externa</span>
+                                </div>
+                                <i class="fas fa-chevron-right" style="color: var(--text-muted);"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-block" style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-blue); text-align: left;">Ecosistema Modular</h3>
+                <h2 style="text-align: left;">Arquitectura "Plug & Play"</h2>
+                <p style="text-align: left;">Las reglas cambian. Quizás hoy usas MercadoPago, pero mañana querés cobrar con MODO. Si la lógica estuviese atada al código, tendrías que reescribir medio sistema.</p>
+                <p style="text-align: left;">Diseñamos "Slots" o ranuras virtuales. El dueño del comercio puede abrir el <strong>Marketplace de Plugins</strong>, descargar una integración nueva y enchufarla en el Slot con un clic, sin tocar una sola línea de código.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 5: WAHA BOT Y AUTONOMÍA (CORREGIDA) -->
+    <div class="slide">
+        <div class="glow-indigo" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-indigo); text-align: left;">Ventas 24/7 Controladas</h3>
+                <h2 style="text-align: left;">Piloto Automático Seguro</h2>
+                <p style="text-align: left;">Vincular el WhatsApp al sistema mediante código o QR es solo el principio. A los dueños les da pánico que un bot "decida" ventas o aplique mal un descuento.</p>
+                <p style="text-align: left;">Creamos un selector de <strong>Autonomía de la IA</strong>. Podés elegir "Revisión Humana" (el bot atiende, pero la venta final la aprobas vos) o "Automático", donde le ponés un <strong>Monto Límite</strong> de seguridad para que apruebe compras chicas por sí solo.</p>
+            </div>
+
+            <div class="visual-block bot-mockup-container">
+                
+                <div class="bot-panel">
+                    <div style="flex: 1; text-align: left;">
+                        <div class="status-pill"><i class="fas fa-check-circle"></i> WHATSAPP VINCULADO</div>
+                        <p>El sistema está leyendo mensajes y procesando carritos de la tienda online.</p>
+                    </div>
+                    <div class="wa-icon-box">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                </div>
+
+                <div class="bot-section-title"><i class="fas fa-robot" style="color: var(--text-muted);"></i> AUTONOMÍA DE LA IA</div>
+                <div class="autonomy-grid">
+                    <div class="autonomy-card">
+                        <i class="fas fa-user-check" style="font-size: 24px; color: var(--kpi-orange); margin-bottom: 5px;"></i>
+                        <strong>Revisión Humana</strong>
+                        <span>Aprobarás todo manual</span>
+                    </div>
+                    <div class="autonomy-card active">
+                        <i class="fas fa-robot" style="font-size: 24px; color: var(--kpi-green); margin-bottom: 5px;"></i>
+                        <strong>Automático</strong>
+                        <span>El bot decide solo</span>
+                    </div>
+                </div>
+
+                <div class="bot-section-title"><i class="fas fa-money-bill-wave" style="color: var(--kpi-green);"></i> Límite de Auto-Aprobación</div>
+                <div class="limit-panel">
+                    <p style="text-align: left;">El bot aprobará ventas sin consultarte solo si el ticket es menor a este monto.</p>
+                    <div class="limit-input">
+                        <span>$</span> <strong>50000</strong>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 6: BLINDAJE FISCAL Y PSICOLOGÍA -->
+    <div class="slide">
+        <div class="glow-emerald" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            
+            <div class="visual-block rules-grid">
+                
+                <div class="rule-card">
+                    <div class="rule-icon" style="color: var(--kpi-green);"><i class="fas fa-receipt"></i></div>
+                    <div class="rule-content">
+                        <h4>Auto-Facturación de Ventas</h4>
+                        <p>Si está encendido, el sistema emitirá el comprobante electrónico (AFIP) inmediatamente al recibir un cobro exitoso vía MercadoPago o Transferencia.</p>
+                        
+                        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                            <div>
+                                <strong style="color: white; font-size: 14px; display: block; margin-bottom: 3px;">Tope Anónimo (Consumidor Final)</strong>
+                                <span style="font-size: 11px; color: var(--text-muted);">Límite AFIP. Si lo supera y no hay DNI, aborta para protegerte.</span>
+                            </div>
+                            <div style="color: white; font-weight: bold; font-size: 16px; background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 6px;">$ 191.000</div>
+                        </div>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider round"></span></label>
+                </div>
+
+                <div class="rule-card">
+                    <div class="rule-icon" style="color: var(--kpi-blue);"><i class="fas fa-calculator"></i></div>
+                    <div class="rule-content">
+                        <h4>Psicología de Precios</h4>
+                        <p>No se trata solo de sumarle un margen de ganancia al costo del proveedor (Markup). Configurá la regla de redondeo automático cara al público.</p>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--kpi-blue); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold;">Efecto Psicológico (.99)</span>
+                            <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold;">Múltiplos de $50</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-block" style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-green); text-align: left;">Protección del Negocio</h3>
+                <h2 style="text-align: left;">Blindaje Operativo</h2>
+                <p style="text-align: left;">La automatización es excelente, pero sin frenos puede generar multas. El <strong>Tope Anónimo AFIP</strong> bloquea la facturación masiva si una venta online supera el monto permitido para "Consumidor Final" y el cliente no dejó su DNI.</p>
+                <p style="text-align: left;">Además, controlas la <strong>Logística de Envíos</strong> limitando el Radio Máximo en KM y fijás las <strong>Reglas Psicológicas</strong> de precios para que tu catálogo siempre se vea profesional (ej: $4.999 en vez de $4.957).</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">El Ecosistema está Configurado</h3>
+                <h2>Misión Cumplida</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Repasamos todo el sistema: desde la configuración profunda de estos Ajustes, hasta el control del Inventario, la Caja, las Promociones y la Agenda.</p>
+            </div>
+            
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="Auditoria.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-search-dollar"></i></div>
+                    <div class="qa-text" style="color: white;">Auditoría<br>Financiera</div>
+                </a>
+                
+                <a href="Catalogo.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-sitemap"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al<br>Catálogo Base</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
+    <script>
+        const pageId = 'ajustes'; // Identificador único de esta presentación
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            // Al cambiar de slide en mobile, sube el scroll arriba
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                // En la última diapositiva, volver al índice
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Inicializar
+        updateSlides();
+    </script>
+
+</body>
+</html>

@@ -26,12 +26,13 @@
             --kpi-purple: #a855f7; 
             --kpi-orange: #f59e0b;
             --kpi-red: #ef4444;
+            --kpi-pink: #ec4899;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* =========================================
-           MOTOR FULLSCREEN NATIVO
+           MOTOR FULLSCREEN RESPONSIVE
            ========================================= */
         html, body {
             height: 100vh;
@@ -48,7 +49,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -159,7 +160,7 @@
            ========================================= */
         .ledger-table { width: 100%; border-collapse: collapse; margin-top: 10px;}
         .ledger-table th { padding: 15px 20px; background: rgba(0,0,0,0.4); color: var(--text-muted); font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; border-bottom: 1px solid var(--border-glass);}
-        .ledger-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; font-size: 15px;}
+        .ledger-table td { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; font-size: 15px; white-space: nowrap;}
         .ledger-table tr:hover { background: rgba(255,255,255,0.02); }
 
         .btn-export { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: white; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px;}
@@ -191,22 +192,81 @@
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
 
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
+            .visual-block { order: 2; width: 100%; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .kpi-grid { grid-template-columns: 1fr; }
+            .charts-container { grid-template-columns: 1fr; }
+            .heatmaps-wrapper { gap: 20px; }
+            
+            /* 🔴 CORRECCIONES EN LA CARTA DE BARRAS */
+            .chart-wrapper { width: 100%; overflow-x: auto; padding-bottom: 10px; }
+            .chart-mockup { min-width: 400px; padding: 20px 20px 0 20px;}
+            .bar-group { min-width: 40px; }
+
+            /* 🔴 CORRECCIONES DE TABLA */
+            .table-responsive { width: 100%; overflow-x: auto; }
+            .ledger-table { min-width: 600px; } /* Fuerza el scroll lateral */
+            
+            .modal-mockup { position: relative; right: auto; top: auto; width: 100%; max-width: 100%; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            
+            /* Botones apilados verticalmente */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Teclado o Clic</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
-
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 6</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -214,14 +274,14 @@
     <div class="slide active">
         <div class="glow-green"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block">
                 <h3 style="color: var(--kpi-green);">El Pulso del Negocio</h3>
                 <h1>Flujo de Caja <br><span style="color: white;">y Rendimiento</span></h1>
                 <p>La vista táctica para el dueño del local. Mientras la Auditoría te muestra el cierre mensual, la Caja te muestra qué está pasando <strong>hoy, en este preciso instante.</strong></p>
                 <p>Monitoreá ingresos vs. egresos, identificá qué métodos de pago dominan tu facturación y registrá gastos operativos al vuelo sin salir del sistema.</p>
             </div>
             
-            <div class="glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-cash-register" style="font-size: 80px; color: var(--kpi-green); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-chart-line text-muted mr-2"></i> KPIs en Vivo</span>
@@ -238,8 +298,14 @@
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
             
+            <div class="text-block" style="text-align: center; margin-bottom: 30px;">
+                <h3 style="color: var(--kpi-blue);">Métricas al Instante</h3>
+                <h2>El Tablero de Control</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Un vistazo general del día. El sistema te dice exactamente cuánta plata entró, cuánta salió en gastos y qué porcentaje es ganancia pura.</p>
+            </div>
+
             <!-- KPI GRID -->
-            <div class="kpi-grid">
+            <div class="visual-block kpi-grid">
                 <div class="kpi-card kpi-green">
                     <div class="kpi-header"><small>Ingresos</small></div>
                     <div class="kpi-val">$ 1.450.000</div>
@@ -267,38 +333,41 @@
             </div>
 
             <!-- CHARTS -->
-            <div class="charts-container mt-4">
-                <div class="glass-panel" style="display: flex; flex-direction: column;">
+            <div class="visual-block charts-container mt-4">
+                <div class="glass-panel" style="display: flex; flex-direction: column; padding-bottom: 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;">
                         <h3 style="margin: 0; font-size: 20px;"><i class="fas fa-chart-area text-blue-400 mr-2" style="color: var(--kpi-blue);"></i> Evolución del Flujo</h3>
                         <div style="background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: var(--text-muted);"><i class="fas fa-calendar-day mr-2"></i> Últimos 7 Días</div>
                     </div>
                     
-                    <div class="chart-mockup">
-                        <div class="bar-group">
-                            <div class="bar bar-inc" style="height: 40%;"></div>
-                            <div class="bar bar-exp" style="height: 10%;"></div>
-                            <span class="bar-label">Lun</span>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar bar-inc" style="height: 60%;"></div>
-                            <div class="bar bar-exp" style="height: 15%;"></div>
-                            <span class="bar-label">Mar</span>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar bar-inc" style="height: 30%;"></div>
-                            <div class="bar bar-exp" style="height: 50%;"></div>
-                            <span class="bar-label">Mie</span>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar bar-inc" style="height: 80%;"></div>
-                            <div class="bar bar-exp" style="height: 20%;"></div>
-                            <span class="bar-label">Jue</span>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar bar-inc" style="height: 95%;"></div>
-                            <div class="bar bar-exp" style="height: 5%;"></div>
-                            <span class="bar-label">Vie</span>
+                    <!-- Wrapper para scroll horizontal en móvil -->
+                    <div class="chart-wrapper custom-scrollbar">
+                        <div class="chart-mockup">
+                            <div class="bar-group">
+                                <div class="bar bar-inc" style="height: 40%;"></div>
+                                <div class="bar bar-exp" style="height: 10%;"></div>
+                                <span class="bar-label">Lun</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar bar-inc" style="height: 60%;"></div>
+                                <div class="bar bar-exp" style="height: 15%;"></div>
+                                <span class="bar-label">Mar</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar bar-inc" style="height: 30%;"></div>
+                                <div class="bar bar-exp" style="height: 50%;"></div>
+                                <span class="bar-label">Mie</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar bar-inc" style="height: 80%;"></div>
+                                <div class="bar bar-exp" style="height: 20%;"></div>
+                                <span class="bar-label">Jue</span>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar bar-inc" style="height: 95%;"></div>
+                                <div class="bar bar-exp" style="height: 5%;"></div>
+                                <span class="bar-label">Vie</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -329,14 +398,14 @@
     <div class="slide">
         <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-orange);">Desnudando el Inventario</h3>
                 <h2>El Verdadro "Top Ventas"</h2>
                 <p>Muchos sistemas te dicen qué producto se vende más, pero ocultan si ese producto es realmente rentable.</p>
                 <p>Nuestra barra de progreso dual divide visualmente el ingreso bruto de cada producto estrella: <strong>la franja violeta muestra el Costo (COGS)</strong> que le pagaste al proveedor, y <strong>la franja naranja/amarilla muestra tu Ganancia Neta real</strong>. Así detectás rápido qué producto te conviene empujar y cuál es pura facturación vacía.</p>
             </div>
             
-            <div class="glass-panel" style="padding: 30px;">
+            <div class="visual-block glass-panel" style="padding: 30px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 25px;">
                     <h3 style="margin: 0; font-size: 22px;"><i class="fas fa-fire" style="color: var(--kpi-orange); margin-right: 8px;"></i> Ranking de Rentabilidad</h3>
                 </div>
@@ -405,8 +474,7 @@
         <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
             
-            <div class="heatmaps-wrapper">
-                
+            <div class="visual-block heatmaps-wrapper">
                 <!-- Heatmap Productos -->
                 <div class="heatmap-card glass-panel">
                     <div class="hm-header">
@@ -454,10 +522,9 @@
                         <div class="hm-cell" style="background: rgba(59, 130, 246, 0.5);"></div>
                     </div>
                 </div>
-
             </div>
 
-            <div style="padding-left: 40px;">
+            <div class="text-block" style="padding-left: 40px;">
                 <h3 style="color: var(--kpi-blue); text-align: left;">Business Intelligence</h3>
                 <h2 style="text-align: left;">Mapas de Calor (Heatmaps)</h2>
                 <p style="text-align: left;">Inspirados en las herramientas de desarrollo corporativas (como GitHub), los Heatmaps te permiten <strong>visualizar patrones de comportamiento</strong> de un solo vistazo.</p>
@@ -471,51 +538,53 @@
     <div class="slide">
         <div class="glow-green" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide grid-split">
-            <div style="padding-right: 40px;">
+            <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-green); text-align: left;">Trazabilidad Total</h3>
                 <h2 style="text-align: left;">Libro Diario y Egresos</h2>
                 <p style="text-align: left;">Cada movimiento que ocurre en el sistema (ventas físicas, reservas online, cobros recurrentes) queda grabado inmutablemente en el Libro Diario.</p>
                 <p style="text-align: left;">Podés exportar el historial completo a un Excel contable (.csv) en un clic. Y si necesitás asentar el pago del alquiler o de internet, la herramienta de <strong>"Registro de Gastos"</strong> te permite deducirlo directamente del flujo de caja del día para que el margen de ganancia siga siendo exacto.</p>
             </div>
             
-            <div style="position: relative; width: 100%;">
+            <div class="visual-block" style="position: relative; width: 100%;">
                 
-                <div class="glass-panel" style="padding: 0; overflow: hidden; width: 100%; height: 400px;">
+                <div class="glass-panel" style="padding: 0; width: 100%;">
                     <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);">
                         <h3 style="margin: 0; font-size: 18px; color: white;"><i class="fas fa-list-ul mr-2 text-slate-400"></i> Libro Diario</h3>
-                        <button class="btn-export"><i class="fas fa-file-excel" style="color: #10b981;"></i> Exportar a Excel (.csv)</button>
+                        <button class="btn-export"><i class="fas fa-file-excel" style="color: #10b981;"></i> <span class="hide-mobile">Exportar a Excel</span></button>
                     </div>
                     
-                    <table class="ledger-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha y Hora</th>
-                                <th>Descripción / Cliente</th>
-                                <th style="text-align: center;">Método</th>
-                                <th style="text-align: right;">Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 14:30</td>
-                                <td>
-                                    <div class="tx-desc">Ticket #1045</div>
-                                    <div class="tx-client"><i class="fas fa-user"></i> Juan Pérez</div>
-                                </td>
-                                <td style="text-align: center;"><span class="badge badge-cash"><i class="fas fa-money-bill-wave"></i> Efectivo</span></td>
-                                <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 15.000</td>
-                            </tr>
-                            <tr>
-                                <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 15:10</td>
-                                <td>
-                                    <div class="tx-desc">Reserva #1046</div>
-                                    <div class="tx-client"><i class="fas fa-globe text-blue-400"></i> Cliente Web</div>
-                                </td>
-                                <td style="text-align: center;"><span class="badge badge-mp"><i class="fas fa-handshake"></i> MercadoPago</span></td>
-                                <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 22.000</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive custom-scrollbar">
+                        <table class="ledger-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha y Hora</th>
+                                    <th>Descripción / Cliente</th>
+                                    <th style="text-align: center;">Método</th>
+                                    <th style="text-align: right;">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 14:30</td>
+                                    <td>
+                                        <div class="tx-desc">Ticket #1045</div>
+                                        <div class="tx-client"><i class="fas fa-user"></i> Juan Pérez</div>
+                                    </td>
+                                    <td style="text-align: center;"><span class="badge badge-cash"><i class="fas fa-money-bill-wave"></i> Efectivo</span></td>
+                                    <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 15.000</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: var(--text-muted); font-size: 13px;">15/03/2026 15:10</td>
+                                    <td>
+                                        <div class="tx-desc">Reserva #1046</div>
+                                        <div class="tx-client"><i class="fas fa-globe text-blue-400"></i> Cliente Web</div>
+                                    </td>
+                                    <td style="text-align: center;"><span class="badge badge-mp"><i class="fas fa-handshake"></i> MercadoPago</span></td>
+                                    <td style="text-align: right; color: var(--kpi-green); font-weight: bold; font-size: 16px;">+$ 22.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- OVERLAPPING EXPENSE MODAL -->
@@ -546,24 +615,26 @@
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-blue);">Fin de la Presentación</h3>
-            <h2>El Ecosistema Completo</h2>
-            <p style="max-width: 900px; margin: 0 auto;">Hemos auditado todo el circuito de gestión: desde el alta del producto en el catálogo hasta el control diario del flujo de caja.</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Fin de la Presentación</h3>
+                <h2>El Ecosistema Completo</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Hemos auditado todo el circuito de gestión: desde el alta del producto en el catálogo hasta el control diario del flujo de caja.</p>
+            </div>
             
-            <div class="quick-actions-grid" style="margin: 40px auto 0 auto;">
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="presentacionFinanzas.html" class="qa-btn green" style="border-color: var(--kpi-green);">
-                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-search-dollar"></i></div>
+                <a href="Finanzas.html" class="qa-btn red" style="border-color: var(--kpi-red);">
+                    <div class="qa-icon" style="color: var(--kpi-red);"><i class="fas fa-search-dollar"></i></div>
                     <div class="qa-text" style="color: white;">Ir a la<br>Auditoría (LTV)</div>
                 </a>
                 
-                <a href="presentacionPOS.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
-                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-cash-register"></i></div>
+                <a href="POS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
                     <div class="qa-text" style="color: white;">Ir a la<br>Caja (POS)</div>
                 </a>
 
@@ -573,13 +644,20 @@
 
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
+        const pageId = 'caja';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -588,12 +666,23 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -608,12 +697,30 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        updateSlides();
     </script>
 
 </body>

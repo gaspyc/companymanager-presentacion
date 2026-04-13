@@ -94,6 +94,11 @@
 
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
         /* =========================================
            SLIDE 2: RENDIMIENTO Y STAFF CARDS
            ========================================= */
@@ -144,7 +149,7 @@
         .god-mode-badge { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 15px; border-radius: 8px; color: var(--kpi-orange); font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px;}
 
         /* =========================================
-           SLIDE 4: HORARIOS Y MODALIDAD (CORREGIDO HORIZONTAL)
+           SLIDE 4: HORARIOS Y MODALIDAD
            ========================================= */
         .modal-mockup { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; max-width: 600px; margin: 0 auto;}
         .mm-header { padding: 20px; border-bottom: 1px solid var(--border-glass); font-weight: 800; font-size: 18px; color: white; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2);}
@@ -158,7 +163,6 @@
         .day-toggle { display: flex; align-items: center; gap: 10px;}
         .day-name { font-weight: 700; font-size: 15px; color: white; }
         
-        /* 🔴 CORRECCIÓN: Todo en una línea horizontal */
         .time-inputs { display: flex; align-items: center; gap: 15px; } 
         .time-stack { display: flex; align-items: center; gap: 5px; } 
         
@@ -197,16 +201,16 @@
            RESPONSIVE DESIGN (MÓVILES Y TABLETS)
            ========================================= */
         @media (max-width: 1024px) {
-            html, body { overflow-y: auto; }
+            html, body { overflow-y: auto !important; height: auto !important; }
             .slide {
-                position: relative;
+                position: relative !important;
                 width: 100%;
-                height: auto;
+                height: auto !important;
                 min-height: 100vh;
                 border-radius: 0;
                 border: none;
-                padding: 40px 20px 100px 20px;
-                display: none; /* Hide all by default */
+                padding: 40px 20px 140px 20px;
+                display: none;
                 overflow-y: visible;
                 box-shadow: none;
             }
@@ -215,9 +219,9 @@
             
             .grid-split, .grid-split-large-left { grid-template-columns: 1fr; gap: 40px; }
             
-            /* 🔴 CORRECCIÓN: Forzar orden en móvil (Texto primero, Visual después) */
-            .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; text-align: center !important; }
-            .visual-block { order: 2; }
+            /* Textos apilados arriba */
+            .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
+            .visual-block { order: 2; width: 100%; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -228,22 +232,37 @@
             .insights-grid { grid-template-columns: 1fr; gap: 15px;}
             .staff-grid { grid-template-columns: 1fr; gap: 15px;}
             
+            /* Fix Roles (Slide 3) */
             .roles-layout { flex-direction: column; height: auto; }
             .roles-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 15px; gap: 10px;}
             .sidebar-header { width: 100%; text-align: center; justify-content: center;}
             .permissions-grid { grid-template-columns: 1fr; padding: 15px;}
 
+            /* Fix Horarios (Slide 4) */
             .modal-mockup { width: 100%; margin-top: 0; }
-            
-            /* Ajuste fino para que los horarios no se rompan en pantallas MUY chicas */
             .schedule-row { flex-wrap: wrap; gap: 15px; justify-content: center; }
             .time-inputs { flex-wrap: wrap; justify-content: center; }
 
+            /* Fix Recruiting (Slide 5) */
             .recruiting-banner { flex-direction: column; text-align: center; gap: 15px; }
             .cv-card { flex-direction: column; align-items: center; text-align: center;}
             .cv-contact { justify-content: center; flex-wrap: wrap;}
 
-            .quick-actions-grid { grid-template-columns: 1fr; max-width: 300px;}
+            /* Botones apilados verticalmente */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0;}
+            .qa-text { text-align: left; font-size: 14px; }
         }
     </style>
 </head>
@@ -257,7 +276,7 @@
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 6</span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -265,7 +284,6 @@
     <div class="slide active">
         <div class="glow-indigo"></div>
         <div class="slide-content-wide grid-split">
-            <!-- Clase text-block añadida para control en móvil -->
             <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-indigo);">Recursos Humanos</h3>
                 <h1>Equipo y <br><span style="color: white;">Seguridad Base</span></h1>
@@ -273,7 +291,6 @@
                 <p>Este módulo te permite invitar a tu staff, medir su rendimiento comercial en tiempo real, configurar sus horarios de trabajo y blindar las partes sensibles del sistema a través de un estricto sistema de Roles.</p>
             </div>
             
-            <!-- Clase visual-block añadida para control en móvil -->
             <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-user-shield" style="font-size: 80px; color: var(--kpi-indigo); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
@@ -291,7 +308,7 @@
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
             
-            <!-- Visual Block primero en Desktop, pero CSS Grid lo manejará -->
+            <!-- Visual Block primero en Desktop, pero CSS Grid lo manejará en Móvil -->
             <div class="visual-block">
                 <div class="insights-grid">
                     <div class="insight-card glass-panel i-blue">
@@ -392,7 +409,7 @@
             
             <div class="visual-block roles-layout">
                 <!-- Sidebar de Roles -->
-                <div class="roles-sidebar">
+                <div class="roles-sidebar custom-scrollbar" style="overflow-y: auto;">
                     <div class="sidebar-header">Roles Creados <i class="fas fa-plus" style="float: right; color: var(--kpi-blue);"></i></div>
                     <div class="role-item"><div style="width: 12px; height: 12px; background: var(--kpi-orange); border-radius: 50%;"></div> Manager (Admin)</div>
                     <div class="role-item active"><div style="width: 12px; height: 12px; background: var(--kpi-blue); border-radius: 50%;"></div> Cajero Principal</div>
@@ -409,7 +426,7 @@
                         <div class="god-mode-badge"><i class="fas fa-star"></i> Acceso Total (Apagado)</div>
                     </div>
                     
-                    <div class="permissions-grid">
+                    <div class="permissions-grid custom-scrollbar" style="overflow-y: auto;">
                         <div class="perm-group">
                             <h5><i class="fas fa-cash-register text-green-400"></i> Punto de Venta</h5>
                             <div class="perm-item"><div class="checkbox-custom checked"><i class="fas fa-check"></i></div> Acceder a Caja (Cobrar)</div>
@@ -435,7 +452,7 @@
         </div>
     </div>
 
-    <!-- SLIDE 4: HORARIOS Y MODALIDAD (CORREGIDO TOTAL) -->
+    <!-- SLIDE 4: HORARIOS Y MODALIDAD -->
     <div class="slide">
         <div class="glow-indigo" style="top: auto; bottom: -200px; left: -200px;"></div>
         <div class="slide-content-wide grid-split">
@@ -455,22 +472,21 @@
                     </div>
                     <div class="mm-body">
                         
-                        <div class="mm-group">
-                            <span class="mm-lbl" style="font-size: 10px;">MODALIDAD DE TURNOS</span>
+                        <div style="margin-bottom: 20px;">
+                            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block;">MODALIDAD DE TURNOS</span>
                             <div class="view-mode-toggle">
                                 <button class="btn-toggle active"><i class="fas fa-user mr-2"></i> Solo Individuales (1x1)</button>
                                 <button class="btn-toggle" style="background: transparent; color: var(--text-muted);"><i class="fas fa-users mr-2"></i> Solo Grupales (1xN)</button>
                             </div>
                         </div>
 
-                        <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin: 10px 0;"></div>
+                        <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin: 10px 0 20px 0;"></div>
 
                         <div class="schedule-row">
                             <div class="day-toggle">
                                 <div style="width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
                                 <span class="day-name">Lunes</span>
                             </div>
-                            <!-- 🔴 CORRECCIÓN: Todo en una línea horizontal -->
                             <div class="time-inputs">
                                 <div class="time-stack">
                                     <div class="time-box">09:00</div>
@@ -485,7 +501,6 @@
                                 <div style="width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
                                 <span class="day-name">Martes</span>
                             </div>
-                            <!-- 🔴 CORRECCIÓN: Todo en una línea horizontal, incluido el break -->
                             <div class="time-inputs">
                                 <div class="time-stack">
                                     <div class="time-box">09:00</div>
@@ -544,7 +559,7 @@
                             <p class="cv-msg">"Tengo 5 años de experiencia en mostrador y manejo de caja..."</p>
                         </div>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="background: var(--kpi-blue); color: white; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; text-align: center;"><i class="fas fa-file-pdf"></i> Ver CV</div>
+                            <div style="background: var(--kpi-blue); color: white; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; text-align: center; cursor: pointer;"><i class="fas fa-file-pdf"></i> Ver CV</div>
                             <button class="btn-hire"><i class="fas fa-check"></i> Contratar</button>
                         </div>
                     </div>
@@ -566,9 +581,9 @@
             
             <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
                 <a href="presentacionAjustes.html" class="qa-btn indigo" style="border-color: var(--kpi-indigo);">
@@ -587,13 +602,20 @@
 
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN Y SCROLL MÓVIL -->
     <script>
+        const pageId = 'staff'; // Identificador único
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -602,6 +624,10 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
             // Al cambiar de slide en mobile, sube el scroll arriba
             if(window.innerWidth <= 1024) {
                 window.scrollTo({top: 0, behavior: 'smooth'});
@@ -612,6 +638,10 @@
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -626,12 +656,31 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'presentacionPOS.html'; break;
+                        case 'i': window.location.href = 'presentacionInventario.html'; break;
+                        case 'c': window.location.href = 'introduccionCatalogo.html'; break;
+                        case 'f': window.location.href = 'presentacionFacturacion.html'; break;
+                        case 'd': window.location.href = 'introduccionBranchDashoard.html'; break;
+                        case 't': window.location.href = 'presentacionTienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>

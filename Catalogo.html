@@ -14,7 +14,7 @@
            PALETA DE COLORES EXACTA DE LA APP
            ========================================= */
         :root {
-            --bg-base: #0f172a;      /* slate-900 */
+            --bg-base: #0f172a;      
             --bg-panel: rgba(15, 23, 42, 0.6);
             --text-main: #f8fafc;    
             --text-muted: #94a3b8;   
@@ -25,17 +25,18 @@
             --kpi-purple: #d946ef; 
             --kpi-orange: #f59e0b;
             --kpi-red: #ef4444;
+            --kpi-pink: #ec4899;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* =========================================
-           MOTOR DE PRESENTACIÓN (FULLSCREEN NATIVO)
+           MOTOR FULLSCREEN RESPONSIVE
            ========================================= */
         html, body {
             height: 100vh;
             width: 100vw;
-            overflow: hidden; /* Cero scroll */
+            overflow: hidden; 
             background-color: var(--bg-base);
             font-family: 'Urbanist', sans-serif;
             color: var(--text-main);
@@ -47,7 +48,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
             display: flex;
             flex-direction: column;
@@ -56,41 +57,25 @@
             padding: 40px 80px;
         }
 
-        .slide.active {
-            opacity: 1;
-            pointer-events: all;
-            z-index: 10;
-        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
 
-        /* Contenedor central ancho para aprovechar el Fullscreen */
         .slide-content-wide {
             width: 100%;
-            max-width: 1600px; /* Mucho más aire para las tablas */
+            max-width: 1600px; 
             position: relative;
             z-index: 2;
             display: flex;
             flex-direction: column;
         }
 
-        /* Luces de fondo (Glow) ajustadas a fullscreen */
+        /* Luces de fondo (Glow) */
         .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
         .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(217, 70, 239, 0.08) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
         .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none;}
 
-        /* Controles de Presentación Flotantes */
+        /* Controles Flotantes */
         .presentation-controls {
-            position: fixed;
-            bottom: 30px;
-            right: 40px;
-            display: flex;
-            gap: 15px;
-            z-index: 9999;
-            background: rgba(0,0,0,0.5);
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 1px solid var(--border-glass);
-            backdrop-filter: blur(10px);
-            align-items: center;
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
         }
         .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace;}
         .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;}
@@ -112,15 +97,10 @@
         .real-toolbar-container { width: 100%; margin-top: 40px; }
         
         .real-toolbar { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            background: #1e293b; 
-            padding: 10px 15px; 
-            border-radius: 12px 12px 0 0; 
-            border: 1px solid var(--border-glass); 
-            border-bottom: none;
-            gap: 15px;
+            display: flex; align-items: center; justify-content: space-between; 
+            background: #1e293b; padding: 10px 15px; 
+            border-radius: 12px 12px 0 0; border: 1px solid var(--border-glass); 
+            border-bottom: none; gap: 15px;
         }
         
         .rt-left { display: flex; align-items: center; gap: 20px; flex: 1;}
@@ -140,16 +120,9 @@
         
         .dropdown-container { position: relative; }
         .rt-export-menu { 
-            position: absolute; 
-            top: calc(100% + 8px); 
-            left: 0; 
-            background: #1e293b; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 8px; 
-            padding: 8px; 
-            width: 240px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
-            z-index: 50;
+            position: absolute; top: calc(100% + 8px); left: 0; background: #1e293b; 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px; 
+            width: 240px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); z-index: 50;
         }
         .rt-export-item { padding: 12px 15px; font-size: 13px; color: white; display: flex; align-items: center; gap: 10px; border-radius: 6px; cursor: pointer; white-space: nowrap;}
         .rt-export-item:hover { background: rgba(59, 130, 246, 0.1); }
@@ -168,7 +141,7 @@
         .im-btn { background: linear-gradient(to right, #2563eb, #3b82f6); padding: 15px; text-align: center; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.1); cursor: pointer;}
 
         /* =========================================
-           SLIDE 3: TABLA VENTAS & ÁRBOL (FULL WIDTH)
+           SLIDE 3: TABLA VENTAS & ÁRBOL
            ========================================= */
         .mockup-table { width: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-glass); margin-top: 30px;}
         .m-header { display: grid; grid-template-columns: 2.5fr 1fr 1fr 150px; background: rgba(255,255,255,0.05); padding: 15px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; align-items: center;}
@@ -196,7 +169,6 @@
         .switch-btn.inactive { color: var(--text-muted); }
         
         .purchase-mockup { display: flex; flex-direction: column; gap: 15px; width: 100%;}
-        /* Corregida alineación de grilla: Nombre | Select | Costo Efectivo | Márgenes */
         .pm-row { display: grid; grid-template-columns: 2fr 2fr 1fr 1fr; gap: 30px; align-items: center; background: rgba(255,255,255,0.02); padding: 20px 30px; border-radius: 10px; border-left: 3px solid var(--kpi-purple);}
         .assign-select { background: rgba(0,0,0,0.4); border: 1px solid rgba(16, 185, 129, 0.5); color: var(--kpi-green); padding: 10px 15px; border-radius: 8px; font-size: 13px; font-weight: bold; width: 100%;}
         .margins-box { display: flex; flex-direction: column; gap: 5px; align-items: flex-end;}
@@ -214,88 +186,158 @@
         .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+
+        /* Custom Scrollbar Genérico */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { overflow-y: auto; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            
+            /* Bloques de Texto y Visual apilados */
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
+            .visual-block { order: 2; width: 100%; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            /* 🔴 Contenedores con scroll lateral para Tablas y Toolbars */
+            .table-responsive { width: 100%; overflow-x: auto; border-radius: 12px; }
+            
+            /* Slide 1 Toolbar */
+            .real-toolbar { min-width: 900px; }
+            .rt-table-header { min-width: 900px; }
+            
+            /* Slide 3 Tabla Árbol */
+            .mockup-table { width: 100%; overflow-x: auto; display: block; white-space: nowrap; }
+            .m-header { min-width: 900px; }
+            .m-row { min-width: 900px; }
+            
+            /* Slide 4 Tabla Compras */
+            .purchase-mockup { overflow-x: auto; display: block; }
+            .pm-row { min-width: 900px; }
+
+            /* Slide 2 Modal Migrate */
+            .import-modal { width: 100%; max-width: 100%; }
+            .modal-overlay { height: auto; padding: 20px; border: none; background: transparent;}
+
+            /* Botones Nav Slide 5 */
+            .quick-actions-grid { 
+                grid-template-columns: 1fr !important; 
+                max-width: 350px; 
+                margin-left: auto; 
+                margin-right: auto;
+            }
+            .qa-btn {
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 15px 20px;
+                text-align: left;
+            }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0;}
+            .qa-text { text-align: left; font-size: 14px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- CONTROLES NATIVOS (FLOTANTES) -->
     <div class="presentation-controls">
-        <button class="ctrl-btn" id="btnPrev" title="Anterior (Flecha Izquierda)"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / 5</span>
-        <button class="ctrl-btn" id="btnNext" title="Siguiente (Flecha Derecha o Espacio)"><i class="fas fa-chevron-right"></i></button>
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">5</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- SLIDE 1: COMANDOS Y EXPORTACIÓN (DISEÑO COMPACTO FIEL) -->
     <div class="slide active">
         <div class="glow-blue"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px;">
                 <h3 style="color: var(--kpi-blue);">El Tablero de Control</h3>
                 <h2>Gestión de Catálogo Omnicanal</h2>
                 <p style="max-width: 900px; margin: 0 auto;">Una barra de herramientas compacta y potente. Diseñada para filtrar estados tras una importación, añadir filas sobre la marcha y exportar tu catálogo a formatos útiles en un solo clic, sin tapar tu área de trabajo.</p>
             </div>
             
-            <div class="real-toolbar-container">
-                <!-- Mockup Toolbar Compacta Exacta -->
-                <div class="real-toolbar">
-                    <div class="rt-left">
-                        <div class="rt-search">
-                            <i class="fas fa-search"></i> Buscar por Nombre o SKU...
-                        </div>
-                        <div class="rt-views">
-                            <div class="rt-view-btn active"><i class="fas fa-store"></i> Ventas</div>
-                            <div class="rt-view-btn"><i class="fas fa-boxes"></i> Costos</div>
-                        </div>
-                        <div style="width: 1px; height: 16px; background: var(--border-glass); margin: 0 5px;"></div>
-                        <div class="rt-filters">
-                            <span class="rt-filter active">Todos (62)</span>
-                            <span class="rt-filter">Modificados (0)</span>
-                            <span class="rt-filter">Errores (0)</span>
-                        </div>
-                    </div>
-                    
-                    <div class="rt-right">
-                        <!-- Botón Exportar con Dropdown flotante -->
-                        <div class="dropdown-container">
-                            <div class="rt-btn">
-                                <i class="fas fa-file-export"></i> Exportar
+            <div class="visual-block real-toolbar-container">
+                <div class="table-responsive custom-scrollbar">
+                    <div class="real-toolbar">
+                        <div class="rt-left">
+                            <div class="rt-search">
+                                <i class="fas fa-search"></i> Buscar por Nombre o SKU...
                             </div>
-                            <!-- Menú flotante que no desplaza la tabla -->
-                            <div class="rt-export-menu">
-                                <div class="rt-export-item"><i class="fas fa-copy text-muted"></i> Copiar a Excel</div>
-                                <div class="rt-export-item"><i class="fas fa-code text-blue"></i> Archivo Nativo (.json)</div>
-                                <div class="rt-export-item"><i class="fas fa-file-pdf text-red-400"></i> Catálogo Visual (.pdf)</div>
+                            <div class="rt-views">
+                                <div class="rt-view-btn active"><i class="fas fa-store"></i> Ventas</div>
+                                <div class="rt-view-btn"><i class="fas fa-boxes"></i> Costos</div>
+                            </div>
+                            <div style="width: 1px; height: 16px; background: var(--border-glass); margin: 0 5px;"></div>
+                            <div class="rt-filters">
+                                <span class="rt-filter active">Todos (62)</span>
+                                <span class="rt-filter">Modificados (0)</span>
+                                <span class="rt-filter">Errores (0)</span>
                             </div>
                         </div>
-                        <div class="rt-btn"><i class="fas fa-file-import"></i> Importar</div>
-                        <div class="rt-btn"><i class="fas fa-plus"></i> Nueva Fila</div>
-                        <div class="rt-btn primary"><i class="fas fa-save"></i> Confirmar Todo</div>
+                        
+                        <div class="rt-right">
+                            <div class="dropdown-container">
+                                <div class="rt-btn">
+                                    <i class="fas fa-file-export"></i> Exportar
+                                </div>
+                                <div class="rt-export-menu" style="display: none;">
+                                    <div class="rt-export-item"><i class="fas fa-copy text-muted"></i> Copiar a Excel</div>
+                                    <div class="rt-export-item"><i class="fas fa-code text-blue"></i> Archivo Nativo (.json)</div>
+                                    <div class="rt-export-item"><i class="fas fa-file-pdf text-red-400"></i> Catálogo Visual (.pdf)</div>
+                                </div>
+                            </div>
+                            <div class="rt-btn"><i class="fas fa-file-import"></i> Importar</div>
+                            <div class="rt-btn"><i class="fas fa-plus"></i> Nueva Fila</div>
+                            <div class="rt-btn primary"><i class="fas fa-save"></i> Confirmar Todo</div>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Cabecera de la tabla para dar contexto y mostrar que no se tapa -->
-                <div class="rt-table-header">
-                    <div style="text-align: center;">ESTADO</div>
-                    <div>PRODUCTO / SKU</div>
-                    <div>CATEGORÍA</div>
-                    <div style="text-align: center;">ESCALA 1</div>
-                    <div style="text-align: center;">ESCALA 2</div>
-                    <div style="text-align: center;">ESCALA 3</div>
-                    <div style="text-align: right;">ACCIONES</div>
+                    <div class="rt-table-header">
+                        <div style="text-align: center;">ESTADO</div>
+                        <div>PRODUCTO / SKU</div>
+                        <div>CATEGORÍA</div>
+                        <div style="text-align: center;">ESCALA 1</div>
+                        <div style="text-align: center;">ESCALA 2</div>
+                        <div style="text-align: center;">ESCALA 3</div>
+                        <div style="text-align: right;">ACCIONES</div>
+                    </div>
                 </div>
             </div>
             
-            <div style="margin-top: 60px; display: flex; justify-content: center; gap: 30px;">
+            <div class="visual-block" style="margin-top: 60px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
                  <div style="display: flex; gap: 15px; align-items: center;">
                     <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--kpi-red);"><i class="fas fa-file-pdf"></i></div>
-                    <div>
+                    <div style="text-align: left;">
                         <strong style="display: block; font-size: 16px; margin-bottom: 2px;">Catálogo Visual en PDF</strong>
                         <span style="font-size: 14px; color: var(--text-muted);">Genera un catálogo listo para clientes.</span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 15px; align-items: center;">
                     <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--kpi-green);"><i class="fas fa-copy"></i></div>
-                    <div>
+                    <div style="text-align: left;">
                         <strong style="display: block; font-size: 16px; margin-bottom: 2px;">Copy/Paste a Excel</strong>
                         <span style="font-size: 14px; color: var(--text-muted);">Llevate la grilla armada en un clic.</span>
                     </div>
@@ -304,12 +346,11 @@
         </div>
     </div>
 
-    <!-- SLIDE 2: ADAPTERS Y MIGRACIÓN -->
     <div class="slide">
         <div class="glow-purple"></div>
         <div class="slide-content-wide grid-split" style="max-width: 1400px; margin: 0 auto;">
             
-            <div class="modal-overlay">
+            <div class="visual-block modal-overlay">
                 <div class="import-modal">
                     <div class="im-header"><i class="fas fa-cogs" style="color: var(--kpi-blue);"></i> Configurar Escaneo</div>
                     <div class="im-body">
@@ -339,7 +380,7 @@
                 </div>
             </div>
 
-            <div style="padding-left: 40px;">
+            <div class="text-block" style="padding-left: 40px;">
                 <h3 style="color: var(--kpi-purple); text-align: left;">Fricción Cero</h3>
                 <h2 style="text-align: left;">Migración Inteligente</h2>
                 <p style="text-align: left;">¿Tus clientes vienen de usar Tiendanube, Shopify o un Excel desordenado? No hay problema.</p>
@@ -349,18 +390,17 @@
         </div>
     </div>
 
-    <!-- SLIDE 3: VARIANTES, TIERS Y ESCANER (FULL WIDTH DESAHOGADO) -->
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; max-width: 1000px; margin: 0 auto 30px auto;">
+            <div class="text-block" style="text-align: center; max-width: 1000px; margin: 0 auto 30px auto;">
                 <h3 style="color: var(--kpi-blue);">Estructuras Complejas</h3>
                 <h2>Árboles y Escalas al Vuelo</h2>
                 <p>Agrupá productos en un esquema Padre-Hijo expandible. Cada variante conserva su propio SKU, costo individual y puede ser <strong>vinculada a un código de barras en vivo.</strong></p>
                 <p><strong>Control Granular:</strong> Creá escalas de precios (Tiers) al vuelo, independizá variantes o guardá cambios fila por fila directamente desde la columna de Acciones.</p>
             </div>
             
-            <div class="mockup-table">
+            <div class="visual-block mockup-table custom-scrollbar">
                 <div class="m-header">
                     <div>Producto / Variante</div>
                     <div>Escala 1</div>
@@ -368,7 +408,6 @@
                     <div style="text-align: right;">Acciones</div>
                 </div>
                 
-                <!-- Fila Padre -->
                 <div class="m-row">
                     <div class="m-parent">
                         <i class="fas fa-chevron-down text-muted"></i> 
@@ -386,7 +425,6 @@
                     </div>
                 </div>
                 
-                <!-- Fila Variante 1 -->
                 <div class="m-row" style="background: rgba(0,0,0,0.2);">
                     <div class="m-child">
                         Rojo - Talle 42
@@ -413,44 +451,39 @@
         </div>
     </div>
 
-    <!-- SLIDE 4: DOBLE VISTA (VENTAS VS COMPRAS FULL WIDTH) -->
     <div class="slide">
-        <div class="glow-orange"></div>
+        <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide">
-            <div style="text-align: center; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-orange);">Inteligencia Financiera</h3>
                 <h2>Motor de Costos Efectivos</h2>
                 <p>Alterná a la vista de "Costos". La regla "Mejor Precio Auto" vigila a tus proveedores, calcula el costo efectivo al instante y te muestra tu margen de ganancia real (Descuento y Remarque).</p>
                 <p style="font-size: 15px; color: var(--kpi-orange); margin-top: 10px; font-weight: bold;"><i class="fas fa-link"></i> Los costos se cruzan y actualizan automáticamente desde el módulo de Proveedores.</p>
             </div>
 
-            <div class="glass-panel" style="width: 100%;">
+            <div class="visual-block glass-panel" style="width: 100%; padding: 0; background: transparent; border: none; box-shadow: none;">
                 <div class="view-switcher">
                     <div class="switch-btn inactive"><i class="fas fa-store"></i> Ventas</div>
                     <div class="switch-btn active"><i class="fas fa-boxes"></i> Costos</div>
                 </div>
                 
-                <div class="purchase-mockup">
+                <div class="purchase-mockup table-responsive custom-scrollbar">
                     <div class="pm-row">
-                        <!-- Col 1: Nombre -->
                         <div>
                             <strong style="display: block; font-size: 20px; color: white;">Set Velas Aromáticas</strong>
                             <span style="color: var(--text-muted); font-size: 15px; font-family: monospace; margin-top: 5px; display: block;">SKU: VELA-01</span>
                         </div>
                         
-                        <!-- Col 2: Regla de Asignación -->
                         <div>
                             <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Regla de Asignación</div>
                             <div class="assign-select">✨ MEJOR PRECIO (Auto)</div>
                         </div>
 
-                        <!-- Col 3: Costo Efectivo -->
                         <div style="text-align: right;">
                             <span style="display: block; font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Costo Efectivo</span>
                             <strong style="font-size: 26px; color: var(--text-main);">$4,200</strong>
                         </div>
                         
-                        <!-- Col 4: Márgenes -->
                         <div class="margins-box">
                             <div class="margin-item">
                                 <span style="color: var(--kpi-red); font-weight: bold;">Desc:</span>
@@ -468,28 +501,29 @@
         </div>
     </div>
 
-    <!-- SLIDE 5: NAVEGACIÓN -->
     <div class="slide">
-        <div class="glow-purple"></div>
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-            <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
-            <h2>Continuar Recorrido</h2>
-            <p style="max-width: 900px; margin: 0 auto;">El catálogo es el núcleo, pero los Proveedores y la Caja son quienes lo mantienen vivo. ¿Qué módulo analizamos ahora?</p>
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">El catálogo es el núcleo, pero los Proveedores y la Caja son quienes lo mantienen vivo. ¿Qué módulo analizamos ahora?</p>
+            </div>
             
-            <div class="quick-actions-grid">
+            <div class="visual-block quick-actions-grid">
                 
-                <a href="introduccionBranchDashoard.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
-                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-home"></i></div>
-                    <div class="qa-text" style="color: white;">Volver al<br>Dashboard</div>
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="#" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                <a href="Proveedores.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
                     <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-truck-loading"></i></div>
                     <div class="qa-text" style="color: white;">Gestión de<br>Proveedores</div>
                 </a>
                 
-                <a href="#" class="qa-btn green">
-                    <div class="qa-icon"><i class="fas fa-cash-register"></i></div>
+                <a href="POS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
                     <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
                 </a>
 
@@ -497,15 +531,21 @@
         </div>
     </div>
 
-    <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
+        const pageId = 'catalogo'; 
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const currentSlideNum = document.getElementById('currentSlideNum');
-        let currentIndex = 0;
+        const totalSlidesDisplay = document.getElementById('totalSlides');
 
         function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
             slides.forEach((slide, index) => {
                 if (index === currentIndex) {
                     slide.classList.add('active');
@@ -514,12 +554,24 @@
                 }
             });
             currentSlideNum.innerText = currentIndex + 1;
+            
+            // Guardar estado
+            localStorage.setItem('slide_' + pageId, currentIndex);
+
+            // Al cambiar de slide en mobile, sube el scroll arriba
+            if(window.innerWidth <= 1024) {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            }
         }
 
         function nextSlide() {
             if (currentIndex < slides.length - 1) {
                 currentIndex++;
                 updateSlides();
+            } else {
+                // En la última diapositiva, borrar estado y volver al índice
+                localStorage.removeItem('slide_' + pageId);
+                window.location.href = 'index.html';
             }
         }
 
@@ -534,12 +586,31 @@
         btnPrev.addEventListener('click', prevSlide);
 
         document.addEventListener('keydown', (e) => {
+            if (e.altKey) {
+                const key = e.key.toLowerCase();
+                if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
+                    e.preventDefault(); 
+                    switch(key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                    }
+                    return; 
+                }
+            }
+
             if (e.key === 'ArrowRight' || e.key === ' ') {
                 nextSlide();
             } else if (e.key === 'ArrowLeft') {
                 prevSlide();
             }
         });
+
+        // Inicializar
+        updateSlides();
     </script>
 
 </body>
