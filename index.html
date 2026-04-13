@@ -244,7 +244,7 @@
 <body>
 
     <div class="map-header">
-        <h1>Mapa del Ecosistema</h1>
+        <h1>Sistema a nivel sede</h1>
         <p>Hacé clic en cualquier módulo para abrir la presentación interactiva correspondiente. Tu navegador recordará cuáles ya visitaste.</p>
         
         <div class="progress-container">
@@ -288,29 +288,29 @@
     <script>
         // Nombres actualizados para que coincidan con la estructura de tu carpeta
         const modules = [
-            { id: 'dashboard', name: 'Centro de Mando', desc: 'Dashboard global de operaciones.', file: 'BranchDashboard.html', icon: 'fas fa-chart-line', color: '#3b82f6', target: 'dashboard' },
+            { id: 'dashboard', name: 'Home', desc: 'Dashboard global de operaciones.', file: 'BranchDashboard.html', icon: 'fas fa-chart-line', color: '#3b82f6', target: 'dashboard' },
             
             // Ventas (3 items)
-            { id: 'pos', name: 'Punto de Venta (POS)', desc: 'Caja rápida y cobro mixto.', file: 'POS.html', icon: 'fas fa-cash-register', color: '#10b981', target: 'col-sales' },
-            { id: 'catalogo', name: 'Catálogo Base', desc: 'Árbol de variantes y precios.', file: 'Catalogo.html', icon: 'fas fa-sitemap', color: '#ec4899', target: 'col-sales' },
-            { id: 'tienda', name: 'Tienda Pública', desc: 'Vidriera y Checkout B2C.', file: 'Tienda.html', icon: 'fas fa-shopping-bag', color: '#ec4899', target: 'col-sales' },
+            { id: 'pos', name: 'Punto de Venta (POS)', desc: 'Caja rápida y cobro mixto y reservas', file: 'POS.html', icon: 'fas fa-cash-register', color: '#10b981', target: 'col-sales' },
+            { id: 'catalogo', name: 'Catálogo', desc: 'Árbol de variantes y precios.', file: 'Catalogo.html', icon: 'fas fa-sitemap', color: '#ec4899', target: 'col-sales' },
+            { id: 'tienda', name: 'Tienda online', desc: 'Vidriera y Checkout B2C.', file: 'Tienda.html', icon: 'fas fa-shopping-bag', color: '#ec4899', target: 'col-sales' },
 
             // CRM (3 items)
             { id: 'clientes', name: 'Directorio CRM', desc: 'LTV, fusiones y Whatsapp.', file: 'Clientes.html', icon: 'fas fa-users', color: '#a855f7', target: 'col-crm' },
-            { id: 'agenda', name: 'Agenda Dual', desc: 'Turnos 1x1 y Clases 1xN.', file: 'Agenda.html', icon: 'far fa-calendar-check', color: '#4f46e5', target: 'col-crm' },
+            { id: 'agenda', name: 'Agenda', desc: 'clases individuales, grupales y subscripciones', file: 'Agenda.html', icon: 'far fa-calendar-check', color: '#4f46e5', target: 'col-crm' },
             { id: 'promociones', name: 'Motor Promociones', desc: 'Eventos automáticos y Combos.', file: 'Promociones.html', icon: 'fas fa-tags', color: '#d946ef', target: 'col-crm' },
             
             // Operaciones (3 items)
-            { id: 'inventario', name: 'Inventario Físico', desc: 'Doble barra, Lotes y Mermas.', file: 'inventario.html', icon: 'fas fa-boxes', color: '#3b82f6', target: 'col-ops' },
+            { id: 'inventario', name: 'Inventario', desc: 'Doble barra, Lotes y Mermas.', file: 'inventario.html', icon: 'fas fa-boxes', color: '#3b82f6', target: 'col-ops' },
             { id: 'operaciones', name: 'Fulfillment', desc: 'Desarme de combos y entregas.', file: 'Operaciones.html', icon: 'fas fa-truck-loading', color: '#f59e0b', target: 'col-ops' },
-            { id: 'proveedores', name: 'Proveedores', desc: 'Compras predictivas (Auto).', file: 'Proveedores.html', icon: 'fas fa-handshake', color: '#f59e0b', target: 'col-ops' },
+            { id: 'proveedores', name: 'Proveedores', desc: 'Compras predictivas y gestion multi-proveedor', file: 'Proveedores.html', icon: 'fas fa-handshake', color: '#f59e0b', target: 'col-ops' },
             
             // Finanzas & Admin (6 items)
             { id: 'caja', name: 'Flujo de Caja', desc: 'Libro diario y Heatmaps.', file: 'Caja.html', icon: 'fas fa-wallet', color: '#10b981', target: 'col-finance' },
-            { id: 'auditoria', name: 'Auditoría Rentabilidad', desc: 'Márgenes netos y comisiones.', file: 'Auditoria.html', icon: 'fas fa-search-dollar', color: '#ef4444', target: 'col-finance' },
+            { id: 'auditoria', name: 'Auditoría de rentabilidad', desc: 'Márgenes netos y comisiones.', file: 'Auditoria.html', icon: 'fas fa-search-dollar', color: '#ef4444', target: 'col-finance' },
             { id: 'inversiones', name: 'Inversiones (CapEx)', desc: 'Registro de gastos y egresos.', file: 'Inversiones.html', icon: 'fas fa-rocket', color: '#f43f5e', target: 'col-finance' },
-            { id: 'facturacion', name: 'Facturación AFIP', desc: 'WeServices y Remitos PDF.', file: 'Facturacion.html', icon: 'fas fa-file-invoice', color: '#3b82f6', target: 'col-finance' },
-            { id: 'encargados', name: 'Staff y Seguridad', desc: 'Roles y Portal de Empleos.', file: 'Encargados.html', icon: 'fas fa-user-shield', color: '#6366f1', target: 'col-finance' },
+            { id: 'facturacion', name: 'Facturación', desc: 'WeServices y Remitos PDF.', file: 'Facturacion.html', icon: 'fas fa-file-invoice', color: '#3b82f6', target: 'col-finance' },
+            { id: 'encargados', name: 'Staff y Roles', desc: 'Roles y Portal de Empleos.', file: 'Encargados.html', icon: 'fas fa-user-shield', color: '#6366f1', target: 'col-finance' },
             { id: 'ajustes', name: 'Config. y Plugins', desc: 'Módulos y Pasarelas de Pago.', file: 'Ajustes.html', icon: 'fas fa-cogs', color: '#4f46e5', target: 'col-finance' }
         ];
 
