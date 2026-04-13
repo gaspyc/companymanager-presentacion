@@ -194,9 +194,6 @@
         .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
         .qa-btn.indigo:hover { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover .qa-icon { color: var(--kpi-indigo); }
 
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
-
         /* =========================================
            RESPONSIVE DESIGN (MÓVILES Y TABLETS)
            ========================================= */
@@ -267,11 +264,6 @@
     </style>
 </head>
 <body>
-
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Navegar</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
@@ -586,12 +578,12 @@
                     <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="presentacionAjustes.html" class="qa-btn indigo" style="border-color: var(--kpi-indigo);">
+                <a href="Ajustes.html" class="qa-btn indigo" style="border-color: var(--kpi-indigo);">
                     <div class="qa-icon" style="color: var(--kpi-indigo);"><i class="fas fa-cogs"></i></div>
                     <div class="qa-text" style="color: white;">Ir a Config.<br>Sistema Operativo</div>
                 </a>
                 
-                <a href="presentacionAgenda.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                <a href="Agenda.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-calendar-check"></i></div>
                     <div class="qa-text" style="color: white;">Ir a la<br>Agenda</div>
                 </a>
@@ -661,12 +653,12 @@
                 if (['p', 'i', 'c', 'f', 't', 'd'].includes(key)) {
                     e.preventDefault(); 
                     switch(key) {
-                        case 'p': window.location.href = 'presentacionPOS.html'; break;
-                        case 'i': window.location.href = 'presentacionInventario.html'; break;
-                        case 'c': window.location.href = 'introduccionCatalogo.html'; break;
-                        case 'f': window.location.href = 'presentacionFacturacion.html'; break;
-                        case 'd': window.location.href = 'introduccionBranchDashoard.html'; break;
-                        case 't': window.location.href = 'presentacionTienda.html'; break;
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'd': window.location.href = 'BranchDashoard.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
                     }
                     return; 
                 }

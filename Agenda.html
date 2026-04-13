@@ -192,9 +192,6 @@
         .qa-btn.pink:hover { border-color: var(--kpi-pink); } .qa-btn.pink:hover .qa-icon { color: var(--kpi-pink); }
         .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
 
-        .scroll-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; color: var(--text-muted); opacity: 0.5; animation: pulse 2s infinite; z-index: 100;}
-        @keyframes pulse { 0%, 100% { opacity: 0.3; transform: translate(-50%, 0); } 50% { opacity: 0.8; transform: translate(-50%, 5px); } }
-
         /* =========================================
            RESPONSIVE DESIGN (MÓVILES Y TABLETS)
            ========================================= */
@@ -254,11 +251,6 @@
     </style>
 </head>
 <body>
-
-    <div class="scroll-hint">
-        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Navegar</span>
-        <i class="fas fa-chevron-down"></i>
-    </div>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
