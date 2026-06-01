@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Café Aurora</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+
+    section{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:120px 0;
+    }
+
+    /* NAV */
+
+    .nav-content{
+    height:80px;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    }
+
+    .logo{
+    margin-right:auto;
+    }
+
+    .nav-links{
+    margin-left:auto;
+    display:flex;
+    gap:45px;
+    color:#f4f4f4;
+    font-weight:500;
+    }
+
+    /* ELIMINÁ ESTO */
+    /*
+    <a href="#" class="nav-btn">Ordenar</a>
+    */
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      font-family:'Poppins',sans-serif;
+      background:#f6f2ee;
+      color:#2f241d;
+      overflow-x:hidden;
+    }
+
+    a{
+      text-decoration:none;
+      color:inherit;
+    }
+
+    .container{
+      width:min(1200px,90%);
+      margin:auto;
+    }
+
+    /* NAVBAR */
+
+    nav{
+      position:fixed;
+      top:0;
+      width:100%;
+      z-index:1000;
+      backdrop-filter:blur(10px);
+      background:rgba(20,15,12,0.7);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-content{
+      height:80px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .logo{
+      font-size:1.8rem;
+      font-weight:700;
+      color:#fff;
+      letter-spacing:1px;
+    }
+
+    .nav-links{
+      display:flex;
+      gap:35px;
+      color:#f4f4f4;
+      font-weight:500;
+    }
+
+    .nav-links a{
+      transition:.3s;
+    }
+
+    .nav-links a:hover{
+      color:#d8a46c;
+    }
+
+    .nav-btn{
+      background:#d8a46c;
+      color:white;
+      padding:12px 22px;
+      border-radius:999px;
+      font-weight:600;
+      transition:.3s;
+    }
+
+    .nav-btn:hover{
+      transform:translateY(-2px);
+      background:#bf8b54;
+    }
+
+    /* HERO */
+
+    .hero{
+      min-height:100vh;
+      background:
+      linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)),
+      url('https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      display:flex;
+      align-items:center;
+    }
+
+    .hero-content{
+      color:white;
+      max-width:650px;
+    }
+
+    .hero-sub{
+      color:#d8a46c;
+      letter-spacing:3px;
+      margin-bottom:20px;
+      font-weight:600;
+    }
+
+    .hero h1{
+      font-size:4.5rem;
+      line-height:1.1;
+      margin-bottom:25px;
+    }
+
+    .hero p{
+      font-size:1.1rem;
+      line-height:1.8;
+      opacity:0.92;
+      margin-bottom:35px;
+    }
+
+    .hero-buttons{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+    }
+
+    .primary-btn{
+      background:#d8a46c;
+      color:white;
+      padding:16px 30px;
+      border-radius:14px;
+      font-weight:600;
+      transition:.3s;
+    }
+
+    .primary-btn:hover{
+      background:#bf8b54;
+      transform:translateY(-3px);
+    }
+
+    .secondary-btn{
+      border:1px solid rgba(255,255,255,0.4);
+      padding:16px 30px;
+      border-radius:14px;
+      transition:.3s;
+    }
+
+    .secondary-btn:hover{
+      background:white;
+      color:#222;
+    }
+
+    /* ABOUT */
+
+    section{
+    min-height:100vh;
+    }
+
+    .section-title{
+      text-align:center;
+      margin-bottom:70px;
+    }
+
+    .section-title span{
+      color:#b57a3f;
+      font-weight:600;
+      letter-spacing:2px;
+    }
+
+    .section-title h2{
+      margin-top:15px;
+      font-size:2.8rem;
+    }
+
+    .about-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:60px;
+      align-items:center;
+    }
+
+    .about-image img{
+      width:100%;
+      border-radius:30px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .about-text h3{
+      font-size:2rem;
+      margin-bottom:20px;
+    }
+
+    .about-text p{
+      line-height:1.9;
+      color:#5b514a;
+      margin-bottom:20px;
+    }
+
+    /* MENU */
+
+    .menu{
+      background:#1d1612;
+      color:white;
+    }
+
+    .menu .section-title h2{
+      color:white;
+    }
+
+    .menu-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:30px;
+    }
+
+    .menu-card{
+      background:#2b211c;
+      border-radius:24px;
+      overflow:hidden;
+      transition:.4s;
+      border:1px solid rgba(255,255,255,0.05);
+    }
+
+    .menu-card:hover{
+      transform:translateY(-10px);
+    }
+
+    .menu-card img{
+      width:100%;
+      height:250px;
+      object-fit:cover;
+    }
+
+    .menu-info{
+      padding:25px;
+    }
+
+    .menu-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:15px;
+    }
+
+    .menu-top h4{
+      font-size:1.3rem;
+    }
+
+    .price{
+      color:#d8a46c;
+      font-weight:700;
+    }
+
+    .menu-info p{
+      color:#c7c1bb;
+      line-height:1.7;
+    }
+
+    /* STATS */
+
+    .stats{
+      background:#f0e7df;
+    }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:30px;
+    }
+
+    .stat-card{
+      background:white;
+      padding:40px;
+      border-radius:24px;
+      text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .stat-card h3{
+      font-size:3rem;
+      color:#b57a3f;
+      margin-bottom:10px;
+    }
+
+    .stat-card p{
+      color:#5d534c;
+      font-weight:500;
+    }
+
+    /* CONTACT */
+
+    .contact-box{
+      background:linear-gradient(135deg,#2d211a,#4b3427);
+      color:white;
+      padding:70px;
+      border-radius:35px;
+      text-align:center;
+    }
+
+    .contact-box h2{
+      font-size:3rem;
+      margin-bottom:20px;
+    }
+
+    .contact-box p{
+      opacity:0.9;
+      margin-bottom:35px;
+      line-height:1.8;
+    }
+
+    /* FOOTER */
+
+    footer{
+      background:#16110e;
+      color:#bbb;
+      padding:35px 0;
+      text-align:center;
+    }
+
+    /* RESPONSIVE */
+
+    @media(max-width:900px){
+
+      .hero h1{
+        font-size:3rem;
+      }
+
+      .about-grid{
+        grid-template-columns:1fr;
+      }
+
+      .nav-links{
+        display:none;
+      }
+
+      .contact-box{
+        padding:45px 25px;
+      }
+
+      .contact-box h2{
+        font-size:2rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+
+  <nav>
+  <div class="container nav-content">
+
+    <div class="logo">
+      ☕ Café Aurora
+    </div>
+
+    <div class="nav-links">
+        <a href="#inicio">Inicio</a>
+        <a href="#nosotros">Nosotros</a>
+        <a href="#menu">Menú</a>
+        <a href="#contacto">Contacto</a>
+    </div>
+
+  </div>
+</nav>
+
+  <!-- HERO -->
+
+  <section class="hero" id="inicio">
+    <div class="container">
+      <div class="hero-content">
+
+        <div class="hero-sub">
+          CAFÉ PREMIUM • EXPERIENCIA ÚNICA
+        </div>
+
+        <h1>
+          El café perfecto para cada momento
+        </h1>
+
+        <p>
+          Descubrí sabores intensos, granos seleccionados y un ambiente elegante diseñado para disfrutar cada taza.
+        </p>
+
+        <div class="hero-buttons">
+          <a href="#" class="primary-btn">Ver Menú</a>
+          <a href="#" class="secondary-btn">Reservar Mesa</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+
+  <section id="nosotros">
+    <div class="container">
+
+      <div class="section-title">
+        <span>NOSOTROS</span>
+        <h2>Pasión por el café artesanal</h2>
+      </div>
+
+      <div class="about-grid">
+
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?q=80&w=1200&auto=format&fit=crop" alt="">
+        </div>
+
+        <div class="about-text">
+          <h3>Más que una cafetería</h3>
+
+          <p>
+            En Café Aurora trabajamos con granos cuidadosamente seleccionados para ofrecer una experiencia premium en cada taza.
+          </p>
+
+          <p>
+            Nuestro espacio combina diseño moderno, aromas únicos y una atención cálida para que cada visita sea inolvidable.
+          </p>
+
+          <a href="#" class="primary-btn">
+            Conocer Más
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MENU -->
+
+  <section class="menu" id="menu">
+
+    <div class="container">
+
+      <div class="section-title">
+        <span>NUESTRO MENÚ</span>
+        <h2>Especialidades destacadas</h2>
+      </div>
+
+      <div class="menu-grid">
+
+        <div class="menu-card">
+          <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?q=80&w=1200&auto=format&fit=crop" alt="">
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h4>Latte Vainilla</h4>
+              <div class="price">$5.99</div>
+            </div>
+
+            <p>
+              Espresso intenso con leche cremosa y un suave toque de vainilla natural.
+            </p>
+
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <img src="https://images.unsplash.com/photo-1497636577773-f1231844b336?q=80&w=1200&auto=format&fit=crop" alt="">
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h4>Cappuccino</h4>
+              <div class="price">$4.50</div>
+            </div>
+
+            <p>
+              Espuma perfecta, café balanceado y cacao premium espolvoreado.
+            </p>
+
+          </div>
+        </div>
+
+        <div class="menu-card">
+          <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?q=80&w=1200&auto=format&fit=crop" alt="">
+
+          <div class="menu-info">
+
+            <div class="menu-top">
+              <h4>Moka Chocolate</h4>
+              <div class="price">$6.20</div>
+            </div>
+
+            <p>
+              La mezcla ideal entre espresso premium y chocolate artesanal.
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- STATS -->
+
+  <section class="stats" id="estadisticas">
+
+    <div class="container">
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <h3>10+</h3>
+          <p>Años de experiencia</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>50k</h3>
+          <p>Clientes felices</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>25</h3>
+          <p>Variedades de café</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>100%</h3>
+          <p>Granos seleccionados</p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- CONTACT -->
+
+  <section id="contacto">
+
+    <div class="container">
+
+      <div class="contact-box">
+
+        <h2>
+          Viví la experiencia Café Aurora
+        </h2>
+
+        <p>
+          Reservá tu mesa o hacé tu pedido online y disfrutá del mejor café artesanal en un ambiente único.
+        </p>
+
+        <a href="#" class="primary-btn">
+          Reservar Ahora
+        </a>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+    © 2026 Café Aurora — Todos los derechos reservados
+  </footer>
+
+</body>
+<script>
+  const sections = document.querySelectorAll("section");
+
+  let currentSection = 0;
+  let isAnimating = false;
+
+  function scrollToSection(index) {
+
+    isAnimating = true;
+
+    sections[index].scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
+    // Espera a que termine la animación
+    setTimeout(() => {
+      isAnimating = false;
+    }, 900);
+  }
+
+  window.addEventListener("wheel", (e) => {
+
+    // Bloquea completamente el scroll nativo
+    e.preventDefault();
+
+    // Evita spam durante animación
+    if (isAnimating) return;
+
+    if (e.deltaY > 0) {
+      currentSection = Math.min(
+        currentSection + 1,
+        sections.length - 1
+      );
+    } else {
+      currentSection = Math.max(
+        currentSection - 1,
+        0
+      );
+    }
+
+    scrollToSection(currentSection);
+
+  }, { passive: false });
+</script>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosistema CompanyManager - Mapa Interactivo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;      
+            --bg-panel: rgba(15, 23, 42, 0.7);
+            --text-main: #f8fafc;    
+            --text-muted: #94a3b8;   
+            --border-glass: rgba(255, 255, 255, 0.05);
+            
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-indigo: #4f46e5; 
+            --kpi-purple: #a855f7; 
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08), transparent 25%);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* HEADER & PROGRESS */
+        .map-header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .map-header h1 { font-size: 48px; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; }
+        .map-header p { font-size: 18px; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px;}
+
+        .progress-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-glass);
+            padding: 15px 30px;
+            border-radius: 100px;
+            width: fit-content;
+            margin: 0 auto;
+        }
+        .progress-text { text-align: left; }
+        .progress-text strong { display: block; font-size: 18px; color: var(--kpi-green); }
+        .progress-text span { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
+        
+        .progress-bar-bg { width: 200px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden;}
+        .progress-bar-fill { height: 100%; background: var(--kpi-green); width: 0%; transition: width 1s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 0 10px var(--kpi-green);}
+
+        /* =========================================
+           ESTRUCTURA PRINCIPAL (ECOSYSTEM WRAPPER)
+           ========================================= */
+        .ecosystem-wrapper {
+            max-width: 1400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Fila 2: Pilares divididos en 2 columnas grandes */
+        .pillars-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+
+        .category-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .category-header {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 10px;
+        }
+        .center-header {
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        /* Fila 3: Publicación (Flex con wrap centrado) */
+        .finance-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .finance-grid .module-card {
+            width: calc(33.333% - 14px); /* 3 tarjetas por fila */
+        }
+
+        /* MODULE CARDS */
+        .module-card {
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 20px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .module-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            transition: 0.3s;
+        }
+
+        .module-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+        .module-info strong { font-size: 16px; color: var(--text-main); font-weight: 800;}
+        .module-info span { font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.4;}
+
+        /* VISITED STATUS */
+        .status-indicator {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: transparent;
+            font-size: 10px;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+        .module-card.visited .status-indicator {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--kpi-green);
+            color: var(--kpi-green);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .module-card.visited {
+            border-left: 4px solid var(--kpi-green);
+        }
+
+        /* HIGHLIGHT FOR DASHBOARD */
+        .card-dashboard {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid var(--kpi-blue);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+            padding: 30px;
+            width: 100%;
+        }
+        .card-dashboard .module-icon { width: 70px; height: 70px; font-size: 30px; background: rgba(59, 130, 246, 0.2); color: var(--kpi-blue);}
+        .card-dashboard .module-info strong { font-size: 24px; }
+        .card-dashboard .module-info span { font-size: 15px; }
+
+        /* BOTÓN LIMPIAR PROGRESO */
+        .btn-reset {
+            margin-top: 50px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-reset:hover { color: white; background: rgba(255,255,255,0.05); }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .finance-grid .module-card { width: calc(50% - 10px); } /* 2 por fila */
+        }
+        @media (max-width: 768px) {
+            .pillars-row { grid-template-columns: 1fr; gap: 40px;}
+            .finance-grid .module-card { width: 100%; } /* 1 por fila */
+            .map-header h1 { font-size: 36px; }
+            .progress-container { flex-direction: column; text-align: center; gap: 10px;}
+            .progress-text { text-align: center; }
+            .category-header.center-header { justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="map-header">
+        <h1>El Ecosistema de Plugins</h1>
+        <p>Hacé clic en cualquier módulo para explorar las reglas, beneficios y el enorme potencial de nuestra plataforma. Tu navegador recordará tu progreso.</p>
+        
+        <div class="progress-container">
+            <div class="progress-text">
+                <strong id="progressCount">0 / 10</strong>
+                <span>Módulos Explorados</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ecosystem-wrapper">
+        
+        <div id="dashboard-container"></div>
+
+        <div class="pillars-row">
+            <div class="category-column" id="col-users">
+                <div class="category-header"><i class="fas fa-store text-blue-500" style="color: var(--kpi-blue);"></i> Para Emprendedores</div>
+            </div>
+
+            <div class="category-column" id="col-devs">
+                <div class="category-header"><i class="fas fa-laptop-code text-purple-500" style="color: var(--kpi-purple);"></i> Para Desarrolladores</div>
+            </div>
+        </div>
+
+        <div class="finance-row">
+            <div class="category-header center-header"><i class="fas fa-rocket text-green-500" style="color: var(--kpi-green);"></i> Ciclo de Publicación</div>
+            <div class="finance-grid" id="col-publish"></div>
+        </div>
+
+    </div>
+
+    <button class="btn-reset" onclick="resetProgress()"><i class="fas fa-undo mr-2"></i> Reiniciar Progreso de Exploración</button>
+
+    <script>
+        // Array adaptado específicamente para el Marketplace
+        const modules = [
+            { id: 'intro', name: 'El Concepto', desc: 'De un software cerrado a posibilidades ilimitadas.', file: 'Concepto.html', icon: 'fas fa-puzzle-piece', color: '#3b82f6', target: 'dashboard' },
+            
+            // Emprendedores (3 items)
+            { id: 'armonia', name: 'Libertad y Armonía', desc: 'Cómo conviven las promociones automáticas con tus ajustes manuales.', file: 'Armonia.html', icon: 'fas fa-scale-balanced', color: '#10b981', target: 'col-users' },
+            { id: 'catalogo', name: 'Catálogo Vivo', desc: 'Instalá herramientas y conectate con AFIP o MercadoPago.', file: 'Catalogo.html', icon: 'fas fa-store', color: '#ec4899', target: 'col-users' },
+            { id: 'gestion', name: 'Activación por Sede', desc: 'Encendé plugins solo en las sucursales que elijas.', file: 'Gestion.html', icon: 'fas fa-sliders-h', color: '#f59e0b', target: 'col-users' },
+
+            // Desarrolladores (3 items)
+            { id: 'sandbox', name: 'Sandboxing Seguro', desc: 'Reglas del juego y por qué no hay acceso directo a la BD.', file: 'Sandbox.html', icon: 'fas fa-shield-alt', color: '#ef4444', target: 'col-devs' },
+            { id: 'api', name: 'Eventos y API', desc: 'Cómo tu código interactúa con el core del sistema.', file: 'API.html', icon: 'fas fa-exchange-alt', color: '#a855f7', target: 'col-devs' },
+            { id: 'monetizacion', name: 'Monetización', desc: 'Creá y vendé soluciones a cientos de comercios B2B.', file: 'Monetizacion.html', icon: 'fas fa-coins', color: '#10b981', target: 'col-devs' },
+            
+            // Publicación (3 items en la grilla inferior)
+            { id: 'manifest', name: 'El manifest.json', desc: 'Permisos y metadatos de tu paquete ZIP.', file: 'Manifest.html', icon: 'fas fa-file-code', color: '#3b82f6', target: 'col-publish' },
+            { id: 'auditoria', name: 'Auditoría Oficial', desc: 'Revisión estructural y de seguridad humana.', file: 'Auditoria.html', icon: 'fas fa-search-shield', color: '#f59e0b', target: 'col-publish' },
+            { id: 'lanzamiento', name: 'Lanzamiento Global', desc: 'Aprobación y publicación en el Explorar.', file: 'Lanzamiento.html', icon: 'fas fa-globe', color: '#ec4899', target: 'col-publish' }
+        ];
+
+        function renderModules() {
+            let visitedCount = 0;
+
+            modules.forEach(mod => {
+                const isVisited = localStorage.getItem(`market_visited_${mod.id}`) === 'true';
+                if (isVisited) visitedCount++;
+
+                const cardHTML = `
+                    <a href="${mod.file}" onclick="markVisited('${mod.id}')" class="module-card ${isVisited ? 'visited' : ''}" ${mod.id === 'intro' ? 'class="module-card card-dashboard '+(isVisited ? 'visited':'')+'"' : ''}>
+                        <div class="module-icon" style="color: ${mod.color};"><i class="${mod.icon}"></i></div>
+                        <div class="module-info">
+                            <strong>${mod.name}</strong>
+                            <span>${mod.desc}</span>
+                        </div>
+                        <div class="status-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </a>
+                `;
+
+                if (mod.target === 'dashboard') {
+                    document.getElementById('dashboard-container').innerHTML = cardHTML;
+                } else {
+                    const col = document.getElementById(mod.target);
+                    if(col) col.insertAdjacentHTML('beforeend', cardHTML);
+                }
+            });
+
+            updateProgress(visitedCount);
+        }
+
+        function markVisited(id) {
+            localStorage.setItem(`market_visited_${id}`, 'true');
+        }
+
+        function updateProgress(count) {
+            const total = modules.length;
+            const percentage = (count / total) * 100;
+            
+            document.getElementById('progressCount').innerText = `${count} / ${total}`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        function resetProgress() {
+            modules.forEach(mod => localStorage.removeItem(`market_visited_${mod.id}`));
+            location.reload();
+        }
+
+        // Iniciar render
+        renderModules();
+
+    </script>
+
+</body>
+</html>
