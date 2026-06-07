@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sandboxing Seguro - CompanyManager Plugins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --kpi-green:  #10b981;
+            --kpi-blue:   #3b82f6;
+            --kpi-purple: #d946ef;
+            --kpi-orange: #f59e0b;
+            --kpi-red:    #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15)  0%, rgba(0,0,0,0) 70%); top: -10vw;    right:  -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(217,70,239,0.12)   0%, rgba(0,0,0,0) 70%); bottom: -10vw; left:   -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.12)  0%, rgba(0,0,0,0) 70%); top: -10vw;    left:   -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.10)  0%, rgba(0,0,0,0) 70%); bottom: -10vw; right:  -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-red    { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(239,68,68,0.12)   0%, rgba(0,0,0,0) 70%); top: -10vw;    right:  -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-red); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+        /* =========================================
+           SLIDE 1 — pill tags hero
+        ========================================= */
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Muro visual: Prohibido
+        ========================================= */
+        .wall-diagram {
+            display: flex; flex-direction: column; gap: 0;
+            border: 2px solid rgba(239,68,68,0.4);
+            border-radius: 16px; overflow: hidden;
+        }
+        .wall-top {
+            background: rgba(239,68,68,0.08); padding: 20px 24px;
+            border-bottom: 2px dashed rgba(239,68,68,0.3);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .wall-top .wt-icon { font-size: 28px; color: var(--kpi-red); flex-shrink: 0; }
+        .wall-top .wt-label { font-size: 16px; font-weight: 800; color: #fca5a5; }
+        .wall-top .wt-sub   { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+        .wall-divider {
+            display: flex; align-items: center; justify-content: center;
+            gap: 12px; padding: 14px 24px;
+            background: rgba(239,68,68,0.15);
+        }
+        .wall-divider span {
+            font-size: 13px; font-weight: 900; color: var(--kpi-red);
+            text-transform: uppercase; letter-spacing: 2px;
+        }
+        .wall-divider i { color: var(--kpi-red); font-size: 20px; }
+
+        .wall-bottom {
+            background: rgba(59,130,246,0.06); padding: 20px 24px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .wall-bottom .wb-icon { font-size: 28px; color: var(--kpi-blue); flex-shrink: 0; }
+        .wall-bottom .wb-label { font-size: 16px; font-weight: 800; color: #93c5fd; }
+        .wall-bottom .wb-sub   { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+
+        .blocked-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        .blocked-item {
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15);
+            border-radius: 10px; padding: 11px 14px;
+            font-size: 14px; font-weight: 700; color: #fca5a5;
+            text-decoration: line-through; opacity: 0.75;
+        }
+        .blocked-item i { color: var(--kpi-red); font-size: 13px; flex-shrink: 0; }
+
+        /* =========================================
+           SLIDE 3 — Permisos declarados (manifest)
+        ========================================= */
+        .manifest-box {
+            background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; padding: 22px 24px;
+            font-family: 'Courier New', monospace; font-size: 14px; line-height: 1.85;
+            color: var(--text-muted);
+        }
+        .ms-key    { color: #93c5fd; }
+        .ms-str    { color: #6ee7b7; }
+        .ms-num    { color: #fcd34d; }
+        .ms-bool   { color: #f9a8d4; }
+        .ms-comment{ color: #475569; font-style: italic; }
+
+        .perm-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        .perm-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            border-radius: 10px; padding: 13px 16px;
+            border: 1px solid;
+        }
+        .perm-item.granted  { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.2); }
+        .perm-item.denied   { background: rgba(239,68,68,0.06);  border-color: rgba(239,68,68,0.2);  }
+        .perm-item .pi-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+        .perm-item.granted .pi-icon { color: var(--kpi-green); }
+        .perm-item.denied  .pi-icon { color: var(--kpi-red);   }
+        .perm-item .pi-name { font-size: 14px; font-weight: 800; color: white; display: block; }
+        .perm-item .pi-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+        /* =========================================
+           SLIDE 4 — Aislamiento: qué SÍ puede
+        ========================================= */
+        .can-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+        }
+        .can-card {
+            border-radius: 14px; padding: 20px 18px;
+            background: rgba(30,41,59,0.5); border: 1px solid rgba(255,255,255,0.06);
+            display: flex; flex-direction: column; gap: 10px;
+            transition: 0.25s;
+        }
+        .can-card:hover { transform: translateY(-3px); background: rgba(30,41,59,0.8); }
+        .can-card .cc-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .can-card strong { font-size: 15px; font-weight: 800; color: white; }
+        .can-card span   { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+        /* =========================================
+           SLIDE 5 — Auditoría humana
+        ========================================= */
+        .audit-steps { display: flex; flex-direction: column; gap: 0; }
+        .audit-step {
+            display: flex; align-items: flex-start; gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .audit-step:last-child { border-bottom: none; }
+        .as-number {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 900; flex-shrink: 0;
+            border: 2px solid;
+        }
+        .audit-step:nth-child(1) .as-number { border-color: var(--kpi-blue);   color: #93c5fd; background: rgba(59,130,246,0.12); }
+        .audit-step:nth-child(2) .as-number { border-color: var(--kpi-orange); color: #fcd34d; background: rgba(245,158,11,0.12); }
+        .audit-step:nth-child(3) .as-number { border-color: var(--kpi-red);    color: #fca5a5; background: rgba(239,68,68,0.12);  }
+        .audit-step:nth-child(4) .as-number { border-color: var(--kpi-green);  color: #6ee7b7; background: rgba(16,185,129,0.12); }
+        .as-body { flex: 1; }
+        .as-body strong { font-size: 17px; font-weight: 800; color: white; display: block; margin-bottom: 5px; }
+        .as-body p { font-size: 15px; color: var(--text-muted); line-height: 1.5; margin: 0; }
+
+        .verdict-box {
+            display: flex; gap: 16px; margin-top: 24px;
+        }
+        .verdict-card {
+            flex: 1; border-radius: 12px; padding: 16px 18px;
+            display: flex; align-items: center; gap: 14px;
+            border: 1px solid;
+        }
+        .verdict-card.ok     { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.25); }
+        .verdict-card.reject { background: rgba(239,68,68,0.07);  border-color: rgba(239,68,68,0.25);  }
+        .verdict-card .v-icon { font-size: 22px; flex-shrink: 0; }
+        .verdict-card.ok     .v-icon { color: var(--kpi-green); }
+        .verdict-card.reject .v-icon { color: var(--kpi-red);   }
+        .verdict-card strong { font-size: 15px; font-weight: 800; color: white; display: block; }
+        .verdict-card span   { font-size: 12px; color: var(--text-muted); }
+
+        /* =========================================
+           SLIDE 6 — Navegación (igual a POS.html)
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.green:hover  { border-color: var(--kpi-green);  } .qa-btn.green:hover  .qa-icon { color: var(--kpi-green);  }
+        .qa-btn.blue:hover   { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue);   }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px 20px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; margin-bottom: 30px; width: 100%; }
+            .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } h3 { font-size: 20px; } p { font-size: 16px; }
+            .can-grid { grid-template-columns: 1fr; }
+            .verdict-box { flex-direction: column; }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-red"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-red);">Para Desarrolladores</h3>
+                <h1>Sandboxing<br><span style="color: white;">Seguro</span></h1>
+                <p>Un plugin puede hacer cosas increíbles, pero <strong style="color: white;">nunca puede romper el sistema</strong>. El sandboxing es el contrato técnico que lo garantiza para todos los comercios.</p>
+                <p>Reglas claras, límites bien definidos y una capa de aislamiento que protege tanto al comercio como al desarrollador.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-shield-alt" style="font-size: 72px; color: var(--kpi-red);"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-ban" style="color: var(--kpi-red);"></i> Sin acceso a BD</span>
+                    <span class="pill-tag"><i class="fas fa-list-check" style="color: var(--kpi-orange);"></i> Permisos declarados</span>
+                    <span class="pill-tag"><i class="fas fa-box" style="color: var(--kpi-blue);"></i> Ejecución aislada</span>
+                    <span class="pill-tag"><i class="fas fa-user-shield" style="color: var(--kpi-green);"></i> Auditoría humana</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — LA REGLA FUNDAMENTAL: sin acceso a BD
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-red);">La Regla #1</h3>
+                <h2>Cero Acceso Directo a la Base de Datos</h2>
+                <p>Un plugin <strong style="color: white;">no puede</strong> abrir una conexión directa a la base de datos, leer tablas libremente ni ejecutar queries propios. Nunca.</p>
+                <p>Todo lo que necesita pedirlo a través de la <strong style="color: white;">API oficial</strong>, que valida permisos, registra el acceso y puede revocar en cualquier momento.</p>
+
+                <div class="blocked-list" style="margin-top: 8px;">
+                    <div class="blocked-item"><i class="fas fa-times-circle"></i> SELECT * FROM products WHERE ...</div>
+                    <div class="blocked-item"><i class="fas fa-times-circle"></i> UPDATE users SET role = 'admin'</div>
+                    <div class="blocked-item"><i class="fas fa-times-circle"></i> DROP TABLE transactions</div>
+                </div>
+            </div>
+
+            <div class="visual-block">
+                <div class="wall-diagram">
+                    <div class="wall-top">
+                        <div class="wt-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <div>
+                            <div class="wt-label">Código del Plugin</div>
+                            <div class="wt-sub">ZIP auditado, ejecutado en sandbox</div>
+                        </div>
+                    </div>
+                    <div class="wall-divider">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Muro de Aislamiento</span>
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="wall-bottom">
+                        <div class="wb-icon"><i class="fas fa-database"></i></div>
+                        <div>
+                            <div class="wb-label">Base de Datos del Core</div>
+                            <div class="wb-sub">Inaccesible directamente · Solo vía API</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.22); border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas fa-check-circle" style="color: var(--kpi-green); margin-top: 3px; flex-shrink: 0;"></i>
+                    <span style="font-size: 14px; color: #d1fae5; line-height: 1.5;">La única vía válida es <code style="background: rgba(59,130,246,0.2); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">api.getProducts()</code>, <code style="background: rgba(59,130,246,0.2); padding: 2px 6px; border-radius: 4px; color: #93c5fd;">api.getOrder(id)</code> y similares — funciones acotadas con permisos explícitos.</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — PERMISOS DECLARADOS EN manifest.json
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Contrato Explícito</h3>
+                <h2>Permisos Declarados en el manifest.json</h2>
+                <p>Antes de instalar cualquier plugin, el sistema muestra <strong style="color: white;">exactamente qué puede y qué no puede hacer</strong>. El comercio acepta o rechaza con plena información.</p>
+                <p>Si el plugin intenta acceder a algo que no declaró, el sandbox lo bloquea y lo registra.</p>
+
+                <div class="perm-list" style="margin-top: 8px;">
+                    <div class="perm-item granted">
+                        <i class="fas fa-check-circle pi-icon"></i>
+                        <div><span class="pi-name">read:products</span><span class="pi-desc">Puede leer el catálogo de productos para calcular precios.</span></div>
+                    </div>
+                    <div class="perm-item granted">
+                        <i class="fas fa-check-circle pi-icon"></i>
+                        <div><span class="pi-name">emit:invoice</span><span class="pi-desc">Puede generar y emitir comprobantes fiscales.</span></div>
+                    </div>
+                    <div class="perm-item denied">
+                        <i class="fas fa-times-circle pi-icon"></i>
+                        <div><span class="pi-name">write:users</span><span class="pi-desc">No puede modificar usuarios ni roles del sistema.</span></div>
+                    </div>
+                    <div class="perm-item denied">
+                        <i class="fas fa-times-circle pi-icon"></i>
+                        <div><span class="pi-name">read:financials</span><span class="pi-desc">No puede acceder a reportes financieros completos.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-block">
+                <div class="manifest-box">
+<span class="ms-comment">// manifest.json — declaración obligatoria</span>
+{
+  <span class="ms-key">"name"</span>: <span class="ms-str">"FacturAR Pro"</span>,
+  <span class="ms-key">"version"</span>: <span class="ms-str">"2.1.0"</span>,
+  <span class="ms-key">"role"</span>: <span class="ms-str">"billing"</span>,
+  <span class="ms-key">"author"</span>: <span class="ms-str">"dev@facturar.ar"</span>,
+  <span class="ms-key">"price"</span>: <span class="ms-num">0</span>,
+  <span class="ms-key">"permissions"</span>: [
+    <span class="ms-str">"read:products"</span>,
+    <span class="ms-str">"read:orders"</span>,
+    <span class="ms-str">"emit:invoice"</span>
+  ],
+  <span class="ms-key">"sandbox"</span>: {
+    <span class="ms-key">"network"</span>: <span class="ms-bool">true</span>,  <span class="ms-comment">// solo AFIP endpoints</span>
+    <span class="ms-key">"filesystem"</span>: <span class="ms-bool">false</span>,
+    <span class="ms-key">"db_direct"</span>: <span class="ms-bool">false</span>  <span class="ms-comment">// siempre false</span>
+  }
+}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — QUÉ SÍ PUEDE HACER UN PLUGIN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide">
+
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">Libertad con Límites</h3>
+                <h2>Dentro del Sandbox, Todo Esto es Posible</h2>
+                <p>El sandboxing no limita lo que podés construir — limita <strong style="color: white;">cómo</strong> lo construís. Y eso protege a todos.</p>
+            </div>
+
+            <div class="visual-block can-grid" style="max-width: 1100px; margin: 0 auto; width: 100%;">
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(16,185,129,0.15); color: #6ee7b7;"><i class="fas fa-globe"></i></div>
+                    <strong>Llamadas HTTP externas</strong>
+                    <span>Conectarse a APIs de terceros (AFIP, MercadoPago, WhatsApp) desde el servidor del plugin.</span>
+                </div>
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(59,130,246,0.15); color: #93c5fd;"><i class="fas fa-exchange-alt"></i></div>
+                    <strong>Leer datos vía API</strong>
+                    <span>Acceder a productos, órdenes, clientes y configuraciones a través de los endpoints declarados.</span>
+                </div>
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(245,158,11,0.15); color: #fcd34d;"><i class="fas fa-sliders-h"></i></div>
+                    <strong>Modificar datos autorizados</strong>
+                    <span>Actualizar precios, emitir facturas, enviar notificaciones — solo lo que el permiso permite.</span>
+                </div>
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(168,85,247,0.15); color: #d8b4fe;"><i class="fas fa-paint-brush"></i></div>
+                    <strong>Renderizar UI propia</strong>
+                    <span>Mostrar paneles, formularios y reportes dentro del slot visual asignado en la app.</span>
+                </div>
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(217,70,239,0.15); color: #e879f9;"><i class="fas fa-bolt"></i></div>
+                    <strong>Escuchar eventos del sistema</strong>
+                    <span>Reaccionar a <code style="font-size: 11px; color: #93c5fd;">on_sale_complete</code>, <code style="font-size: 11px; color: #93c5fd;">on_stock_import</code> y otros hooks oficiales.</span>
+                </div>
+
+                <div class="can-card">
+                    <div class="cc-icon" style="background: rgba(239,68,68,0.15); color: #fca5a5;"><i class="fas fa-hdd"></i></div>
+                    <strong>Almacenamiento propio</strong>
+                    <span>Guardar configuración y estado en su propio espacio aislado, sin tocar tablas del core.</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — AUDITORÍA HUMANA
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">La Última Línea de Defensa</h3>
+                <h2>Auditoría Oficial antes de Publicar</h2>
+                <p>El sandbox es técnico, pero hay un segundo control que es <strong style="color: white;">humano</strong>. Ningún plugin llega al Marketplace sin pasar por revisión del equipo.</p>
+                <p>No alcanza con que el código no explote. Tiene que tener sentido, ser honesto con lo que declara y no engañar al comercio.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="glass-panel" style="width: 100%;">
+                    <div class="audit-steps">
+                        <div class="audit-step">
+                            <div class="as-number">1</div>
+                            <div class="as-body">
+                                <strong>Validación estructural automática</strong>
+                                <p>El sistema verifica que el ZIP tenga un <code style="font-size: 13px; color: #93c5fd;">manifest.json</code> válido, campos obligatorios y sin archivos prohibidos.</p>
+                            </div>
+                        </div>
+                        <div class="audit-step">
+                            <div class="as-number">2</div>
+                            <div class="as-body">
+                                <strong>Revisión de permisos declarados</strong>
+                                <p>Se cruza lo que el plugin declara con lo que realmente hace en el código. Si pide <code style="font-size: 13px; color: #93c5fd;">read:orders</code> pero nunca lo usa, se marca.</p>
+                            </div>
+                        </div>
+                        <div class="audit-step">
+                            <div class="as-number">3</div>
+                            <div class="as-body">
+                                <strong>Revisión de seguridad humana</strong>
+                                <p>Un revisor del equipo lee el código fuente, verifica que no haya intentos de evadir el sandbox, ofuscación sospechosa ni exfiltración de datos.</p>
+                            </div>
+                        </div>
+                        <div class="audit-step">
+                            <div class="as-number">4</div>
+                            <div class="as-body">
+                                <strong>Veredicto y publicación</strong>
+                                <p>Aprobado → aparece en el Marketplace. Rechazado → el dev recibe feedback específico para corregir y reenviar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="verdict-box">
+                    <div class="verdict-card ok">
+                        <div class="v-icon"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                            <strong>Aprobado</strong>
+                            <span>Publicado en el catálogo público</span>
+                        </div>
+                    </div>
+                    <div class="verdict-card reject">
+                        <div class="v-icon"><i class="fas fa-times-circle"></i></div>
+                        <div>
+                            <strong>Rechazado</strong>
+                            <span>Feedback + posibilidad de corregir y reenviar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Ya sabés cómo funciona el aislamiento. ¿Seguimos con la comunicación entre plugins y el sistema?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="API.html" class="qa-btn orange">
+                    <div class="qa-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <div class="qa-text" style="color: white;">Eventos<br>y API</div>
+                </a>
+
+                <a href="Monetizacion.html" class="qa-btn green">
+                    <div class="qa-icon"><i class="fas fa-coins"></i></div>
+                    <div class="qa-text" style="color: white;">Monetización</div>
+                </a>
+
+                <a href="Manifest.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-file-code"></i></div>
+                    <div class="qa-text" style="color: white;">El manifest<br>.json</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'sandbox';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

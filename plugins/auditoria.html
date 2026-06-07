@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría Oficial - CompanyManager Plugins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root{--bg-base:#0f172a;--bg-panel:rgba(15,23,42,0.6);--text-main:#f8fafc;--text-muted:#94a3b8;--border-glass:rgba(255,255,255,0.05);--kpi-green:#10b981;--kpi-blue:#3b82f6;--kpi-purple:#a855f7;--kpi-orange:#f59e0b;--kpi-red:#ef4444;}
+        *{box-sizing:border-box;margin:0;padding:0;}
+        html,body{height:100vh;width:100vw;overflow:hidden;background-color:var(--bg-base);font-family:'Urbanist',sans-serif;color:var(--text-main);}
+        .slide{position:absolute;top:0;left:0;right:0;bottom:0;opacity:0;pointer-events:none;z-index:0;transition:opacity 0.4s ease;background:radial-gradient(circle at top left,#1e293b 0%,var(--bg-base) 100%);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:40px 80px;}
+        .slide.active{opacity:1;pointer-events:all;z-index:10;}
+        .slide-content-wide{width:100%;max-width:1400px;position:relative;z-index:2;display:flex;flex-direction:column;justify-content:center;}
+        .glow-orange{position:absolute;width:40vw;height:40vw;background:radial-gradient(circle,rgba(245,158,11,0.13) 0%,transparent 70%);top:-10vw;right:-10vw;border-radius:50%;z-index:1;pointer-events:none;}
+        .glow-blue  {position:absolute;width:40vw;height:40vw;background:radial-gradient(circle,rgba(59,130,246,0.12) 0%,transparent 70%);bottom:-10vw;left:-10vw;border-radius:50%;z-index:1;pointer-events:none;}
+        .glow-green {position:absolute;width:40vw;height:40vw;background:radial-gradient(circle,rgba(16,185,129,0.10) 0%,transparent 70%);top:-10vw;left:-10vw;border-radius:50%;z-index:1;pointer-events:none;}
+        .glow-red   {position:absolute;width:40vw;height:40vw;background:radial-gradient(circle,rgba(239,68,68,0.12) 0%,transparent 70%);top:-10vw;right:-10vw;border-radius:50%;z-index:1;pointer-events:none;}
+        .glow-purple{position:absolute;width:40vw;height:40vw;background:radial-gradient(circle,rgba(168,85,247,0.12) 0%,transparent 70%);bottom:-10vw;right:-10vw;border-radius:50%;z-index:1;pointer-events:none;}
+        .presentation-controls{position:fixed;bottom:30px;right:40px;display:flex;gap:15px;z-index:9999;background:rgba(0,0,0,0.5);padding:10px 20px;border-radius:50px;border:1px solid var(--border-glass);backdrop-filter:blur(10px);align-items:center;}
+        .slide-indicator{font-size:14px;font-weight:700;color:var(--text-muted);margin:0 10px;font-family:monospace;}
+        .ctrl-btn{background:rgba(255,255,255,0.1);border:none;color:white;width:40px;height:40px;border-radius:50%;cursor:pointer;transition:0.2s;display:flex;align-items:center;justify-content:center;font-size:16px;}
+        .ctrl-btn:hover{background:var(--kpi-orange);}
+        h1{font-size:64px;font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-1px;}
+        h2{font-size:42px;font-weight:800;margin-bottom:15px;}
+        h3{font-size:13px;font-weight:800;margin-bottom:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:2px;}
+        p{font-size:20px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;}
+        .grid-split{display:grid;grid-template-columns:1.2fr 1fr;gap:80px;align-items:center;}
+        .glass-panel{background:var(--bg-panel);backdrop-filter:blur(12px);border:1px solid var(--border-glass);border-radius:16px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,0.4);}
+        .pill-tag{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;}
+        .pill-tag i{margin-right:8px;}
+
+        /* pipeline */
+        .pipeline{display:flex;flex-direction:column;gap:0;}
+        .pl-step{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:18px 0;border-bottom:1px solid rgba(255,255,255,0.05);align-items:flex-start;}
+        .pl-step:last-child{border-bottom:none;}
+        .pl-num{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;border:2px solid;}
+        .pl-step:nth-child(1) .pl-num{border-color:var(--kpi-blue);  color:#93c5fd;background:rgba(59,130,246,0.12);}
+        .pl-step:nth-child(2) .pl-num{border-color:var(--kpi-orange);color:#fcd34d;background:rgba(245,158,11,0.12);}
+        .pl-step:nth-child(3) .pl-num{border-color:var(--kpi-red);   color:#fca5a5;background:rgba(239,68,68,0.12);}
+        .pl-step:nth-child(4) .pl-num{border-color:var(--kpi-purple);color:#d8b4fe;background:rgba(168,85,247,0.12);}
+        .pl-step:nth-child(5) .pl-num{border-color:var(--kpi-green); color:#6ee7b7;background:rgba(16,185,129,0.12);}
+        .pl-body strong{font-size:16px;font-weight:800;color:white;display:block;margin-bottom:4px;}
+        .pl-body p{font-size:14px;color:var(--text-muted);margin:0;line-height:1.5;}
+
+        /* checklist */
+        .checklist{display:flex;flex-direction:column;gap:10px;}
+        .cl-item{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:10px;border:1px solid;}
+        .cl-item.pass{background:rgba(16,185,129,0.06);border-color:rgba(16,185,129,0.2);}
+        .cl-item.fail{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.2);}
+        .cl-item.warn{background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.2);}
+        .cl-icon{font-size:15px;flex-shrink:0;margin-top:2px;}
+        .cl-item.pass .cl-icon{color:var(--kpi-green);}
+        .cl-item.fail .cl-icon{color:var(--kpi-red);}
+        .cl-item.warn .cl-icon{color:var(--kpi-orange);}
+        .cl-body strong{display:block;font-size:14px;font-weight:800;color:white;margin-bottom:2px;}
+        .cl-body span{font-size:12px;color:var(--text-muted);line-height:1.4;}
+
+        /* estados */
+        .status-flow{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+        .st-node{flex:1;border-radius:14px;padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;border:1px solid rgba(255,255,255,0.07);background:rgba(30,41,59,0.45);}
+        .st-node.current{border-color:rgba(245,158,11,0.4);background:rgba(245,158,11,0.07);}
+        .st-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+        .st-node strong{font-size:13px;font-weight:800;color:white;display:block;}
+        .st-node span{font-size:11px;color:var(--text-muted);}
+        .st-arrow{font-size:18px;color:rgba(255,255,255,0.15);flex-shrink:0;animation:pArrow 2s ease-in-out infinite;}
+        @keyframes pArrow{0%,100%{color:rgba(255,255,255,0.12);}50%{color:rgba(245,158,11,0.6);}}
+
+        /* rechazo */
+        .rejection-reasons{display:flex;flex-direction:column;gap:10px;}
+        .rr-row{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-radius:12px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.18);}
+        .rr-icon{width:36px;height:36px;border-radius:9px;background:rgba(239,68,68,0.15);color:#fca5a5;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;}
+        .rr-body strong{font-size:14px;font-weight:800;color:white;display:block;margin-bottom:3px;}
+        .rr-body p{font-size:12px;color:var(--text-muted);margin:0;line-height:1.4;}
+        .rr-fix{margin-top:6px;display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#6ee7b7;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);padding:3px 9px;border-radius:6px;}
+
+        .quick-actions-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin-top:40px;width:100%;max-width:800px;margin-left:auto;margin-right:auto;}
+        .qa-btn{width:250px;background:var(--bg-panel);border:1px solid var(--border-glass);border-radius:16px;padding:30px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;transition:all 0.3s;cursor:pointer;text-decoration:none;}
+        .qa-btn:hover{background:rgba(255,255,255,0.05);transform:translateY(-5px);box-shadow:0 10px 20px rgba(0,0,0,0.3);}
+        .qa-icon{width:60px;height:60px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;background:rgba(0,0,0,0.3);color:var(--text-main);transition:0.3s;}
+        .qa-text{font-size:16px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;text-align:center;}
+        .qa-btn.green:hover{border-color:var(--kpi-green);} .qa-btn.green:hover .qa-icon{color:var(--kpi-green);}
+        .qa-btn.blue:hover{border-color:var(--kpi-blue);} .qa-btn.blue:hover .qa-icon{color:var(--kpi-blue);}
+        .qa-btn.orange:hover{border-color:var(--kpi-orange);} .qa-btn.orange:hover .qa-icon{color:var(--kpi-orange);}
+        .qa-btn.purple:hover{border-color:var(--kpi-purple);} .qa-btn.purple:hover .qa-icon{color:var(--kpi-purple);}
+
+        @media(max-width:1024px){html,body{height:auto;min-height:100vh;overflow-y:auto;overflow-x:hidden;}.slide{position:relative;width:100%;height:auto;min-height:100vh;padding:40px 20px 140px;display:none;overflow-y:visible;}.slide.active{display:flex;justify-content:flex-start;}.slide-content-wide{height:auto;justify-content:flex-start;}.grid-split{grid-template-columns:1fr;gap:40px;}.text-block{order:1;text-align:center!important;margin-bottom:30px;width:100%;}.visual-block{order:2;width:100%;}h1,h2,h3,p{text-align:center!important;margin-left:auto;margin-right:auto;}h1{font-size:46px;}h2{font-size:32px;}p{font-size:16px;}.status-flow{flex-direction:column;}.st-arrow{transform:rotate(90deg);}.quick-actions-grid{flex-direction:column!important;align-items:center;max-width:350px;}.qa-btn{width:100%!important;flex-direction:row;justify-content:flex-start;padding:15px 20px;}.qa-icon{width:50px;height:50px;font-size:20px;flex-shrink:0;}.qa-text{text-align:left;font-size:14px;}}
+    </style>
+</head>
+<body>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1 -->
+    <div class="slide active">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color:var(--kpi-orange);">Ciclo de Publicación</h3>
+                <h1>Auditoría<br><span style="color:white;">Oficial</span></h1>
+                <p>Ningún plugin llega al Marketplace sin pasar por revisión. La auditoría es el <strong style="color:white;">filtro de confianza</strong> que protege a todos los comercios de código malicioso o engañoso.</p>
+                <p>Dos capas: validación automática primero, revisión humana después.</p>
+            </div>
+            <div class="visual-block glass-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;min-height:380px;text-align:center;">
+                <i class="fas fa-search-plus" style="font-size:72px;color:var(--kpi-orange);"></i>
+                <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                    <span class="pill-tag"><i class="fas fa-robot" style="color:var(--kpi-blue);"></i> Validación automática</span>
+                    <span class="pill-tag"><i class="fas fa-user-shield" style="color:var(--kpi-orange);"></i> Revisión humana</span>
+                    <span class="pill-tag"><i class="fas fa-check-double" style="color:var(--kpi-green);"></i> Aprobado / Rechazado</span>
+                    <span class="pill-tag"><i class="fas fa-redo" style="color:var(--kpi-purple);"></i> Feedback y reenvío</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2 — pipeline completo -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color:var(--kpi-blue);">El Proceso</h3>
+                <h2>Pipeline de 5 Pasos</h2>
+                <p>Desde que subís el ZIP hasta que aparece en el catálogo, el plugin pasa por cinco etapas bien definidas. Cada una tiene criterios claros de aprobación.</p>
+                <p>El tiempo promedio de auditoría completa es de <strong style="color:white;">2 a 5 días hábiles</strong>.</p>
+            </div>
+            <div class="visual-block glass-panel" style="width:100%;">
+                <div class="pipeline">
+                    <div class="pl-step">
+                        <div class="pl-num">1</div>
+                        <div class="pl-body"><strong>Subida del ZIP</strong><p>El dev sube el paquete desde "Mis Publicaciones". Estado inicial: <strong style="color:#fcd34d;">Pendiente</strong>.</p></div>
+                    </div>
+                    <div class="pl-step">
+                        <div class="pl-num">2</div>
+                        <div class="pl-body"><strong>Validación estructural automática</strong><p>El sistema verifica el manifest.json, campos obligatorios, tipos y que no haya archivos binarios prohibidos.</p></div>
+                    </div>
+                    <div class="pl-step">
+                        <div class="pl-num">3</div>
+                        <div class="pl-body"><strong>Análisis de permisos declarados</strong><p>Se cruza lo que el plugin declara en permissions con lo que el código realmente llama. Excesos = señal de alerta.</p></div>
+                    </div>
+                    <div class="pl-step">
+                        <div class="pl-num">4</div>
+                        <div class="pl-body"><strong>Revisión humana de seguridad</strong><p>Un revisor lee el código fuente. Busca intentos de evadir el sandbox, ofuscación sospechosa y exfiltración de datos.</p></div>
+                    </div>
+                    <div class="pl-step">
+                        <div class="pl-num">5</div>
+                        <div class="pl-body"><strong>Veredicto final</strong><p>Aprobado → publicado en el catálogo. Rechazado → feedback con puntos específicos a corregir.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3 — checklist automático -->
+    <div class="slide">
+        <div class="glow-orange" style="top:auto;bottom:-200px;left:-200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color:var(--kpi-orange);">Capa 1 de 2</h3>
+                <h2>Validación Automática</h2>
+                <p>El sistema corre estos checks en segundos apenas recibe el ZIP. Si alguno falla, el plugin vuelve al dev con el error específico <strong style="color:white;">antes de esperar la revisión humana</strong>.</p>
+                <p>Pasar esta etapa no garantiza aprobación — solo que el paquete está bien formado.</p>
+            </div>
+            <div class="visual-block checklist" style="width:100%;">
+                <div class="cl-item pass">
+                    <i class="fas fa-check-circle cl-icon"></i>
+                    <div class="cl-body"><strong>manifest.json presente en raíz</strong><span>El archivo existe y es JSON válido sin errores de sintaxis.</span></div>
+                </div>
+                <div class="cl-item pass">
+                    <i class="fas fa-check-circle cl-icon"></i>
+                    <div class="cl-body"><strong>Campos obligatorios completos</strong><span>name, version, role, author, permissions y price están presentes y tienen el tipo correcto.</span></div>
+                </div>
+                <div class="cl-item pass">
+                    <i class="fas fa-check-circle cl-icon"></i>
+                    <div class="cl-body"><strong>Versión semántica válida</strong><span>El campo version sigue el formato MAJOR.MINOR.PATCH.</span></div>
+                </div>
+                <div class="cl-item warn">
+                    <i class="fas fa-triangle-exclamation cl-icon"></i>
+                    <div class="cl-body"><strong>Permiso read:financials declarado pero no usado</strong><span>El código no llama a ninguna función que requiera este permiso. Se marca para revisión humana.</span></div>
+                </div>
+                <div class="cl-item fail">
+                    <i class="fas fa-times-circle cl-icon"></i>
+                    <div class="cl-body"><strong>Archivo .exe encontrado en /src</strong><span>Tipo de archivo no permitido. El ZIP es rechazado automáticamente sin pasar a revisión humana.</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4 — estados del plugin -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align:center;margin-bottom:40px;max-width:900px;margin-left:auto;margin-right:auto;">
+                <h3 style="color:var(--kpi-purple);">Trazabilidad</h3>
+                <h2>Estados del Plugin en el Pipeline</h2>
+                <p>En todo momento podés ver en qué etapa está tu plugin desde "Mis Publicaciones".</p>
+            </div>
+            <div class="visual-block status-flow" style="max-width:1100px;margin:0 auto;width:100%;">
+                <div class="st-node">
+                    <div class="st-icon" style="background:rgba(255,255,255,0.06);color:var(--text-muted);"><i class="fas fa-upload"></i></div>
+                    <strong>Subido</strong><span>ZIP recibido</span>
+                </div>
+                <div class="st-arrow"><i class="fas fa-chevron-right"></i></div>
+                <div class="st-node">
+                    <div class="st-icon" style="background:rgba(59,130,246,0.15);color:#93c5fd;"><i class="fas fa-robot"></i></div>
+                    <strong>Validando</strong><span>Checks automáticos</span>
+                </div>
+                <div class="st-arrow"><i class="fas fa-chevron-right"></i></div>
+                <div class="st-node current">
+                    <div class="st-icon" style="background:rgba(245,158,11,0.15);color:#fcd34d;"><i class="fas fa-user-shield"></i></div>
+                    <strong>En revisión</strong><span>Auditoría humana</span>
+                </div>
+                <div class="st-arrow"><i class="fas fa-chevron-right"></i></div>
+                <div class="st-node">
+                    <div class="st-icon" style="background:rgba(16,185,129,0.15);color:#6ee7b7;"><i class="fas fa-globe"></i></div>
+                    <strong>Publicado</strong><span>En el catálogo</span>
+                </div>
+            </div>
+            <div style="display:flex;gap:16px;max-width:1100px;margin:20px auto 0;justify-content:center;">
+                <div style="padding:12px 20px;border-radius:10px;background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.22);display:flex;align-items:center;gap:10px;font-size:14px;">
+                    <i class="fas fa-times-circle" style="color:var(--kpi-red);"></i>
+                    <span style="color:#fca5a5;font-weight:800;">Rechazado</span>
+                    <span style="color:var(--text-muted);">— Feedback + opción de corregir y reenviar</span>
+                </div>
+                <div style="padding:12px 20px;border-radius:10px;background:rgba(245,158,11,0.07);border:1px solid rgba(245,158,11,0.22);display:flex;align-items:center;gap:10px;font-size:14px;">
+                    <i class="fas fa-pause-circle" style="color:var(--kpi-orange);"></i>
+                    <span style="color:#fcd34d;font-weight:800;">Suspendido</span>
+                    <span style="color:var(--text-muted);">— Problema detectado post-publicación</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5 — causas de rechazo humano -->
+    <div class="slide">
+        <div class="glow-red"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color:var(--kpi-red);">Capa 2 de 2</h3>
+                <h2>Por Qué Rechaza el Revisor</h2>
+                <p>La revisión humana va más allá de la estructura. Evalúa <strong style="color:white;">intención y honestidad</strong>. Un plugin bien formado puede igual ser rechazado si el código hace algo diferente a lo que promete.</p>
+                <p>Estos son los motivos más frecuentes de rechazo en la revisión manual.</p>
+            </div>
+            <div class="visual-block rejection-reasons" style="width:100%;">
+                <div class="rr-row">
+                    <div class="rr-icon"><i class="fas fa-eye-slash"></i></div>
+                    <div class="rr-body">
+                        <strong>Código ofuscado sin justificación</strong>
+                        <p>El revisor no puede leer lo que hace el plugin. Sin transparencia no hay aprobación.</p>
+                        <div class="rr-fix"><i class="fas fa-check"></i> Código legible y comentado</div>
+                    </div>
+                </div>
+                <div class="rr-row">
+                    <div class="rr-icon"><i class="fas fa-database"></i></div>
+                    <div class="rr-body">
+                        <strong>Intento de acceso directo a BD</strong>
+                        <p>Cualquier import de driver de base de datos o conexión string es rechazo inmediato.</p>
+                        <div class="rr-fix"><i class="fas fa-check"></i> Solo api.getX() y api.setX()</div>
+                    </div>
+                </div>
+                <div class="rr-row">
+                    <div class="rr-icon"><i class="fas fa-share-nodes"></i></div>
+                    <div class="rr-body">
+                        <strong>Exfiltración de datos del comercio</strong>
+                        <p>Enviar datos de clientes u órdenes a un servidor externo no declarado ni justificado.</p>
+                        <div class="rr-fix"><i class="fas fa-check"></i> Declarar endpoints en sandbox.network</div>
+                    </div>
+                </div>
+                <div class="rr-row">
+                    <div class="rr-icon"><i class="fas fa-mask"></i></div>
+                    <div class="rr-body">
+                        <strong>Descripción engañosa</strong>
+                        <p>Lo que el plugin promete en la ficha no coincide con lo que realmente hace el código.</p>
+                        <div class="rr-fix"><i class="fas fa-check"></i> Descripción honesta y precisa</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6 — NAV -->
+    <div class="slide">
+        <div class="glow-orange" style="left:50%;transform:translateX(-50%);top:-300px;width:800px;height:800px;"></div>
+        <div class="slide-content-wide" style="align-items:center;text-align:center;justify-content:center;">
+            <div class="text-block">
+                <h3 style="color:var(--kpi-orange);">Explorar Módulos</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width:900px;margin:0 auto;">Ya sabés cómo funciona el proceso de revisión. ¿Seguimos con el lanzamiento?</p>
+            </div>
+            <div class="visual-block quick-actions-grid" style="margin:40px auto 0 auto;">
+                <a href="index.html" class="qa-btn blue" style="border-color:var(--kpi-blue);">
+                    <div class="qa-icon" style="color:var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color:white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+                <a href="Lanzamiento.html" class="qa-btn green">
+                    <div class="qa-icon"><i class="fas fa-globe"></i></div>
+                    <div class="qa-text" style="color:white;">Lanzamiento<br>Global</div>
+                </a>
+                <a href="Manifest.html" class="qa-btn orange">
+                    <div class="qa-icon"><i class="fas fa-file-code"></i></div>
+                    <div class="qa-text" style="color:white;">El manifest<br>.json</div>
+                </a>
+                <a href="Sandbox.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="qa-text" style="color:white;">Sandboxing<br>Seguro</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId='auditoria';let currentIndex=parseInt(localStorage.getItem('slide_'+pageId))||0;
+        const slides=document.querySelectorAll('.slide'),btnPrev=document.getElementById('btnPrev'),btnNext=document.getElementById('btnNext'),currentSlideNum=document.getElementById('currentSlideNum'),totalSlidesDisplay=document.getElementById('totalSlides');
+        function updateSlides(){if(totalSlidesDisplay)totalSlidesDisplay.innerText=slides.length;slides.forEach((s,i)=>s.classList.toggle('active',i===currentIndex));currentSlideNum.innerText=currentIndex+1;localStorage.setItem('slide_'+pageId,currentIndex);setTimeout(()=>window.scrollTo(0,0),50);}
+        function nextSlide(){if(currentIndex<slides.length-1){currentIndex++;updateSlides();}else{localStorage.setItem('slide_'+pageId,0);window.location.href='index.html';}}
+        function prevSlide(){if(currentIndex>0){currentIndex--;updateSlides();}}
+        btnNext.addEventListener('click',nextSlide);btnPrev.addEventListener('click',prevSlide);
+        document.addEventListener('keydown',(e)=>{const isTyping=['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);if(!isTyping){if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide();}else if(e.key==='ArrowLeft'){e.preventDefault();prevSlide();}}});
+        updateSlides();
+    </script>
+</body>
+</html>

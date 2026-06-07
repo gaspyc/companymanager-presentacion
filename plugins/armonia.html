@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libertad y Armonía - CompanyManager Plugins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --kpi-green:  #10b981;
+            --kpi-blue:   #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-red:    #ef4444;
+            --kpi-teal:   #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15)  0%, transparent 70%); top: -10vw;    right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12)   0%, transparent 70%); bottom: -10vw; left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.12)  0%, transparent 70%); top: -10vw;    left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.10)  0%, transparent 70%); bottom: -10vw; right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-teal   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20,184,166,0.12)  0%, transparent 70%); top: -10vw;    right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-teal); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — El problema: conflicto de precios
+        ========================================= */
+        .conflict-row {
+            display: flex; align-items: stretch; gap: 20px;
+        }
+        .conflict-side {
+            flex: 1; border-radius: 14px; padding: 22px 20px;
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .cs-auto  { background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.25); }
+        .cs-manual{ background: rgba(245,158,11,0.07);  border: 1px solid rgba(245,158,11,0.25); }
+        .conflict-side .csh {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 16px; font-weight: 800; margin-bottom: 4px;
+        }
+        .cs-auto   .csh { color: #d8b4fe; }
+        .cs-manual .csh { color: #fcd34d; }
+        .csh-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .cs-auto   .csh-icon { background: rgba(168,85,247,0.18); color: #d8b4fe; }
+        .cs-manual .csh-icon { background: rgba(245,158,11,0.18); color: #fcd34d; }
+        .conflict-item { font-size: 14px; color: var(--text-muted); line-height: 1.5; display: flex; align-items: flex-start; gap: 8px; }
+        .conflict-item i { margin-top: 3px; flex-shrink: 0; font-size: 12px; }
+        .cs-auto   .conflict-item i { color: #d8b4fe; }
+        .cs-manual .conflict-item i { color: #fcd34d; }
+
+        .vs-divider {
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .vs-circle {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(239,68,68,0.15); border: 2px solid rgba(239,68,68,0.35);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; color: #fca5a5;
+        }
+
+        .conflict-result {
+            margin-top: 20px; border-radius: 12px; padding: 15px 18px;
+            background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25);
+            display: flex; align-items: center; gap: 12px;
+            font-size: 15px; color: #fca5a5; font-weight: 700;
+        }
+        .conflict-result i { font-size: 20px; flex-shrink: 0; color: var(--kpi-red); }
+
+        /* =========================================
+           SLIDE 3 — La solución: jerarquía de prioridades
+        ========================================= */
+        .priority-stack { display: flex; flex-direction: column; gap: 0; }
+        .priority-level {
+            display: flex; align-items: center; gap: 16px;
+            padding: 18px 22px; border-radius: 12px;
+            border: 1px solid; position: relative;
+        }
+        .pl-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .pl-body { flex: 1; }
+        .pl-body strong { display: block; font-size: 15px; font-weight: 800; color: white; margin-bottom: 2px; }
+        .pl-body span   { font-size: 12px; color: var(--text-muted); }
+        .pl-badge { font-size: 11px; font-weight: 900; padding: 5px 12px; border-radius: 999px; flex-shrink: 0; letter-spacing: 0.5px; }
+        .pl-wins   { font-size: 11px; font-weight: 800; color: var(--kpi-green); flex-shrink: 0; }
+
+        .lv1 { background: rgba(239,68,68,0.07);  border-color: rgba(239,68,68,0.25);  }
+        .lv1 .pl-icon  { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+        .lv1 .pl-badge { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+
+        .lv2 { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); margin-top: 10px; }
+        .lv2 .pl-icon  { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .lv2 .pl-badge { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+
+        .lv3 { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.25); margin-top: 10px; }
+        .lv3 .pl-icon  { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .lv3 .pl-badge { background: rgba(168,85,247,0.15); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+
+        .lv4 { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.25); margin-top: 10px; }
+        .lv4 .pl-icon  { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .lv4 .pl-badge { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+
+        .priority-connector {
+            width: 2px; height: 10px; background: rgba(255,255,255,0.08);
+            margin-left: 42px;
+        }
+
+        /* =========================================
+           SLIDE 4 — El cajero siempre manda (override manual)
+        ========================================= */
+        .pos-mockup {
+            background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden;
+        }
+        .pos-topbar {
+            background: rgba(0,0,0,0.4); padding: 11px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .pos-dot { width: 11px; height: 11px; border-radius: 50%; }
+        .pos-title { font-size: 13px; color: var(--text-muted); margin-left: 8px; font-weight: 700; }
+        .pos-body { padding: 20px; }
+
+        .pos-item-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 14px; border-radius: 10px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 10px;
+        }
+        .pos-item-row.overridden { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+        .pir-name { flex: 1; font-size: 14px; font-weight: 700; color: white; }
+        .pir-auto { font-size: 13px; color: var(--text-muted); text-decoration: line-through; }
+        .pir-manual { font-size: 14px; font-weight: 900; color: #fcd34d; }
+        .pir-badge { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; flex-shrink: 0; }
+        .badge-auto    { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .badge-manual  { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .badge-normal  { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+
+        .pos-total-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 14px 4px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            margin-top: 4px;
+        }
+        .pos-total-row span { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .pos-total-row strong { font-size: 22px; font-weight: 900; color: var(--kpi-green); }
+
+        .override-note {
+            display: flex; align-items: flex-start; gap: 12px; margin-top: 16px;
+            background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2);
+            border-radius: 10px; padding: 13px 15px;
+            font-size: 13px; color: #fef3c7; line-height: 1.5;
+        }
+        .override-note i { color: #fcd34d; margin-top: 2px; flex-shrink: 0; }
+
+        /* =========================================
+           SLIDE 5 — Escenarios reales
+        ========================================= */
+        .scenario-list { display: flex; flex-direction: column; gap: 14px; }
+        .scenario-card {
+            display: flex; align-items: flex-start; gap: 18px;
+            border-radius: 14px; padding: 20px 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(30,41,59,0.45);
+            transition: 0.25s;
+        }
+        .scenario-card:hover { background: rgba(30,41,59,0.75); transform: translateX(4px); }
+        .sc-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+        .sc-body strong { display: block; font-size: 16px; font-weight: 800; color: white; margin-bottom: 5px; }
+        .sc-body p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+        .sc-result {
+            margin-top: 8px; display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 999px;
+        }
+
+        /* =========================================
+           SLIDE 6 — Nav
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.green:hover  { border-color: var(--kpi-green);  } .qa-btn.green:hover  .qa-icon { color: var(--kpi-green);  }
+        .qa-btn.blue:hover   { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue);   }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; margin-bottom: 30px; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .conflict-row { flex-direction: column; }
+            .vs-divider { transform: rotate(90deg); }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-teal"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-teal);">Para Emprendedores</h3>
+                <h1>Libertad<br><span style="color: white;">y Armonía</span></h1>
+                <p>Los plugins automatizan decisiones de precios y promociones. Pero <strong style="color: white;">vos siempre tenés la última palabra</strong>. El sistema fue diseñado para que ambas cosas convivan sin conflicto.</p>
+                <p>Automatización inteligente que nunca te saca el control.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-scale-balanced" style="font-size: 72px; color: var(--kpi-teal);"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-robot" style="color: var(--kpi-purple);"></i> Precios automáticos</span>
+                    <span class="pill-tag"><i class="fas fa-hand-pointer" style="color: var(--kpi-orange);"></i> Ajuste manual</span>
+                    <span class="pill-tag"><i class="fas fa-layer-group" style="color: var(--kpi-blue);"></i> Jerarquía clara</span>
+                    <span class="pill-tag"><i class="fas fa-user-check" style="color: var(--kpi-green);"></i> Cajero decide</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — EL PROBLEMA: ¿quién manda?
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-red);">El Problema Real</h3>
+                <h2>¿Qué pasa cuando chocan?</h2>
+                <p>Un plugin aplica un <strong style="color: white;">20% de descuento automático</strong> por volumen. El cajero quiere darle un <strong style="color: white;">10% de cortesía</strong> al cliente. ¿Cuál precio gana?</p>
+                <p>Sin reglas claras, el resultado es impredecible. Con la jerarquía de CompanyManager, siempre es predecible.</p>
+
+                <div class="conflict-result" style="margin-top: 8px;">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    Sin reglas claras: precio final desconocido hasta el momento del cobro.
+                </div>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="conflict-row">
+                    <div class="conflict-side cs-auto">
+                        <div class="csh">
+                            <div class="csh-icon"><i class="fas fa-robot"></i></div>
+                            Plugin Automático
+                        </div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Detecta compra de 10 unidades</div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Aplica regla: −20% por volumen</div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Precio calculado: <strong style="color: #d8b4fe;">$8.000</strong></div>
+                    </div>
+
+                    <div class="vs-divider">
+                        <div class="vs-circle">VS</div>
+                    </div>
+
+                    <div class="conflict-side cs-manual">
+                        <div class="csh">
+                            <div class="csh-icon"><i class="fas fa-hand-pointer"></i></div>
+                            Ajuste Manual
+                        </div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Cajero conoce al cliente</div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Quiere aplicar: −10% cortesía</div>
+                        <div class="conflict-item"><i class="fas fa-circle-dot"></i> Precio esperado: <strong style="color: #fcd34d;">$9.000</strong></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — LA SOLUCIÓN: jerarquía de prioridades
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">La Solución</h3>
+                <h2>Jerarquía de Prioridades</h2>
+                <p>El sistema resuelve conflictos con una <strong style="color: white;">cadena de prioridades ordenada</strong>. Cada nivel puede pisar al anterior. El resultado siempre es determinístico.</p>
+                <p>El emprendedor configura qué niveles están activos y cuál gana en cada sede.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="priority-stack">
+
+                    <div class="priority-level lv1">
+                        <div class="pl-icon"><i class="fas fa-hand-pointer"></i></div>
+                        <div class="pl-body">
+                            <strong>Override Manual del Cajero</strong>
+                            <span>Descuento ingresado en el POS en el momento de la venta</span>
+                        </div>
+                        <div class="pl-badge">PRIORIDAD 1</div>
+                    </div>
+                    <div class="priority-connector"></div>
+
+                    <div class="priority-level lv2">
+                        <div class="pl-icon"><i class="fas fa-store"></i></div>
+                        <div class="pl-body">
+                            <strong>Regla de la Sede</strong>
+                            <span>Configuración fija del local: lista de precios, mayorista, etc.</span>
+                        </div>
+                        <div class="pl-badge">PRIORIDAD 2</div>
+                    </div>
+                    <div class="priority-connector"></div>
+
+                    <div class="priority-level lv3">
+                        <div class="pl-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <div class="pl-body">
+                            <strong>Plugin de Precios Activo</strong>
+                            <span>Lógica automática: volumen, horario, cliente frecuente, etc.</span>
+                        </div>
+                        <div class="pl-badge">PRIORIDAD 3</div>
+                    </div>
+                    <div class="priority-connector"></div>
+
+                    <div class="priority-level lv4">
+                        <div class="pl-icon"><i class="fas fa-tag"></i></div>
+                        <div class="pl-body">
+                            <strong>Precio Base del Producto</strong>
+                            <span>Valor original sin modificaciones. El piso de la cadena.</span>
+                        </div>
+                        <div class="pl-badge">PRIORIDAD 4</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — EL CAJERO EN EL POS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-teal" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-teal);">En la Práctica</h3>
+                <h2>El Cajero Siempre Puede Pisar el Precio</h2>
+                <p>En el POS, el cajero ve el precio calculado por el plugin. Si necesita ajustarlo, lo hace directamente sobre el ítem. El sistema registra el cambio y <strong style="color: white;">quién lo hizo</strong>.</p>
+                <p>El plugin queda informado del override a través del evento <code style="background: rgba(20,184,166,0.12); padding: 2px 8px; border-radius: 4px; color: #5eead4; font-size: 17px;">on_price_override</code> por si necesita recalcular algo.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="pos-mockup">
+                    <div class="pos-topbar">
+                        <div class="pos-dot" style="background: #ef4444;"></div>
+                        <div class="pos-dot" style="background: #f59e0b;"></div>
+                        <div class="pos-dot" style="background: #10b981;"></div>
+                        <div class="pos-title">POS — Venta en curso · Sucursal Centro</div>
+                    </div>
+                    <div class="pos-body">
+                        <div class="pos-item-row">
+                            <div class="pir-name">Yerba Mate 500g × 10</div>
+                            <div class="pir-auto">$10.000</div>
+                            <div style="width: 10px;"></div>
+                            <div class="pir-manual" style="color: #d8b4fe;">$8.000</div>
+                            <div class="pir-badge badge-auto">Plugin −20%</div>
+                        </div>
+                        <div class="pos-item-row overridden">
+                            <div class="pir-name">Azúcar 1kg × 5</div>
+                            <div class="pir-auto" style="color: #d8b4fe;">$6.250</div>
+                            <div style="width: 10px;"></div>
+                            <div class="pir-manual">$5.625</div>
+                            <div class="pir-badge badge-manual">Manual −10%</div>
+                        </div>
+                        <div class="pos-item-row">
+                            <div class="pir-name">Aceite 1L × 2</div>
+                            <div style="flex:1;"></div>
+                            <div class="pir-manual" style="color: white;">$3.800</div>
+                            <div class="pir-badge badge-normal">Sin desc.</div>
+                        </div>
+                        <div class="pos-total-row">
+                            <span>TOTAL</span>
+                            <strong>$17.425</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="override-note">
+                    <i class="fas fa-circle-info"></i>
+                    El override del Azúcar quedó registrado: cajero <strong style="color: white;">Lucía M.</strong>, motivo libre, delta −$625. Auditable en el historial de ventas.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — ESCENARIOS REALES
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+
+            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green);">Casos de Uso</h3>
+                <h2>Armonía en Escenarios Reales</h2>
+                <p>Así se resuelve cada situación con la jerarquía activa.</p>
+            </div>
+
+            <div class="visual-block scenario-list" style="max-width: 1000px; margin: 0 auto; width: 100%;">
+
+                <div class="scenario-card">
+                    <div class="sc-icon" style="background: rgba(168,85,247,0.15); color: #d8b4fe;"><i class="fas fa-boxes-stacked"></i></div>
+                    <div class="sc-body">
+                        <strong>Compra por volumen + descuento de cortesía</strong>
+                        <p>El plugin aplica −20% por volumen. El cajero agrega −5% de cortesía. El sistema acumula ambos correctamente porque el override es sobre el precio ya procesado.</p>
+                        <div class="sc-result" style="background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25);">
+                            <i class="fas fa-check"></i> Precio final: base −20% −5% acumulado
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="sc-icon" style="background: rgba(59,130,246,0.15); color: #93c5fd;"><i class="fas fa-store"></i></div>
+                    <div class="sc-body">
+                        <strong>Sede mayorista con plugin de precios minoristas</strong>
+                        <p>La sede tiene lista mayorista configurada (Prioridad 2). El plugin de precios dinámicos (Prioridad 3) queda inactivo para esa sede porque la regla local lo pisa.</p>
+                        <div class="sc-result" style="background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25);">
+                            <i class="fas fa-check"></i> Gana la regla de sede · Plugin ignorado
+                        </div>
+                    </div>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="sc-icon" style="background: rgba(245,158,11,0.15); color: #fcd34d;"><i class="fas fa-clock"></i></div>
+                    <div class="sc-body">
+                        <strong>Promoción horaria automática + precio fijo de lista</strong>
+                        <p>El plugin activa −15% de 18 a 20hs. Pero el producto tiene un precio especial fijo en la sede. El precio fijo de sede (Prioridad 2) gana sobre el plugin (Prioridad 3).</p>
+                        <div class="sc-result" style="background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25);">
+                            <i class="fas fa-check"></i> Precio fijo respetado · Promo ignorada
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-teal" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-teal);">Explorar Módulos</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Ya entendés cómo conviven la automatización y el control manual. ¿Seguimos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="Catalogo.html" class="qa-btn green">
+                    <div class="qa-icon"><i class="fas fa-store"></i></div>
+                    <div class="qa-text" style="color: white;">Catálogo<br>Vivo</div>
+                </a>
+
+                <a href="Gestion.html" class="qa-btn orange">
+                    <div class="qa-icon"><i class="fas fa-sliders-h"></i></div>
+                    <div class="qa-text" style="color: white;">Activación<br>por Sede</div>
+                </a>
+
+                <a href="Monetizacion.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-coins"></i></div>
+                    <div class="qa-text" style="color: white;">Monetización</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'armonia';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

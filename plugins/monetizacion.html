@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monetización - CompanyManager Plugins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --kpi-green:  #10b981;
+            --kpi-blue:   #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-red:    #ef4444;
+            --kpi-gold:   #eab308;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-base); font-family: 'Urbanist', sans-serif; color: var(--text-main); }
+
+        .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.4s ease; background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .slide-content-wide { width: 100%; max-width: 1400px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.15)  0%, transparent 70%); top: -10vw;    right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-gold   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(234,179,8,0.12)    0%, transparent 70%); bottom: -10vw; left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.12)   0%, transparent 70%); top: -10vw;    left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12)   0%, transparent 70%); bottom: -10vw; right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls { position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center; }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-green); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Modelos de precio
+        ========================================= */
+        .model-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .model-card {
+            border-radius: 16px; padding: 22px 20px;
+            display: flex; flex-direction: column; gap: 12px;
+            border: 1px solid; transition: 0.25s; cursor: default;
+        }
+        .model-card:hover { transform: translateY(-3px); }
+        .mc-free     { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.25); }
+        .mc-sub      { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.25); }
+        .mc-once     { background: rgba(234,179,8,0.07);   border-color: rgba(234,179,8,0.25);  }
+        .mc-private  { background: rgba(168,85,247,0.07);  border-color: rgba(168,85,247,0.25); }
+        .mc-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .mc-free    .mc-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .mc-sub     .mc-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .mc-once    .mc-icon { background: rgba(234,179,8,0.15);   color: #fde047; }
+        .mc-private .mc-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .model-card strong { font-size: 16px; font-weight: 800; color: white; display: block; }
+        .model-card p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.45; }
+        .mc-tag { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 999px; display: inline-block; margin-top: 4px; }
+        .mc-free    .mc-tag { background: rgba(16,185,129,0.15); color: #6ee7b7;  border: 1px solid rgba(16,185,129,0.25); }
+        .mc-sub     .mc-tag { background: rgba(59,130,246,0.15); color: #93c5fd;  border: 1px solid rgba(59,130,246,0.25); }
+        .mc-once    .mc-tag { background: rgba(234,179,8,0.15);  color: #fde047;  border: 1px solid rgba(234,179,8,0.25);  }
+        .mc-private .mc-tag { background: rgba(168,85,247,0.15); color: #d8b4fe;  border: 1px solid rgba(168,85,247,0.25); }
+
+        /* =========================================
+           SLIDE 3 — Reparto y cobro
+        ========================================= */
+        .split-visual {
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+        }
+        .split-bar-container {
+            width: 100%; height: 56px; border-radius: 14px; overflow: hidden;
+            display: flex; margin-bottom: 16px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .split-bar-dev {
+            background: linear-gradient(90deg, #10b981, #059669);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 900; color: white;
+            transition: width 1s ease;
+        }
+        .split-bar-plat {
+            background: linear-gradient(90deg, #3b82f6, #2563eb);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; font-weight: 900; color: white;
+        }
+        .split-labels { display: flex; justify-content: space-between; width: 100%; margin-bottom: 24px; }
+        .split-label { display: flex; align-items: center; gap: 10px; }
+        .split-dot { width: 12px; height: 12px; border-radius: 3px; }
+        .split-label span { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .split-label strong { font-size: 14px; color: white; }
+
+        .payment-flow { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+        .pf-row { display: flex; align-items: center; gap: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 13px 16px; }
+        .pf-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; flex-shrink: 0; }
+        .pf-row:nth-child(1) .pf-num { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .pf-row:nth-child(2) .pf-num { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .pf-row:nth-child(3) .pf-num { background: rgba(234,179,8,0.15);  color: #fde047; }
+        .pf-row:nth-child(4) .pf-num { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .pf-text { font-size: 14px; color: var(--text-muted); flex: 1; line-height: 1.4; }
+        .pf-text strong { color: white; }
+
+        /* =========================================
+           SLIDE 4 — Calculadora de ingresos
+        ========================================= */
+        .calc-panel {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 20px;
+        }
+        .calc-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .calc-label { font-size: 15px; font-weight: 700; color: var(--text-muted); flex: 1; }
+        .calc-input-mock {
+            display: flex; align-items: center; gap: 0;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; overflow: hidden;
+        }
+        .calc-input-mock span { padding: 10px 14px; font-size: 15px; font-weight: 800; color: white; min-width: 80px; text-align: center; }
+        .calc-input-mock button { background: rgba(255,255,255,0.07); border: none; color: var(--text-muted); width: 36px; height: 38px; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .calc-input-mock button:hover { background: rgba(255,255,255,0.15); color: white; }
+        .calc-divider { height: 1px; background: rgba(255,255,255,0.06); }
+        .calc-result-row { display: flex; align-items: center; justify-content: space-between; }
+        .calc-result-label { font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .calc-result-val { font-size: 28px; font-weight: 900; }
+
+        /* =========================================
+           SLIDE 5 — Acceso y visibilidad
+        ========================================= */
+        .access-stack { display: flex; flex-direction: column; gap: 14px; }
+        .access-card {
+            display: flex; align-items: flex-start; gap: 18px;
+            border-radius: 14px; padding: 20px 20px;
+            border: 1px solid; transition: 0.25s;
+        }
+        .access-card:hover { transform: translateX(4px); }
+        .ac-public  { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.25); }
+        .ac-white   { background: rgba(245,158,11,0.07);  border-color: rgba(245,158,11,0.25); }
+        .ac-admin   { background: rgba(168,85,247,0.07);  border-color: rgba(168,85,247,0.25); }
+        .ac-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+        .ac-public .ac-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .ac-white  .ac-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .ac-admin  .ac-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .access-card .ac-body strong { font-size: 16px; font-weight: 800; color: white; display: block; margin-bottom: 5px; }
+        .access-card .ac-body p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+        .ac-tag { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 6px; margin-top: 8px; display: inline-block; }
+        .ac-public .ac-tag { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .ac-white  .ac-tag { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .ac-admin  .ac-tag { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        /* =========================================
+           SLIDE 6 — Nav
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.green:hover  { border-color: var(--kpi-green);  } .qa-btn.green:hover  .qa-icon { color: var(--kpi-green);  }
+        .qa-btn.blue:hover   { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue);   }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; margin-bottom: 30px; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .model-cards { grid-template-columns: 1fr; }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Para Desarrolladores</h3>
+                <h1>Monetización</h1>
+                <p>Construís una vez. El plugin trabaja solo. Cada comercio que lo activa en una sede <strong style="color: white;">genera ingreso pasivo</strong> sin que vos hagas nada más.</p>
+                <p>El modelo B2B te conecta con cientos de negocios sin tener que venderle a cada uno individualmente.</p>
+            </div>
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-coins" style="font-size: 72px; color: var(--kpi-green);"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-rotate" style="color: var(--kpi-blue);"></i> Ingresos pasivos</span>
+                    <span class="pill-tag"><i class="fas fa-building" style="color: var(--kpi-orange);"></i> Mercado B2B</span>
+                    <span class="pill-tag"><i class="fas fa-percent" style="color: var(--kpi-green);"></i> 70% para el dev</span>
+                    <span class="pill-tag"><i class="fas fa-store" style="color: var(--kpi-purple);"></i> Por sede activa</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — MODELOS DE PRECIO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-gold"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-gold);">Tu Decisión</h3>
+                <h2>Cuatro Modelos de Precio</h2>
+                <p>Elegís el modelo que mejor se adapta a tu plugin y a tu estrategia. Podés empezar gratis para ganar volumen y luego migrar a suscripción.</p>
+                <p>El modelo se declara en el <code style="background: rgba(234,179,8,0.12); padding: 2px 8px; border-radius: 4px; color: #fde047; font-size: 17px;">manifest.json</code> y no puede cambiarse sin publicar una nueva versión auditada.</p>
+            </div>
+            <div class="visual-block model-cards" style="width: 100%;">
+                <div class="model-card mc-free">
+                    <div class="mc-icon"><i class="fas fa-gift"></i></div>
+                    <strong>Gratuito</strong>
+                    <p>Visibilidad máxima. Instalaciones sin fricción. Construís reputación y reviews rápido.</p>
+                    <span class="mc-tag">price: 0</span>
+                </div>
+                <div class="model-card mc-sub">
+                    <div class="mc-icon"><i class="fas fa-rotate"></i></div>
+                    <strong>Suscripción mensual</strong>
+                    <p>Cobro por sede activa cada mes. El modelo de mayor previsibilidad de ingresos a largo plazo.</p>
+                    <span class="mc-tag">price_model: subscription</span>
+                </div>
+                <div class="model-card mc-once">
+                    <div class="mc-icon"><i class="fas fa-bolt"></i></div>
+                    <strong>Pago único</strong>
+                    <p>Una sola compra, acceso permanente. Ideal para utilities de configuración o importadores.</p>
+                    <span class="mc-tag">price_model: one_time</span>
+                </div>
+                <div class="model-card mc-private">
+                    <div class="mc-icon"><i class="fas fa-lock"></i></div>
+                    <strong>Privado / Lista blanca</strong>
+                    <p>Ventas directas a clientes específicos. El plugin no aparece en el catálogo público.</p>
+                    <span class="mc-tag">access: whitelist</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — REPARTO Y COBRO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">La Economía</h3>
+                <h2>Reparto y Ciclo de Cobro</h2>
+                <p>Por cada instalación paga, el ingreso se divide entre el desarrollador y la plataforma. <strong style="color: white;">El dev se queda con el 70%</strong> sin gestionar cobros, facturas ni cuentas bancarias.</p>
+                <p>La plataforma centraliza todo: cobra al comercio, retiene su parte y acredita al dev en el ciclo mensual.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="split-visual">
+                    <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Distribución por instalación paga</span>
+                    </div>
+                    <div class="split-bar-container">
+                        <div class="split-bar-dev" style="width: 70%;">70%</div>
+                        <div class="split-bar-plat" style="width: 30%;">30%</div>
+                    </div>
+                    <div class="split-labels">
+                        <div class="split-label">
+                            <div class="split-dot" style="background: #10b981;"></div>
+                            <span>Desarrollador</span>
+                            <strong style="color: #6ee7b7;">70%</strong>
+                        </div>
+                        <div class="split-label">
+                            <div class="split-dot" style="background: #3b82f6;"></div>
+                            <span>Plataforma</span>
+                            <strong style="color: #93c5fd;">30%</strong>
+                        </div>
+                    </div>
+                    <div class="payment-flow">
+                        <div class="pf-row">
+                            <div class="pf-num">1</div>
+                            <div class="pf-text">El comercio <strong>activa el plugin en una sede</strong>. Se registra la instalación y arranca el ciclo.</div>
+                        </div>
+                        <div class="pf-row">
+                            <div class="pf-num">2</div>
+                            <div class="pf-text">Al cierre del mes, la plataforma <strong>cobra automáticamente</strong> al comercio el precio declarado.</div>
+                        </div>
+                        <div class="pf-row">
+                            <div class="pf-num">3</div>
+                            <div class="pf-text">La plataforma retiene el 30% y <strong>acredita el 70% al dev</strong> en su cuenta de desarrollador.</div>
+                        </div>
+                        <div class="pf-row">
+                            <div class="pf-num">4</div>
+                            <div class="pf-text">El dev <strong>retira cuando quiere</strong> sin límite mínimo. Sin facturas, sin gestión bancaria propia.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — CALCULADORA DE INGRESOS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">El Potencial</h3>
+                <h2>Calculá tus Ingresos Pasivos</h2>
+                <p>El negocio escala con cada nueva instalación sin que vos trabajes más. A $12/mes por sede y 50 sedes activas, son <strong style="color: white;">$504 mensuales</strong> sin esfuerzo adicional.</p>
+                <p>El límite real es cuántos comercios necesitan lo que construiste. El mercado B2B tiene cientos de potenciales instalaciones.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="calc-panel">
+                    <div class="calc-row">
+                        <div class="calc-label"><i class="fas fa-store" style="color: var(--kpi-blue); margin-right: 8px;"></i>Sedes activas</div>
+                        <div class="calc-input-mock">
+                            <button onclick="adjust('sedes',-10)">−</button>
+                            <span id="val-sedes">50</span>
+                            <button onclick="adjust('sedes',10)">+</button>
+                        </div>
+                    </div>
+                    <div class="calc-row">
+                        <div class="calc-label"><i class="fas fa-dollar-sign" style="color: var(--kpi-gold); margin-right: 8px;"></i>Precio por sede/mes (USD)</div>
+                        <div class="calc-input-mock">
+                            <button onclick="adjust('price',-1)">−</button>
+                            <span id="val-price">12</span>
+                            <button onclick="adjust('price',1)">+</button>
+                        </div>
+                    </div>
+                    <div class="calc-divider"></div>
+                    <div class="calc-result-row">
+                        <div class="calc-result-label">Ingreso bruto mensual</div>
+                        <div class="calc-result-val" style="color: var(--text-muted);" id="res-bruto">$600</div>
+                    </div>
+                    <div class="calc-result-row">
+                        <div class="calc-result-label">Plataforma (30%)</div>
+                        <div class="calc-result-val" style="color: #93c5fd; font-size: 20px;" id="res-plat">−$180</div>
+                    </div>
+                    <div class="calc-divider"></div>
+                    <div class="calc-result-row">
+                        <div class="calc-result-label" style="color: white; font-weight: 800; font-size: 16px;">Tu ingreso neto mensual</div>
+                        <div class="calc-result-val" style="color: var(--kpi-green);" id="res-neto">$420</div>
+                    </div>
+                    <div style="text-align: right; font-size: 12px; color: var(--text-muted); margin-top: 4px;" id="res-anual"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — VISIBILIDAD Y ACCESO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Tu Estrategia</h3>
+                <h2>Control Total sobre la Visibilidad</h2>
+                <p>No todos los plugins son para todos. Podés elegir <strong style="color: white;">quién puede ver e instalar</strong> tu plugin, sin depender del equipo de la plataforma para configurarlo.</p>
+                <p>Esto te permite vender de forma directa a clientes específicos o lanzar en beta cerrada antes de abrirlo al público general.</p>
+            </div>
+            <div class="visual-block access-stack" style="width: 100%;">
+                <div class="access-card ac-public">
+                    <div class="ac-icon"><i class="fas fa-globe"></i></div>
+                    <div class="ac-body">
+                        <strong>Público</strong>
+                        <p>Aparece en el catálogo para todos los comercios. Máxima exposición. Cualquiera puede instalarlo sin contactarte.</p>
+                        <span class="ac-tag">access: "public"</span>
+                    </div>
+                </div>
+                <div class="access-card ac-white">
+                    <div class="ac-icon"><i class="fas fa-users"></i></div>
+                    <div class="ac-body">
+                        <strong>Lista blanca</strong>
+                        <p>Solo los User IDs que vos autorices pueden verlo e instalarlo. Ideal para soluciones vendidas directamente a clientes.</p>
+                        <span class="ac-tag">access: "whitelist"</span>
+                    </div>
+                </div>
+                <div class="access-card ac-admin">
+                    <div class="ac-icon"><i class="fas fa-lock"></i></div>
+                    <div class="ac-body">
+                        <strong>Solo administradores</strong>
+                        <p>Invisible para todos los usuarios del Marketplace. Solo los superusuarios de la plataforma pueden gestionarlo.</p>
+                        <span class="ac-tag">access: "admin"</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Explorar Módulos</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Ya sabés cómo generar ingresos con tu plugin. ¿Seguimos con el proceso de publicación?</p>
+            </div>
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+                <a href="Manifest.html" class="qa-btn orange">
+                    <div class="qa-icon"><i class="fas fa-file-code"></i></div>
+                    <div class="qa-text" style="color: white;">El manifest<br>.json</div>
+                </a>
+                <a href="Auditoria.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-search-plus"></i></div>
+                    <div class="qa-text" style="color: white;">Auditoría<br>Oficial</div>
+                </a>
+                <a href="Lanzamiento.html" class="qa-btn green">
+                    <div class="qa-icon"><i class="fas fa-globe"></i></div>
+                    <div class="qa-text" style="color: white;">Lanzamiento<br>Global</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'monetizacion';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+        updateSlides();
+
+        // Calculadora interactiva
+        const vals = { sedes: 50, price: 12 };
+        function adjust(key, delta) {
+            const min = key === 'sedes' ? 10 : 1;
+            const max = key === 'sedes' ? 500 : 100;
+            vals[key] = Math.max(min, Math.min(max, vals[key] + delta));
+            document.getElementById('val-' + key).textContent = vals[key];
+            recalc();
+        }
+        function recalc() {
+            const bruto = vals.sedes * vals.price;
+            const plat  = bruto * 0.3;
+            const neto  = bruto * 0.7;
+            document.getElementById('res-bruto').textContent = '$' + bruto.toLocaleString('es-AR');
+            document.getElementById('res-plat').textContent  = '−$' + plat.toLocaleString('es-AR');
+            document.getElementById('res-neto').textContent  = '$' + neto.toLocaleString('es-AR');
+            document.getElementById('res-anual').textContent = '≈ $' + (neto * 12).toLocaleString('es-AR') + ' / año';
+        }
+        recalc();
+    </script>
+</body>
+</html>
