@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talento — Apartado de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base:      #0f172a;
+            --bg-panel:     rgba(15, 23, 42, 0.6);
+            --text-main:    #f8fafc;
+            --text-muted:   #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --accent:       #a855f7;
+            --kpi-green:    #10b981;
+            --kpi-blue:     #3b82f6;
+            --kpi-indigo:   #4f46e5;
+            --kpi-purple:   #a855f7;
+            --kpi-orange:   #f59e0b;
+            --kpi-pink:     #ec4899;
+            --kpi-red:      #ef4444;
+            --kpi-teal:     #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           MOTOR DE SLIDES
+        ========================================= */
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-purple { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(168,85,247,0.13) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-pink   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(236,72,153,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.11) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-amber  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn {
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .ctrl-btn:hover { background: var(--kpi-purple); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Vista de red: sedes y personas
+        ========================================= */
+        .network-tree {
+            display: flex; flex-direction: column; gap: 10px; width: 100%;
+        }
+
+        .brand-node {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border-radius: 12px;
+            background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.35);
+        }
+        .brand-node .bn-icon {
+            width: 42px; height: 42px; border-radius: 11px;
+            background: rgba(168,85,247,0.2); color: #d8b4fe;
+            display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+        }
+        .brand-node .bn-label { font-size: 15px; font-weight: 800; color: #e9d5ff; flex: 1; }
+        .brand-node .bn-count { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 5px; background: rgba(168,85,247,0.2); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.35); }
+
+        .branch-indent { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .branch-connector { display: flex; gap: 0; }
+        .connector-line { width: 2px; background: rgba(255,255,255,0.07); margin: 0 10px; flex-shrink: 0; }
+
+        .branch-item {
+            flex: 1; display: flex; align-items: center; gap: 10px;
+            padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.02);
+        }
+        .branch-item .bi-icon {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            background: rgba(59,130,246,0.15); color: #93c5fd;
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
+        }
+        .branch-item .bi-name { font-size: 13px; font-weight: 700; color: white; flex: 1; }
+
+        .staff-bubbles { display: flex; gap: -4px; }
+        .staff-bubble {
+            width: 26px; height: 26px; border-radius: 50%; border: 2px solid #0f172a;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: 900; color: white; flex-shrink: 0;
+            margin-left: -6px;
+        }
+        .staff-bubble:first-child { margin-left: 0; }
+
+        .branch-alert {
+            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
+            flex-shrink: 0;
+        }
+        .alert-warn    { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+        .alert-ok      { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .alert-danger  { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
+
+        .network-summary {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;
+        }
+        .ns-card {
+            padding: 14px 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+        .ns-card .ns-val { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .ns-card .ns-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .ns-purple .ns-val { color: #d8b4fe; }
+        .ns-blue   .ns-val { color: #93c5fd; }
+        .ns-amber  .ns-val { color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 3 — Jerarquía y roles
+        ========================================= */
+        .hierarchy-diagram {
+            display: flex; flex-direction: column; gap: 10px; width: 100%;
+        }
+
+        .tier-row {
+            display: flex; align-items: center; gap: 12px;
+        }
+        .tier-connector {
+            display: flex; flex-direction: column; align-items: center;
+            width: 24px; flex-shrink: 0;
+        }
+        .tier-connector .tc-line { width: 2px; height: 20px; background: rgba(255,255,255,0.08); }
+        .tier-connector .tc-dot  { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+
+        .role-card {
+            flex: 1; display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px; border-radius: 12px; border: 1px solid;
+        }
+        .role-card.rc-owner   { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.3); }
+        .role-card.rc-manager { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.3); }
+        .role-card.rc-base    { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+
+        .role-card .rc-avatar {
+            width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; color: white;
+        }
+        .rc-owner   .rc-avatar { background: linear-gradient(135deg, #9333ea, #7c3aed); }
+        .rc-manager .rc-avatar { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+        .rc-base    .rc-avatar { background: rgba(255,255,255,0.08); color: var(--text-muted); }
+
+        .role-card .rc-body { flex: 1; }
+        .role-card .rc-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .role-card .rc-body small  { font-size: 12px; color: var(--text-muted); }
+
+        .perms-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .perm-chip {
+            font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px;
+        }
+        .pc-full    { background: rgba(168,85,247,0.15); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+        .pc-read    { background: rgba(59,130,246,0.12);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+        .pc-limited { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); }
+
+        /* =========================================
+           SLIDE 4 — Transferencias
+        ========================================= */
+        .transfer-flow {
+            display: flex; flex-direction: column; gap: 12px; width: 100%;
+        }
+
+        .transfer-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border-radius: 13px; border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.02);
+            transition: 0.2s;
+        }
+        .transfer-card:hover { transform: translateX(4px); background: rgba(255,255,255,0.04); }
+
+        .transfer-card .tc-emp {
+            display: flex; align-items: center; gap: 10px; flex: 1;
+        }
+        .tc-emp .te-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; color: white; flex-shrink: 0;
+        }
+        .tc-emp .te-name  { font-size: 13px; font-weight: 800; color: white; display: block; }
+        .tc-emp .te-role  { font-size: 11px; color: var(--text-muted); }
+
+        .transfer-arrow {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 0 12px; flex-shrink: 0;
+        }
+        .transfer-arrow .ta-line {
+            width: 60px; height: 2px; background: linear-gradient(90deg, rgba(168,85,247,0.4), rgba(59,130,246,0.6));
+            position: relative;
+        }
+        .transfer-arrow .ta-line::after {
+            content: ''; position: absolute; right: -4px; top: -4px;
+            border: 5px solid transparent; border-left-color: rgba(59,130,246,0.8);
+        }
+        .transfer-arrow .ta-reason {
+            font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px;
+        }
+
+        .transfer-card .tc-branch {
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .tc-branch .tb-icon {
+            width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+            background: rgba(59,130,246,0.15); color: #93c5fd;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+        }
+        .tc-branch .tb-name { font-size: 12px; font-weight: 700; color: #93c5fd; }
+
+        .transfer-reason-tag {
+            font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 999px; flex-shrink: 0;
+        }
+        .tr-coverage     { background: rgba(16,185,129,0.12);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+        .tr-reinforcement{ background: rgba(59,130,246,0.12);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+        .tr-training     { background: rgba(168,85,247,0.12);  color: #d8b4fe; border: 1px solid rgba(168,85,247,0.25); }
+
+        /* =========================================
+           SLIDE 5 — Alertas de talento
+        ========================================= */
+        .alert-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;
+        }
+
+        .talent-alert {
+            border-radius: 14px; padding: 18px;
+            display: flex; gap: 14px; border: 1px solid; align-items: flex-start;
+            transition: 0.2s;
+        }
+        .talent-alert:hover { transform: translateY(-2px); }
+        .ta-critical { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   }
+        .ta-warning  { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.22); }
+        .ta-info     { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
+        .ta-ok       { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.22); }
+
+        .ta-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .ta-critical .ta-icon { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+        .ta-warning  .ta-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .ta-info     .ta-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .ta-ok       .ta-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+
+        .ta-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .ta-body p      { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        .ta-sede-tag {
+            display: inline-block; margin-top: 8px;
+            font-size: 11px; font-weight: 900; padding: 3px 8px;
+            border-radius: 5px; background: rgba(255,255,255,0.05);
+            color: var(--text-muted); border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .talent-kpis {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;
+        }
+        .tk-card {
+            padding: 14px 12px; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+        .tk-card .tk-val { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .tk-card .tk-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .tk-purple .tk-val { color: #d8b4fe; }
+        .tk-amber  .tk-val { color: #fcd34d; }
+        .tk-red    .tk-val { color: #fca5a5; }
+        .tk-green  .tk-val { color: #6ee7b7; }
+
+        /* =========================================
+           SLIDE 6 — Navegación
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: #d8b4fe; }
+        .qa-btn.blue:hover   { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.indigo:hover { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover .qa-icon { color: #a5b4fc; }
+        .qa-btn.pink:hover   { border-color: var(--kpi-pink);   } .qa-btn.pink:hover   .qa-icon { color: var(--kpi-pink); }
+        .qa-btn.cyan:hover   { border-color: #06b6d4;           } .qa-btn.cyan:hover   .qa-icon { color: #22d3ee; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .alert-grid { grid-template-columns: 1fr; }
+            .talent-kpis { grid-template-columns: repeat(2, 1fr); }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .qa-icon { flex-shrink: 0; }
+            .qa-text { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">Apartado de Marca</h3>
+                <h1>Talento<br><span style="color: white;">de Red</span></h1>
+                <p>El mapa humano de toda la organización. Desde la marca se ve quién está en cada sede, qué rol ocupa, cuánta tensión operativa tiene cada local y cómo fluye el equipo entre sucursales.</p>
+                <p>No es un listado de empleados. Es un <strong style="color: white;">panel estratégico</strong> para detectar desbalances, lagunas de liderazgo y oportunidades de refuerzo antes de que se conviertan en problemas.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-users" style="font-size: 72px; color: #d8b4fe;"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-sitemap" style="color: #d8b4fe;"></i> Vista de red</span>
+                    <span class="pill-tag"><i class="fas fa-crown" style="color: var(--kpi-orange);"></i> Roles y jerarquía</span>
+                    <span class="pill-tag"><i class="fas fa-exchange-alt" style="color: var(--kpi-blue);"></i> Transferencias</span>
+                    <span class="pill-tag"><i class="fas fa-heartbeat" style="color: var(--kpi-red);"></i> Tensión operativa</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — VISTA DE RED: SEDES Y PERSONAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">El Mapa Humano</h3>
+                <h2>Una Red, Muchas Sedes, Un Solo Panel</h2>
+                <p>La vista de talento agrupa a toda la red en un solo lugar. Cada sede es un acordeón expandible que muestra su equipo, organizado por niveles: quiénes lideran y quiénes forman el equipo operativo.</p>
+                <p>De un vistazo sabés cuántas personas tiene cada local, qué carga manejan hoy y si hay alguna señal de alerta sin resolver.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="network-summary">
+                    <div class="ns-card ns-purple">
+                        <div class="ns-val">3</div>
+                        <div class="ns-lbl">Sedes activas</div>
+                    </div>
+                    <div class="ns-card ns-blue">
+                        <div class="ns-val">14</div>
+                        <div class="ns-lbl">Talento total</div>
+                    </div>
+                    <div class="ns-card ns-amber">
+                        <div class="ns-val">1</div>
+                        <div class="ns-lbl">Sin liderazgo</div>
+                    </div>
+                </div>
+
+                <div class="network-tree">
+                    <div class="brand-node">
+                        <div class="bn-icon"><i class="fas fa-crown"></i></div>
+                        <div class="bn-label">Marca — Vista agregada de red</div>
+                        <div class="bn-count">14 personas</div>
+                    </div>
+
+                    <div style="padding-left: 22px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 0;">
+                            <div style="width: 2px; background: rgba(255,255,255,0.07); margin: 0 10px;"></div>
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+
+                                <div class="branch-item">
+                                    <div class="bi-icon"><i class="fas fa-store"></i></div>
+                                    <div class="bi-name">Sucursal Centro</div>
+                                    <div class="staff-bubbles">
+                                        <div class="staff-bubble" style="background: #7c3aed;">M</div>
+                                        <div class="staff-bubble" style="background: #2563eb;">A</div>
+                                        <div class="staff-bubble" style="background: #059669;">L</div>
+                                        <div class="staff-bubble" style="background: #d97706;">R</div>
+                                        <div class="staff-bubble" style="background: #475569; font-size: 9px;">+2</div>
+                                    </div>
+                                    <span class="branch-alert alert-ok">Estable</span>
+                                </div>
+
+                                <div class="branch-item">
+                                    <div class="bi-icon"><i class="fas fa-store"></i></div>
+                                    <div class="bi-name">Sucursal Norte</div>
+                                    <div class="staff-bubbles">
+                                        <div class="staff-bubble" style="background: #be185d;">S</div>
+                                        <div class="staff-bubble" style="background: #059669;">P</div>
+                                        <div class="staff-bubble" style="background: #7c3aed;">N</div>
+                                    </div>
+                                    <span class="branch-alert alert-warn">A vigilar</span>
+                                </div>
+
+                                <div class="branch-item">
+                                    <div class="bi-icon"><i class="fas fa-store"></i></div>
+                                    <div class="bi-name">Sucursal Nueva</div>
+                                    <div class="staff-bubbles">
+                                        <div class="staff-bubble" style="background: #2563eb;">C</div>
+                                    </div>
+                                    <span class="branch-alert alert-danger">Sin lider</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — JERARQUÍA Y ROLES
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">Estructura Interna</h3>
+                <h2>Roles que Definen Permisos</h2>
+                <p>Cada persona en la red tiene un rol que determina exactamente qué puede ver y qué puede hacer. Los roles no son etiquetas: <strong style="color: white;">son conjuntos de permisos</strong> que la marca define y las sedes aplican.</p>
+                <p>Hay dos capas fijas: liderazgo y equipo operativo. Dentro de cada una, los roles dinámicos permiten ajustar con precisión sin abrir accesos de más.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="hierarchy-diagram">
+
+                    <div class="role-card rc-owner">
+                        <div class="rc-avatar">M</div>
+                        <div class="rc-body">
+                            <strong>Dueño / Socio</strong>
+                            <small>Liderazgo total de la sede. No puede transferirse desde el panel.</small>
+                            <div class="perms-row">
+                                <span class="perm-chip pc-full">Acceso total *</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding-left: 18px; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; gap: 0;">
+                            <div style="width: 2px; background: rgba(255,255,255,0.07); margin: 0 10px;"></div>
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+
+                                <div class="role-card rc-manager">
+                                    <div class="rc-avatar">A</div>
+                                    <div class="rc-body">
+                                        <strong>Manager de Sede</strong>
+                                        <small>Administra operaciones sin acceso a configuración crítica.</small>
+                                        <div class="perms-row">
+                                            <span class="perm-chip pc-read">Ventas</span>
+                                            <span class="perm-chip pc-read">Catálogo</span>
+                                            <span class="perm-chip pc-read">Reservas</span>
+                                            <span class="perm-chip pc-limited">Sin ajustes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="role-card rc-base">
+                                    <div class="rc-avatar"><i class="fas fa-users" style="font-size: 13px;"></i></div>
+                                    <div class="rc-body">
+                                        <strong>Personal Base</strong>
+                                        <small>Cajeros, profesionales y operativos. Acceso acotado por rol asignado.</small>
+                                        <div class="perms-row">
+                                            <span class="perm-chip pc-limited">POS</span>
+                                            <span class="perm-chip pc-limited">Turnos</span>
+                                            <span class="perm-chip pc-limited">Sin reportes</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.2); font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                    <i class="fas fa-info-circle" style="color: #d8b4fe; margin-right: 8px;"></i>
+                    Los roles dinámicos dentro de cada capa los crea la marca. Son reutilizables en cualquier sede de la red.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — TRANSFERENCIAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #93c5fd;">Movilidad Interna</h3>
+                <h2>Transferencias con Trazabilidad</h2>
+                <p>Cuando una persona necesita moverse entre sedes, el panel lo registra. No es solo un cambio de lugar: el sistema guarda <strong style="color: white;">el motivo, la fecha y quién lo autorizó</strong>, generando un historial limpio de movilidad.</p>
+                <p>Cobertura, refuerzo, reemplazo, formación. Cada traslado tiene contexto. Eso permite analizar patrones y anticipar necesidades futuras en la red.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="transfer-flow">
+
+                    <div class="transfer-card">
+                        <div class="tc-emp">
+                            <div class="te-avatar" style="background: linear-gradient(135deg, #7c3aed, #9333ea);">M</div>
+                            <div>
+                                <span class="te-name">Martina G.</span>
+                                <span class="te-role">Cajera Principal</span>
+                            </div>
+                        </div>
+                        <div class="transfer-arrow">
+                            <div class="ta-line"></div>
+                            <div class="ta-reason">Cobertura</div>
+                        </div>
+                        <div class="tc-branch">
+                            <div class="tb-icon"><i class="fas fa-store"></i></div>
+                            <span class="tb-name">Sucursal Norte</span>
+                        </div>
+                        <span class="transfer-reason-tag tr-coverage">Cobertura</span>
+                    </div>
+
+                    <div class="transfer-card">
+                        <div class="tc-emp">
+                            <div class="te-avatar" style="background: linear-gradient(135deg, #1d4ed8, #2563eb);">P</div>
+                            <div>
+                                <span class="te-name">Pablo R.</span>
+                                <span class="te-role">Profesional Base</span>
+                            </div>
+                        </div>
+                        <div class="transfer-arrow">
+                            <div class="ta-line"></div>
+                            <div class="ta-reason">Refuerzo</div>
+                        </div>
+                        <div class="tc-branch">
+                            <div class="tb-icon"><i class="fas fa-store"></i></div>
+                            <span class="tb-name">Sucursal Centro</span>
+                        </div>
+                        <span class="transfer-reason-tag tr-reinforcement">Refuerzo</span>
+                    </div>
+
+                    <div class="transfer-card">
+                        <div class="tc-emp">
+                            <div class="te-avatar" style="background: linear-gradient(135deg, #be185d, #ec4899);">S</div>
+                            <div>
+                                <span class="te-name">Sofía L.</span>
+                                <span class="te-role">Personal Base</span>
+                            </div>
+                        </div>
+                        <div class="transfer-arrow">
+                            <div class="ta-line"></div>
+                            <div class="ta-reason">Formación</div>
+                        </div>
+                        <div class="tc-branch">
+                            <div class="tb-icon"><i class="fas fa-store"></i></div>
+                            <span class="tb-name">Sucursal Nueva</span>
+                        </div>
+                        <span class="transfer-reason-tag tr-training">Formación</span>
+                    </div>
+
+                </div>
+
+                <div style="margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: rgba(59,130,246,0.05); border: 1px solid rgba(59,130,246,0.18); font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                    <i class="fas fa-history" style="color: #93c5fd; margin-right: 8px;"></i>
+                    El historial de los últimos 3 meses es visible desde el panel lateral. Buscable por empleado, sede o motivo.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — ALERTAS DE TALENTO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-amber"></div>
+        <div class="slide-content-wide">
+
+            <div class="text-block" style="text-align: center; margin-bottom: 32px; max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #d8b4fe;">El Panel de Señales</h3>
+                <h2>Las Alertas que Importan</h2>
+                <p>El sistema agrupa automáticamente las situaciones que necesitan atención: sedes sin líder, dotación mínima, sobrecarga operativa y patrones de rotación inusuales. Todo en un solo lugar.</p>
+            </div>
+
+            <div class="visual-block" style="max-width: 1100px; margin: 0 auto; width: 100%;">
+                <div class="talent-kpis">
+                    <div class="tk-card tk-purple">
+                        <div class="tk-val">14</div>
+                        <div class="tk-lbl">Talento activo</div>
+                    </div>
+                    <div class="tk-card tk-amber">
+                        <div class="tk-val">1</div>
+                        <div class="tk-lbl">Sin liderazgo</div>
+                    </div>
+                    <div class="tk-card tk-red">
+                        <div class="tk-val">1</div>
+                        <div class="tk-lbl">Sobrecargada</div>
+                    </div>
+                    <div class="tk-card tk-green">
+                        <div class="tk-val">3</div>
+                        <div class="tk-lbl">Mov. este mes</div>
+                    </div>
+                </div>
+
+                <div class="alert-grid">
+
+                    <div class="talent-alert ta-danger" style="background: rgba(239,68,68,0.05); border-color: rgba(239,68,68,0.2);">
+                        <div class="ta-icon" style="background: rgba(239,68,68,0.15); color: #fca5a5;"><i class="fas fa-user-shield"></i></div>
+                        <div class="ta-body">
+                            <strong>Sin liderazgo asignado</strong>
+                            <p>La sede opera sin un referente claro. Nadie tiene acceso de administración.</p>
+                            <div class="ta-sede-tag">Sucursal Nueva</div>
+                        </div>
+                    </div>
+
+                    <div class="talent-alert ta-warning">
+                        <div class="ta-icon"><i class="fas fa-heartbeat"></i></div>
+                        <div class="ta-body">
+                            <strong>Tensión operativa alta</strong>
+                            <p>La sede acumula más turnos de los que puede absorber con el equipo actual.</p>
+                            <div class="ta-sede-tag">Sucursal Norte</div>
+                        </div>
+                    </div>
+
+                    <div class="talent-alert ta-info">
+                        <div class="ta-icon"><i class="fas fa-exchange-alt"></i></div>
+                        <div class="ta-body">
+                            <strong>Rotación frecuente detectada</strong>
+                            <p>3 movimientos en 7 días. Conviene revisar si hay un patrón detrás.</p>
+                            <div class="ta-sede-tag">Red general</div>
+                        </div>
+                    </div>
+
+                    <div class="talent-alert ta-ok">
+                        <div class="ta-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="ta-body">
+                            <strong>Sucursal Centro equilibrada</strong>
+                            <p>Tiene liderazgo, dotación adecuada y tensión operativa dentro del rango normal.</p>
+                            <div class="ta-sede-tag">Sucursal Centro</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">Seguir Explorando</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 880px; margin: 0 auto;">Ya entendés cómo la marca gestiona su equipo humano a nivel de red. ¿Continuamos con la tabla de mando de sedes o con los estándares de identidad?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+
+                <a href="index.html" class="qa-btn purple" style="border-color: rgba(168,85,247,0.4);">
+                    <div class="qa-icon" style="color: #d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Índice<br>de Marca</div>
+                </a>
+
+                <a href="brand_Red.html" class="qa-btn blue">
+                    <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text" style="color: white;">Red</div>
+                </a>
+
+                <a href="brand_Estandares.html" class="qa-btn indigo">
+                    <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="qa-text" style="color: white;">Estándares</div>
+                </a>
+
+                <a href="brand_Mensajes.html" class="qa-btn pink">
+                    <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
+                    <div class="qa-text" style="color: white;">Mensajes<br>Clave</div>
+                </a>
+
+                <a href="brand_Catalogo.html" class="qa-btn cyan">
+                    <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text" style="color: white;">Catálogo<br>Maestro</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'brand_talento';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estándares — Apartado de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --accent: #4f46e5;
+            --accent-soft: rgba(79, 70, 229, 0.15);
+            --kpi-green:  #10b981;
+            --kpi-blue:   #3b82f6;
+            --kpi-indigo: #4f46e5;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink:   #ec4899;
+            --kpi-red:    #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           MOTOR DE SLIDES
+        ========================================= */
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-indigo { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(79,70,229,0.14) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn {
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .ctrl-btn:hover { background: var(--kpi-indigo); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Las 3 piezas base
+        ========================================= */
+        .three-pieces {
+            display: flex; flex-direction: column; gap: 14px; width: 100%;
+        }
+        .piece-row {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 18px 20px; border-radius: 14px; border: 1px solid;
+            transition: 0.2s;
+        }
+        .piece-row:hover { transform: translateX(4px); }
+        .piece-row.p-logo   { background: rgba(79,70,229,0.07); border-color: rgba(79,70,229,0.3); }
+        .piece-row.p-banner { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.3); }
+        .piece-row.p-social { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.3); }
+
+        .piece-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .p-logo   .piece-icon { background: rgba(79,70,229,0.18);  color: #a5b4fc; }
+        .p-banner .piece-icon { background: rgba(59,130,246,0.18); color: #93c5fd; }
+        .p-social .piece-icon { background: rgba(168,85,247,0.18); color: #d8b4fe; }
+
+        .piece-body { flex: 1; }
+        .piece-body strong { font-size: 16px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .piece-body p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+        .piece-status {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 900; padding: 4px 10px;
+            border-radius: 999px; flex-shrink: 0; align-self: flex-start; margin-top: 2px;
+        }
+        .status-ok     { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .status-warn   { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+        .status-missing{ background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25);}
+
+        /* contadores de piezas configuradas */
+        .pieces-counter {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+        }
+        .pc-bubble {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: rgba(79,70,229,0.15); border: 2px solid rgba(79,70,229,0.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 900; color: #a5b4fc;
+        }
+        .pc-text strong { font-size: 18px; font-weight: 800; color: white; display: block; }
+        .pc-text span   { font-size: 13px; color: var(--text-muted); }
+
+        /* =========================================
+           SLIDE 3 — Herencia vs Desvío
+        ========================================= */
+        .inheritance-diagram {
+            display: flex; flex-direction: column; gap: 10px; width: 100%;
+        }
+        .id-brand {
+            display: flex; align-items: center; gap: 14px;
+            padding: 16px 20px; border-radius: 12px;
+            background: rgba(79,70,229,0.1); border: 1px solid rgba(79,70,229,0.35);
+        }
+        .id-brand .idb-icon {
+            width: 44px; height: 44px; border-radius: 11px;
+            background: rgba(79,70,229,0.2); color: #a5b4fc;
+            display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
+        }
+        .id-brand .idb-label { font-size: 15px; font-weight: 800; color: #c7d2fe; flex: 1; }
+        .id-brand .idb-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 5px; background: rgba(79,70,229,0.25); color: #a5b4fc; border: 1px solid rgba(79,70,229,0.4); }
+
+        .id-arrow-row {
+            display: flex; gap: 8px; padding-left: 20px;
+        }
+        .id-arrow-line {
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+            padding: 0 10px;
+        }
+        .id-arrow-line .al-vert { width: 2px; height: 20px; background: rgba(255,255,255,0.08); }
+        .id-arrow-line .al-dot  { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.12); }
+
+        .id-branches { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+        .id-branch {
+            display: flex; align-items: center; gap: 10px;
+            padding: 12px 16px; border-radius: 10px;
+            border: 1px solid;
+        }
+        .id-branch .ib-icon {
+            width: 34px; height: 34px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0;
+        }
+        .id-branch .ib-name { font-size: 13px; font-weight: 700; color: white; flex: 1; }
+        .id-branch .ib-dots  { display: flex; gap: 6px; }
+
+        .id-branch.b-aligned { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.22); }
+        .id-branch.b-custom  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
+        .id-branch.b-missing { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.22); }
+
+        .b-aligned .ib-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .b-custom  .ib-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .b-missing .ib-icon { background: rgba(239,68,68,0.12);  color: #fca5a5; }
+
+        .std-dot {
+            width: 22px; height: 22px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center; font-size: 9px;
+        }
+        .std-dot.aligned { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .std-dot.custom  { background: rgba(59,130,246,0.2);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+        .std-dot.missing { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+
+        .legend-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+        /* =========================================
+           SLIDE 4 — El workbench de comparación
+        ========================================= */
+        .workbench-mock {
+            background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .wb-topbar {
+            padding: 12px 18px; background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
+        }
+        .wb-title { font-size: 13px; font-weight: 800; color: var(--text-muted); }
+        .wb-filter-tabs { display: flex; gap: 6px; }
+        .wb-tab {
+            padding: 5px 12px; border-radius: 7px;
+            font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.08);
+            background: transparent; color: var(--text-muted); cursor: default;
+        }
+        .wb-tab.active { background: rgba(79,70,229,0.18); color: #c7d2fe; border-color: rgba(79,70,229,0.3); }
+
+        .wb-body { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; }
+        .wb-col { padding: 18px 16px; }
+        .wb-divider-line { background: rgba(255,255,255,0.05); }
+        .wb-col-label {
+            font-size: 10px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 1.5px; margin-bottom: 14px;
+        }
+        .wb-col-label.brand-label  { color: #a5b4fc; }
+        .wb-col-label.branch-label { color: #93c5fd; }
+
+        .wb-asset-box {
+            width: 100%; height: 90px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .wb-asset-box.logo-box { height: 80px; background: rgba(79,70,229,0.07); }
+        .wb-asset-box.banner-box { height: 70px; background: rgba(59,130,246,0.07); }
+        .wb-asset-box.empty-box { background: rgba(255,255,255,0.02); }
+        .wb-asset-box.empty-box i { font-size: 22px; color: #334155; }
+        .fake-logo { font-size: 28px; color: #a5b4fc; font-weight: 900; letter-spacing: -1px; }
+        .fake-banner {
+            width: 100%; height: 100%; 
+            background: linear-gradient(135deg, rgba(79,70,229,0.4) 0%, rgba(59,130,246,0.3) 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 800; color: #c7d2fe;
+        }
+        .fake-banner-custom {
+            background: linear-gradient(135deg, rgba(245,158,11,0.35) 0%, rgba(249,115,22,0.3) 100%);
+            color: #fef3c7;
+        }
+
+        .wb-action-strip {
+            display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
+        }
+        .wb-btn {
+            font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 7px;
+            border: 1px solid; cursor: default;
+        }
+        .wb-btn.approve { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+        .wb-btn.allow   { background: rgba(245,158,11,0.12); color: #fcd34d; border-color: rgba(245,158,11,0.3); }
+        .wb-btn.reject  { background: rgba(239,68,68,0.12);  color: #fca5a5; border-color: rgba(239,68,68,0.25); }
+
+        .wb-status-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 11px; font-weight: 900; padding: 4px 9px;
+            border-radius: 999px; margin-bottom: 8px;
+        }
+        .wbs-aligned { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .wbs-custom  { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+
+        /* =========================================
+           SLIDE 5 — Señales del radar
+        ========================================= */
+        .radar-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+        }
+        .radar-card {
+            border-radius: 14px; padding: 18px 18px;
+            display: flex; gap: 14px; border: 1px solid; align-items: flex-start;
+            transition: 0.2s;
+        }
+        .radar-card:hover { transform: translateY(-2px); }
+        .rc-ok      { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.22); }
+        .rc-warn    { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.22); }
+        .rc-danger  { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);  }
+        .rc-info    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
+
+        .rc-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .rc-ok    .rc-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .rc-warn  .rc-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .rc-danger .rc-icon{ background: rgba(239,68,68,0.12);  color: #fca5a5; }
+        .rc-info  .rc-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+
+        .rc-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .rc-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        .rc-sede-tag {
+            display: inline-block; margin-top: 8px;
+            font-size: 11px; font-weight: 900; padding: 3px 8px;
+            border-radius: 5px; background: rgba(255,255,255,0.05);
+            color: var(--text-muted); border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .radar-kpis {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px;
+        }
+        .rk-card {
+            padding: 16px 14px; border-radius: 12px;
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+        .rk-card .rk-val { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .rk-card .rk-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .rk-ok     .rk-val { color: #6ee7b7; }
+        .rk-warn   .rk-val { color: #fcd34d; }
+        .rk-danger .rk-val { color: #fca5a5; }
+
+        /* =========================================
+           SLIDE 6 — Navegación
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover .qa-icon { color: #a5b4fc; }
+        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue);   }
+        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover   .qa-icon { color: var(--kpi-pink);   }
+        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover   .qa-icon { color: #22d3ee;           }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; margin-bottom: 30px; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .radar-grid { grid-template-columns: 1fr; }
+            .radar-kpis { grid-template-columns: 1fr 1fr 1fr; }
+            .wb-body { grid-template-columns: 1fr; }
+            .wb-divider-line { display: none; }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .qa-icon { flex-shrink: 0; }
+            .qa-text { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #a5b4fc;">Apartado de Marca</h3>
+                <h1>Estándares<br><span style="color: white;">de Marca</span></h1>
+                <p>El nivel estratégico no produce, <strong style="color: white;">define</strong>. Los estándares son las tres piezas de identidad que la marca configura una sola vez y todas las sedes heredan automáticamente.</p>
+                <p>Una sede que hereda es una sede alineada. Una que se desvía aparece en el radar para revisión.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-ruler-combined" style="font-size: 72px; color: #a5b4fc;"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-image" style="color: #a5b4fc;"></i> Logo oficial</span>
+                    <span class="pill-tag"><i class="fas fa-panorama" style="color: var(--kpi-blue);"></i> Banner de portada</span>
+                    <span class="pill-tag"><i class="fas fa-hashtag" style="color: var(--kpi-purple);"></i> Presencia digital</span>
+                    <span class="pill-tag"><i class="fas fa-check-double" style="color: var(--kpi-green);"></i> Alineación por sede</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — LAS 3 PIEZAS BASE
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #a5b4fc;">La Base Que Se Hereda</h3>
+                <h2>Tres Piezas, Una Sola Configuración</h2>
+                <p>La marca no gestiona decenas de ajustes. Son exactamente <strong style="color: white;">tres piezas</strong> de identidad que definen cómo se presenta el negocio en cualquier contexto: digital o físico.</p>
+                <p>Configurás las tres una vez. El sistema hace el resto: controla qué sedes las tienen, cuáles se desviaron y cuáles todavía no las aplicaron.</p>
+
+                <div class="pieces-counter" style="margin-top: 8px;">
+                    <div class="pc-bubble">3</div>
+                    <div class="pc-text">
+                        <strong>Piezas de identidad</strong>
+                        <span>Logo · Banner · Redes — todo desde la marca</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="three-pieces">
+
+                    <div class="piece-row p-logo">
+                        <div class="piece-icon"><i class="fas fa-image"></i></div>
+                        <div class="piece-body">
+                            <strong>Logo oficial</strong>
+                            <p>La imagen principal que identifica la marca. Cada sede debería usarla sin modificaciones.</p>
+                        </div>
+                        <div class="piece-status status-ok"><i class="fas fa-check"></i> Configurado</div>
+                    </div>
+
+                    <div class="piece-row p-banner">
+                        <div class="piece-icon"><i class="fas fa-panorama"></i></div>
+                        <div class="piece-body">
+                            <strong>Banner de portada</strong>
+                            <p>La imagen principal de los perfiles públicos. Incluye recortes optimizados por dispositivo.</p>
+                        </div>
+                        <div class="piece-status status-ok"><i class="fas fa-check"></i> Configurado</div>
+                    </div>
+
+                    <div class="piece-row p-social">
+                        <div class="piece-icon"><i class="fas fa-hashtag"></i></div>
+                        <div class="piece-body">
+                            <strong>Presencia digital</strong>
+                            <p>Instagram, Facebook, TikTok y sitio web. Los links que todas las sedes deberían compartir.</p>
+                        </div>
+                        <div class="piece-status status-warn"><i class="fas fa-exclamation"></i> Incompleto</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — HERENCIA VS DESVÍO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Cómo Funciona la Propagación</h3>
+                <h2>Hereda, Diverge o Falta</h2>
+                <p>Una vez configurado el estándar en la marca, el sistema compara cada sede contra esa base. El resultado es uno de tres estados: <strong style="color: #6ee7b7;">Hereda</strong> (idéntica a la marca), <strong style="color: #93c5fd;">Propio</strong> (tiene algo diferente) o <strong style="color: #fca5a5;">Falta</strong> (no tiene nada).</p>
+                <p>No hay penalización por tener algo propio. Sí hay visibilidad total sobre quién se salió del estándar y quién todavía no lo aplicó.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="inheritance-diagram">
+
+                    <div class="id-brand">
+                        <div class="idb-icon"><i class="fas fa-crown"></i></div>
+                        <div class="idb-label">Marca — Estándares definidos</div>
+                        <div class="idb-badge">BASE</div>
+                    </div>
+
+                    <div style="display: flex; gap: 0; padding-left: 22px;">
+                        <div style="width: 2px; background: rgba(255,255,255,0.07); margin: 0 10px;"></div>
+                        <div class="id-branches" style="flex: 1;">
+
+                            <div class="id-branch b-aligned">
+                                <div class="ib-icon"><i class="fas fa-store"></i></div>
+                                <div class="ib-name">Sucursal Centro</div>
+                                <div class="ib-dots">
+                                    <div class="std-dot aligned" title="Logo"><i class="fas fa-check"></i></div>
+                                    <div class="std-dot aligned" title="Banner"><i class="fas fa-check"></i></div>
+                                    <div class="std-dot aligned" title="Redes"><i class="fas fa-check"></i></div>
+                                </div>
+                                <div class="piece-status status-ok" style="margin: 0; font-size: 10px; padding: 3px 8px;">Hereda</div>
+                            </div>
+
+                            <div class="id-branch b-custom">
+                                <div class="ib-icon"><i class="fas fa-store"></i></div>
+                                <div class="ib-name">Sucursal Norte</div>
+                                <div class="ib-dots">
+                                    <div class="std-dot aligned" title="Logo"><i class="fas fa-check"></i></div>
+                                    <div class="std-dot custom" title="Banner propio"><i class="fas fa-pen"></i></div>
+                                    <div class="std-dot aligned" title="Redes"><i class="fas fa-check"></i></div>
+                                </div>
+                                <div class="piece-status" style="margin: 0; font-size: 10px; padding: 3px 8px; background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);">Propio</div>
+                            </div>
+
+                            <div class="id-branch b-missing">
+                                <div class="ib-icon"><i class="fas fa-store"></i></div>
+                                <div class="ib-name">Sucursal Nueva</div>
+                                <div class="ib-dots">
+                                    <div class="std-dot missing" title="Logo falta"><i class="fas fa-xmark"></i></div>
+                                    <div class="std-dot missing" title="Banner falta"><i class="fas fa-xmark"></i></div>
+                                    <div class="std-dot missing" title="Redes falta"><i class="fas fa-xmark"></i></div>
+                                </div>
+                                <div class="piece-status status-missing" style="margin: 0; font-size: 10px; padding: 3px 8px;">Falta</div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="legend-row" style="margin-top: 14px;">
+                    <div class="legend-item"><div class="legend-dot" style="background: #6ee7b7;"></div> Hereda el estándar</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #93c5fd;"></div> Valor propio distinto</div>
+                    <div class="legend-item"><div class="legend-dot" style="background: #fca5a5;"></div> No tiene nada</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — EL WORKBENCH DE COMPARACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #a5b4fc;">La Pantalla de Trabajo</h3>
+                <h2>Comparar Marca vs Sede</h2>
+                <p>El workbench muestra en paralelo lo que tiene la marca y lo que tiene la sede seleccionada. Si hay diferencia, aparecen tres acciones: <strong style="color: #93c5fd;">Aplicar a marca</strong> (adoptar lo de la sede), <strong style="color: #fcd34d;">Permitir sede</strong> (aceptar que tenga algo propio) o <strong style="color: #fca5a5;">Descartar</strong> (forzar el estándar).</p>
+                <p>Tres decisiones. Vos elegís cuál aplica a cada caso.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="workbench-mock">
+                    <div class="wb-topbar">
+                        <div class="wb-title"><i class="fas fa-code-compare" style="margin-right: 8px; color: #a5b4fc;"></i>Imagen — Sucursal Norte (local)</div>
+                        <div class="wb-filter-tabs">
+                            <div class="wb-tab active">Imagen</div>
+                            <div class="wb-tab">Redes</div>
+                            <div class="wb-tab">Desvíos</div>
+                            <div class="wb-tab">Alineadas</div>
+                        </div>
+                    </div>
+                    <div class="wb-body">
+                        <div class="wb-col">
+                            <div class="wb-col-label brand-label">Marca — Estándar activo</div>
+                            <div class="wb-status-chip wbs-aligned"><i class="fas fa-crown"></i> Base oficial</div>
+                            <div class="wb-asset-box logo-box">
+                                <div class="fake-logo">BRAND</div>
+                            </div>
+                            <div class="wb-asset-box banner-box">
+                                <div class="fake-banner">Banner oficial · 1200×400</div>
+                            </div>
+                        </div>
+                        <div class="wb-divider-line"></div>
+                        <div class="wb-col">
+                            <div class="wb-col-label branch-label">Sucursal Norte — Lo que tiene</div>
+                            <div class="wb-status-chip wbs-custom"><i class="fas fa-pen"></i> Banner propio</div>
+                            <div class="wb-asset-box logo-box">
+                                <div class="fake-logo">BRAND</div>
+                            </div>
+                            <div class="wb-asset-box banner-box">
+                                <div class="fake-banner fake-banner-custom">Banner local · temporada</div>
+                            </div>
+                            <div class="wb-action-strip">
+                                <div class="wb-btn approve">Aplicar a marca</div>
+                                <div class="wb-btn allow">Permitir sede</div>
+                                <div class="wb-btn reject">Descartar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — EL RADAR DE SEÑALES
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+
+            <div class="text-block" style="text-align: center; margin-bottom: 32px; max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green);">El Panel de Revisión</h3>
+                <h2>El Radar Ve Todo lo que Falta</h2>
+                <p>Sin tener que revisar sede por sede, el panel de revisión agrupa todas las señales: estándares faltantes, desvíos de identidad y problemas de catálogo que afectan a Google Merchant.</p>
+            </div>
+
+            <div class="visual-block" style="max-width: 1100px; margin: 0 auto; width: 100%;">
+                <div class="radar-kpis">
+                    <div class="rk-card rk-ok">
+                        <div class="rk-val">2</div>
+                        <div class="rk-lbl">Piezas listas</div>
+                    </div>
+                    <div class="rk-card rk-warn">
+                        <div class="rk-val">1</div>
+                        <div class="rk-lbl">Sede con propio</div>
+                    </div>
+                    <div class="rk-card rk-danger">
+                        <div class="rk-val">3</div>
+                        <div class="rk-lbl">Sedes sin aplicar</div>
+                    </div>
+                </div>
+
+                <div class="radar-grid">
+
+                    <div class="radar-card rc-danger">
+                        <div class="rc-icon"><i class="fas fa-image"></i></div>
+                        <div class="rc-body">
+                            <strong>Logo sin aplicar</strong>
+                            <p>La sede todavía no tiene logo alineado con la marca.</p>
+                            <div class="rc-sede-tag">Sucursal Nueva</div>
+                        </div>
+                    </div>
+
+                    <div class="radar-card rc-warn">
+                        <div class="rc-icon"><i class="fas fa-panorama"></i></div>
+                        <div class="rc-body">
+                            <strong>Banner modificado</strong>
+                            <p>La sede usa un banner propio distinto al estándar de marca.</p>
+                            <div class="rc-sede-tag">Sucursal Norte</div>
+                        </div>
+                    </div>
+
+                    <div class="radar-card rc-danger">
+                        <div class="rc-icon"><i class="fab fa-google"></i></div>
+                        <div class="rc-body">
+                            <strong>Productos sin imagen</strong>
+                            <p>3 productos físicos del catálogo compartido no tienen imagen para Google Merchant.</p>
+                            <div class="rc-sede-tag">Sucursal Centro</div>
+                        </div>
+                    </div>
+
+                    <div class="radar-card rc-ok">
+                        <div class="rc-icon"><i class="fas fa-check-double"></i></div>
+                        <div class="rc-body">
+                            <strong>Sucursal Centro alineada</strong>
+                            <p>Aplica los tres estándares activos de la marca. Sin desvíos reportados.</p>
+                            <div class="rc-sede-tag">Sucursal Centro</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-indigo" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+
+            <div class="text-block">
+                <h3 style="color: #a5b4fc;">Seguir Explorando</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 880px; margin: 0 auto;">Ya entendés cómo se definen los estándares, cómo se heredan y cómo se detectan los desvíos. ¿Continuamos con los mensajes que acompañan a esa identidad?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+
+                <a href="index.html" class="qa-btn indigo" style="border-color: rgba(79,70,229,0.4);">
+                    <div class="qa-icon" style="color: #a5b4fc;"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Índice<br>de Marca</div>
+                </a>
+
+                <a href="brand_Mensajes.html" class="qa-btn pink">
+                    <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
+                    <div class="qa-text" style="color: white;">Mensajes<br>Clave</div>
+                </a>
+
+                <a href="brand_Red.html" class="qa-btn blue">
+                    <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text" style="color: white;">Red</div>
+                </a>
+
+                <a href="brand_Catalogo.html" class="qa-btn cyan">
+                    <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text" style="color: white;">Catálogo<br>Maestro</div>
+                </a>
+
+                <a href="brand_Talento.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-users"></i></div>
+                    <div class="qa-text" style="color: white;">Talento</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'brand_estandares';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,675 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensajes Clave — Apartado de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --accent:       #ec4899;
+            --kpi-green:    #10b981;
+            --kpi-blue:     #3b82f6;
+            --kpi-purple:   #a855f7;
+            --kpi-orange:   #f59e0b;
+            --kpi-pink:     #ec4899;
+            --kpi-teal:     #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           MOTOR DE SLIDES
+        ========================================= */
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-pink   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(236,72,153,0.13)  0%, transparent 70%); top: -12vw;    right: -12vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10)   0%, transparent 70%); bottom: -10vw; left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-teal   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20,184,166,0.11)   0%, transparent 70%); top: -10vw;    left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09)   0%, transparent 70%); bottom: -10vw; right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn {
+            background: rgba(255,255,255,0.1); border: none; color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .ctrl-btn:hover { background: var(--kpi-pink); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Los dos tipos de respuesta
+        ========================================= */
+        .two-types {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%;
+        }
+        .type-card {
+            border-radius: 14px; padding: 22px 20px;
+            display: flex; flex-direction: column; gap: 14px; border: 1px solid;
+        }
+        .type-card.tc-exact   { background: rgba(20,184,166,0.06);  border-color: rgba(20,184,166,0.28); }
+        .type-card.tc-contain { background: rgba(168,85,247,0.06);  border-color: rgba(168,85,247,0.28); }
+
+        .type-card .tc-icon {
+            width: 44px; height: 44px; border-radius: 11px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 19px; flex-shrink: 0;
+        }
+        .tc-exact   .tc-icon { background: rgba(20,184,166,0.15);  color: #5eead4; }
+        .tc-contain .tc-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+
+        .type-card strong { font-size: 16px; font-weight: 800; color: white; }
+        .type-card p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.45; }
+
+        .keyword-pill {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 900; padding: 5px 11px; border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .kp-exact   { background: rgba(20,184,166,0.15); color: #5eead4; border: 1px solid rgba(20,184,166,0.3); }
+        .kp-contain { background: rgba(168,85,247,0.15); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+        .kp-wildcard { background: rgba(245,158,11,0.12); color: #fcd34d; }
+
+        .tc-example {
+            background: rgba(0,0,0,0.25); border-radius: 10px; padding: 12px 14px;
+            font-size: 12px; color: var(--text-muted); line-height: 1.5;
+        }
+        .tc-example strong { color: white; display: block; margin-bottom: 4px; font-size: 13px; }
+        .tc-example code { color: #5eead4; background: rgba(20,184,166,0.1); padding: 1px 5px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 11px; }
+        .tc-contain .tc-example code { color: #d8b4fe; background: rgba(168,85,247,0.1); }
+
+        /* =========================================
+           SLIDE 3 — Variables dinámicas
+        ========================================= */
+        .variables-showcase {
+            display: flex; flex-direction: column; gap: 12px; width: 100%;
+        }
+        .var-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 16px; border-radius: 12px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            transition: 0.2s;
+        }
+        .var-row:hover { background: rgba(255,255,255,0.05); transform: translateX(4px); }
+        .var-token {
+            font-size: 12px; font-weight: 900; padding: 5px 12px; border-radius: 7px;
+            font-family: 'Courier New', monospace; flex-shrink: 0; min-width: 160px; text-align: center;
+        }
+        .vt-catalog  { background: rgba(20,184,166,0.12);  color: #5eead4;  border: 1px solid rgba(20,184,166,0.25); }
+        .vt-pdf      { background: rgba(59,130,246,0.12);  color: #93c5fd;  border: 1px solid rgba(59,130,246,0.25); }
+        .vt-store    { background: rgba(168,85,247,0.12);  color: #d8b4fe;  border: 1px solid rgba(168,85,247,0.25); }
+        .vt-name     { background: rgba(236,72,153,0.12);  color: #f9a8d4;  border: 1px solid rgba(236,72,153,0.25); }
+        .vt-phone    { background: rgba(245,158,11,0.12);  color: #fcd34d;  border: 1px solid rgba(245,158,11,0.25); }
+        .vt-schedule { background: rgba(16,185,129,0.12);  color: #6ee7b7;  border: 1px solid rgba(16,185,129,0.25); }
+
+        .var-desc { font-size: 13px; color: var(--text-muted); flex: 1; line-height: 1.4; }
+        .var-desc strong { color: white; display: block; font-size: 13px; margin-bottom: 2px; }
+
+        /* mensaje de ejemplo con variables */
+        .message-preview {
+            margin-top: 16px; padding: 16px 18px;
+            border-radius: 12px; background: rgba(236,72,153,0.06); border: 1px solid rgba(236,72,153,0.2);
+        }
+        .mp-label { font-size: 10px; font-weight: 900; color: var(--kpi-pink); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 7px; }
+        .mp-bubble {
+            background: rgba(255,255,255,0.05); border-radius: 0 12px 12px 12px;
+            padding: 12px 14px; font-size: 14px; color: #e2e8f0; line-height: 1.6;
+            border: 1px solid rgba(255,255,255,0.07); position: relative;
+        }
+        .mp-bubble::before {
+            content: ''; position: absolute; top: 0; left: -6px;
+            border: 6px solid transparent; border-right-color: rgba(255,255,255,0.05);
+            border-top-color: rgba(255,255,255,0.05);
+        }
+        .mp-var { font-weight: 900; padding: 0 3px; border-radius: 3px; }
+        .mp-var.pink   { color: #f9a8d4; background: rgba(236,72,153,0.12); }
+        .mp-var.teal   { color: #5eead4; background: rgba(20,184,166,0.12); }
+        .mp-var.purple { color: #d8b4fe; background: rgba(168,85,247,0.12); }
+
+        /* =========================================
+           SLIDE 4 — Condiciones de disparo
+        ========================================= */
+        .condition-cards {
+            display: flex; flex-direction: column; gap: 12px; width: 100%;
+        }
+        .cond-card {
+            display: flex; align-items: flex-start; gap: 15px;
+            padding: 16px 18px; border-radius: 13px; border: 1px solid;
+        }
+        .cond-card.cc-always  { background: rgba(20,184,166,0.06);  border-color: rgba(20,184,166,0.25); }
+        .cond-card.cc-stock   { background: rgba(245,158,11,0.06);  border-color: rgba(245,158,11,0.25); }
+        .cond-card.cc-future  { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); opacity: 0.6; }
+
+        .cc-icon {
+            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .cc-always .cc-icon  { background: rgba(20,184,166,0.15);  color: #5eead4; }
+        .cc-stock  .cc-icon  { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .cc-future .cc-icon  { background: rgba(255,255,255,0.05); color: #475569; }
+
+        .cc-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .cc-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        .cc-badge {
+            font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 5px;
+            margin-left: auto; align-self: flex-start; flex-shrink: 0;
+        }
+        .cc-always  .cc-badge { background: rgba(20,184,166,0.15);  color: #5eead4;  border: 1px solid rgba(20,184,166,0.3); }
+        .cc-stock   .cc-badge { background: rgba(245,158,11,0.15);  color: #fcd34d;  border: 1px solid rgba(245,158,11,0.3); }
+        .cc-future  .cc-badge { background: rgba(255,255,255,0.05); color: #475569;  border: 1px solid rgba(255,255,255,0.1); }
+
+        /* mockup de regla con condición */
+        .rule-mini-mock {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 13px; padding: 16px;
+        }
+        .rmm-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .rmm-label { font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; min-width: 80px; }
+        .rmm-value {
+            font-size: 13px; font-weight: 700;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+            padding: 6px 12px; border-radius: 8px; color: white; flex: 1;
+        }
+        .rmm-cond-select {
+            font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 8px;
+            background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25);
+        }
+
+        /* =========================================
+           SLIDE 5 — Retención: reglas automáticas
+        ========================================= */
+        .retention-flow {
+            display: flex; flex-direction: column; gap: 0; width: 100%;
+        }
+        .rf-step {
+            display: grid; grid-template-columns: 40px 1fr;
+            gap: 16px; align-items: flex-start; padding: 16px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .rf-step:last-child { border-bottom: none; }
+        .rf-num {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 900; border: 2px solid; flex-shrink: 0;
+        }
+        .rf-step:nth-child(1) .rf-num { border-color: #f9a8d4; color: #f9a8d4; background: rgba(236,72,153,0.1); }
+        .rf-step:nth-child(2) .rf-num { border-color: #fcd34d; color: #fcd34d; background: rgba(245,158,11,0.1); }
+        .rf-step:nth-child(3) .rf-num { border-color: #5eead4; color: #5eead4; background: rgba(20,184,166,0.1); }
+        .rf-step:nth-child(4) .rf-num { border-color: #d8b4fe; color: #d8b4fe; background: rgba(168,85,247,0.1); }
+
+        .rf-body strong { font-size: 16px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .rf-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+        .trigger-chips { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .trig-chip {
+            font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 7px; border: 1px solid;
+        }
+        .trig-inactive { background: rgba(236,72,153,0.12); color: #f9a8d4; border-color: rgba(236,72,153,0.3); }
+        .trig-periodic { background: rgba(245,158,11,0.12); color: #fcd34d; border-color: rgba(245,158,11,0.3); }
+        .trig-postbuy  { background: rgba(20,184,166,0.12); color: #5eead4; border-color: rgba(20,184,166,0.3); }
+
+        .incentive-chips { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .inc-chip {
+            font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 7px; border: 1px solid;
+        }
+        .inc-discount { background: rgba(16,185,129,0.12); color: #6ee7b7; border-color: rgba(16,185,129,0.3); }
+        .inc-combo    { background: rgba(59,130,246,0.12);  color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+        .inc-custom   { background: rgba(168,85,247,0.12);  color: #d8b4fe; border-color: rgba(168,85,247,0.3); }
+        .inc-none     { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+
+        .segment-chips { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .seg-chip {
+            font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 7px; border: 1px solid;
+        }
+        .seg-all      { background: rgba(255,255,255,0.05); color: var(--text-muted); border-color: rgba(255,255,255,0.1); }
+        .seg-vip      { background: rgba(245,158,11,0.12);  color: #fcd34d; border-color: rgba(245,158,11,0.3); }
+        .seg-frequent { background: rgba(59,130,246,0.12);  color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+        .seg-risk     { background: rgba(239,68,68,0.12);   color: #fca5a5; border-color: rgba(239,68,68,0.25); }
+
+        /* =========================================
+           SLIDE 6 — Navegación
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover    .qa-icon { color: #f9a8d4;   }
+        .qa-btn.indigo:hover  { border-color: #4f46e5;           } .qa-btn.indigo:hover  .qa-icon { color: #a5b4fc;   }
+        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover    .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover  .qa-icon { color: #d8b4fe;   }
+        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover    .qa-icon { color: #22d3ee;   }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .two-types { grid-template-columns: 1fr; }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .qa-icon { flex-shrink: 0; }
+            .qa-text { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-pink"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #f9a8d4;">Apartado de Marca</h3>
+                <h1>Mensajes<br><span style="color: white;">Clave</span></h1>
+                <p>La marca define <strong style="color: white;">una vez</strong> cómo responde el negocio, qué tono usa y cuándo actúa de forma automática. Las sedes no crean mensajes desde cero: heredan la voz de la marca.</p>
+                <p>Dos capas: respuestas automáticas ante palabras clave y reglas de retención que se disparan por comportamiento del cliente.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-comment-dots" style="font-size: 72px; color: #f9a8d4;"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-bullseye" style="color: #5eead4;"></i> Exactas</span>
+                    <span class="pill-tag"><i class="fas fa-search-plus" style="color: #d8b4fe;"></i> Por palabra suelta</span>
+                    <span class="pill-tag"><i class="fas fa-code" style="color: #f9a8d4;"></i> Variables dinámicas</span>
+                    <span class="pill-tag"><i class="fas fa-user-clock" style="color: var(--kpi-orange);"></i> Retención</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — LOS DOS TIPOS DE RESPUESTA AUTOMÁTICA
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-teal"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #5eead4;">AutoResponder</h3>
+                <h2>Exacto o por Palabra Suelta</h2>
+                <p>Hay dos formas de disparar una respuesta automática. La primera es el <strong style="color: white;">match exacto</strong>: el cliente escribe exactamente esa palabra y el bot responde. La segunda detecta si la palabra aparece <strong style="color: white;">en cualquier parte</strong> del mensaje.</p>
+                <p>Podés tener decenas de reglas activas en paralelo. Cada una es independiente, con su propio mensaje y condición.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="two-types">
+
+                    <div class="type-card tc-exact">
+                        <div class="tc-icon"><i class="fas fa-bullseye"></i></div>
+                        <strong>Mensaje exacto</strong>
+                        <p>El cliente escribe la palabra tal cual está configurada. Nada más, nada menos.</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span class="keyword-pill kp-exact">info</span>
+                            <span class="keyword-pill kp-exact">precios</span>
+                            <span class="keyword-pill kp-exact">horarios</span>
+                        </div>
+                        <div class="tc-example">
+                            <strong>Cliente escribe:</strong>
+                            <code>info</code> → respuesta exacta disparada
+                        </div>
+                    </div>
+
+                    <div class="type-card tc-contain">
+                        <div class="tc-icon"><i class="fas fa-search-plus"></i></div>
+                        <strong>Palabra suelta</strong>
+                        <p>La palabra aparece dentro de cualquier mensaje, sin importar lo que esté alrededor.</p>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span class="keyword-pill kp-contain"><span class="kp-wildcard">*</span>catálogo<span class="kp-wildcard">*</span></span>
+                            <span class="keyword-pill kp-contain"><span class="kp-wildcard">*</span>envío<span class="kp-wildcard">*</span></span>
+                        </div>
+                        <div class="tc-example">
+                            <strong>Cliente escribe:</strong>
+                            "hola, ¿tienen <code>catálogo</code> digital?" → disparada
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — VARIABLES DINÁMICAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #f9a8d4;">Personalización sin Esfuerzo</h3>
+                <h2>Variables que se Llenan Solas</h2>
+                <p>Los mensajes no son texto plano. Podés insertar variables que el sistema reemplaza en tiempo real con los datos reales del negocio. Un solo mensaje definido en la marca funciona en cualquier sede.</p>
+                <p>No editás mensaje por sede. <strong style="color: white;">Editás el template una vez</strong> y cada local entrega la información correcta automáticamente.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="variables-showcase">
+                    <div class="var-row">
+                        <div class="var-token vt-catalog">[TUCATALOGO]</div>
+                        <div class="var-desc"><strong>Catálogo web</strong>Link público al catálogo de la sede</div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-token vt-pdf">{catalog_pdf_url}</div>
+                        <div class="var-desc"><strong>PDF del catálogo</strong>Archivo descargable generado automáticamente</div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-token vt-store">{store_url}</div>
+                        <div class="var-desc"><strong>Tienda pública</strong>URL de la tienda online de la sede</div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-token vt-name">{business_name}</div>
+                        <div class="var-desc"><strong>Nombre del negocio</strong>Nombre configurado en los ajustes de la sede</div>
+                    </div>
+                    <div class="var-row">
+                        <div class="var-token vt-schedule">{schedule}</div>
+                        <div class="var-desc"><strong>Horarios</strong>Horarios de atención del local</div>
+                    </div>
+                </div>
+
+                <div class="message-preview">
+                    <div class="mp-label"><i class="fab fa-whatsapp"></i> Ejemplo de mensaje con variables</div>
+                    <div class="mp-bubble">
+                        Hola, gracias por escribirnos a <span class="mp-var pink">{business_name}</span>. 
+                        Nuestro catálogo completo está acá: <span class="mp-var teal">[TUCATALOGO]</span>. 
+                        Atendemos <span class="mp-var purple">{schedule}</span>. 
+                        ¡Te esperamos!
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — CONDICIONES DE DISPARO
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-teal"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: #5eead4;">Cuándo Responde el Bot</h3>
+                <h2>Condiciones de Disparo</h2>
+                <p>No todas las respuestas deben activarse siempre. Una regla puede responder <strong style="color: white;">únicamente cuando un producto está sin stock</strong>, evitando que el bot confirme disponibilidad de algo que no hay.</p>
+                <p>Cada regla tiene su condición propia. El mismo mensaje puede tener comportamientos distintos según el contexto operativo del negocio.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="condition-cards">
+
+                    <div class="cond-card cc-always">
+                        <div class="cc-icon"><i class="fas fa-infinity"></i></div>
+                        <div class="cc-body">
+                            <strong>Siempre</strong>
+                            <p>La respuesta se dispara cada vez que se detecta la palabra clave, sin importar el estado del negocio.</p>
+                        </div>
+                        <div class="cc-badge">Activo</div>
+                    </div>
+
+                    <div class="cond-card cc-stock">
+                        <div class="cc-icon"><i class="fas fa-box-open"></i></div>
+                        <div class="cc-body">
+                            <strong>Si producto sin stock</strong>
+                            <p>Solo responde si el producto consultado no tiene stock disponible. Ideal para redirigir al cliente.</p>
+                        </div>
+                        <div class="cc-badge">Activo</div>
+                    </div>
+
+                    <div class="cond-card cc-future">
+                        <div class="cc-icon"><i class="fas fa-clock"></i></div>
+                        <div class="cc-body">
+                            <strong>Más condiciones próximamente</strong>
+                            <p>Fuera de horario, cliente VIP, método de pago, entre otras.</p>
+                        </div>
+                        <div class="cc-badge">Pronto</div>
+                    </div>
+
+                </div>
+
+                <div class="rule-mini-mock" style="margin-top: 16px;">
+                    <div class="rmm-row">
+                        <span class="rmm-label">Palabra</span>
+                        <div class="rmm-value" style="color: #fcd34d; font-family: monospace;">zapatillas</div>
+                    </div>
+                    <div class="rmm-row">
+                        <span class="rmm-label">Condición</span>
+                        <div class="rmm-cond-select"><i class="fas fa-box-open" style="margin-right: 6px;"></i>Si producto sin stock</div>
+                    </div>
+                    <div class="rmm-row" style="margin-bottom: 0;">
+                        <span class="rmm-label">Respuesta</span>
+                        <div class="rmm-value" style="font-size: 12px; color: var(--text-muted);">"No tenemos stock en este momento, pero podés ver alternativas en {store_url}"</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — RETENCIÓN: REGLAS AUTOMÁTICAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block">
+                <h3 style="color: var(--kpi-pink);">La Segunda Capa</h3>
+                <h2>Retención: el Bot que Actúa Solo</h2>
+                <p>Más allá de responder preguntas, el módulo tiene un segundo motor: <strong style="color: white;">reglas de retención</strong> que observan el comportamiento del cliente y actúan de forma automática sin que nadie tenga que disparar nada.</p>
+                <p>Un cliente que no compra hace 30 días, un incentivo periódico, un mensaje post-compra. Todo configurable una vez, activo en toda la red.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="width: 100%;">
+                <div class="retention-flow">
+
+                    <div class="rf-step">
+                        <div class="rf-num">1</div>
+                        <div class="rf-body">
+                            <strong>Elegís el disparador</strong>
+                            <p>¿Qué comportamiento activa la regla?</p>
+                            <div class="trigger-chips">
+                                <span class="trig-chip trig-inactive">Cliente inactivo</span>
+                                <span class="trig-chip trig-periodic">Incentivo periódico</span>
+                                <span class="trig-chip trig-postbuy">Post-compra</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rf-step">
+                        <div class="rf-num">2</div>
+                        <div class="rf-body">
+                            <strong>Definís el segmento</strong>
+                            <p>¿A qué tipo de cliente le llega el mensaje?</p>
+                            <div class="segment-chips">
+                                <span class="seg-chip seg-all">Todos</span>
+                                <span class="seg-chip seg-vip">VIP</span>
+                                <span class="seg-chip seg-frequent">Frecuentes</span>
+                                <span class="seg-chip seg-risk">En riesgo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rf-step">
+                        <div class="rf-num">3</div>
+                        <div class="rf-body">
+                            <strong>Configurás el incentivo</strong>
+                            <p>¿Qué recibe el cliente además del mensaje?</p>
+                            <div class="incentive-chips">
+                                <span class="inc-chip inc-discount">Descuento %</span>
+                                <span class="inc-chip inc-combo">Combo</span>
+                                <span class="inc-chip inc-custom">Personalizado</span>
+                                <span class="inc-chip inc-none">Sin incentivo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rf-step">
+                        <div class="rf-num">4</div>
+                        <div class="rf-body">
+                            <strong>Escribís el mensaje y activás</strong>
+                            <p>La regla queda activa. El bot actúa solo cuando se cumple la condición, sin intervención manual.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-pink" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+
+            <div class="text-block">
+                <h3 style="color: #f9a8d4;">Seguir Explorando</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 880px; margin: 0 auto;">Ya sabés cómo la marca define su voz y sus reglas de comunicación. ¿Continuamos con cómo gestiona visualmente los estándares o la tabla de mando de la red?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+
+                <a href="index.html" class="qa-btn pink" style="border-color: rgba(236,72,153,0.4);">
+                    <div class="qa-icon" style="color: #f9a8d4;"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Índice<br>de Marca</div>
+                </a>
+
+                <a href="brand_Estandares.html" class="qa-btn indigo">
+                    <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="qa-text" style="color: white;">Estándares</div>
+                </a>
+
+                <a href="brand_Red.html" class="qa-btn blue">
+                    <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text" style="color: white;">Red</div>
+                </a>
+
+                <a href="brand_Talento.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-users"></i></div>
+                    <div class="qa-text" style="color: white;">Talento</div>
+                </a>
+
+                <a href="brand_Catalogo.html" class="qa-btn cyan">
+                    <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text" style="color: white;">Catálogo<br>Maestro</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'brand_mensajes';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

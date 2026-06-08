@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red — Apartado de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15,23,42,0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255,255,255,0.05);
+            --kpi-blue: #3b82f6;
+            --kpi-green: #10b981;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-teal: #14b8a6;
+            --kpi-red: #ef4444;
+            --kpi-indigo: #4f46e5;
+            --kpi-cyan: #06b6d4;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-base); font-family: 'Urbanist', sans-serif; color: var(--text-main); }
+        .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.4s ease; background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .slide-content-wide { width: 100%; max-width: 1400px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+        .glow-blue   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(59,130,246,0.13) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-teal   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .presentation-controls { position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center; }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-blue); }
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* SLIDE 2 — Tabla de Mando */
+        .branch-table { width: 100%; border-collapse: collapse; }
+        .branch-table th { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 900; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: left; }
+        .branch-table td { padding: 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
+        .branch-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .branch-name { font-weight: 800; color: white; }
+        .status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+        .sc-healthy  { background: rgba(16,185,129,0.12); color: #34d399; }
+        .sc-warning  { background: rgba(245,158,11,0.12); color: #fbbf24; }
+        .sc-critical { background: rgba(239,68,68,0.12);  color: #f87171; }
+        .dev-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        .dp-error   { background: rgba(239,68,68,0.1);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .dp-ok      { background: rgba(16,185,129,0.1);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+        .perm-select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; border-radius: 8px; padding: 5px 8px; font-size: 11px; font-weight: 800; outline: none; cursor: pointer; }
+        .perm-select.ps-blocked  { color: #fca5a5; }
+        .perm-select.ps-approval { color: #93c5fd; }
+        .perm-select.ps-direct   { color: #6ee7b7; }
+
+        /* SLIDE 3 — Comparativa 1v1 */
+        .vs-panel { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; align-items: center; width: 100%; }
+        .vs-col { display: flex; flex-direction: column; gap: 12px; }
+        .vs-name { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
+        .vs-metric-row { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); }
+        .vs-metric-row small { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        .vs-metric-row strong { font-size: 18px; color: white; }
+        .vs-divider { display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #475569; }
+        .vs-conclusion { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* SLIDE 4 — Prioridades */
+        .signal-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .signal-item { display: flex; gap: 14px; padding: 16px 18px; border-radius: 14px; border: 1px solid; align-items: flex-start; transition: 0.2s; }
+        .signal-item:hover { transform: translateX(4px); }
+        .si-critical { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2); }
+        .si-warning  { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.22); }
+        .si-info     { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
+        .si-ok       { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.22); }
+        .si-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .si-critical .si-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
+        .si-warning  .si-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .si-info     .si-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .si-ok       .si-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .si-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .si-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        .si-action { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; font-weight: 900; color: #60a5fa; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); padding: 4px 10px; border-radius: 6px; }
+
+        /* SLIDE 5 — Permisos */
+        .perms-explainer { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .perm-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: 13px; border: 1px solid; }
+        .perm-row.pr-blocked  { background: rgba(239,68,68,0.06);   border-color: rgba(239,68,68,0.25); }
+        .perm-row.pr-approval { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.25); }
+        .perm-row.pr-direct   { background: rgba(16,185,129,0.06);  border-color: rgba(16,185,129,0.25); }
+        .perm-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .pr-blocked  .perm-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
+        .pr-approval .perm-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .pr-direct   .perm-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .perm-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .perm-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.45; }
+        .perm-badge-tag { font-size: 11px; font-weight: 900; padding: 3px 9px; border-radius: 5px; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
+        .pr-blocked  .perm-badge-tag { background: rgba(239,68,68,0.15);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+        .pr-approval .perm-badge-tag { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+        .pr-direct   .perm-badge-tag { background: rgba(16,185,129,0.15);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+
+        /* SLIDE 6 — nav */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover    .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover  .qa-icon { color: #d8b4fe; }
+        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover  .qa-icon { color: #a5b4fc; }
+        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover    .qa-icon { color: #f9a8d4; }
+        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover    .qa-icon { color: #22d3ee; }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .vs-panel { grid-template-columns: 1fr; }
+            .vs-divider { display: none; }
+            .nav-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .qa-icon { flex-shrink: 0; } .qa-text { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-controls">
+    <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+    <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+    <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<!-- SLIDE 1 — INTRO -->
+<div class="slide active">
+    <div class="glow-blue"></div>
+    <div class="slide-content-wide grid-split">
+        <div class="text-block">
+            <h3 style="color:#93c5fd;">Apartado de Marca</h3>
+            <h1>Red</h1>
+            <p>La tabla de mando de toda la red de sedes. Comparás ventas, estado operativo, desvíos de catálogo y permisos de edición desde un solo panel. La marca tiene visibilidad total sin entrar a cada local.</p>
+            <p>Seleccionás hasta 2 sedes para comparación directa 1 vs 1.</p>
+        </div>
+        <div class="visual-block glass-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;min-height:380px;text-align:center;">
+            <i class="fas fa-network-wired" style="font-size:72px;color:#93c5fd;"></i>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+                <span class="pill-tag"><i class="fas fa-list" style="color:#93c5fd;"></i> Tabla de Mando</span>
+                <span class="pill-tag"><i class="fas fa-not-equal" style="color:#d8b4fe;"></i> Comparativa 1v1</span>
+                <span class="pill-tag"><i class="fas fa-bullseye" style="color:#fcd34d;"></i> Prioridades</span>
+                <span class="pill-tag"><i class="fas fa-user-shield" style="color:#6ee7b7;"></i> Permisos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 2 — TABLA DE MANDO -->
+<div class="slide">
+    <div class="glow-teal"></div>
+    <div class="slide-content-wide grid-split">
+        <div class="text-block">
+            <h3 style="color:#5eead4;">El Centro de Control</h3>
+            <h2>Una Tabla, Toda la Red</h2>
+            <p>Cada fila es una sede. Cada columna responde a una pregunta estratégica: ¿está activa? ¿cuánto vendió? ¿tiene desvíos? ¿con qué permisos opera sobre el catálogo?</p>
+            <p>Las sedes se ordenan por <strong style="color:white;">riesgo operativo</strong> descendente: las que más necesitan atención aparecen primero.</p>
+        </div>
+        <div class="visual-block glass-panel" style="width:100%;overflow-x:auto;">
+            <table class="branch-table">
+                <thead>
+                    <tr>
+                        <th>Sede</th>
+                        <th>Estado</th>
+                        <th>Ventas</th>
+                        <th>Desvíos</th>
+                        <th>Permisos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="branch-name">Sucursal Nueva</div></td>
+                        <td><span class="status-chip sc-critical"><i class="fas fa-circle" style="font-size:7px;"></i> Crítica</span></td>
+                        <td style="color:white;font-weight:700;">$0.8M</td>
+                        <td><span class="dev-pill dp-error"><i class="fas fa-boxes"></i> 4</span></td>
+                        <td><select class="perm-select ps-approval"><option>Con aprobación</option></select></td>
+                    </tr>
+                    <tr>
+                        <td><div class="branch-name">Sucursal Norte</div></td>
+                        <td><span class="status-chip sc-warning"><i class="fas fa-circle" style="font-size:7px;"></i> A vigilar</span></td>
+                        <td style="color:white;font-weight:700;">$1.3M</td>
+                        <td><span class="dev-pill dp-error"><i class="fas fa-clock"></i> 8</span></td>
+                        <td><select class="perm-select ps-approval"><option>Con aprobación</option></select></td>
+                    </tr>
+                    <tr>
+                        <td><div class="branch-name">Sucursal Centro</div></td>
+                        <td><span class="status-chip sc-healthy"><i class="fas fa-circle" style="font-size:7px;"></i> Estable</span></td>
+                        <td style="color:white;font-weight:700;">$2.1M</td>
+                        <td><span class="dev-pill dp-ok"><i class="fas fa-check"></i> OK</span></td>
+                        <td><select class="perm-select ps-direct"><option>Edición directa</option></select></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.5;">
+                <i class="fas fa-info-circle" style="color:#60a5fa;margin-right:6px;"></i>
+                Seleccioná 2 sedes para activar la comparativa 1v1 en el panel lateral.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3 — COMPARATIVA 1v1 -->
+<div class="slide">
+    <div class="glow-blue"></div>
+    <div class="slide-content-wide grid-split">
+        <div class="text-block">
+            <h3 style="color:#93c5fd;">La Lupa Estratégica</h3>
+            <h2>Comparativa 1 vs 1</h2>
+            <p>Seleccionás dos sedes en la tabla y el panel lateral muestra la comparación directa: ventas, staff, clientes y la brecha en facturación calculada en tiempo real.</p>
+            <p>La herramienta más rápida para detectar <strong style="color:white;">disparidades operativas</strong> entre locales similares.</p>
+        </div>
+        <div class="visual-block glass-panel" style="width:100%;">
+            <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:14px;">Comparativa activa</div>
+            <div class="vs-panel">
+                <div class="vs-col">
+                    <div class="vs-name" style="color:#60a5fa;">Sucursal Centro</div>
+                    <div class="vs-metric-row"><small>Ventas</small><strong>$2.1M</strong></div>
+                    <div class="vs-metric-row"><small>Staff</small><strong>7</strong></div>
+                    <div class="vs-metric-row"><small>Clientes</small><strong>1.842</strong></div>
+                </div>
+                <div class="vs-divider">VS</div>
+                <div class="vs-col">
+                    <div class="vs-name" style="color:#f472b6;">Sucursal Norte</div>
+                    <div class="vs-metric-row"><small>Ventas</small><strong>$1.3M</strong></div>
+                    <div class="vs-metric-row"><small>Staff</small><strong>3</strong></div>
+                    <div class="vs-metric-row"><small>Clientes</small><strong>1.025</strong></div>
+                </div>
+            </div>
+            <div class="vs-conclusion">
+                La diferencia en facturación es de <strong style="color:white;">$800.000</strong>. La brecha de staff podría explicar parte de la diferencia.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4 — PRIORIDADES -->
+<div class="slide">
+    <div class="glow-purple"></div>
+    <div class="slide-content-wide grid-split">
+        <div class="text-block">
+            <h3 style="color:#d8b4fe;">El Panel Lateral</h3>
+            <h2>Prioridades de la Red</h2>
+            <p>Cuando no hay comparativa activa, el panel lateral muestra las señales más importantes de la red ordenadas por urgencia. No hay que leer toda la tabla: el sistema ya lo hizo.</p>
+            <p>Cada señal tiene una <strong style="color:white;">acción directa</strong> para resolver o investigar desde ahí mismo.</p>
+        </div>
+        <div class="visual-block" style="width:100%;">
+            <div class="signal-list">
+                <div class="signal-item si-critical">
+                    <div class="si-icon"><i class="fas fa-boxes-stacked"></i></div>
+                    <div class="si-body">
+                        <strong>Desfasaje de Catálogo</strong>
+                        <p>Sucursal Norte: 4 desvíos comerciales frente al estándar de marca.</p>
+                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver estándares</span>
+                    </div>
+                </div>
+                <div class="signal-item si-warning">
+                    <div class="si-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                    <div class="si-body">
+                        <strong>Intervención Prioritaria</strong>
+                        <p>Sucursal Nueva: sin liderazgo y con ventas -3% este mes.</p>
+                        <span class="si-action"><i class="fas fa-arrow-right"></i> Revisar sede</span>
+                    </div>
+                </div>
+                <div class="signal-item si-info">
+                    <div class="si-icon"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="si-body">
+                        <strong>Cuello de Botella</strong>
+                        <p>Sucursal Centro: 8 reservas estancadas sin resolución.</p>
+                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver operaciones</span>
+                    </div>
+                </div>
+                <div class="signal-item si-ok">
+                    <div class="si-icon"><i class="fas fa-trophy"></i></div>
+                    <div class="si-body">
+                        <strong>Mejor Referencia</strong>
+                        <p>Sucursal Centro lidera la red con $2.1M en ventas del mes.</p>
+                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver finanzas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5 — PERMISOS DE CATÁLOGO -->
+<div class="slide">
+    <div class="glow-green"></div>
+    <div class="slide-content-wide grid-split">
+        <div class="text-block">
+            <h3 style="color:#6ee7b7;">Control de Edición</h3>
+            <h2>Permisos de Catálogo por Sede</h2>
+            <p>Desde la tabla, la marca controla exactamente <strong style="color:white;">cuánta libertad editorial</strong> tiene cada sede sobre el catálogo maestro. Tres modos, tres niveles de autonomía.</p>
+            <p>Se cambia con un select en la misma fila. Sin modales, sin flujos intermedios. El cambio se guarda al instante.</p>
+        </div>
+        <div class="visual-block" style="width:100%;">
+            <div class="perms-explainer">
+                <div class="perm-row pr-blocked">
+                    <div class="perm-icon"><i class="fas fa-ban"></i></div>
+                    <div class="perm-body">
+                        <strong>Sin acceso</strong>
+                        <p>La sede no puede modificar ni proponer cambios en el catálogo. Solo hereda lo oficial.</p>
+                    </div>
+                    <div class="perm-badge-tag">Bloqueado</div>
+                </div>
+                <div class="perm-row pr-approval">
+                    <div class="perm-icon"><i class="fas fa-user-shield"></i></div>
+                    <div class="perm-body">
+                        <strong>Con aprobación</strong>
+                        <p>La sede propone cambios pero la marca los revisa antes de que entren al catálogo activo.</p>
+                    </div>
+                    <div class="perm-badge-tag">Revisión</div>
+                </div>
+                <div class="perm-row pr-direct">
+                    <div class="perm-icon"><i class="fas fa-pen-to-square"></i></div>
+                    <div class="perm-body">
+                        <strong>Edición directa</strong>
+                        <p>La sede puede modificar precios, stock y categorías sin aprobación previa. Solo sedes de alta confianza.</p>
+                    </div>
+                    <div class="perm-badge-tag">Directo</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6 — NAV -->
+<div class="slide">
+    <div class="glow-blue" style="left:50%;transform:translateX(-50%);top:-300px;width:800px;height:800px;"></div>
+    <div class="slide-content-wide" style="align-items:center;text-align:center;justify-content:center;">
+        <div class="text-block">
+            <h3 style="color:#93c5fd;">Seguir Explorando</h3>
+            <h2>¿Qué vemos ahora?</h2>
+            <p style="max-width:880px;margin:0 auto;">Ya entendés cómo la marca controla su red de sedes. ¿Continuamos con el talento de red o con los estándares de identidad?</p>
+        </div>
+        <div class="visual-block nav-grid">
+            <a href="index.html" class="qa-btn blue" style="border-color:rgba(59,130,246,0.4);">
+                <div class="qa-icon" style="color:#93c5fd;"><i class="fas fa-map"></i></div>
+                <div class="qa-text" style="color:white;">Índice de Marca</div>
+            </a>
+            <a href="brand_Talento.html" class="qa-btn purple">
+                <div class="qa-icon"><i class="fas fa-users"></i></div>
+                <div class="qa-text" style="color:white;">Talento</div>
+            </a>
+            <a href="brand_Estandares.html" class="qa-btn indigo">
+                <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
+                <div class="qa-text" style="color:white;">Estándares</div>
+            </a>
+            <a href="brand_Mensajes.html" class="qa-btn pink">
+                <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
+                <div class="qa-text" style="color:white;">Mensajes</div>
+            </a>
+            <a href="brand_Catalogo.html" class="qa-btn cyan">
+                <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="qa-text" style="color:white;">Catálogo Maestro</div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    const pageId = 'brand_red';
+    let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+    const slides = document.querySelectorAll('.slide');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const currentSlideNum = document.getElementById('currentSlideNum');
+    const totalSlidesDisplay = document.getElementById('totalSlides');
+    function updateSlides() {
+        if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+        slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+        currentSlideNum.innerText = currentIndex + 1;
+        localStorage.setItem('slide_' + pageId, currentIndex);
+        setTimeout(() => window.scrollTo(0, 0), 50);
+    }
+    function nextSlide() {
+        if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+        else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+    }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; updateSlides(); } }
+    btnNext.addEventListener('click', nextSlide);
+    btnPrev.addEventListener('click', prevSlide);
+    document.addEventListener('keydown', (e) => {
+        const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+        if (!isTyping) {
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+        }
+    });
+    updateSlides();
+</script>
+</body>
+</html>
