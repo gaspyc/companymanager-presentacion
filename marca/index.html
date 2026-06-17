@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const referrer = document.referrer;
+            if (referrer && (referrer.includes('/ecosystem') || referrer.includes('localhost') || referrer.includes('127.0.0.1') || referrer.includes('duckdns.org'))) {
+                window.location.href = referrer;
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                window.location.href = 'http://localhost:5173/ecosystem';
+            }
+        })();
+    </script>
     <title>Brand — Apartado Estratégico de Marca</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

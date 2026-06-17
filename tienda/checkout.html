@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:           #0f172a;
+            --bg-panel:     rgba(15,23,42,0.65);
+            --text-main:    #f8fafc;
+            --text-muted:   #94a3b8;
+            --border:       rgba(255,255,255,0.06);
+            --green:        #10b981;
+            --blue:         #3b82f6;
+            --purple:       #a855f7;
+            --orange:       #f59e0b;
+            --pink:         #ec4899;
+            --red:          #ef4444;
+            --wa:           #25d366;
+            --mp:           #009ee3;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           SLIDE ENGINE
+        ========================================= */
+        .slide {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-inner {
+            width: 100%; max-width: 1380px;
+            display: flex; flex-direction: column; justify-content: center;
+            position: relative; z-index: 2;
+        }
+
+        /* glows */
+        .g-green  { position: absolute; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(16,185,129,0.11) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-blue   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-purple { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-wa     { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(37,211,102,0.09) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 1; }
+
+        /* =========================================
+           CONTROLS
+        ========================================= */
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px;
+            border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--green); }
+        .slide-num { font-size: 13px; font-weight: 700; color: var(--text-muted); font-family: monospace; padding: 0 6px; }
+
+        /* =========================================
+           TYPE SCALE
+        ========================================= */
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--text-muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 62px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 19px; color: var(--text-muted); line-height: 1.6; max-width: 560px; }
+
+        /* =========================================
+           LAYOUT HELPERS
+        ========================================= */
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .split-wide { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: start; }
+        .split-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .glass { background: var(--bg-panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — INTRO
+        ========================================= */
+        .intro-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 32px; }
+        .tag { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); color: var(--text-muted); }
+        .tag i { font-size: 12px; }
+
+        .intro-visual {
+            display: flex; flex-direction: column; gap: 0;
+            border-radius: 20px; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .iv-header {
+            background: white; padding: 16px 22px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .iv-title { font-size: 15px; font-weight: 900; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .iv-close { width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #94a3b8; }
+        .iv-body { display: grid; grid-template-columns: 1fr 1fr; background: white; }
+        .iv-ticket { background: #e8edf4; padding: 18px; }
+        .iv-form   { background: white; padding: 18px; }
+
+        .iv-receipt-title { font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; text-align: center; margin-bottom: 12px; }
+        .iv-item { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #cbd5e1; }
+        .iv-item:last-child { border-bottom: none; }
+        .iv-item-left .qty { font-size: 12px; font-weight: 900; color: #10b981; border-bottom: 1px dashed #10b981; display: inline; cursor: text; }
+        .iv-item-left .name { font-size: 12px; font-weight: 600; color: #334155; margin-left: 6px; }
+        .iv-item-left .promo { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: #ecfdf5; color: #047857; font-weight: 800; display: inline-block; margin-top: 4px; }
+        .iv-item-right .old { font-size: 10px; color: #94a3b8; text-decoration: line-through; text-align: right; }
+        .iv-item-right .final { font-size: 13px; font-weight: 900; color: #0f172a; text-align: right; }
+        .iv-total { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding-top: 10px; border-top: 2px solid #e2e8f0; }
+        .iv-total span { font-size: 12px; font-weight: 800; color: #475569; }
+        .iv-total strong { font-size: 22px; font-weight: 900; color: #1e293b; }
+
+        .iv-form-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .iv-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: #334155; margin-bottom: 10px; }
+        .iv-input.filled { color: #0f172a; font-weight: 700; }
+        .iv-btn-wa { width: 100%; background: #25d366; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+        .iv-btn-mp { width: 100%; background: #009ee3; color: white; border: none; border-radius: 8px; padding: 10px; font-size: 12px; font-weight: 800; text-align: center; margin-bottom: 6px; }
+        .iv-btn-local { width: 100%; background: white; color: #475569; border: 1px solid #cbd5e1; border-radius: 8px; padding: 9px; font-size: 12px; font-weight: 700; text-align: center; }
+
+        /* =========================================
+           SLIDE 2 — TICKET
+        ========================================= */
+        .ticket-demo {
+            background: white; border-radius: 18px; padding: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            max-width: 360px; width: 100%;
+        }
+        .td-title { font-size: 11px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.5px; text-align: center; margin-bottom: 16px; }
+        .td-item { margin-bottom: 14px; }
+        .td-item-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .td-qty-box { display: inline-flex; align-items: baseline; gap: 2px; border-bottom: 1px dashed #10b981; cursor: text; }
+        .td-qty { font-size: 15px; font-weight: 900; color: #10b981; min-width: 1ch; }
+        .td-x   { font-size: 13px; font-weight: 700; color: #10b981; }
+        .td-name { font-size: 13px; font-weight: 600; color: #334155; margin-left: 8px; }
+        .td-unit { font-size: 11px; color: #94a3b8; margin-top: 3px; display: flex; gap: 6px; align-items: center; }
+        .td-unit .old { text-decoration: line-through; }
+        .td-prices { text-align: right; }
+        .td-old   { font-size: 11px; color: #94a3b8; text-decoration: line-through; }
+        .td-final { font-size: 15px; font-weight: 900; color: #0f172a; }
+        .td-pill  { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 999px; background: #ecfdf5; color: #047857; font-size: 11px; font-weight: 800; margin-top: 5px; }
+        .td-combo { font-size: 11px; color: #94a3b8; padding-left: 22px; margin-top: 3px; }
+        .td-divider { border: none; border-top: 2px dashed #e2e8f0; margin: 14px 0; }
+        .td-total-row { display: flex; justify-content: space-between; align-items: flex-end; }
+        .td-total-lbl { font-size: 16px; font-weight: 900; color: #1e293b; }
+        .td-total-val { font-size: 28px; font-weight: 900; color: #1e293b; }
+        .td-badge { display: inline-block; margin-top: 12px; padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: white; }
+
+        .ticket-callouts { display: flex; flex-direction: column; gap: 16px; }
+        .callout {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 16px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .callout-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .callout-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .callout-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+        .co-green  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .co-blue   { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  }
+        .co-orange { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  }
+        .co-green  .callout-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .co-blue   .callout-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .co-orange .callout-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 3 — FORM + DELIVERY
+        ========================================= */
+        .form-demo {
+            background: white; border-radius: 18px; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.35); width: 100%;
+        }
+        .fd-section { padding: 18px 22px; border-bottom: 1px solid #f1f5f9; }
+        .fd-section:last-child { border-bottom: none; }
+        .fd-section-title { font-size: 12px; font-weight: 900; color: #475569; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .fd-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .fd-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 9px; padding: 10px 12px; font-size: 12px; color: #0f172a; font-weight: 700; }
+        .fd-input.placeholder { color: #94a3b8; font-weight: 400; }
+
+        .fd-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+        .fd-mode { padding: 10px 12px; border-radius: 10px; font-size: 12px; font-weight: 700; text-align: center; }
+        .fd-mode.active { background: #0f172a; color: white; }
+        .fd-mode.inactive { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+
+        .fd-delivery-box {
+            background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+            border: 1px solid #dbeafe; border-radius: 12px; padding: 12px 14px;
+        }
+        .fd-search { position: relative; margin-bottom: 10px; }
+        .fd-search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 12px; }
+        .fd-search-input { width: 100%; background: white; border: 1px solid #dbeafe; border-radius: 8px; padding: 9px 10px 9px 28px; font-size: 12px; color: #0f172a; font-weight: 700; }
+        .fd-dropdown { background: white; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .fd-option { padding: 9px 12px; font-size: 11px; color: #334155; border-bottom: 1px solid #f1f5f9; }
+        .fd-option:last-child { border-bottom: none; }
+        .fd-option.active { background: #eff6ff; color: #1d4ed8; font-weight: 700; }
+        .fd-meta { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; font-weight: 700; color: #475569; }
+
+        /* =========================================
+           SLIDE 4 — MÉTODOS DE PAGO
+        ========================================= */
+        .payment-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+        .pay-card {
+            border-radius: 18px; padding: 24px 20px;
+            display: flex; flex-direction: column; gap: 14px;
+            border: 1px solid; transition: 0.2s;
+        }
+        .pay-card:hover { transform: translateY(-3px); }
+
+        .pay-card.pc-wa     { background: rgba(37,211,102,0.05);  border-color: rgba(37,211,102,0.25);  }
+        .pay-card.pc-mp     { background: rgba(0,158,227,0.05);   border-color: rgba(0,158,227,0.25);   }
+        .pay-card.pc-local  { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+        .pay-card.pc-digital{ background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);   }
+
+        .pay-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .pc-wa     .pay-icon { background: rgba(37,211,102,0.15);  color: #4ade80; }
+        .pc-mp     .pay-icon { background: rgba(0,158,227,0.15);   color: #38bdf8; }
+        .pc-local  .pay-icon { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+        .pc-digital .pay-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .pay-card h3 { font-size: 16px; font-weight: 800; color: white; margin: 0; }
+        .pay-card p  { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+        .pay-tag { display: inline-block; margin-top: auto; font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 6px; }
+        .pc-wa     .pay-tag { background: rgba(37,211,102,0.12);  color: #4ade80;   border: 1px solid rgba(37,211,102,0.25);  }
+        .pc-mp     .pay-tag { background: rgba(0,158,227,0.12);   color: #38bdf8;   border: 1px solid rgba(0,158,227,0.25);   }
+        .pc-local  .pay-tag { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border); }
+        .pc-digital .pay-tag { background: rgba(168,85,247,0.12); color: #d8b4fe;   border: 1px solid rgba(168,85,247,0.25); }
+
+        .pay-note {
+            margin-top: 28px; padding: 16px 20px; border-radius: 14px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            font-size: 13px; color: var(--text-muted); line-height: 1.6; text-align: center;
+        }
+        .pay-note strong { color: white; }
+
+        /* =========================================
+           SLIDE 5 — TOASTS Y VALIDACIONES
+        ========================================= */
+        .toast-stack { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 420px; }
+        .toast-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 18px; border-radius: 12px; font-size: 14px; font-weight: 600; color: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .toast-item i { font-size: 16px; flex-shrink: 0; }
+        .t-success { background: var(--green);  border: 1px solid #059669; }
+        .t-error   { background: var(--red);    border: 1px solid #b91c1c; }
+        .t-warning { background: var(--orange); border: 1px solid #d97706; }
+
+        .validation-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+        .val-rule {
+            display: flex; align-items: center; gap: 12px;
+            padding: 13px 16px; border-radius: 12px; border: 1px solid;
+        }
+        .val-rule.vr-block  { background: rgba(239,68,68,0.05);  border-color: rgba(239,68,68,0.18);  }
+        .val-rule.vr-warn   { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.18); }
+        .val-rule.vr-ok     { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.18); }
+        .val-rule .vr-icon  { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .vr-block .vr-icon  { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+        .vr-warn  .vr-icon  { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .vr-ok    .vr-icon  { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .val-rule span { font-size: 13px; color: var(--text-muted); }
+        .val-rule strong { font-size: 13px; font-weight: 800; color: white; }
+
+        /* =========================================
+           SLIDE 6 — NAVEGACIÓN
+        ========================================= */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin-top: 38px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn {
+            width: 190px; background: var(--bg-panel); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px 16px; display: flex; flex-direction: column;
+            align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 52px; height: 52px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split, .split-wide { grid-template-columns: 1fr; gap: 36px; }
+            .split-3 { grid-template-columns: 1fr; }
+            .payment-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 42px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 360px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; }
+            .nav-label { text-align: left; }
+        }
+        @media (max-width: 600px) {
+            .payment-grid { grid-template-columns: 1fr; }
+            .iv-body { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-num"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g-green" style="top: -15vw; right: -10vw;"></div>
+        <div class="g-blue"  style="bottom: -12vw; left: -8vw;"></div>
+
+        <div class="slide-inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="eyebrow-dot" style="background: var(--green);"></span>
+                    Tienda Online · Módulo
+                </div>
+                <h1>El Checkout<br><span style="color: var(--green);">que cierra</span><br>pedidos.</h1>
+                <p class="lead">Un modal dividido en dos mitades: el resumen editable del pedido a la derecha, el formulario de entrega y pago a la izquierda. El cliente llega, confirma y se va.</p>
+                <div class="intro-tags">
+                    <span class="tag"><i class="fas fa-file-invoice" style="color: var(--green);"></i> Ticket editable</span>
+                    <span class="tag"><i class="fas fa-motorcycle" style="color: var(--blue);"></i> Delivery con geocoding</span>
+                    <span class="tag"><i class="fab fa-whatsapp" style="color: var(--wa);"></i> WhatsApp</span>
+                    <span class="tag"><i class="fas fa-credit-card" style="color: var(--mp);"></i> Mercado Pago</span>
+                    <span class="tag"><i class="fas fa-bell" style="color: var(--orange);"></i> Toasts no bloqueantes</span>
+                </div>
+            </div>
+
+            <div class="intro-visual">
+                <div class="iv-header">
+                    <div class="iv-title">
+                        <i class="fas fa-lock" style="color: #94a3b8; font-size: 13px;"></i>
+                        Finalizar Compra
+                    </div>
+                    <div class="iv-close"><i class="fas fa-times"></i></div>
+                </div>
+                <div class="iv-body">
+                    <div class="iv-ticket">
+                        <div class="iv-receipt-title">Resumen de tu orden</div>
+                        <div class="iv-item">
+                            <div class="iv-item-left">
+                                <span class="qty">3</span><span style="font-size:11px; color: #10b981; margin: 0 4px;">x</span><span class="name">Invictus - Aura</span>
+                                <div><span class="promo"><i class="fas fa-tag"></i> Promo 32%</span></div>
+                            </div>
+                            <div class="iv-item-right">
+                                <div class="old">$ 22.425</div>
+                                <div class="final">$ 15.210</div>
+                            </div>
+                        </div>
+                        <div class="iv-item">
+                            <div class="iv-item-left">
+                                <span class="qty">1</span><span style="font-size:11px; color: #10b981; margin: 0 4px;">x</span><span class="name">Combo Verano</span>
+                                <div style="font-size: 10px; color: #94a3b8; margin-top: 3px;">↳ Vainilla · Coco · Menta</div>
+                            </div>
+                            <div class="iv-item-right">
+                                <div class="final">$ 9.800</div>
+                            </div>
+                        </div>
+                        <div class="iv-total">
+                            <span>Total</span>
+                            <strong>$ 25.010</strong>
+                        </div>
+                    </div>
+                    <div class="iv-form">
+                        <div class="iv-form-label">Nombre</div>
+                        <div class="iv-input filled">Nacho</div>
+                        <div class="iv-form-label">Teléfono</div>
+                        <div class="iv-input filled">1123456789</div>
+                        <div class="iv-btn-wa"><i class="fab fa-whatsapp"></i> Enviar WhatsApp</div>
+                        <div class="iv-btn-mp"><i class="fas fa-credit-card"></i> Mercado Pago</div>
+                        <div class="iv-btn-local"><i class="fas fa-store"></i> Reservar en local</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — EL TICKET
+    ====================================================== -->
+    <div class="slide">
+        <div class="g-blue" style="top: -10vw; left: -10vw;"></div>
+
+        <div class="slide-inner split-wide">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="eyebrow-dot" style="background: var(--blue);"></span>
+                    El Resumen
+                </div>
+                <h2>Un ticket<br>que se puede editar.</h2>
+                <p class="lead" style="max-width: 500px;">La cantidad de cada ítem es un campo editable directamente en el ticket. El cliente toca el número verde, lo cambia, y el total se recalcula en el momento. Sin modales extra, sin pasos adicionales.</p>
+
+                <div class="ticket-callouts" style="margin-top: 28px;">
+                    <div class="callout co-green">
+                        <div class="callout-icon"><i class="fas fa-pencil-alt"></i></div>
+                        <div class="callout-body">
+                            <strong>Cantidad editable inline</strong>
+                            <p>El campo cantidad usa <code style="font-size: 11px; background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px;">contenteditable</code>. Se recalcula al perder el foco.</p>
+                        </div>
+                    </div>
+                    <div class="callout co-blue">
+                        <div class="callout-icon"><i class="fas fa-tags"></i></div>
+                        <div class="callout-body">
+                            <strong>Descuentos con contexto</strong>
+                            <p>Cada promo muestra el precio tachado, el nuevo precio y una etiqueta que explica por qué se aplicó.</p>
+                        </div>
+                    </div>
+                    <div class="callout co-orange">
+                        <div class="callout-icon"><i class="fas fa-truck"></i></div>
+                        <div class="callout-body">
+                            <strong>Envío separado del subtotal</strong>
+                            <p>Si el cliente elige delivery, el costo de envío aparece como línea propia y el total final se actualiza solo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticket-demo">
+                <div class="td-title">Resumen de tu orden</div>
+
+                <div class="td-item">
+                    <div class="td-item-row">
+                        <div>
+                            <div class="td-qty-box">
+                                <span class="td-qty">12</span><span class="td-x">x</span>
+                            </div>
+                            <span class="td-name">Invictus - Aura</span>
+                            <div class="td-unit"><span class="old">$ 7.475</span><span style="font-weight:800; color:#0f172a;">$ 5.070</span></div>
+                        </div>
+                        <div class="td-prices">
+                            <div class="td-old">$ 89.700</div>
+                            <div class="td-final">$ 60.840</div>
+                        </div>
+                    </div>
+                    <div><span class="td-pill"><i class="fas fa-tag"></i> Promo aplicada 32%</span></div>
+                </div>
+
+                <div class="td-item">
+                    <div class="td-item-row">
+                        <div>
+                            <div class="td-qty-box">
+                                <span class="td-qty">1</span><span class="td-x">x</span>
+                            </div>
+                            <span class="td-name">Combo Verano</span>
+                        </div>
+                        <div class="td-prices">
+                            <div class="td-final">$ 9.800</div>
+                        </div>
+                    </div>
+                    <div class="td-combo">↳ Vainilla · Coco · Menta</div>
+                </div>
+
+                <hr class="td-divider">
+
+                <div class="td-total-row">
+                    <span class="td-total-lbl">Total</span>
+                    <span class="td-total-val">$ 70.640</span>
+                </div>
+                <div style="text-align: center;">
+                    <span class="td-badge" style="background: #3b82f6;">
+                        <i class="fas fa-box" style="margin-right: 5px;"></i> A Pedido
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — FORM Y DELIVERY
+    ====================================================== -->
+    <div class="slide">
+        <div class="g-blue"  style="top: -12vw; right: -8vw;"></div>
+        <div class="g-orange" style="bottom: -14vw; left: -6vw;"></div>
+
+        <div class="slide-inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="eyebrow-dot" style="background: var(--orange);"></span>
+                    El Formulario
+                </div>
+                <h2>Pickup o delivery.<br>Con costo calculado.</h2>
+                <p class="lead" style="max-width: 520px;">Si la sede tiene logística habilitada, el cliente elige entre retirar en el local o recibir en su dirección. El sistema busca la ubicación con Nominatim, calcula la distancia desde la sede y aplica el costo automáticamente.</p>
+
+                <div style="margin-top: 28px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted);">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(59,130,246,0.15); color: #93c5fd; display: flex; align-items: center; justify-content: center; flex-shrink:0;">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        Geocoding con Nominatim — el cliente escribe la dirección y el sistema sugiere opciones reales.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted);">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(245,158,11,0.15); color: #fcd34d; display: flex; align-items: center; justify-content: center; flex-shrink:0;">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        Costo = base + costo por km × distancia hasta la sede. Se muestra antes de confirmar.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-muted);">
+                        <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(239,68,68,0.15); color: #fca5a5; display: flex; align-items: center; justify-content: center; flex-shrink:0;">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        Si la dirección está fuera del radio máximo configurado, el botón bloquea y muestra el error.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-demo">
+                <div class="fd-section">
+                    <div class="fd-section-title">Tus datos</div>
+                    <div class="fd-row">
+                        <div class="fd-input">Nacho</div>
+                        <div class="fd-input">1123456789</div>
+                    </div>
+                    <div class="fd-input placeholder">Aclaraciones opcionales...</div>
+                </div>
+
+                <div class="fd-section">
+                    <div class="fd-section-title">Entrega</div>
+                    <div class="fd-switch">
+                        <div class="fd-mode inactive"><i class="fas fa-store" style="margin-right:6px;"></i>Retiro</div>
+                        <div class="fd-mode active"><i class="fas fa-motorcycle" style="margin-right:6px;"></i>Envío</div>
+                    </div>
+                    <div class="fd-delivery-box">
+                        <div class="fd-search">
+                            <i class="fas fa-search"></i>
+                            <div class="fd-search-input">Av. Corrientes 1500, CABA</div>
+                        </div>
+                        <div class="fd-dropdown">
+                            <div class="fd-option active">Av. Corrientes 1500, San Nicolás, CABA, Buenos Aires</div>
+                            <div class="fd-option">Av. Corrientes 1500, Almagro, CABA, Buenos Aires</div>
+                        </div>
+                        <div class="fd-meta">
+                            <span><i class="fas fa-motorcycle" style="margin-right:4px;"></i> Envío: $ 1.800</span>
+                            <span>Distancia: 4.2 km</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fd-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                        <span style="font-weight: 800; color: #475569;">Total final</span>
+                        <span style="font-size: 22px; font-weight: 900; color: #1e293b;">$ 72.440</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — MÉTODOS DE PAGO
+    ====================================================== -->
+    <div class="slide">
+        <div class="g-wa"     style="top: -12vw; left: -8vw;"></div>
+        <div class="g-purple" style="bottom: -14vw; right: -8vw;"></div>
+
+        <div class="slide-inner">
+            <div style="text-align: center;">
+                <div class="eyebrow" style="justify-content: center;">
+                    <span class="eyebrow-dot" style="background: var(--wa);"></span>
+                    Cierre del Pedido
+                </div>
+                <h2>Cuatro formas de cerrar.<br>El local elige cuáles habilitar.</h2>
+                <p class="lead" style="margin: 0 auto; text-align: center;">Desde la configuración del storefront, la sede activa o desactiva cada canal. El checkout solo muestra los que están habilitados, sin código extra.</p>
+            </div>
+
+            <div class="payment-grid">
+
+                <div class="pay-card pc-wa">
+                    <div class="pay-icon"><i class="fab fa-whatsapp"></i></div>
+                    <h3>WhatsApp</h3>
+                    <p>Genera un mensaje preformateado con todos los ítems, precios, dirección y total. Se abre directo en la app del teléfono.</p>
+                    <span class="pay-tag">Sin integración extra</span>
+                </div>
+
+                <div class="pay-card pc-mp">
+                    <div class="pay-icon"><i class="fas fa-credit-card"></i></div>
+                    <h3>Mercado Pago</h3>
+                    <p>Crea una preferencia de pago con los ítems y el costo de envío. Redirige al checkout seguro de MP y registra la orden al volver.</p>
+                    <span class="pay-tag">Plugin activo requerido</span>
+                </div>
+
+                <div class="pay-card pc-local">
+                    <div class="pay-icon"><i class="fas fa-store"></i></div>
+                    <h3>Reservar en local</h3>
+                    <p>El pedido queda registrado en el sistema como reserva. El local lo confirma manualmente y el cliente paga al retirar o recibir.</p>
+                    <span class="pay-tag">Sin pago online</span>
+                </div>
+
+                <div class="pay-card pc-digital" style="grid-column: 1 / -1; grid-row: 2; max-width: 460px; margin: 0 auto; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div class="pay-icon"><i class="fas fa-cloud-download-alt"></i></div>
+                        <div>
+                            <h3>Descarga inmediata</h3>
+                            <p style="margin-top: 4px;">Si el carrito tiene solo productos digitales con precio 0, aparece un botón de descarga directa. Sin formulario, sin pago, sin fricción.</p>
+                        </div>
+                        <span class="pay-tag" style="flex-shrink: 0; align-self: flex-start; margin-top: 2px;">Solo productos digitales</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pay-note">
+                Los métodos activos se configuran en <strong>storefront_payment_methods</strong> de la sede. El checkout los lee en tiempo real: si se desactiva uno, desaparece del modal sin necesidad de redesplegar.
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — TOASTS Y VALIDACIONES
+    ====================================================== -->
+    <div class="slide">
+        <div class="g-orange" style="top: -10vw; right: -8vw;"></div>
+        <div class="g-green"  style="bottom: -12vw; left: -8vw;"></div>
+
+        <div class="slide-inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="eyebrow-dot" style="background: var(--orange);"></span>
+                    Feedback
+                </div>
+                <h2>Errores que guían,<br>no que bloquean.</h2>
+                <p class="lead" style="max-width: 500px;">El checkout nunca muestra un <code style="font-size: 14px; background: rgba(255,255,255,0.07); padding: 2px 7px; border-radius: 5px;">alert()</code>. Todos los mensajes son toasts que aparecen arriba del modal, duran 4 segundos y se van solos. Las validaciones corren antes de llamar al servidor.</p>
+
+                <div class="validation-list" style="margin-top: 28px;">
+                    <div class="val-rule vr-block">
+                        <div class="vr-icon"><i class="fas fa-user"></i></div>
+                        <div><strong>Sin nombre</strong> <span>→ bloquea antes de enviar</span></div>
+                    </div>
+                    <div class="val-rule vr-block">
+                        <div class="vr-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div><strong>Dirección muy corta</strong> <span>→ bloquea si delivery está activo</span></div>
+                    </div>
+                    <div class="val-rule vr-warn">
+                        <div class="vr-icon"><i class="fas fa-ruler"></i></div>
+                        <div><strong>Fuera del radio</strong> <span>→ bloquea y explica la distancia máxima</span></div>
+                    </div>
+                    <div class="val-rule vr-warn">
+                        <div class="vr-icon"><i class="fas fa-phone"></i></div>
+                        <div><strong>Teléfono menor a 8 dígitos</strong> <span>→ toast de advertencia</span></div>
+                    </div>
+                    <div class="val-rule vr-ok">
+                        <div class="vr-icon"><i class="fas fa-check"></i></div>
+                        <div><strong>Todo válido</strong> <span>→ emite al padre y procesa</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 28px;">
+                <div class="toast-stack">
+                    <div class="toast-item t-success">
+                        <i class="fas fa-check-circle"></i>
+                        <span>¡Gracias Nacho! Tu pedido #2847 fue recibido.</span>
+                    </div>
+                    <div class="toast-item t-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>La dirección supera el radio de 10 km.</span>
+                    </div>
+                    <div class="toast-item t-error">
+                        <i class="fas fa-times-circle"></i>
+                        <span>Por favor, ingresá tu nombre o apodo.</span>
+                    </div>
+                </div>
+
+                <div style="padding: 16px 20px; border-radius: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 400px; text-align: center;">
+                    Los toasts del checkout y del catálogo (<code style="font-size: 11px; background: rgba(255,255,255,0.07); padding: 1px 5px; border-radius: 4px;">StoreCatalog</code>) son sistemas independientes. Cada uno gestiona su propia cola sin interferir.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="g-green" style="top: -15vw; left: 50%; transform: translateX(-50%); width: 60vw; height: 60vw;"></div>
+        <div class="slide-inner" style="align-items: center; text-align: center;">
+
+            <div class="eyebrow" style="justify-content: center;">
+                <span class="eyebrow-dot" style="background: var(--green);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin: 0 auto; text-align: center;">Ya conocés el checkout de punta a punta. Podés profundizar en el carrito flotante, en cómo se muestran los productos o en cómo funciona la agenda de servicios.</p>
+
+            <div class="nav-grid">
+
+                <a href="index.html" class="nav-btn c-purple" style="border-color: rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color: #d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color: white;">Índice<br>Tienda</div>
+                </a>
+
+                <a href="FloatingCart.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-cart-arrow-down"></i></div>
+                    <div class="nav-label">Carrito<br>Flotante</div>
+                </a>
+
+                <a href="StoreCatalog.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+
+                <a href="StoreAppointments.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="far fa-calendar-check"></i></div>
+                    <div class="nav-label">Turnos y<br>Servicios</div>
+                </a>
+
+                <a href="ComboBuilderModal.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-fire"></i></div>
+                    <div class="nav-label">Armador<br>de Combos</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE_ID = 'tienda_checkout';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE_ID)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl  = document.getElementById('cur');
+        const totEl  = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE_ID, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE_ID, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+
+        document.addEventListener('keydown', (e) => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const referrer = document.referrer;
+            if (referrer && (referrer.includes('/ecosystem') || referrer.includes('localhost') || referrer.includes('127.0.0.1') || referrer.includes('duckdns.org'))) {
+                window.location.href = referrer;
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                window.location.href = 'http://localhost:5173/ecosystem';
+            }
+        })();
+    </script>
+    <title>Tienda Online — CompanyManager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base:      #0f172a;
+            --bg-panel:     rgba(15, 23, 42, 0.7);
+            --text-main:    #f8fafc;
+            --text-muted:   #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --kpi-green:    #10b981;
+            --kpi-blue:     #3b82f6;
+            --kpi-indigo:   #4f46e5;
+            --kpi-purple:   #a855f7;
+            --kpi-orange:   #f59e0b;
+            --kpi-pink:     #ec4899;
+            --kpi-red:      #ef4444;
+            --kpi-teal:     #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(168, 85, 247, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.07), transparent 25%);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* =========================================
+           HEADER
+        ========================================= */
+        .map-header {
+            text-align: center;
+            margin-bottom: 40px;
+            max-width: 800px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 11px; font-weight: 900; letter-spacing: 2.5px;
+            text-transform: uppercase; color: var(--text-muted);
+            margin-bottom: 16px; padding: 6px 16px; border-radius: 999px;
+            border: 1px solid var(--border-glass); background: rgba(255,255,255,0.03);
+        }
+        .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--kpi-purple); }
+
+        .map-header h1 {
+            font-size: 48px; font-weight: 900; letter-spacing: -1px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #f1f5f9 30%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .map-header p { font-size: 18px; color: var(--text-muted); line-height: 1.5; margin-bottom: 30px; }
+
+        .progress-container {
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass);
+            padding: 15px 30px; border-radius: 100px; width: fit-content; margin: 0 auto;
+        }
+        .progress-text { text-align: left; }
+        .progress-text strong { display: block; font-size: 18px; color: var(--kpi-purple); }
+        .progress-text span   { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .progress-bar-bg   { width: 200px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--kpi-purple); width: 0%; transition: width 1s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 0 10px var(--kpi-purple); }
+
+        /* =========================================
+           WRAPPER
+        ========================================= */
+        .ecosystem-wrapper {
+            max-width: 1400px; width: 100%;
+            display: flex; flex-direction: column; gap: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* =========================================
+           SECTION HEADERS
+        ========================================= */
+        .section-label {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+        }
+        .section-label .sl-line { flex: 1; height: 1px; background: var(--border-glass); }
+        .section-label .sl-text {
+            font-size: 11px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--text-muted); white-space: nowrap;
+        }
+
+        /* =========================================
+           GRIDS
+        ========================================= */
+        .pillars-row {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+        }
+        .category-column { display: flex; flex-direction: column; gap: 14px; }
+        .category-header {
+            font-size: 11px; font-weight: 900; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 2px;
+            display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 4px;
+        }
+
+        .bottom-grid {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 14px;
+        }
+        .bottom-grid .module-card { width: calc(25% - 11px); }
+
+        /* =========================================
+           MODULE CARDS
+        ========================================= */
+        .module-card {
+            background: var(--bg-panel); backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass); border-radius: 16px;
+            padding: 18px; text-decoration: none;
+            display: flex; align-items: flex-start; gap: 14px;
+            transition: all 0.3s ease; position: relative; overflow: hidden; cursor: pointer;
+        }
+        .module-card:hover {
+            transform: translateY(-4px); background: rgba(30,41,59,0.9);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.12);
+        }
+        .module-card.visited { border-left: 4px solid var(--kpi-green); }
+        .module-card.visited .status-indicator {
+            background: rgba(16,185,129,0.2); border-color: var(--kpi-green);
+            color: var(--kpi-green); box-shadow: 0 0 10px rgba(16,185,129,0.3);
+        }
+
+        .module-icon {
+            width: 46px; height: 46px; border-radius: 12px;
+            background: rgba(0,0,0,0.3); display: flex; align-items: center;
+            justify-content: center; font-size: 18px; flex-shrink: 0; transition: 0.3s;
+        }
+        .module-info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+        .module-info strong { font-size: 14px; color: var(--text-main); font-weight: 800; line-height: 1.2; }
+        .module-info span   { font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.4; }
+
+        .status-indicator {
+            width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: transparent; font-size: 9px; transition: 0.3s;
+        }
+
+        /* HERO card */
+        .card-hero {
+            background: linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(15,23,42,0.9) 100%);
+            border: 1px solid rgba(168,85,247,0.3);
+            box-shadow: 0 0 30px rgba(168,85,247,0.1);
+            padding: 28px; width: 100%; align-items: center;
+        }
+        .card-hero .module-icon {
+            width: 64px; height: 64px; font-size: 26px;
+            background: rgba(168,85,247,0.15); color: #d8b4fe;
+        }
+        .card-hero .module-info strong { font-size: 22px; }
+        .card-hero .module-info span   { font-size: 15px; }
+
+        /* Satellite badge */
+        .satellite-badge {
+            position: absolute; top: 12px; right: 12px;
+            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
+            background: rgba(168,85,247,0.12); color: #d8b4fe;
+            border: 1px solid rgba(168,85,247,0.25); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* =========================================
+           RESET BTN
+        ========================================= */
+        .btn-reset {
+            margin-top: 50px; background: transparent;
+            border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);
+            padding: 8px 16px; border-radius: 8px; font-size: 12px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;
+        }
+        .btn-reset:hover { color: white; background: rgba(255,255,255,0.05); }
+
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn     { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1100px) {
+            .pillars-row { grid-template-columns: 1fr 1fr; }
+            .bottom-grid .module-card { width: calc(33.333% - 10px); }
+        }
+        @media (max-width: 768px) {
+            .pillars-row { grid-template-columns: 1fr; }
+            .bottom-grid .module-card { width: 100%; }
+            .map-header h1 { font-size: 36px; }
+            .progress-container { flex-direction: column; gap: 10px; }
+            .progress-text { text-align: center; }
+        }
+        @media (max-width: 500px) {
+            body { padding: 30px 14px; }
+            .bottom-grid .module-card { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="map-header">
+        <div class="header-eyebrow">
+            <span class="eyebrow-dot"></span>
+            Satélite Independiente
+            <span class="eyebrow-dot"></span>
+        </div>
+        <h1>Tienda Online</h1>
+        <p>La vidriera pública B2C. Se sincroniza con el inventario y el catálogo de la sede pero opera de forma autónoma. Explorá cada módulo para ver cómo funciona.</p>
+
+        <div class="progress-container">
+            <div class="progress-text">
+                <strong id="progressCount">0 / 13</strong>
+                <span>Módulos Explorados</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ecosystem-wrapper">
+
+        <!-- HERO -->
+        <div id="dashboard-container"></div>
+
+        <!-- FILA: Vidriera pública + Experiencia de compra + Mi cuenta -->
+        <div>
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><i class="fas fa-globe" style="margin-right: 6px; color: #d8b4fe;"></i> Canales de acceso público</div>
+                <div class="sl-line"></div>
+            </div>
+            <div class="pillars-row">
+                <div class="category-column" id="col-vidriera">
+                    <div class="category-header">
+                        <i class="fas fa-store" style="color: #d8b4fe;"></i>
+                        Vidriera y Perfil
+                    </div>
+                </div>
+                <div class="category-column" id="col-compra">
+                    <div class="category-header">
+                        <i class="fas fa-shopping-cart" style="color: #93c5fd;"></i>
+                        Experiencia de Compra
+                    </div>
+                </div>
+                <div class="category-column" id="col-cuenta">
+                    <div class="category-header">
+                        <i class="fas fa-user-circle" style="color: #6ee7b7;"></i>
+                        Mi Cuenta
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FILA INFERIOR: Infraestructura -->
+        <div>
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><i class="fas fa-cogs" style="margin-right: 6px; color: #94a3b8;"></i> Infraestructura y diseño</div>
+                <div class="sl-line"></div>
+            </div>
+            <div class="bottom-grid" id="col-infra"></div>
+        </div>
+
+    </div>
+
+    <button class="btn-reset" onclick="resetProgress()">
+        <i class="fas fa-undo" style="margin-right: 6px;"></i> Reiniciar Progreso
+    </button>
+
+    <script>
+        const modules = [
+            // HERO
+            {
+                id: 'storefront',
+                name: 'Tienda Online',
+                desc: 'La vidriera pública completa: perfil del local, catálogo en tiempo real, búsqueda, filtros por categoría y carrito flotante.',
+                file: 'StoreFront.html',
+                icon: 'fas fa-shopping-bag',
+                color: '#a855f7',
+                target: 'dashboard'
+            },
+
+            // Vidriera y Perfil (3)
+            {
+                id: 'perfil',
+                name: 'Perfil del Local',
+                desc: 'Banner, logo, dirección, horarios de atención expandibles, redes sociales y botón de WhatsApp.',
+                file: 'StoreProfile.html',
+                icon: 'fas fa-store',
+                color: '#a855f7',
+                target: 'col-vidriera'
+            },
+            {
+                id: 'catalogo',
+                name: 'Catálogo Público',
+                desc: 'Grid de productos con variantes, combos, stock en vivo, filtros de categoría y buscador local.',
+                file: 'StoreCatalog.html',
+                icon: 'fas fa-th-large',
+                color: '#ec4899',
+                target: 'col-vidriera'
+            },
+            {
+                id: 'producto',
+                name: 'Página de Producto',
+                desc: 'Vista detallada con galería de variantes, precios por volumen (tiers mayoristas) y acción de compra rápida.',
+                file: 'StoreProduct.html',
+                icon: 'fas fa-tag',
+                color: '#d946ef',
+                target: 'col-vidriera'
+            },
+
+            // Experiencia de Compra (4)
+            {
+                id: 'carrito',
+                name: 'Carrito Flotante',
+                desc: 'Barra flotante persistente con total, modo de fulfillment detectado y botón de envío de pedido.',
+                file: 'FloatingCart.html',
+                icon: 'fas fa-cart-arrow-down',
+                color: '#3b82f6',
+                target: 'col-compra'
+            },
+            {
+                id: 'checkout',
+                name: 'Checkout',
+                desc: 'Resumen editable del pedido, envío a domicilio con geocoding, y opciones de pago: WhatsApp, Mercado Pago o reservar en local.',
+                file: 'CheckoutModal.html',
+                icon: 'fas fa-lock',
+                color: '#10b981',
+                target: 'col-compra'
+            },
+            {
+                id: 'combos',
+                name: 'Armador de Combos',
+                desc: 'Modal para elegir variantes dentro de una promo configurada. Soporta combos de categoría abierta y productos fijos.',
+                file: 'ComboBuilderModal.html',
+                icon: 'fas fa-fire',
+                color: '#f59e0b',
+                target: 'col-compra'
+            },
+            {
+                id: 'servicios',
+                name: 'Turnos y Servicios',
+                desc: 'Wizard de reserva paso a paso: elegí servicio, profesional, día en calendario y horario disponible.',
+                file: 'StoreAppointments.html',
+                icon: 'far fa-calendar-check',
+                color: '#6366f1',
+                target: 'col-compra'
+            },
+
+            // Mi Cuenta (3)
+            {
+                id: 'pedidos',
+                name: 'Mis Pedidos',
+                desc: 'Historial de órdenes, carritos guardados en otros locales y seguimiento en vivo de deliveries activos.',
+                file: 'MyOrders.html',
+                icon: 'fas fa-receipt',
+                color: '#10b981',
+                target: 'col-cuenta'
+            },
+            {
+                id: 'agenda',
+                name: 'Mis Servicios',
+                desc: 'Pases y suscripciones activos con QR de acceso, turnos programados y filtro de disponibilidad personal.',
+                file: 'Agenda.html',
+                icon: 'fas fa-id-badge',
+                color: '#d946ef',
+                target: 'col-cuenta'
+            },
+            {
+                id: 'auth',
+                name: 'Acceso',
+                desc: 'Login y registro de cliente con verificación de email. Guarda historial y carritos entre sesiones.',
+                file: 'StoreLoginModal.html',
+                icon: 'fas fa-user-lock',
+                color: '#64748b',
+                target: 'col-cuenta'
+            },
+
+            // Infraestructura (3)
+            {
+                id: 'tutorial',
+                name: 'Tutorial de Compra',
+                desc: 'Animación interactiva paso a paso que muestra cómo funciona el carrito, los precios mayoristas y el checkout.',
+                file: 'StoreHowToBuyModal.html',
+                icon: 'fas fa-question-circle',
+                color: '#3b82f6',
+                target: 'col-infra'
+            },
+            {
+                id: 'devoluciones',
+                name: 'Política de Devoluciones',
+                desc: 'Página pública con la política de devoluciones y cambios de la sede. Indexable por Google.',
+                file: 'StoreReturnsPolicy.html',
+                icon: 'fas fa-undo-alt',
+                color: '#94a3b8',
+                target: 'col-infra'
+            },
+            {
+                id: 'design',
+                name: 'Selector de Diseño',
+                desc: 'Shell que carga el storefront default o el diseño premium según el plugin activo en la sede.',
+                file: 'StoreFrontDesignShell.html',
+                icon: 'fas fa-paint-brush',
+                color: '#a855f7',
+                target: 'col-infra'
+            },
+        ];
+
+        const PREFIX = 'tienda_visited_';
+
+        function renderModules() {
+            let visitedCount = 0;
+
+            modules.forEach(mod => {
+                const isVisited = localStorage.getItem(PREFIX + mod.id) === 'true';
+                if (isVisited) visitedCount++;
+
+                const isHero = mod.target === 'dashboard';
+
+                const cardHTML = `
+                    <a href="${mod.file}" onclick="markVisited('${mod.id}')"
+                       class="module-card ${isHero ? 'card-hero' : ''} ${isVisited ? 'visited' : ''}">
+                        ${isHero ? '<span class="satellite-badge">Satélite</span>' : ''}
+                        <div class="module-icon" style="color: ${mod.color};">
+                            <i class="${mod.icon}"></i>
+                        </div>
+                        <div class="module-info">
+                            <strong>${mod.name}</strong>
+                            <span>${mod.desc}</span>
+                        </div>
+                        <div class="status-indicator">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </a>
+                `;
+
+                if (isHero) {
+                    document.getElementById('dashboard-container').innerHTML = cardHTML;
+                } else {
+                    const col = document.getElementById(mod.target);
+                    if (col) col.insertAdjacentHTML('beforeend', cardHTML);
+                }
+            });
+
+            updateProgress(visitedCount);
+        }
+
+        function markVisited(id) {
+            localStorage.setItem(PREFIX + id, 'true');
+        }
+
+        function updateProgress(count) {
+            const total = modules.length;
+            document.getElementById('progressCount').innerText = `${count} / ${total}`;
+            document.getElementById('progressBar').style.width = `${(count / total) * 100}%`;
+        }
+
+        function resetProgress() {
+            modules.forEach(mod => localStorage.removeItem(PREFIX + mod.id));
+            location.reload();
+        }
+
+        renderModules();
+    </script>
+
+</body>
+</html> 

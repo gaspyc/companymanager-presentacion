@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armador de Combos — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: #f8fafc;
+        }
+
+        /* ENGINE */
+        .slide {
+            position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.11)  0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.10)  0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09)  0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.09)  0%, transparent 70%); }
+
+        /* CONTROLS */
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--green); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        /* TYPE */
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 60px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+
+        /* LAYOUT */
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           DEMO MODAL FIEL AL COMPONENTE
+        ========================================= */
+        .combo-modal {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5); width: 100%;
+        }
+        .cm-header {
+            padding: 16px 22px; border-bottom: 1px solid #e2e8f0;
+            display: flex; justify-content: space-between; align-items: center; background: white;
+        }
+        .cm-title { font-size: 16px; font-weight: 900; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+        .cm-title i { color: #10b981; }
+        .cm-close { width: 30px; height: 30px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #64748b; }
+
+        .cm-hero { padding: 16px 22px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+        .cm-hero-name { font-size: 18px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+        .cm-hero-desc { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+        .cm-price-badge { display: inline-block; background: #d1fae5; color: #047857; font-weight: 800; padding: 5px 12px; border-radius: 7px; font-size: 12px; }
+        .cm-search { position: relative; }
+        .cm-search i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 11px; }
+        .cm-search-input { padding: 8px 10px 8px 28px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; width: 200px; outline: none; }
+
+        .cm-body { padding: 16px 22px; }
+        .cm-rule-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; }
+        .cm-rule-title    { font-size: 13px; font-weight: 800; color: #1e293b; }
+        .cm-rule-subtitle { font-size: 11px; color: #64748b; margin-top: 2px; }
+        .cm-rule-counter  { font-size: 15px; font-weight: 900; color: #94a3b8; }
+        .cm-rule-counter.done { color: #10b981; }
+
+        .cm-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+        .cm-opt {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 11px; background: white;
+            font-size: 12px; font-weight: 600; color: #334155;
+        }
+        .cm-opt.selected { border-color: #10b981; background: #ecfdf5; }
+        .cm-qty { display: flex; align-items: center; gap: 6px; background: white; border: 1px solid #e2e8f0; border-radius: 7px; padding: 2px 4px; }
+        .cm-qty-btn { width: 24px; height: 24px; border-radius: 5px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: transparent; }
+        .cm-qty-btn.minus { color: #64748b; }
+        .cm-qty-btn.plus  { color: #10b981; }
+        .cm-qty-val { font-size: 12px; font-weight: 800; color: #0f172a; width: 14px; text-align: center; }
+
+        .cm-footer { padding: 14px 22px; border-top: 1px solid #e2e8f0; background: white; }
+        .cm-btn-ready    { width: 100%; padding: 13px; border-radius: 11px; border: none; background: #10b981; color: white; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .cm-btn-disabled { width: 100%; padding: 13px; border-radius: 11px; border: none; background: #f8fafc; color: #94a3b8; font-weight: 800; font-size: 14px; cursor: not-allowed; }
+
+        /* =========================================
+           SLIDE 2 — TIPOS DE REGLA
+        ========================================= */
+        .rule-types { display: flex; flex-direction: column; gap: 16px; }
+        .rt-card {
+            border-radius: 16px; padding: 20px; border: 1px solid; display: flex; gap: 16px; align-items: flex-start;
+        }
+        .rt-fixed    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  }
+        .rt-category { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  }
+        .rt-mixed    { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  }
+
+        .rt-icon { width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+        .rt-fixed    .rt-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .rt-category .rt-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .rt-mixed    .rt-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        .rt-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
+        .rt-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+
+        .rt-json {
+            margin-top: 8px; padding: 8px 12px; border-radius: 8px;
+            background: rgba(0,0,0,0.25); font-size: 11px; font-family: monospace;
+            color: #6ee7b7; line-height: 1.6; overflow-x: auto;
+        }
+
+        /* =========================================
+           SLIDE 3 — VALIDACIÓN
+        ========================================= */
+        .validation-demo { display: flex; flex-direction: column; gap: 14px; }
+        .vd-step {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 16px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .vd-ok      { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .vd-block   { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   }
+        .vd-pending { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+
+        .vd-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .vd-ok      .vd-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .vd-block   .vd-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
+        .vd-pending .vd-icon { background: rgba(255,255,255,0.06); color: var(--muted); }
+
+        .vd-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .vd-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4; }
+
+        .counter-demo {
+            display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap;
+        }
+        .cd-pill {
+            flex: 1; min-width: 130px; padding: 14px 16px; border-radius: 13px;
+            border: 1px solid; text-align: center;
+        }
+        .cd-done    { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.25);  }
+        .cd-partial { background: rgba(245,158,11,0.07);  border-color: rgba(245,158,11,0.25);  }
+        .cd-empty   { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.08); }
+
+        .cd-pill .cd-num  { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+        .cd-pill .cd-lbl  { font-size: 11px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .cd-done    .cd-num { color: #6ee7b7; }
+        .cd-partial .cd-num { color: #fcd34d; }
+        .cd-empty   .cd-num { color: var(--muted); }
+
+        /* =========================================
+           SLIDE 4 — FLUJO AUTOMÁTICO VS MANUAL
+        ========================================= */
+        .flow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .flow-card {
+            border-radius: 16px; padding: 22px; border: 1px solid;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .flow-auto   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .flow-manual { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  }
+
+        .flow-head { display: flex; align-items: center; gap: 12px; }
+        .flow-icon { width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+        .flow-auto   .flow-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .flow-manual .flow-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .flow-head strong { font-size: 15px; font-weight: 800; color: white; }
+        .flow-card p { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+
+        .flow-steps { display: flex; flex-direction: column; gap: 8px; }
+        .flow-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+        .flow-step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; color: white; flex-shrink: 0; }
+        .flow-auto   .flow-step-num { background: rgba(16,185,129,0.3); }
+        .flow-manual .flow-step-num { background: rgba(168,85,247,0.3); }
+
+        .flow-note {
+            grid-column: 1 / -1; padding: 16px 20px; border-radius: 14px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            font-size: 13px; color: var(--muted); line-height: 1.6; text-align: center;
+        }
+        .flow-note strong { color: white; }
+
+        /* =========================================
+           SLIDE 5 — PROPS Y OUTPUT
+        ========================================= */
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table th { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        .props-table td { font-size: 13px; padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+        .props-table tr:last-child td { border-bottom: none; }
+        .props-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .pn { font-family: monospace; color: #93c5fd; font-weight: 700; }
+        .pt { font-family: monospace; color: #fcd34d; font-size: 12px; }
+        .pd { color: var(--muted); font-size: 13px; line-height: 1.4; }
+        .pr { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 900; background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .po { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+        .output-demo {
+            margin-top: 22px; padding: 18px 20px; border-radius: 14px;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(16,185,129,0.2);
+        }
+        .od-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #6ee7b7; margin-bottom: 12px; }
+        .od-json  { font-family: monospace; font-size: 12px; line-height: 1.8; color: #cbd5e1; }
+        .od-key   { color: #93c5fd; }
+        .od-str   { color: #fcd34d; }
+        .od-num   { color: #6ee7b7; }
+
+        /* =========================================
+           NAV
+        ========================================= */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .flow-grid { grid-template-columns: 1fr; }
+            .cm-options { grid-template-columns: repeat(2,1fr); }
+            h1 { font-size: 42px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; }
+            .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + DEMO MODAL
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-green"  style="width:48vw;height:48vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:38vw;height:38vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Tienda Online · Módulo
+                </div>
+                <h1>Armá<br>tu<br><span style="color:var(--green);">Combo.</span></h1>
+                <p class="lead" style="max-width:500px;">Cuando una promo tiene variantes a elección, el catálogo no adivina qué quiere el cliente. Abre este modal y lo deja elegir. El combo no se agrega al carrito hasta que cada regla esté completa.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;">
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-lock" style="color:var(--green);font-size:11px;"></i> Validación por regla
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-sitemap" style="color:var(--purple);font-size:11px;"></i> Categoría o SKU fijo
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-search" style="color:var(--blue);font-size:11px;"></i> Buscador integrado
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-bolt" style="color:var(--orange);font-size:11px;"></i> Autoconfirm si es fijo
+                    </span>
+                </div>
+            </div>
+
+            <div class="combo-modal">
+                <div class="cm-header">
+                    <div class="cm-title"><i class="fas fa-box-open"></i> Armá tu Combo</div>
+                    <div class="cm-close"><i class="fas fa-times"></i></div>
+                </div>
+                <div class="cm-hero">
+                    <div>
+                        <div class="cm-hero-name">Combo Verano x3</div>
+                        <div class="cm-hero-desc">Elegí 3 aromas de nuestra línea de difusores.</div>
+                        <div class="cm-price-badge">Precio del combo: $ 14.900</div>
+                    </div>
+                    <div class="cm-search">
+                        <i class="fas fa-search"></i>
+                        <input class="cm-search-input" type="text" placeholder="Buscar opción..." value="">
+                    </div>
+                </div>
+                <div class="cm-body">
+                    <div class="cm-rule-header">
+                        <div>
+                            <div class="cm-rule-title">Elegí de la categoría: Aromatizantes</div>
+                            <div class="cm-rule-subtitle">Seleccioná 3 unidades</div>
+                        </div>
+                        <div class="cm-rule-counter done">3 / 3</div>
+                    </div>
+                    <div class="cm-options">
+                        <div class="cm-opt selected">
+                            <span>Invictus</span>
+                            <div class="cm-qty">
+                                <button class="cm-qty-btn minus">-</button>
+                                <span class="cm-qty-val">1</span>
+                                <button class="cm-qty-btn plus">+</button>
+                            </div>
+                        </div>
+                        <div class="cm-opt selected">
+                            <span>Vainilla</span>
+                            <div class="cm-qty">
+                                <button class="cm-qty-btn minus">-</button>
+                                <span class="cm-qty-val">2</span>
+                                <button class="cm-qty-btn plus">+</button>
+                            </div>
+                        </div>
+                        <div class="cm-opt">
+                            <span>Menta</span>
+                            <div class="cm-qty">
+                                <button class="cm-qty-btn minus">-</button>
+                                <span class="cm-qty-val">0</span>
+                                <button class="cm-qty-btn plus">+</button>
+                            </div>
+                        </div>
+                        <div class="cm-opt">
+                            <span>Coco</span>
+                            <div class="cm-qty">
+                                <button class="cm-qty-btn minus">-</button>
+                                <span class="cm-qty-val">0</span>
+                                <button class="cm-qty-btn plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cm-footer">
+                    <button class="cm-btn-ready"><i class="fas fa-check-circle"></i> Agregar Combo al Carrito</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — TIPOS DE REGLA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:38vw;height:38vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--purple);"></span>
+                    Estructura del Combo
+                </div>
+                <h2>Cada regla<br>define qué elegir.</h2>
+                <p class="lead" style="max-width:500px;">Un combo puede tener una o varias reglas. Cada regla tiene un <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">target_type</code> que determina si el cliente elige de una categoría entera o si el producto ya viene fijo. Una promo puede mezclar ambos tipos.</p>
+                <p class="lead" style="max-width:500px;margin-top:14px;">El campo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">quantity</code> de cada regla define cuántas unidades hay que completar para que esa regla quede satisfecha.</p>
+            </div>
+
+            <div class="rule-types">
+
+                <div class="rt-card rt-fixed">
+                    <div class="rt-icon"><i class="fas fa-tag"></i></div>
+                    <div class="rt-body" style="flex:1;">
+                        <strong>Producto fijo (target_type: sku)</strong>
+                        <p>El ítem ya está definido. No hay nada que elegir. El modal pre-selecciona la cantidad automáticamente.</p>
+                        <div class="rt-json">{ target_type: <span style="color:#fcd34d;">"sku"</span>, target_value: <span style="color:#fcd34d;">"INV-001"</span>, quantity: <span style="color:#6ee7b7;">2</span> }</div>
+                    </div>
+                </div>
+
+                <div class="rt-card rt-category">
+                    <div class="rt-icon"><i class="fas fa-layer-group"></i></div>
+                    <div class="rt-body" style="flex:1;">
+                        <strong>Categoría abierta (target_type: category)</strong>
+                        <p>El cliente elige libremente entre todos los productos de esa categoría hasta completar la cantidad indicada.</p>
+                        <div class="rt-json">{ target_type: <span style="color:#fcd34d;">"category"</span>, target_value: <span style="color:#fcd34d;">"Aromatizantes"</span>, quantity: <span style="color:#6ee7b7;">3</span> }</div>
+                    </div>
+                </div>
+
+                <div class="rt-card rt-mixed">
+                    <div class="rt-icon"><i class="fas fa-shuffle"></i></div>
+                    <div class="rt-body" style="flex:1;">
+                        <strong>Combo mixto</strong>
+                        <p>El array <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">raw_items</code> puede combinar reglas fijas y de categoría. El modal las muestra como secciones separadas.</p>
+                        <div class="rt-json">raw_items: [ <span style="color:#6ee7b7;">/* regla fija */</span>, <span style="color:#d8b4fe;">/* regla cat. */</span> ]</div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — VALIDACIÓN POR REGLA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:44vw;height:44vw; top:-10vw; left:-8vw;"></div>
+        <div class="g g-orange" style="width:38vw;height:38vw; bottom:-10vw; right:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    El Sistema de Selección
+                </div>
+                <h2>No podés<br>pasarte ni<br>quedarte corto.</h2>
+                <p class="lead" style="max-width:500px;">Cada regla tiene su propio contador. El botón <strong style="color:white;">+</strong> se bloquea en cuanto la regla se completa — no se puede agregar más de lo que la promo permite. Y el botón de confirmar solo se habilita cuando <strong style="color:white;">todas</strong> las reglas están completas.</p>
+                <p class="lead" style="max-width:500px;margin-top:14px;">La validación corre en el computed <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">isComplete</code> que recorre cada regla y chequea las sumas.</p>
+
+                <div class="counter-demo">
+                    <div class="cd-pill cd-done">
+                        <div class="cd-num">3 / 3</div>
+                        <div class="cd-lbl">Aromatizantes</div>
+                    </div>
+                    <div class="cd-pill cd-partial">
+                        <div class="cd-num">1 / 2</div>
+                        <div class="cd-lbl">Difusores</div>
+                    </div>
+                    <div class="cd-pill cd-empty">
+                        <div class="cd-num">0 / 1</div>
+                        <div class="cd-lbl">Fijo</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="validation-demo">
+
+                <div class="vd-step vd-block">
+                    <div class="vd-icon"><i class="fas fa-ban"></i></div>
+                    <div class="vd-body">
+                        <strong>Regla incompleta → botón bloqueado</strong>
+                        <p>Mientras alguna regla no alcance su cantidad mínima, el botón de confirmar queda gris y con <code style="font-size:11px;">cursor: not-allowed</code>. El texto dice "Completá las opciones para continuar".</p>
+                    </div>
+                </div>
+
+                <div class="vd-step vd-block">
+                    <div class="vd-icon"><i class="fas fa-plus-circle"></i></div>
+                    <div class="vd-body">
+                        <strong>Regla completa → + bloqueado</strong>
+                        <p>Cuando el total seleccionado para una regla llega a su límite, <code style="font-size:11px;">updateSelection</code> hace <code style="font-size:11px;">return</code> sin hacer nada. No hay alert, no hay error.</p>
+                    </div>
+                </div>
+
+                <div class="vd-step vd-ok">
+                    <div class="vd-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="vd-body">
+                        <strong>Todas completas → botón verde</strong>
+                        <p><code style="font-size:11px;">isComplete</code> es <code style="font-size:11px;">true</code>. El botón cambia a verde y emite <code style="font-size:11px;">@confirm</code> con el combo, la cantidad y la configuración elegida.</p>
+                    </div>
+                </div>
+
+                <div class="vd-step vd-pending">
+                    <div class="vd-icon"><i class="fas fa-search"></i></div>
+                    <div class="vd-body">
+                        <strong>Buscador en tiempo real</strong>
+                        <p>El campo de búsqueda filtra los productos elegibles dentro de cada regla. No afecta las selecciones ya hechas — solo oculta opciones visualmente.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — AUTOMÁTICO VS MANUAL
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div class="eyebrow">
+                <span class="dot" style="background:var(--green);"></span>
+                Dos caminos posibles
+            </div>
+            <h2 style="margin-bottom:24px;">El modal se abre<br>solo cuando hace falta.</h2>
+
+            <div class="flow-grid">
+
+                <div class="flow-card flow-auto">
+                    <div class="flow-head">
+                        <div class="flow-icon"><i class="fas fa-bolt"></i></div>
+                        <strong>Autoconfirm (combo fijo)</strong>
+                    </div>
+                    <p>Si todas las reglas son de tipo <code style="font-size:12px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">sku</code>, no hay nada que elegir. El catálogo genera la configuración automáticamente y llama a <code style="font-size:12px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">addToCartWithConfig</code> directo, sin abrir el modal.</p>
+                    <div class="flow-steps">
+                        <div class="flow-step"><div class="flow-step-num">1</div>Cliente toca "Agregar"</div>
+                        <div class="flow-step"><div class="flow-step-num">2</div>Catálogo detecta que es combo fijo</div>
+                        <div class="flow-step"><div class="flow-step-num">3</div>Genera config automática</div>
+                        <div class="flow-step"><div class="flow-step-num">4</div>Agrega al carrito directo + toast</div>
+                    </div>
+                </div>
+
+                <div class="flow-card flow-manual">
+                    <div class="flow-head">
+                        <div class="flow-icon"><i class="fas fa-hand-pointer"></i></div>
+                        <strong>Modal manual (combo abierto)</strong>
+                    </div>
+                    <p>Si alguna regla es de tipo <code style="font-size:12px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">category</code>, el cliente tiene que elegir. El catálogo abre el <code style="font-size:12px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">ComboBuilderModal</code> y espera el evento <code style="font-size:12px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">@confirm</code>.</p>
+                    <div class="flow-steps">
+                        <div class="flow-step"><div class="flow-step-num">1</div>Cliente toca "Agregar"</div>
+                        <div class="flow-step"><div class="flow-step-num">2</div>Catálogo detecta que tiene categorías</div>
+                        <div class="flow-step"><div class="flow-step-num">3</div>Abre ComboBuilderModal</div>
+                        <div class="flow-step"><div class="flow-step-num">4</div>Cliente elige → @confirm → carrito</div>
+                    </div>
+                </div>
+
+                <div class="flow-note">
+                    La lógica que detecta si el combo es fijo o abierto vive en <strong>StoreCatalog</strong>, en la función <strong>handleAddProductClick</strong>. El modal en sí no sabe nada de esto — solo recibe el combo y espera confirmación.
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — PROPS Y OUTPUT
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div class="eyebrow">
+                <span class="dot" style="background:var(--blue);"></span>
+                Interfaz del Componente
+            </div>
+            <h2 style="margin-bottom:22px;">Props, eventos y lo que emite.</h2>
+
+            <div class="glass" style="overflow:hidden; margin-bottom:20px;">
+                <table class="props-table">
+                    <thead>
+                        <tr><th>Prop</th><th>Tipo</th><th>Descripción</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="pn">show</span></td>
+                            <td><span class="pt">Boolean</span></td>
+                            <td class="pd">Controla si el modal está visible. El watch sobre este prop limpia las selecciones al abrirse.</td>
+                            <td><span class="po">default: false</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="pn">combo</span></td>
+                            <td><span class="pt">Object</span></td>
+                            <td class="pd">El objeto combo con <code style="font-size:11px;">name</code>, <code style="font-size:11px;">description</code>, <code style="font-size:11px;">price</code> y <code style="font-size:11px;">raw_items</code> (las reglas).</td>
+                            <td><span class="po">default: null</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="pn">products</span></td>
+                            <td><span class="pt">Array</span></td>
+                            <td class="pd">Catálogo completo de la tienda. Se usa para filtrar los productos elegibles por categoría o SKU.</td>
+                            <td><span class="pr">Required</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="pn">initialQuantity</span></td>
+                            <td><span class="pt">Number</span></td>
+                            <td class="pd">Cuántos combos quiere agregar el cliente. Se pasa directo al evento <code style="font-size:11px;">@confirm</code>.</td>
+                            <td><span class="po">default: 1</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="pn">hidePrices</span></td>
+                            <td><span class="pt">Boolean</span></td>
+                            <td class="pd">Oculta el badge de precio del combo en el hero del modal.</td>
+                            <td><span class="po">default: false</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="output-demo">
+                <div class="od-title"><i class="fas fa-arrow-right" style="margin-right:6px;"></i> Payload del evento @confirm</div>
+                <div class="od-json">
+                    {<br>
+                    &nbsp;&nbsp;<span class="od-key">combo</span>: { <span class="od-str">name</span>: <span class="od-str">"Combo Verano x3"</span>, <span class="od-str">price</span>: <span class="od-num">14900</span>, ... },<br>
+                    &nbsp;&nbsp;<span class="od-key">quantity</span>: <span class="od-num">1</span>,<br>
+                    &nbsp;&nbsp;<span class="od-key">configuration</span>: [<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;{ <span class="od-key">product_sku</span>: <span class="od-str">"INV-001"</span>, <span class="od-key">quantity</span>: <span class="od-num">1</span> },<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;{ <span class="od-key">product_sku</span>: <span class="od-str">"VAI-003"</span>, <span class="od-key">quantity</span>: <span class="od-num">2</span> }<br>
+                    &nbsp;&nbsp;]<br>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+        <div class="inner" style="align-items:center; text-align:center;">
+
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--orange);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin:0 auto; text-align:center; max-width:600px;">Ya entendés cómo se arman los combos con variantes. Podés saltar al catálogo que los dispara, al checkout que los recibe, o explorar cómo funciona la agenda de servicios.</p>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="CheckoutModal.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-lock"></i></div>
+                    <div class="nav-label">Checkout</div>
+                </a>
+                <a href="FloatingCart.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-cart-arrow-down"></i></div>
+                    <div class="nav-label">Carrito<br>Flotante</div>
+                </a>
+                <a href="StoreAppointments.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="far fa-calendar-check"></i></div>
+                    <div class="nav-label">Turnos y<br>Servicios</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_combo';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

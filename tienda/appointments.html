@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turnos y Servicios — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --indigo: #6366f1;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: #f8fafc;
+        }
+
+        /* ENGINE */
+        .slide {
+            position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.10)  0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09)  0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09)  0%, transparent 70%); }
+        .g-indigo { background: radial-gradient(circle, rgba(99,102,241,0.09)  0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08)  0%, transparent 70%); }
+
+        /* CONTROLS */
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--indigo); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        /* TYPE */
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 58px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+
+        /* LAYOUT */
+        .split  { display: grid; grid-template-columns: 1fr 1fr;        gap: 60px; align-items: center; }
+        .split3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+        .glass  { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — TIPOS DE SERVICIO FIEL AL COMPONENTE
+        ========================================= */
+        .service-columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; }
+
+        .srv-col { border-radius: 16px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; }
+        .col-head { display: flex; align-items: center; gap: 8px; padding: 6px 4px 12px; border-bottom: 1px solid #f1f5f9; margin-bottom: 10px; }
+        .col-head-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: white; flex-shrink: 0; }
+        .col-head h4 { font-size: 12px; font-weight: 900; color: #0f172a; margin: 0; }
+        .col-head p  { font-size: 10px; color: #64748b; margin: 0; }
+
+        .srv-card-mini {
+            background: linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eefdf7 100%);
+            border: 1px solid #dbeafe; border-radius: 12px; overflow: hidden;
+            margin-bottom: 8px; display: grid; grid-template-columns: 1fr 60px;
+        }
+        .srv-card-mini:last-child { margin-bottom: 0; }
+        .scm-info { padding: 10px 12px; }
+        .scm-kicker { display: inline-block; font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 999px; color: #047857; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.15); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .scm-name { font-size: 12px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
+        .scm-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+        .scm-pill { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 999px; background: #f1f5f9; color: #475569; }
+        .scm-price { font-size: 14px; font-weight: 900; color: #059669; }
+        .scm-img { background: linear-gradient(135deg, #dbeafe, #ccfbf1); display: flex; align-items: center; justify-content: center; font-size: 20px; color: rgba(15,23,42,0.2); }
+
+        /* colores por columna */
+        .col-clases  .srv-card-mini { background: linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eefdf7 100%); }
+        .col-reservas .srv-card-mini { background: linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eff6ff 100%); border-color: #bfdbfe; }
+        .col-subs    .srv-card-mini { background: linear-gradient(135deg, #fff 0%, #faf9ff 60%, #f5f3ff 100%); border-color: #ddd6fe; }
+        .col-clases  .scm-kicker { color: #047857; background: rgba(16,185,129,0.1);  border-color: rgba(16,185,129,0.2); }
+        .col-reservas .scm-kicker { color: #1d4ed8; background: rgba(59,130,246,0.1);  border-color: rgba(59,130,246,0.2); }
+        .col-subs    .scm-kicker { color: #6d28d9; background: rgba(139,92,246,0.1);  border-color: rgba(139,92,246,0.2); }
+        .col-clases  .scm-img { background: linear-gradient(135deg, #dbeafe, #ccfbf1); }
+        .col-reservas .scm-img { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+        .col-subs    .scm-img { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+
+        /* =========================================
+           SLIDE 2 — WIZARD DE PASOS
+        ========================================= */
+        .wizard-paths { display: flex; flex-direction: column; gap: 14px; }
+        .wp-row {
+            display: flex; gap: 0; align-items: center;
+            padding: 14px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .wp-label {
+            width: 140px; flex-shrink: 0; font-size: 12px; font-weight: 800; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .wp-steps { display: flex; align-items: center; gap: 0; flex: 1; }
+        .wp-step {
+            display: flex; align-items: center; gap: 6px;
+            padding: 7px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; white-space: nowrap;
+        }
+        .wp-step i { font-size: 11px; }
+        .wp-arrow { color: rgba(255,255,255,0.15); font-size: 11px; margin: 0 2px; }
+
+        .wp-1x1  { background: rgba(16,185,129,0.06);  border-color: rgba(16,185,129,0.2);  }
+        .wp-1xn  { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.2);  }
+        .wp-subs { background: rgba(168,85,247,0.06);  border-color: rgba(168,85,247,0.2);  }
+        .wp-res  { background: rgba(245,158,11,0.06);  border-color: rgba(245,158,11,0.2);  }
+
+        .ws-service  { background: rgba(255,255,255,0.05); color: #f1f5f9; }
+        .ws-staff    { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .ws-schedule { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .ws-payment  { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .ws-direct   { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        .wizard-note {
+            margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            font-size: 13px; color: var(--muted); line-height: 1.6;
+        }
+        .wizard-note strong { color: white; }
+
+        /* =========================================
+           SLIDE 3 — CALENDARIO Y SLOTS
+        ========================================= */
+        .calendar-demo {
+            background: white; border: 1px solid #dbeafe; border-radius: 16px; padding: 16px; width: 100%;
+        }
+        .cd-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .cd-head strong { font-size: 13px; font-weight: 900; color: #0f172a; }
+        .cd-nav { width: 28px; height: 28px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #475569; }
+        .cd-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
+        .cd-weekdays span { text-align: center; font-size: 10px; font-weight: 900; color: #94a3b8; padding: 4px 0; }
+        .cd-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+        .cd-day {
+            aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; border-radius: 8px; border: 1px solid transparent;
+            cursor: pointer; color: #475569;
+        }
+        .cd-day.empty    { visibility: hidden; }
+        .cd-day.disabled { color: #cbd5e1; background: #f8fafc; cursor: not-allowed; }
+        .cd-day.today    { border-color: #38bdf8; color: #0369a1; }
+        .cd-day.selected { background: #0f172a; color: white; border-color: #0f172a; }
+        .cd-day.available:not(.selected):not(.disabled):hover { background: #ecfdf5; border-color: #10b981; color: #059669; }
+
+        .slots-demo {
+            background: white; border: 1px solid #dbeafe; border-radius: 16px; padding: 16px; width: 100%;
+        }
+        .slots-demo h5 { font-size: 11px; font-weight: 900; color: #475569; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+        .slots-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+        .slot-btn {
+            padding: 10px 8px; border-radius: 10px; border: 1px solid; text-align: center;
+            font-size: 12px; font-weight: 900;
+        }
+        .slot-avail    { border-color: #dbeafe; background: white; color: #334155; }
+        .slot-selected { border-color: #0f172a; background: #0f172a; color: white; }
+        .slot-disabled { border-color: #f1f5f9; background: #f8fafc; color: #cbd5e1; }
+
+        .slots-logic { display: flex; flex-direction: column; gap: 10px; }
+        .sl-item {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 13px; color: var(--muted); line-height: 1.4;
+        }
+        .sl-icon {
+            width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+        }
+
+        /* =========================================
+           SLIDE 4 — RESUMEN LATERAL
+        ========================================= */
+        .summary-card {
+            background: white; border: 1px solid #dbeafe; border-radius: 18px;
+            padding: 20px; width: 100%;
+            background: linear-gradient(135deg, #fff 0%, #f8fbff 60%, #eefdf7 100%);
+        }
+        .sc-kicker { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px; background: rgba(16,185,129,0.1); color: #047857; border: 1px solid rgba(16,185,129,0.15); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+        .sc-name { font-size: 18px; font-weight: 900; color: #0f172a; margin-bottom: 14px; }
+        .sc-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-bottom: 14px; }
+        .sc-row { display: flex; flex-direction: column; gap: 3px; }
+        .sc-row span   { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; }
+        .sc-row strong { font-size: 13px; font-weight: 900; color: #334155; }
+        .sc-divider { border: none; border-top: 1px solid #e2e8f0; margin: 12px 0; }
+        .sc-total { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 14px; }
+        .sc-total span   { font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sc-total strong { font-size: 26px; font-weight: 900; color: #059669; }
+        .sc-form { display: grid; gap: 8px; margin-bottom: 14px; }
+        .sc-input { padding: 9px 12px; border: 1px solid #dbeafe; border-radius: 10px; font-size: 12px; color: #0f172a; font-weight: 700; background: white; }
+        .sc-input.placeholder { color: #94a3b8; font-weight: 400; }
+        .sc-payments { display: grid; gap: 8px; }
+        .sc-pay { padding: 11px 14px; border-radius: 12px; border: none; color: white; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .sc-pay.wa    { background: #25d366; }
+        .sc-pay.mp    { background: #009ee3; }
+        .sc-pay.local { background: white; color: #475569; border: 1px solid #cbd5e1; }
+
+        .summary-callouts { display: flex; flex-direction: column; gap: 14px; }
+        .sc-callout {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 16px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .sc-callout-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .sc-callout-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .sc-callout-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .scc-green  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .scc-purple { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  }
+        .scc-blue   { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  }
+        .scc-orange { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  }
+        .scc-green  .sc-callout-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .scc-purple .sc-callout-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .scc-blue   .sc-callout-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .scc-orange .sc-callout-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 5 — SUSCRIPCIONES
+        ========================================= */
+        .subs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .subs-card {
+            border-radius: 16px; padding: 20px; border: 1px solid; display: flex; flex-direction: column; gap: 12px;
+        }
+        .subs-flexible { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  }
+        .subs-fixed    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  }
+
+        .subs-icon { width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+        .subs-flexible .subs-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .subs-fixed    .subs-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+
+        .subs-card h3 { font-size: 15px; font-weight: 800; color: white; margin: 0; }
+        .subs-card p  { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+        .subs-feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+        .subs-feature i { font-size: 11px; }
+        .subs-flexible .subs-feature i { color: #d8b4fe; }
+        .subs-fixed    .subs-feature i { color: #93c5fd; }
+
+        .subs-demo-bar {
+            display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-top: 6px;
+        }
+        .sdb-day { height: 8px; border-radius: 3px; }
+        .sdb-used { background: #d8b4fe; }
+        .sdb-free { background: rgba(255,255,255,0.1); }
+
+        .subs-note {
+            grid-column: 1 / -1; padding: 16px 20px; border-radius: 14px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            font-size: 13px; color: var(--muted); line-height: 1.6; text-align: center;
+        }
+        .subs-note strong { color: white; }
+
+        /* =========================================
+           NAV
+        ========================================= */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-indigo:hover { border-color: var(--indigo); } .nav-btn.c-indigo:hover .nav-icon { color: #a5b4fc; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .service-columns { grid-template-columns: 1fr; }
+            .subs-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 40px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + TRES TIPOS
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-indigo" style="width:48vw;height:48vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-green"  style="width:38vw;height:38vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:56px; align-items:center;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--indigo);"></span>
+                        Tienda Online · Módulo
+                    </div>
+                    <h1>Turnos<br>y<br><span style="color:var(--indigo);">Servicios.</span></h1>
+                    <p class="lead" style="max-width:440px;">El módulo que convierte la tienda en una agenda. Clases individuales o grupales, reservas de espacio y suscripciones con créditos — todo en un wizard de pasos que se adapta al tipo de servicio elegido.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-chalkboard-teacher" style="color:#6ee7b7;font-size:11px;"></i> Clases 1x1 y grupales
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-calendar-check" style="color:#93c5fd;font-size:11px;"></i> Reservas con cupos
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-id-card" style="color:#d8b4fe;font-size:11px;"></i> Pases y suscripciones
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-calendar-alt" style="color:#fcd34d;font-size:11px;"></i> Calendario desde horarios del local
+                        </span>
+                    </div>
+                </div>
+
+                <div class="service-columns">
+                    <!-- Clases -->
+                    <div class="srv-col col-clases">
+                        <div class="col-head">
+                            <div class="col-head-icon" style="background:#10b981;"><i class="fas fa-chalkboard-teacher"></i></div>
+                            <div><h4>Clases</h4><p>Individuales y en grupo</p></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker">Clase 1x1</div>
+                                <div class="scm-name">Pilates Individual</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="far fa-clock"></i> 60 min</span>
+                                    <span class="scm-pill"><i class="fas fa-user"></i> Individual</span>
+                                </div>
+                                <div class="scm-price">$ 8.500</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-person-walking"></i></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker">Clase grupal</div>
+                                <div class="scm-name">Yoga Flow</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="far fa-clock"></i> 50 min</span>
+                                    <span class="scm-pill"><i class="fas fa-users"></i> 15 cupos</span>
+                                </div>
+                                <div class="scm-price">$ 4.200</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-spa"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Reservas -->
+                    <div class="srv-col col-reservas">
+                        <div class="col-head">
+                            <div class="col-head-icon" style="background:#3b82f6;"><i class="fas fa-calendar-check"></i></div>
+                            <div><h4>Reservas</h4><p>Lugares y recursos</p></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker" style="color:#1d4ed8;background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.2);">Reserva</div>
+                                <div class="scm-name">Cancha de Tenis</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="far fa-clock"></i> 60 min</span>
+                                    <span class="scm-pill"><i class="fas fa-users"></i> 4 cupos</span>
+                                </div>
+                                <div class="scm-price">$ 12.000</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-table-tennis-paddle-ball"></i></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker" style="color:#1d4ed8;background:rgba(59,130,246,0.1);border-color:rgba(59,130,246,0.2);">Reserva</div>
+                                <div class="scm-name">Sala de Reuniones</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="far fa-clock"></i> 90 min</span>
+                                    <span class="scm-pill"><i class="fas fa-users"></i> 8 cupos</span>
+                                </div>
+                                <div class="scm-price">$ 6.000</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-building"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- Suscripciones -->
+                    <div class="srv-col col-subs">
+                        <div class="col-head">
+                            <div class="col-head-icon" style="background:#8b5cf6;"><i class="fas fa-id-card"></i></div>
+                            <div><h4>Suscripciones</h4><p>Pases y membresías</p></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker" style="color:#6d28d9;background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.2);">Pase mensual</div>
+                                <div class="scm-name">Acceso ilimitado</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="fas fa-infinity"></i> Ilimitado</span>
+                                    <span class="scm-pill"><i class="fas fa-calendar"></i> 30 días</span>
+                                </div>
+                                <div class="scm-price">$ 45.000</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-crown"></i></div>
+                        </div>
+                        <div class="srv-card-mini">
+                            <div class="scm-info">
+                                <div class="scm-kicker" style="color:#6d28d9;background:rgba(139,92,246,0.1);border-color:rgba(139,92,246,0.2);">Pase flexible</div>
+                                <div class="scm-name">Pack 10 clases</div>
+                                <div class="scm-pills">
+                                    <span class="scm-pill"><i class="fas fa-ticket-alt"></i> 10 créditos</span>
+                                    <span class="scm-pill"><i class="fas fa-percent"></i> 15% off</span>
+                                </div>
+                                <div class="scm-price">$ 32.000</div>
+                            </div>
+                            <div class="scm-img"><i class="fas fa-bolt"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — WIZARD DINÁMICO
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-indigo" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--indigo);"></span>
+                    Flujo de Reserva
+                </div>
+                <h2>Los pasos cambian<br>según el servicio.</h2>
+                <p class="lead" style="max-width:500px;">El wizard no tiene pasos fijos. El computed <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">bookingSteps</code> arma el array de pasos en base al tipo de servicio seleccionado. Una clase individual agrega "elegir profesional". Una reserva lo omite. Una suscripción va directo al pago.</p>
+                <p class="lead" style="max-width:500px;margin-top:14px;">El botón de volver y el título del wizard también se calculan automáticamente según el paso actual dentro de ese array.</p>
+            </div>
+
+            <div>
+                <div class="wizard-paths">
+                    <div class="wp-row wp-1x1">
+                        <div class="wp-label"><i class="fas fa-user" style="margin-right:6px;color:#6ee7b7;"></i>Clase 1x1</div>
+                        <div class="wp-steps">
+                            <div class="wp-step ws-service"><i class="fas fa-spa"></i> Servicio</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-staff"><i class="fas fa-user-tie"></i> Profesional</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-schedule"><i class="fas fa-calendar"></i> Horario</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-payment"><i class="fas fa-lock"></i> Pago</div>
+                        </div>
+                    </div>
+                    <div class="wp-row wp-1xn">
+                        <div class="wp-label"><i class="fas fa-users" style="margin-right:6px;color:#93c5fd;"></i>Clase grupal</div>
+                        <div class="wp-steps">
+                            <div class="wp-step ws-service"><i class="fas fa-spa"></i> Servicio</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-staff"><i class="fas fa-user-tie"></i> Profesional</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-schedule"><i class="fas fa-calendar"></i> Horario</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-payment"><i class="fas fa-lock"></i> Pago</div>
+                        </div>
+                    </div>
+                    <div class="wp-row wp-res">
+                        <div class="wp-label"><i class="fas fa-calendar-check" style="margin-right:6px;color:#fcd34d;"></i>Reserva</div>
+                        <div class="wp-steps">
+                            <div class="wp-step ws-service"><i class="fas fa-spa"></i> Servicio</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-schedule"><i class="fas fa-calendar"></i> Horario</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-payment"><i class="fas fa-lock"></i> Pago</div>
+                        </div>
+                    </div>
+                    <div class="wp-row wp-subs">
+                        <div class="wp-label"><i class="fas fa-id-card" style="margin-right:6px;color:#d8b4fe;"></i>Suscripción</div>
+                        <div class="wp-steps">
+                            <div class="wp-step ws-service"><i class="fas fa-spa"></i> Servicio</div>
+                            <span class="wp-arrow"><i class="fas fa-chevron-right"></i></span>
+                            <div class="wp-step ws-direct"><i class="fas fa-bolt"></i> Pago directo</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="wizard-note">
+                    La suscripción no pide horario porque no es una reserva puntual. El computed <strong>requiresSchedule</strong> devuelve <code style="font-size:12px;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;">false</code> para el tipo <strong>subscription</strong> y el paso de calendario no se agrega al array.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — CALENDARIO Y SLOTS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-indigo" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    El Calendario
+                </div>
+                <h2>Los horarios del local<br>dictan qué días<br>están disponibles.</h2>
+                <p class="lead" style="max-width:500px;">No hay un backend de disponibilidad. El calendario se calcula del lado del cliente a partir del campo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">schedule</code> del perfil del local. Si el lunes está cerrado, todos los lunes del mes aparecen deshabilitados.</p>
+
+                <div class="slots-logic" style="margin-top:24px;">
+                    <div class="sl-item">
+                        <div class="sl-icon" style="background:rgba(59,130,246,0.15);color:#93c5fd;"><i class="fas fa-calendar-day"></i></div>
+                        El día seleccionado consulta <code style="font-size:12px;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;">buildSlotsForDate</code> que genera los slots cada N minutos.
+                    </div>
+                    <div class="sl-item">
+                        <div class="sl-icon" style="background:rgba(245,158,11,0.15);color:#fcd34d;"><i class="fas fa-coffee"></i></div>
+                        Si el local tiene descanso configurado, los slots que solapan quedan deshabilitados automáticamente.
+                    </div>
+                    <div class="sl-item">
+                        <div class="sl-icon" style="background:rgba(239,68,68,0.15);color:#fca5a5;"><i class="fas fa-clock"></i></div>
+                        Si es el día de hoy, los horarios anteriores al momento actual quedan bloqueados como "Pasado".
+                    </div>
+                    <div class="sl-item">
+                        <div class="sl-icon" style="background:rgba(16,185,129,0.15);color:#6ee7b7;"><i class="fas fa-ruler"></i></div>
+                        El paso entre slots es <code style="font-size:12px;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;">Math.max(15, Math.min(duración, 60))</code>. Para servicios de 30 min el paso es 30 min, para 2 hs el paso es 60 min.
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="calendar-demo">
+                    <div class="cd-head">
+                        <div class="cd-nav"><i class="fas fa-chevron-left"></i></div>
+                        <strong>Julio 2025</strong>
+                        <div class="cd-nav"><i class="fas fa-chevron-right"></i></div>
+                    </div>
+                    <div class="cd-weekdays">
+                        <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                    </div>
+                    <div class="cd-grid">
+                        <div class="cd-day empty"></div>
+                        <div class="cd-day available">1</div>
+                        <div class="cd-day available">2</div>
+                        <div class="cd-day available">3</div>
+                        <div class="cd-day available">4</div>
+                        <div class="cd-day disabled">5</div>
+                        <div class="cd-day disabled">6</div>
+                        <div class="cd-day available">7</div>
+                        <div class="cd-day available">8</div>
+                        <div class="cd-day available selected">9</div>
+                        <div class="cd-day available">10</div>
+                        <div class="cd-day available">11</div>
+                        <div class="cd-day disabled">12</div>
+                        <div class="cd-day disabled">13</div>
+                        <div class="cd-day available">14</div>
+                        <div class="cd-day available">15</div>
+                        <div class="cd-day today">16</div>
+                        <div class="cd-day disabled">17</div>
+                        <div class="cd-day disabled">18</div>
+                        <div class="cd-day disabled">19</div>
+                        <div class="cd-day disabled">20</div>
+                        <div class="cd-day disabled">21</div>
+                    </div>
+                </div>
+
+                <div class="slots-demo">
+                    <h5><i class="fas fa-clock" style="margin-right:6px;color:#6366f1;"></i> Miércoles 9 — Slots disponibles</h5>
+                    <div class="slots-grid">
+                        <div class="slot-btn slot-disabled">09:00<br><span style="font-size:9px;color:#cbd5e1;">Pasado</span></div>
+                        <div class="slot-btn slot-disabled">09:30<br><span style="font-size:9px;color:#cbd5e1;">Pasado</span></div>
+                        <div class="slot-btn slot-avail">10:00</div>
+                        <div class="slot-btn slot-avail">10:30</div>
+                        <div class="slot-btn slot-selected">11:00</div>
+                        <div class="slot-btn slot-avail">11:30</div>
+                        <div class="slot-btn slot-disabled">13:00<br><span style="font-size:9px;color:#cbd5e1;">Descanso</span></div>
+                        <div class="slot-btn slot-avail">14:00</div>
+                        <div class="slot-btn slot-avail">14:30</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — RESUMEN LATERAL Y PAGOS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    El Panel Lateral
+                </div>
+                <h2>El resumen<br>siempre visible.</h2>
+                <p class="lead" style="max-width:500px;">Mientras el cliente navega los pasos del wizard, el panel lateral muestra en tiempo real el servicio elegido, el profesional, la fecha, el horario y el total. Sin sorpresas al llegar al pago.</p>
+
+                <div class="summary-callouts" style="margin-top:24px;">
+                    <div class="sc-callout scc-green">
+                        <div class="sc-callout-icon"><i class="fas fa-eye"></i></div>
+                        <div class="sc-callout-body">
+                            <strong>Siempre en pantalla</strong>
+                            <p>El panel lateral está visible en todos los pasos del wizard. Los campos que aún no se completaron aparecen como "Pendiente".</p>
+                        </div>
+                    </div>
+                    <div class="sc-callout scc-purple">
+                        <div class="sc-callout-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <div class="sc-callout-body">
+                            <strong>Formulario en el último paso</strong>
+                            <p>Nombre, teléfono y notas se piden solo al llegar al paso de pago. Los métodos disponibles los configura el local.</p>
+                        </div>
+                    </div>
+                    <div class="sc-callout scc-orange">
+                        <div class="sc-callout-icon"><i class="fas fa-forward"></i></div>
+                        <div class="sc-callout-body">
+                            <strong>El botón "Continuar" vive ahí</strong>
+                            <p>El mismo panel tiene el botón de avanzar al siguiente paso. En el último paso lo reemplaza el bloque de métodos de pago habilitados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="sc-kicker"><i class="fas fa-receipt"></i> Resumen</div>
+                <div class="sc-name">Pilates Individual</div>
+                <div class="sc-rows">
+                    <div class="sc-row"><span>Tipo</span><strong>Clase individual</strong></div>
+                    <div class="sc-row"><span>Profesional</span><strong>María G.</strong></div>
+                    <div class="sc-row"><span>Día</span><strong>mié. 9 jul</strong></div>
+                    <div class="sc-row" style="grid-column:1/-1;"><span>Horario</span><strong>11:00 - 12:00</strong></div>
+                </div>
+                <hr class="sc-divider">
+                <div class="sc-total">
+                    <span>Total</span>
+                    <strong>$ 8.500</strong>
+                </div>
+                <div class="sc-form">
+                    <div class="sc-input">Nacho</div>
+                    <div class="sc-input">1123456789</div>
+                    <div class="sc-input placeholder">Notas opcionales...</div>
+                </div>
+                <div class="sc-payments">
+                    <button class="sc-pay wa"><i class="fab fa-whatsapp"></i> Enviar WhatsApp</button>
+                    <button class="sc-pay mp"><i class="fas fa-credit-card"></i> Mercado Pago</button>
+                    <button class="sc-pay local"><i class="fas fa-calendar-check"></i> Solicitar reserva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — SUSCRIPCIONES EN DETALLE
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div class="eyebrow">
+                <span class="dot" style="background:var(--purple);"></span>
+                Suscripciones
+            </div>
+            <h2 style="margin-bottom:10px;">Dos modos de pase.</h2>
+            <p class="lead" style="max-width:760px; margin-bottom:28px;">Las suscripciones no requieren elegir horario: se compran directamente. Lo que varía es cómo se consumen. El campo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">metadata_info.mode</code> define el comportamiento.</p>
+
+            <div class="subs-grid">
+                <div class="subs-card subs-flexible">
+                    <div class="subs-icon"><i class="fas fa-shuffle"></i></div>
+                    <h3>Modo Flexible</h3>
+                    <p>El cliente elige cuántos días de suscripción quiere comprar. Aparece un input numérico en el resumen lateral y el total se multiplica automáticamente.</p>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Input de cantidad en el resumen</div>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Total = precio × días elegidos</div>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Compatible con Mercado Pago</div>
+                    <div class="subs-demo-bar">
+                        <div class="sdb-day sdb-used"></div>
+                        <div class="sdb-day sdb-used"></div>
+                        <div class="sdb-day sdb-used"></div>
+                        <div class="sdb-day sdb-free"></div>
+                        <div class="sdb-day sdb-free"></div>
+                        <div class="sdb-day sdb-free"></div>
+                        <div class="sdb-day sdb-free"></div>
+                    </div>
+                    <div style="font-size:11px;color:#d8b4fe;font-weight:700;">3 de 7 días usados</div>
+                </div>
+
+                <div class="subs-card subs-fixed">
+                    <div class="subs-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <h3>Modo Fijo</h3>
+                    <p>La vigencia está predefinida (ej: 30 días). El cliente no elige cantidad — simplemente compra el pase y la vigencia empieza desde la activación.</p>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Vigencia fija en días</div>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Sin input de cantidad</div>
+                    <div class="subs-feature"><i class="fas fa-check-circle"></i> Puede incluir créditos (clases)</div>
+                    <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;">
+                        <div style="padding:6px 12px;border-radius:8px;background:rgba(59,130,246,0.15);color:#93c5fd;font-size:12px;font-weight:800;"><i class="fas fa-ticket-alt" style="margin-right:5px;"></i>10 créditos</div>
+                        <div style="padding:6px 12px;border-radius:8px;background:rgba(59,130,246,0.15);color:#93c5fd;font-size:12px;font-weight:800;"><i class="fas fa-calendar" style="margin-right:5px;"></i>30 días</div>
+                        <div style="padding:6px 12px;border-radius:8px;background:rgba(59,130,246,0.15);color:#93c5fd;font-size:12px;font-weight:800;"><i class="fas fa-percent" style="margin-right:5px;"></i>15% off productos</div>
+                    </div>
+                </div>
+
+                <div class="subs-note">
+                    Ambos modos emiten al servidor con <strong>api.publicCreatePassPreference</strong> (Mercado Pago) o resuelven el pago vía WhatsApp. Después de la compra, el pase aparece en <strong>Mis Servicios</strong> con un QR de acceso generado en el cliente.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-indigo" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+        <div class="inner" style="align-items:center; text-align:center;">
+
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--indigo);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin:0 auto; text-align:center; max-width:620px;">Ya conocés el módulo de servicios completo. Podés ver cómo el cliente gestiona sus turnos y pases en "Mis Servicios", o explorar el catálogo de productos.</p>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="Agenda.html" class="nav-btn c-indigo">
+                    <div class="nav-icon"><i class="fas fa-id-badge"></i></div>
+                    <div class="nav-label">Mis<br>Servicios</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="MyOrders.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+                    <div class="nav-label">Mis<br>Pedidos</div>
+                </a>
+                <a href="CheckoutModal.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-lock"></i></div>
+                    <div class="nav-label">Checkout</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_appointments';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

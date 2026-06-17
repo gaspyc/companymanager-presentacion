@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        (function() {
+            const referrer = document.referrer;
+            if (referrer && (referrer.includes('/ecosystem') || referrer.includes('localhost') || referrer.includes('127.0.0.1') || referrer.includes('duckdns.org'))) {
+                window.location.href = referrer;
+            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                window.location.href = 'http://localhost:5173/ecosystem';
+            }
+        })();
+    </script>
+    <title>CompanyManager — Ecosistema Completo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:           #080f1e;
+            --bg-panel:     rgba(15, 23, 42, 0.55);
+            --text-main:    #f1f5f9;
+            --text-muted:   #64748b;
+            --glass-border: rgba(255,255,255,0.06);
+
+            /* Colores por apartado */
+            --c-marca:    #4f46e5;
+            --c-sede:     #3b82f6;
+            --c-fabrica:  #f59e0b;
+            --c-deposito: #10b981;
+            --c-plugins:  #ec4899;
+            --c-tienda:   #a855f7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(ellipse 60% 40% at 50% -10%, rgba(79,70,229,0.18) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 50% at 90% 80%,  rgba(168,85,247,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 30% 40% at 5%  70%,  rgba(59,130,246,0.07) 0%, transparent 60%);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 60px 24px 80px;
+        }
+
+        /* =========================================
+           HEADER
+        ========================================= */
+        .main-header {
+            text-align: center;
+            margin-bottom: 70px;
+            animation: fadeDown 0.7s ease-out both;
+        }
+        .eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 11px; font-weight: 900; letter-spacing: 2.5px;
+            text-transform: uppercase; color: var(--text-muted);
+            margin-bottom: 18px;
+            padding: 6px 16px; border-radius: 999px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255,255,255,0.03);
+        }
+        .eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-marca); }
+        .main-header h1 {
+            font-size: clamp(42px, 6vw, 76px);
+            font-weight: 900; letter-spacing: -2px; line-height: 1;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #f1f5f9 30%, #94a3b8 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .main-header p {
+            font-size: 18px; color: var(--text-muted); max-width: 600px;
+            margin: 0 auto 32px; line-height: 1.6;
+        }
+
+        /* progress pill */
+        .progress-pill {
+            display: inline-flex; align-items: center; gap: 16px;
+            background: rgba(0,0,0,0.35); border: 1px solid var(--glass-border);
+            padding: 12px 24px; border-radius: 999px;
+        }
+        .pp-text strong { font-size: 16px; color: var(--c-marca); display: block; }
+        .pp-text span   { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 800; }
+        .pp-bar-bg { width: 160px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; }
+        .pp-bar-fill { height: 100%; background: var(--c-marca); border-radius: 10px; transition: width 1s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 0 10px var(--c-marca); }
+
+        /* =========================================
+           LAYOUT WRAPPER
+        ========================================= */
+        .ecosystem {
+            max-width: 1280px; margin: 0 auto;
+            display: flex; flex-direction: column; gap: 60px;
+        }
+
+        /* =========================================
+           SECTION LABELS
+        ========================================= */
+        .section-label {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 20px;
+        }
+        .section-label .sl-line {
+            flex: 1; height: 1px; background: var(--glass-border);
+        }
+        .section-label .sl-text {
+            font-size: 11px; font-weight: 900; text-transform: uppercase;
+            letter-spacing: 2px; color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .section-label .sl-icon { font-size: 12px; }
+
+        /* =========================================
+           MARCA — HERO CARD
+        ========================================= */
+        .marca-card {
+            display: grid; grid-template-columns: auto 1fr auto;
+            align-items: center; gap: 28px;
+            padding: 32px 36px;
+            border-radius: 20px;
+            background: linear-gradient(135deg,
+                rgba(79,70,229,0.14) 0%,
+                rgba(79,70,229,0.05) 50%,
+                rgba(15,23,42,0.6) 100%);
+            border: 1px solid rgba(79,70,229,0.35);
+            box-shadow: 0 0 40px rgba(79,70,229,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+            text-decoration: none; cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .marca-card::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(79,70,229,0.8), transparent);
+        }
+        .marca-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(79,70,229,0.2), inset 0 1px 0 rgba(255,255,255,0.07);
+            border-color: rgba(79,70,229,0.6);
+        }
+        .marca-card.visited { border-left: 4px solid var(--c-marca); }
+
+        .mc-icon {
+            width: 72px; height: 72px; border-radius: 18px;
+            background: rgba(79,70,229,0.2); border: 1px solid rgba(79,70,229,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; color: #a5b4fc; flex-shrink: 0;
+        }
+        .mc-text {}
+        .mc-text .apt-label {
+            font-size: 11px; font-weight: 900; letter-spacing: 2px;
+            text-transform: uppercase; color: #a5b4fc; margin-bottom: 6px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .mc-text h2 { font-size: 28px; font-weight: 900; color: white; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .mc-text p  { font-size: 15px; color: var(--text-muted); line-height: 1.5; }
+        .mc-modules {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px;
+        }
+        .mc-mod-chip {
+            font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+            background: rgba(79,70,229,0.12); color: #a5b4fc;
+            border: 1px solid rgba(79,70,229,0.2);
+        }
+        .mc-right { text-align: right; }
+        .mc-count { font-size: 48px; font-weight: 900; color: rgba(79,70,229,0.4); line-height: 1; }
+        .mc-count-label { font-size: 11px; color: var(--text-muted); font-weight: 700; }
+
+        /* herencia arrow */
+        .herencia-arrow {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 0;
+        }
+        .ha-line  { width: 2px; height: 24px; background: rgba(79,70,229,0.25); }
+        .ha-label {
+            font-size: 10px; font-weight: 900; letter-spacing: 1.5px;
+            text-transform: uppercase; color: rgba(79,70,229,0.5);
+        }
+        .ha-arrows { display: flex; gap: 60px; }
+        .ha-branch { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .ha-branch-line { width: 2px; height: 20px; }
+        .ha-branch-dot  { width: 8px; height: 8px; border-radius: 50%; }
+
+        /* =========================================
+           OPERATIVAS — 3 COLUMNAS
+        ========================================= */
+        .operativas-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+        }
+        .apt-card {
+            border-radius: 16px; padding: 24px 22px;
+            background: var(--bg-panel); backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            text-decoration: none; cursor: pointer;
+            transition: all 0.3s ease; display: flex; flex-direction: column; gap: 16px;
+            position: relative; overflow: hidden;
+        }
+        .apt-card:hover { transform: translateY(-4px); background: rgba(30,41,59,0.8); }
+        .apt-card.visited { border-left: 4px solid; }
+        .apt-card[data-apt="sede"].visited    { border-left-color: var(--c-sede); }
+        .apt-card[data-apt="fabrica"].visited { border-left-color: var(--c-fabrica); }
+        .apt-card[data-apt="deposito"].visited{ border-left-color: var(--c-deposito); }
+
+        .apt-card[data-apt="sede"]:hover    { box-shadow: 0 15px 40px rgba(59,130,246,0.15);  border-color: rgba(59,130,246,0.3); }
+        .apt-card[data-apt="fabrica"]:hover { box-shadow: 0 15px 40px rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); }
+        .apt-card[data-apt="deposito"]:hover{ box-shadow: 0 15px 40px rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); }
+
+        .apt-top { display: flex; align-items: center; gap: 14px; }
+        .apt-icon {
+            width: 52px; height: 52px; border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .apt-icon.sede    { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .apt-icon.fabrica { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .apt-icon.deposito{ background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+
+        .apt-title { }
+        .apt-title .apt-label { font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+        .apt-title .apt-label.sede    { color: #93c5fd; }
+        .apt-title .apt-label.fabrica { color: #fcd34d; }
+        .apt-title .apt-label.deposito{ color: #6ee7b7; }
+        .apt-title h3 { font-size: 20px; font-weight: 800; color: white; }
+
+        .apt-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        .apt-mod-count {
+            margin-top: auto; padding-top: 14px;
+            border-top: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .apt-mod-count span { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .apt-mod-count .count-num { font-size: 22px; font-weight: 900; }
+        .apt-card[data-apt="sede"]    .count-num { color: #93c5fd; }
+        .apt-card[data-apt="fabrica"] .count-num { color: #fcd34d; }
+        .apt-card[data-apt="deposito"].count-num { color: #6ee7b7; }
+
+        .apt-status-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px;
+        }
+        .apt-card.visited .apt-status-dot {
+            background: rgba(16,185,129,0.2); color: #6ee7b7;
+            border: 1px solid rgba(16,185,129,0.4);
+        }
+        .apt-card:not(.visited) .apt-status-dot {
+            background: rgba(255,255,255,0.04); color: transparent;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* =========================================
+           MÓDULOS EN COMÚN
+        ========================================= */
+        .common-modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .common-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+            border-radius: 14px; padding: 16px 18px;
+            display: flex; flex-direction: column; gap: 12px;
+            transition: 0.25s;
+        }
+        .common-card:hover { background: rgba(255,255,255,0.04); transform: translateY(-2px); }
+
+        .cc-top { display: flex; align-items: center; gap: 12px; }
+        .cc-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; flex-shrink: 0;
+        }
+        .cc-name { font-size: 15px; font-weight: 800; color: white; }
+        .cc-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+        .cc-apts { display: flex; flex-wrap: wrap; gap: 5px; }
+        .apt-badge {
+            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
+            letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .ab-marca    { background: rgba(79,70,229,0.15);  color: #a5b4fc; border: 1px solid rgba(79,70,229,0.3); }
+        .ab-sede     { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+        .ab-fabrica  { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
+        .ab-deposito { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+
+        /* =========================================
+           SATÉLITES
+        ========================================= */
+        .satellites-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+        }
+        .satellite-card {
+            border-radius: 16px; padding: 28px 28px;
+            text-decoration: none; cursor: pointer;
+            display: flex; align-items: center; gap: 22px;
+            transition: all 0.3s ease;
+            position: relative; overflow: hidden;
+        }
+        .satellite-card.sc-plugins {
+            background: rgba(236,72,153,0.06); border: 1px solid rgba(236,72,153,0.22);
+        }
+        .satellite-card.sc-tienda {
+            background: rgba(168,85,247,0.06); border: 1px solid rgba(168,85,247,0.22);
+        }
+        .satellite-card.sc-plugins:hover {
+            background: rgba(236,72,153,0.1); transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.4);
+        }
+        .satellite-card.sc-tienda:hover {
+            background: rgba(168,85,247,0.1); transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(168,85,247,0.12); border-color: rgba(168,85,247,0.4);
+        }
+        .satellite-card.visited { border-left: 4px solid; }
+        .satellite-card.sc-plugins.visited { border-left-color: var(--c-plugins); }
+        .satellite-card.sc-tienda.visited  { border-left-color: var(--c-tienda); }
+
+        .sat-icon {
+            width: 64px; height: 64px; border-radius: 16px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 26px;
+        }
+        .sc-plugins .sat-icon { background: rgba(236,72,153,0.15); color: #f9a8d4; }
+        .sc-tienda  .sat-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .sat-body { flex: 1; }
+        .sat-body .sat-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+        .sc-plugins .sat-label { color: #f9a8d4; }
+        .sc-tienda  .sat-label { color: #d8b4fe; }
+        .sat-body h3 { font-size: 22px; font-weight: 900; color: white; margin-bottom: 5px; }
+        .sat-body p  { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        .sat-independent-badge {
+            font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px;
+            background: rgba(255,255,255,0.05); color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.08); white-space: nowrap;
+            align-self: flex-start;
+        }
+        .sat-status-dot {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 11px;
+            flex-shrink: 0;
+        }
+        .satellite-card.visited .sat-status-dot {
+            background: rgba(16,185,129,0.2); color: #6ee7b7;
+            border: 1px solid rgba(16,185,129,0.4);
+        }
+        .satellite-card:not(.visited) .sat-status-dot {
+            background: rgba(255,255,255,0.04); color: transparent;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+        .footer-actions {
+            display: flex; justify-content: center; gap: 16px; margin-top: 20px;
+        }
+        .btn-reset {
+            background: transparent; border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text-muted); padding: 9px 18px; border-radius: 9px;
+            font-size: 12px; font-weight: 800; cursor: pointer;
+            font-family: inherit; transition: 0.2s; letter-spacing: 0.5px;
+        }
+        .btn-reset:hover { color: white; background: rgba(255,255,255,0.05); }
+
+        /* =========================================
+           ANIMACIONES
+        ========================================= */
+        @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: translateY(0); } }
+
+        .anim-1 { animation: fadeUp 0.6s 0.1s ease-out both; }
+        .anim-2 { animation: fadeUp 0.6s 0.2s ease-out both; }
+        .anim-3 { animation: fadeUp 0.6s 0.3s ease-out both; }
+        .anim-4 { animation: fadeUp 0.6s 0.4s ease-out both; }
+        .anim-5 { animation: fadeUp 0.6s 0.5s ease-out both; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 900px) {
+            .operativas-grid  { grid-template-columns: 1fr; }
+            .satellites-grid  { grid-template-columns: 1fr; }
+            .marca-card       { grid-template-columns: auto 1fr; }
+            .mc-right         { display: none; }
+            .common-modules-grid { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 600px) {
+            body { padding: 40px 16px 60px; }
+            .main-header h1 { font-size: 38px; }
+            .main-header p  { font-size: 16px; }
+            .marca-card     { grid-template-columns: 1fr; text-align: center; }
+            .mc-icon        { margin: 0 auto; }
+            .common-modules-grid { grid-template-columns: 1fr; }
+            .progress-pill  { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="main-header">
+        <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            CompanyManager
+            <span class="eyebrow-dot"></span>
+        </div>
+        <h1>El Ecosistema</h1>
+        <p>Todos los apartados del sistema. Explorá cada uno o navegá por los módulos que comparten varios contextos.</p>
+
+        <div class="progress-pill">
+            <div class="pp-text">
+                <strong id="progressCount">0 / 6</strong>
+                <span>Apartados explorados</span>
+            </div>
+            <div class="pp-bar-bg">
+                <div class="pp-bar-fill" id="progressBar" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ecosystem">
+
+        <!-- =============================================
+             CAPA ESTRATÉGICA — MARCA
+        ============================================= -->
+        <div class="anim-1">
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><span class="sl-icon">👑</span> &nbsp;Capa Estratégica</div>
+                <div class="sl-line"></div>
+            </div>
+
+            <a href="brand/index.html" onclick="markVisited('marca')" id="card-marca" class="marca-card">
+                <div class="mc-icon"><i class="fas fa-crown"></i></div>
+                <div class="mc-text">
+                    <div class="apt-label">
+                        <i class="fas fa-circle" style="font-size: 7px;"></i> Apartado de Marca
+                    </div>
+                    <h2>Marca</h2>
+                    <p>Define los estándares de identidad, los mensajes clave, el catálogo maestro y la tabla de mando de toda la red. Todo lo que configura la marca es heredado por las sedes.</p>
+                    <div class="mc-modules">
+                        <span class="mc-mod-chip"><i class="fas fa-crown" style="font-size:9px; margin-right:4px;"></i>Dashboard</span>
+                        <span class="mc-mod-chip"><i class="fas fa-network-wired" style="font-size:9px; margin-right:4px;"></i>Red</span>
+                        <span class="mc-mod-chip"><i class="fas fa-ruler-combined" style="font-size:9px; margin-right:4px;"></i>Estándares</span>
+                        <span class="mc-mod-chip"><i class="fas fa-comment-dots" style="font-size:9px; margin-right:4px;"></i>Mensajes</span>
+                        <span class="mc-mod-chip"><i class="fas fa-users" style="font-size:9px; margin-right:4px;"></i>Talento</span>
+                        <span class="mc-mod-chip"><i class="fas fa-layer-group" style="font-size:9px; margin-right:4px;"></i>Catálogo Maestro</span>
+                        <span class="mc-mod-chip"><i class="fas fa-gear" style="font-size:9px; margin-right:4px;"></i>Ajustes</span>
+                    </div>
+                </div>
+                <div class="mc-right">
+                    <div class="mc-count">7</div>
+                    <div class="mc-count-label">módulos</div>
+                </div>
+            </a>
+        </div>
+
+        <!-- flecha herencia -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin: -30px 0; z-index: 2;" class="anim-2">
+            <div style="width: 2px; height: 20px; background: rgba(79,70,229,0.3);"></div>
+            <div style="font-size: 10px; font-weight: 900; letter-spacing: 2px; color: rgba(79,70,229,0.5); text-transform: uppercase;">hereda a</div>
+            <div style="display: flex; gap: 100px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <div style="width: 2px; height: 18px; background: rgba(59,130,246,0.3);"></div>
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(59,130,246,0.5);"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <div style="width: 2px; height: 18px; background: rgba(245,158,11,0.3);"></div>
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(245,158,11,0.5);"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <div style="width: 2px; height: 18px; background: rgba(16,185,129,0.3);"></div>
+                    <div style="width: 8px; height: 8px; border-radius: 50%; background: rgba(16,185,129,0.5);"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================
+             OPERATIVAS
+        ============================================= -->
+        <div class="anim-3">
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><span class="sl-icon">🏪</span> &nbsp;Unidades Operativas</div>
+                <div class="sl-line"></div>
+            </div>
+
+            <div class="operativas-grid">
+
+                <a href="sede/index.html" onclick="markVisited('sede')" id="card-sede" data-apt="sede" class="apt-card">
+                    <div class="apt-top">
+                        <div class="apt-icon sede"><i class="fas fa-store"></i></div>
+                        <div class="apt-title">
+                            <div class="apt-label sede">Apartado</div>
+                            <h3>Sede</h3>
+                        </div>
+                    </div>
+                    <div class="apt-desc">El núcleo operativo base. Todo lo que tiene Sede está disponible en Fábrica y Depósito. POS, CRM, inventario, caja y más.</div>
+                    <div class="apt-mod-count">
+                        <div>
+                            <div class="count-num">16</div>
+                            <span>módulos</span>
+                        </div>
+                        <div class="apt-status-dot"><i class="fas fa-check"></i></div>
+                    </div>
+                </a>
+
+                <a href="fabrica/index.html" onclick="markVisited('fabrica')" id="card-fabrica" data-apt="fabrica" class="apt-card">
+                    <div class="apt-top">
+                        <div class="apt-icon fabrica"><i class="fas fa-industry"></i></div>
+                        <div class="apt-title">
+                            <div class="apt-label fabrica">Apartado</div>
+                            <h3>Fábrica</h3>
+                        </div>
+                    </div>
+                    <div class="apt-desc">Tiene todo lo de Sede más los módulos de producción, órdenes de fabricación, fórmulas de producto y control de calidad.</div>
+                    <div class="apt-mod-count">
+                        <div>
+                            <div class="count-num">16+</div>
+                            <span>módulos</span>
+                        </div>
+                        <div class="apt-status-dot"><i class="fas fa-check"></i></div>
+                    </div>
+                </a>
+
+                <a href="deposito/index.html" onclick="markVisited('deposito')" id="card-deposito" data-apt="deposito" class="apt-card">
+                    <div class="apt-top">
+                        <div class="apt-icon deposito"><i class="fas fa-warehouse"></i></div>
+                        <div class="apt-title">
+                            <div class="apt-label deposito">Apartado</div>
+                            <h3>Depósito</h3>
+                        </div>
+                    </div>
+                    <div class="apt-desc">Tiene todo lo de Sede más los módulos de recepción de mercadería, trazabilidad de lotes, transferencias y cross-docking.</div>
+                    <div class="apt-mod-count">
+                        <div>
+                            <div class="count-num">16+</div>
+                            <span>módulos</span>
+                        </div>
+                        <div class="apt-status-dot"><i class="fas fa-check"></i></div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+        <!-- =============================================
+             MÓDULOS EN COMÚN
+        ============================================= -->
+        <div class="anim-4">
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><span class="sl-icon">🔗</span> &nbsp;Módulos en Común</div>
+                <div class="sl-line"></div>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 18px; text-align: center;">
+                Estos módulos aparecen en más de un apartado. El contenido es el mismo — los badges indican en qué contextos está presente.
+            </p>
+
+            <div class="common-modules-grid">
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #3b82f6;"><i class="fas fa-chart-line"></i></div>
+                        <div class="cc-name">Dashboard</div>
+                    </div>
+                    <div class="cc-desc">Panel de KPIs global de operaciones, alertas y métricas en tiempo real.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-marca">Marca</span>
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #10b981;"><i class="fas fa-boxes"></i></div>
+                        <div class="cc-name">Inventario</div>
+                    </div>
+                    <div class="cc-desc">Doble barra de stock, lotes, mermas y transferencias entre unidades.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #a855f7;"><i class="fas fa-users"></i></div>
+                        <div class="cc-name">Directorio CRM</div>
+                    </div>
+                    <div class="cc-desc">LTV, historial de clientes, segmentación y canal de WhatsApp.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #f59e0b;"><i class="fas fa-wallet"></i></div>
+                        <div class="cc-name">Flujo de Caja</div>
+                    </div>
+                    <div class="cc-desc">Libro diario, heatmaps de flujo y cierre de caja por turno.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #ec4899;"><i class="fas fa-tags"></i></div>
+                        <div class="cc-name">Motor de Promociones</div>
+                    </div>
+                    <div class="cc-desc">Campañas, descuentos automáticos y combos por evento o condición.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-marca">Marca</span>
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #06b6d4;"><i class="fas fa-sitemap"></i></div>
+                        <div class="cc-name">Catálogo</div>
+                    </div>
+                    <div class="cc-desc">Árbol de variantes y precios. La marca tiene el Maestro; las unidades lo heredan.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-marca">Marca</span>
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #6366f1;"><i class="fas fa-user-shield"></i></div>
+                        <div class="cc-name">Staff y Roles</div>
+                    </div>
+                    <div class="cc-desc">Roles, permisos y portal de empleos. La marca gestiona transferencias entre unidades.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-marca">Marca</span>
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #f43f5e;"><i class="fas fa-handshake"></i></div>
+                        <div class="cc-name">Proveedores</div>
+                    </div>
+                    <div class="cc-desc">Compras predictivas, órdenes y gestión multi-proveedor.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #ef4444;"><i class="fas fa-search-dollar"></i></div>
+                        <div class="cc-name">Auditoría</div>
+                    </div>
+                    <div class="cc-desc">Márgenes netos, comisiones y control de rentabilidad por unidad.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+                <div class="common-card">
+                    <div class="cc-top">
+                        <div class="cc-icon" style="color: #3b82f6;"><i class="fas fa-file-invoice"></i></div>
+                        <div class="cc-name">Facturación</div>
+                    </div>
+                    <div class="cc-desc">WebServices y remitos PDF. Integración con AFIP según plugin activo.</div>
+                    <div class="cc-apts">
+                        <span class="apt-badge ab-sede">Sede</span>
+                        <span class="apt-badge ab-fabrica">Fábrica</span>
+                        <span class="apt-badge ab-deposito">Depósito</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =============================================
+             SATÉLITES
+        ============================================= -->
+        <div class="anim-5">
+            <div class="section-label">
+                <div class="sl-line"></div>
+                <div class="sl-text"><span class="sl-icon">🛰️</span> &nbsp;Satélites Independientes</div>
+                <div class="sl-line"></div>
+            </div>
+
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 18px; text-align: center;">
+                No forman parte de la jerarquía. Funcionan de forma autónoma y se conectan con las unidades a través de integraciones.
+            </p>
+
+            <div class="satellites-grid">
+
+                <a href="plugins/index.html" onclick="markVisited('plugins')" id="card-plugins" class="satellite-card sc-plugins">
+                    <div class="sat-icon"><i class="fas fa-puzzle-piece"></i></div>
+                    <div class="sat-body">
+                        <div class="sat-label">Satélite</div>
+                        <h3>Ecosistema de Plugins</h3>
+                        <p>Marketplace de herramientas. Catálogo vivo, activación por sede, sandboxing y monetización para developers.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
+                        <span class="sat-independent-badge">Independiente</span>
+                        <div class="sat-status-dot"><i class="fas fa-check"></i></div>
+                    </div>
+                </a>
+
+                <a href="tienda/index.html" onclick="markVisited('tienda')" id="card-tienda" class="satellite-card sc-tienda">
+                    <div class="sat-icon"><i class="fas fa-shopping-bag"></i></div>
+                    <div class="sat-body">
+                        <div class="sat-label">Satélite</div>
+                        <h3>Tienda Online</h3>
+                        <p>Vidriera pública y checkout B2C. Se sincroniza con el inventario y catálogo de la sede pero opera de forma independiente.</p>
+                    </div>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
+                        <span class="sat-independent-badge">Independiente</span>
+                        <div class="sat-status-dot"><i class="fas fa-check"></i></div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-actions">
+        <button class="btn-reset" onclick="resetProgress()">
+            <i class="fas fa-undo" style="margin-right: 6px;"></i> Reiniciar progreso
+        </button>
+    </div>
+
+    <script>
+        const APTS = ['marca', 'sede', 'fabrica', 'deposito', 'plugins', 'tienda'];
+        const PREFIX = 'main_visited_';
+
+        function markVisited(id) {
+            localStorage.setItem(PREFIX + id, 'true');
+        }
+
+        function renderVisited() {
+            let count = 0;
+            APTS.forEach(id => {
+                const visited = localStorage.getItem(PREFIX + id) === 'true';
+                if (visited) {
+                    count++;
+                    const card = document.getElementById('card-' + id);
+                    if (card) card.classList.add('visited');
+                }
+            });
+
+            const total = APTS.length;
+            document.getElementById('progressCount').innerText = `${count} / ${total}`;
+            document.getElementById('progressBar').style.width = `${(count / total) * 100}%`;
+        }
+
+        function resetProgress() {
+            APTS.forEach(id => localStorage.removeItem(PREFIX + id));
+            location.reload();
+        }
+
+        renderVisited();
+    </script>
+
+</body>
+</html>

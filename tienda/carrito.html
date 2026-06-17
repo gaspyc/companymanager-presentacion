@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito Flotante — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:       #0f172a;
+            --panel:    rgba(15,23,42,0.65);
+            --muted:    #94a3b8;
+            --border:   rgba(255,255,255,0.06);
+            --green:    #10b981;
+            --blue:     #3b82f6;
+            --purple:   #a855f7;
+            --orange:   #f59e0b;
+            --red:      #ef4444;
+            --pink:     #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: #f8fafc;
+        }
+
+        /* =========================================
+           SLIDE ENGINE
+        ========================================= */
+        .slide {
+            position: absolute; inset: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .inner {
+            width: 100%; max-width: 1360px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.11) 0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); }
+        .g-red    { background: radial-gradient(circle, rgba(239,68,68,0.08)  0%, transparent 70%); }
+
+        /* =========================================
+           CONTROLS
+        ========================================= */
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--green); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        /* =========================================
+           TYPE
+        ========================================= */
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 60px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; max-width: 540px; }
+
+        /* =========================================
+           LAYOUT
+        ========================================= */
+        .split  { display: grid; grid-template-columns: 1fr 1fr;      gap: 64px; align-items: center; }
+        .split3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+        .glass  { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           EL CARRITO FLOTANTE — DEMO FIEL
+        ========================================= */
+        /* página de fondo simulada */
+        .fake-page {
+            width: 100%; border-radius: 20px; overflow: hidden;
+            background: #f8fafc; position: relative;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.5);
+        }
+        .fake-page-body {
+            padding: 20px; display: grid;
+            grid-template-columns: repeat(3,1fr); gap: 12px;
+        }
+        .fake-product {
+            background: white; border-radius: 12px; border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .fp-img  { height: 64px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #cbd5e1; }
+        .fp-info { padding: 10px; }
+        .fp-name { font-size: 11px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+        .fp-row  { display: flex; justify-content: space-between; align-items: center; }
+        .fp-price { font-size: 13px; font-weight: 900; color: #10b981; }
+        .fp-btn  { width: 26px; height: 26px; border-radius: 7px; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+
+        /* El carrito real */
+        .fc-bar {
+            position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 28px); max-width: 700px;
+            background: #0f172a; border-radius: 100px;
+            padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideUp { from { transform: translateX(-50%) translateY(100%); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        .fc-left  { display: flex; align-items: center; gap: 12px; }
+        .fc-clear { width: 38px; height: 38px; border-radius: 50%; background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .fc-label { font-size: 10px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .fc-total { font-size: 20px; font-weight: 900; color: white; line-height: 1; }
+        .fc-btn   { background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 800; font-size: 13px; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+
+        /* =========================================
+           SLIDE 2 — FULFILLMENT
+        ========================================= */
+        .fulfillment-cards { display: flex; flex-direction: column; gap: 12px; }
+        .ff-card {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .ff-icon { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ff-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .ff-body p       { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .ff-tag { margin-left: auto; font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; }
+
+        .ff-pickup   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .ff-order    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  }
+        .ff-delivery { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  }
+        .ff-mixed    { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  }
+
+        .ff-pickup   .ff-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .ff-order    .ff-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .ff-delivery .ff-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .ff-mixed    .ff-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+
+        .ff-pickup   .ff-tag { background: rgba(16,185,129,0.12);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25);  }
+        .ff-order    .ff-tag { background: rgba(59,130,246,0.12);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.25);  }
+        .ff-delivery .ff-tag { background: rgba(245,158,11,0.12);  color: #fcd34d; border: 1px solid rgba(245,158,11,0.25);  }
+        .ff-mixed    .ff-tag { background: rgba(168,85,247,0.12);  color: #d8b4fe; border: 1px solid rgba(168,85,247,0.25);  }
+
+        .fulfillment-note {
+            margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            font-size: 13px; color: var(--muted); line-height: 1.5;
+        }
+
+        /* =========================================
+           SLIDE 3 — MODOS HIDE PRICES
+        ========================================= */
+        .modes-grid { display: flex; flex-direction: column; gap: 18px; }
+        .mode-demo {
+            border-radius: 18px; overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .md-label {
+            padding: 10px 16px; font-size: 11px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        .md-bar {
+            background: #0f172a; padding: 12px 16px;
+            display: flex; justify-content: space-between; align-items: center; gap: 12px;
+        }
+        .md-left  { display: flex; align-items: center; gap: 12px; }
+        .md-clear { width: 36px; height: 36px; border-radius: 50%; background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .md-texts { display: flex; flex-direction: column; gap: 2px; }
+        .md-sublabel { font-size: 10px; font-weight: 900; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .md-total    { font-size: 18px; font-weight: 900; color: white; line-height: 1; }
+        .md-old      { font-size: 12px; font-weight: 700; color: #94a3b8; text-decoration: line-through; margin-left: 8px; }
+        .md-saving   { font-size: 10px; font-weight: 900; color: #6ee7b7; text-transform: uppercase; letter-spacing: 0.5px; }
+        .md-btn { background: #10b981; color: white; border: none; padding: 9px 18px; border-radius: 30px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+
+        /* barra de progreso mayorista */
+        .md-progress { padding: 0 0 4px 0; }
+        .md-prog-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4px; }
+        .md-prog-units { font-size: 16px; font-weight: 900; color: white; }
+        .md-prog-badge { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 5px; background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .md-prog-bar   { height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .md-prog-fill  { height: 100%; border-radius: 10px; transition: width 0.3s; }
+        .md-prog-hint  { font-size: 10px; font-weight: 700; color: var(--muted); margin-top: 4px; }
+
+        /* =========================================
+           SLIDE 4 — CICLO DE VIDA
+        ========================================= */
+        .lifecycle {
+            display: flex; flex-direction: column; gap: 0; width: 100%;
+        }
+        .lc-step {
+            display: flex; gap: 20px; align-items: flex-start; position: relative;
+        }
+        .lc-connector {
+            display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 44px;
+        }
+        .lc-num {
+            width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 900; color: white; border: 2px solid;
+        }
+        .lc-line { width: 2px; height: 28px; }
+
+        .lc-body { padding-bottom: 28px; flex: 1; }
+        .lc-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; margin-top: 10px; }
+        .lc-body p       { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 0; }
+
+        .lc-add      .lc-num  { background: rgba(59,130,246,0.1);  border-color: rgba(59,130,246,0.4);  color: #93c5fd; }
+        .lc-show     .lc-num  { background: rgba(16,185,129,0.1);  border-color: rgba(16,185,129,0.4);  color: #6ee7b7; }
+        .lc-act      .lc-num  { background: rgba(168,85,247,0.1);  border-color: rgba(168,85,247,0.4);  color: #d8b4fe; }
+        .lc-clear    .lc-num  { background: rgba(239,68,68,0.1);   border-color: rgba(239,68,68,0.4);   color: #fca5a5; }
+        .lc-hide     .lc-num  { background: rgba(245,158,11,0.1);  border-color: rgba(245,158,11,0.4);  color: #fcd34d; }
+
+        .lc-add   .lc-line { background: rgba(59,130,246,0.2);  }
+        .lc-show  .lc-line { background: rgba(16,185,129,0.2);  }
+        .lc-act   .lc-line { background: rgba(168,85,247,0.2);  }
+        .lc-clear .lc-line { background: rgba(239,68,68,0.2);   }
+
+        .lc-code {
+            display: inline-block; margin-top: 6px;
+            font-size: 11px; padding: 3px 9px; border-radius: 6px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: var(--muted); font-family: monospace;
+        }
+
+        /* =========================================
+           SLIDE 5 — PROPS
+        ========================================= */
+        .props-table { width: 100%; border-collapse: collapse; }
+        .props-table th {
+            font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--muted); padding: 10px 14px; text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .props-table td {
+            font-size: 13px; padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;
+        }
+        .props-table tr:last-child td { border-bottom: none; }
+        .props-table tr:hover td { background: rgba(255,255,255,0.02); }
+        .prop-name  { font-family: monospace; color: #93c5fd; font-size: 13px; font-weight: 700; }
+        .prop-type  { font-family: monospace; color: #fcd34d; font-size: 12px; }
+        .prop-desc  { color: var(--muted); font-size: 13px; line-height: 1.4; }
+        .prop-req   { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 900; background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+        .prop-opt   { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+
+        .events-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+        .ev-card {
+            padding: 16px 18px; border-radius: 14px; border: 1px solid;
+            display: flex; gap: 12px; align-items: flex-start;
+        }
+        .ev-card.ev-checkout { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  }
+        .ev-card.ev-clear    { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   }
+        .ev-icon { width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .ev-checkout .ev-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .ev-clear    .ev-icon { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+        .ev-body strong { font-size: 13px; font-weight: 800; color: white; display: block; font-family: monospace; margin-bottom: 3px; }
+        .ev-body p       { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+
+        /* =========================================
+           SLIDE 6 — NAV
+        ========================================= */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split  { grid-template-columns: 1fr; gap: 36px; }
+            .split3 { grid-template-columns: 1fr; }
+            h1 { font-size: 42px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .events-row { grid-template-columns: 1fr; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; }
+            .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-green" style="width:50vw;height:50vw; top:-12vw; right:-10vw;"></div>
+        <div class="g g-blue"  style="width:40vw;height:40vw; bottom:-10vw; left:-8vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    Tienda Online · Módulo
+                </div>
+                <h1>El carrito<br>que<br><span style="color:var(--green);">nunca cierra.</span></h1>
+                <p class="lead">Flota sobre el catálogo completo. Aparece en cuanto se agrega el primer ítem, muestra el total en tiempo real y lleva al cliente al checkout con un solo tap. Siempre visible, nunca estorba.</p>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:28px;">
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-arrow-up" style="color:var(--green);font-size:11px;"></i> Animación de entrada
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-truck" style="color:var(--blue);font-size:11px;"></i> Modo de fulfillment
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-eye-slash" style="color:var(--orange);font-size:11px;"></i> Modo ocultar precios
+                    </span>
+                    <span style="display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                        <i class="fas fa-chart-bar" style="color:var(--purple);font-size:11px;"></i> Progress bar mayorista
+                    </span>
+                </div>
+            </div>
+
+            <!-- demo visual fiel -->
+            <div class="fake-page">
+                <div style="background:#e2e8f0; padding:10px 16px; display:flex; align-items:center; gap:8px;">
+                    <div style="width:28px;height:28px;border-radius:8px;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:900;">T</div>
+                    <span style="font-size:12px;font-weight:800;color:#334155;">Tienda Demo</span>
+                </div>
+                <div class="fake-page-body">
+                    <div class="fake-product">
+                        <div class="fp-img"><i class="fas fa-spray-can"></i></div>
+                        <div class="fp-info">
+                            <div class="fp-name">Invictus</div>
+                            <div class="fp-row"><span class="fp-price">$ 7.475</span><div class="fp-btn"><i class="fas fa-plus"></i></div></div>
+                        </div>
+                    </div>
+                    <div class="fake-product">
+                        <div class="fp-img"><i class="fas fa-leaf"></i></div>
+                        <div class="fp-info">
+                            <div class="fp-name">Vainilla</div>
+                            <div class="fp-row"><span class="fp-price">$ 6.200</span><div class="fp-btn"><i class="fas fa-plus"></i></div></div>
+                        </div>
+                    </div>
+                    <div class="fake-product">
+                        <div class="fp-img"><i class="fas fa-seedling"></i></div>
+                        <div class="fp-info">
+                            <div class="fp-name">Menta</div>
+                            <div class="fp-row"><span class="fp-price">$ 5.900</span><div class="fp-btn"><i class="fas fa-plus"></i></div></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- el carrito flotante dentro de la demo -->
+                <div style="height:70px; position:relative;">
+                    <div class="fc-bar">
+                        <div class="fc-left">
+                            <div class="fc-clear"><i class="fas fa-times"></i></div>
+                            <div>
+                                <div class="fc-label"><i class="fas fa-box"></i> A Pedido</div>
+                                <div class="fc-total">$ 19.575</div>
+                            </div>
+                        </div>
+                        <button class="fc-btn">Enviar Pedido (3) <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — FULFILLMENT ANALYSIS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"  style="width:48vw;height:48vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-green" style="width:38vw;height:38vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    Inteligencia del Carrito
+                </div>
+                <h2>El carrito sabe<br>cómo se entrega.</h2>
+                <p class="lead" style="max-width:520px;">El <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">fulfillmentAnalysis</code> es un objeto calculado por el composable <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">useCart</code>. El carrito flotante lo recibe como prop y muestra el modo detectado automáticamente según el stock y tipo de cada producto en el carrito.</p>
+                <p class="lead" style="max-width:520px; margin-top:14px;">No hay lógica en el componente: solo recibe un label, un icono y un color y los muestra. La inteligencia vive en el composable.</p>
+            </div>
+
+            <div>
+                <div class="fulfillment-cards">
+                    <div class="ff-card ff-pickup">
+                        <div class="ff-icon"><i class="fas fa-store"></i></div>
+                        <div class="ff-body">
+                            <strong>Retiro en local</strong>
+                            <p>Todos los ítems tienen stock disponible. El cliente puede pasar a buscarlos.</p>
+                        </div>
+                        <span class="ff-tag">stock disponible</span>
+                    </div>
+                    <div class="ff-card ff-order">
+                        <div class="ff-icon"><i class="fas fa-box"></i></div>
+                        <div class="ff-body">
+                            <strong>A Pedido</strong>
+                            <p>Uno o más ítems no tienen stock inmediato. El pedido entra a producción o reposición.</p>
+                        </div>
+                        <span class="ff-tag">sin stock</span>
+                    </div>
+                    <div class="ff-card ff-delivery">
+                        <div class="ff-icon"><i class="fas fa-motorcycle"></i></div>
+                        <div class="ff-body">
+                            <strong>Envío a domicilio</strong>
+                            <p>El cliente eligió delivery en el checkout. Se activa el módulo de logística.</p>
+                        </div>
+                        <span class="ff-tag">logística activa</span>
+                    </div>
+                    <div class="ff-card ff-mixed">
+                        <div class="ff-icon"><i class="fas fa-layer-group"></i></div>
+                        <div class="ff-body">
+                            <strong>Mixto</strong>
+                            <p>El carrito mezcla productos con stock y sin stock. Se avisa al cliente antes de confirmar.</p>
+                        </div>
+                        <span class="ff-tag">stock parcial</span>
+                    </div>
+                </div>
+                <div class="fulfillment-note">
+                    <i class="fas fa-info-circle" style="color:#93c5fd;margin-right:8px;"></i>
+                    El label y el color del badge de fulfillment que se ve en el carrito vienen directamente de este objeto. Cambiar la lógica en <code style="font-size:11px;background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;">useCart</code> se refleja automáticamente sin tocar el componente.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — LOS TRES MODOS DE PRECIO
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:40vw;height:40vw; bottom:-12vw; left:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Flexibilidad de Display
+                </div>
+                <h2>Un carrito,<br>tres caras.</h2>
+                <p class="lead" style="max-width:500px;">El prop <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">hidePrices</code> cambia completamente lo que se muestra en el carrito. No oculta el botón de envío: oculta los precios y muestra en su lugar las unidades y el progreso hacia el precio mayorista.</p>
+                <p class="lead" style="max-width:500px; margin-top:14px;">El prop <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">mixAndMatchTarget</code> activa la barra de progreso. Cuando se alcanza, el badge cambia a "Mayorista" en verde.</p>
+            </div>
+
+            <div class="modes-grid">
+
+                <!-- Modo 1: precios normales -->
+                <div class="mode-demo">
+                    <div class="md-label" style="background:rgba(16,185,129,0.1);color:#6ee7b7;">
+                        <i class="fas fa-dollar-sign" style="margin-right:6px;"></i> hidePrices = false (por defecto)
+                    </div>
+                    <div class="md-bar">
+                        <div class="md-left">
+                            <div class="md-clear"><i class="fas fa-times"></i></div>
+                            <div class="md-texts">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span class="md-sublabel"><i class="fas fa-box"></i> A Pedido</span>
+                                    <span class="md-saving" style="border-left:1px solid #334155;padding-left:8px;"><i class="fas fa-tag"></i> Ahorrás $ 8.400</span>
+                                </div>
+                                <div style="display:flex;align-items:baseline;gap:8px;">
+                                    <span class="md-total">$ 60.840</span>
+                                    <span class="md-old">$ 69.240</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="md-btn">Enviar Pedido (12) <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Modo 2: hide prices sin mix&match -->
+                <div class="mode-demo">
+                    <div class="md-label" style="background:rgba(245,158,11,0.1);color:#fcd34d;">
+                        <i class="fas fa-eye-slash" style="margin-right:6px;"></i> hidePrices = true · sin mixAndMatchTarget
+                    </div>
+                    <div class="md-bar">
+                        <div class="md-left">
+                            <div class="md-clear"><i class="fas fa-times"></i></div>
+                            <div class="md-texts">
+                                <div style="display:flex;align-items:center;gap:8px;">
+                                    <span class="md-sublabel"><i class="fas fa-box"></i> A Pedido</span>
+                                    <span class="md-saving" style="border-left:1px solid #334155;padding-left:8px;">Precio mayorista</span>
+                                </div>
+                                <span class="md-total">8 unidades</span>
+                            </div>
+                        </div>
+                        <button class="md-btn">Enviar Pedido (8) <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <!-- Modo 3: hide prices + mix&match -->
+                <div class="mode-demo">
+                    <div class="md-label" style="background:rgba(168,85,247,0.1);color:#d8b4fe;">
+                        <i class="fas fa-chart-bar" style="margin-right:6px;"></i> hidePrices = true · mixAndMatchTarget = 12
+                    </div>
+                    <div class="md-bar" style="flex-direction:column;align-items:stretch;gap:10px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+                            <div class="md-left">
+                                <div class="md-clear"><i class="fas fa-times"></i></div>
+                                <div class="md-progress" style="width:180px;">
+                                    <div class="md-prog-top">
+                                        <span class="md-prog-units">8 unidades</span>
+                                    </div>
+                                    <div class="md-prog-bar">
+                                        <div class="md-prog-fill" style="width:66%;background:var(--blue);"></div>
+                                    </div>
+                                    <div class="md-prog-hint">Faltan 4 para precio mayorista</div>
+                                </div>
+                            </div>
+                            <button class="md-btn">Enviar (8) <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — CICLO DE VIDA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; left:-8vw;"></div>
+        <div class="g g-purple" style="width:38vw;height:38vw; bottom:-10vw; right:-6vw;"></div>
+
+        <div class="inner split">
+
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    Ciclo de Vida
+                </div>
+                <h2>Nace, actúa<br>y desaparece.</h2>
+                <p class="lead" style="max-width:500px;">El carrito flotante es un componente completamente pasivo. No guarda estado propio, no llama a APIs. Solo refleja lo que le pasa el catálogo y emite dos eventos. La lógica de negocio vive en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">useCart</code> y en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">StoreCatalog</code>.</p>
+            </div>
+
+            <div class="lifecycle">
+                <div class="lc-step lc-add">
+                    <div class="lc-connector">
+                        <div class="lc-num">1</div>
+                        <div class="lc-line"></div>
+                    </div>
+                    <div class="lc-body">
+                        <strong>Se agrega el primer ítem</strong>
+                        <p><code class="lc-code">cartTotalItems > 0</code> → la condición se cumple y el componente se monta con animación <code class="lc-code">slide-up</code> desde abajo.</p>
+                    </div>
+                </div>
+                <div class="lc-step lc-show">
+                    <div class="lc-connector">
+                        <div class="lc-num">2</div>
+                        <div class="lc-line"></div>
+                    </div>
+                    <div class="lc-body">
+                        <strong>El carrito se actualiza solo</strong>
+                        <p>Cada cambio de cantidad en el catálogo actualiza los props. El total, el fulfillment y el badge se recalculan reactivamente sin ninguna acción del componente.</p>
+                    </div>
+                </div>
+                <div class="lc-step lc-act">
+                    <div class="lc-connector">
+                        <div class="lc-num">3</div>
+                        <div class="lc-line"></div>
+                    </div>
+                    <div class="lc-body">
+                        <strong>El cliente toca "Enviar Pedido"</strong>
+                        <p>Emite <code class="lc-code">@checkout</code> al padre. El carrito se oculta con el prop <code class="lc-code">hidden</code> mientras el modal de checkout está abierto.</p>
+                    </div>
+                </div>
+                <div class="lc-step lc-clear">
+                    <div class="lc-connector">
+                        <div class="lc-num">4</div>
+                        <div class="lc-line"></div>
+                    </div>
+                    <div class="lc-body">
+                        <strong>El cliente toca la X</strong>
+                        <p>Emite <code class="lc-code">@clear</code>. El catálogo vacía el carrito y <code class="lc-code">cartTotalItems</code> vuelve a 0, desmontando el componente con animación de salida.</p>
+                    </div>
+                </div>
+                <div class="lc-step lc-hide">
+                    <div class="lc-connector">
+                        <div class="lc-num">5</div>
+                    </div>
+                    <div class="lc-body">
+                        <strong>El checkout se abre</strong>
+                        <p><code class="lc-code">hidden = true</code> oculta el carrito con <code class="lc-code">v-if</code> para no superponer ambos paneles. Al cerrar el checkout, vuelve a aparecer.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — PROPS Y EVENTOS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-orange" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div class="eyebrow">
+                <span class="dot" style="background:var(--blue);"></span>
+                Interfaz del Componente
+            </div>
+            <h2 style="margin-bottom:24px;">Props y eventos.</h2>
+
+            <div class="glass" style="overflow:hidden;">
+                <table class="props-table">
+                    <thead>
+                        <tr>
+                            <th>Prop</th>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="prop-name">cartTotalItems</span></td>
+                            <td><span class="prop-type">Number</span></td>
+                            <td class="prop-desc">Cantidad total de unidades en el carrito. Controla si el componente se monta.</td>
+                            <td><span class="prop-req">Required</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="prop-name">cartTotals</span></td>
+                            <td><span class="prop-type">Object</span></td>
+                            <td class="prop-desc">Objeto con <code style="font-size:11px;">total</code>, <code style="font-size:11px;">subtotal</code>, <code style="font-size:11px;">discount</code>, <code style="font-size:11px;">hasDiscount</code>.</td>
+                            <td><span class="prop-req">Required</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="prop-name">fulfillmentAnalysis</span></td>
+                            <td><span class="prop-type">Object</span></td>
+                            <td class="prop-desc">Label, icono y color del modo de entrega detectado por <code style="font-size:11px;">useCart</code>.</td>
+                            <td><span class="prop-req">Required</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="prop-name">hidePrices</span></td>
+                            <td><span class="prop-type">Boolean</span></td>
+                            <td class="prop-desc">Oculta montos y muestra unidades. Configurable desde el storefront de la sede.</td>
+                            <td><span class="prop-opt">default: false</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="prop-name">mixAndMatchTarget</span></td>
+                            <td><span class="prop-type">Number</span></td>
+                            <td class="prop-desc">Activa la barra de progreso mayorista cuando <code style="font-size:11px;">hidePrices</code> es true.</td>
+                            <td><span class="prop-opt">default: 0</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="prop-name">hidden</span></td>
+                            <td><span class="prop-type">Boolean</span></td>
+                            <td class="prop-desc">Oculta el carrito mientras el checkout está abierto.</td>
+                            <td><span class="prop-opt">default: false</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="events-row">
+                <div class="ev-card ev-checkout">
+                    <div class="ev-icon"><i class="fas fa-arrow-right"></i></div>
+                    <div class="ev-body">
+                        <strong>@checkout</strong>
+                        <p>Emitido al presionar "Enviar Pedido". El catálogo abre el modal de checkout y pasa <code style="font-size:11px;">hidden=true</code> al carrito.</p>
+                    </div>
+                </div>
+                <div class="ev-card ev-clear">
+                    <div class="ev-icon"><i class="fas fa-times"></i></div>
+                    <div class="ev-body">
+                        <strong>@clear</strong>
+                        <p>Emitido al presionar la X roja. El catálogo llama a <code style="font-size:11px;">clearCart()</code> del composable y el carrito desaparece.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+        <div class="inner" style="align-items:center; text-align:center;">
+
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--green);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin:0 auto; text-align:center;">Ya entendés cómo funciona el carrito flotante de punta a punta. Podés saltar al checkout que abre, al catálogo que lo alimenta, o a cualquier otro módulo.</p>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="CheckoutModal.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-lock"></i></div>
+                    <div class="nav-label">Checkout</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="ComboBuilderModal.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-fire"></i></div>
+                    <div class="nav-label">Armador<br>de Combos</div>
+                </a>
+                <a href="StoreProduct.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-tag"></i></div>
+                    <div class="nav-label">Página de<br>Producto</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_floatingcart';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl  = document.getElementById('cur');
+        const totEl  = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>
