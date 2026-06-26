@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infraestructura — Política & DesignShell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+            --teal:   #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+
+        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%); }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); }
+        .g-teal   { background: radial-gradient(circle, rgba(20,184,166,0.09)  0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); }
+
+        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--teal); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 56px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+        .split  { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .split3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+        .glass  { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — POLÍTICA DE DEVOLUCIONES DEMO
+        ========================================= */
+        .policy-page {
+            background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 22px; padding: 28px; width: 100%;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+        }
+        .pp-eyebrow { display: inline-block; margin-bottom: 8px; color: #93c5fd; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+        .pp-title   { font-size: 26px; font-weight: 900; color: white; margin-bottom: 6px; }
+        .pp-desc    { font-size: 13px; color: #cbd5e1; line-height: 1.6; margin-bottom: 20px; }
+        .pp-grid    { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 14px; }
+        .pp-block   { background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; }
+        .pp-block h4 { font-size: 13px; font-weight: 800; color: white; margin-bottom: 7px; }
+        .pp-block p  { font-size: 12px; color: #cbd5e1; line-height: 1.6; margin: 0; }
+        .pp-notes   { background: rgba(0,0,0,0.22); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+        .pp-notes h4 { font-size: 13px; font-weight: 800; color: white; margin-bottom: 7px; }
+        .pp-notes p  { font-size: 12px; color: #cbd5e1; line-height: 1.6; margin: 0; }
+        .pp-footer  { display: flex; justify-content: flex-end; }
+        .pp-btn     { background: rgba(37,99,235,0.14); border: 1px solid rgba(96,165,250,0.34); color: #dbeafe; padding: 10px 16px; border-radius: 11px; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+        /* =========================================
+           SLIDE 1 — CALLOUTS DERECHA
+        ========================================= */
+        .policy-callouts { display: flex; flex-direction: column; gap: 14px; }
+        .pc-card { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
+        .pc-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .pc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .pc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .pc-seo    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .pc-seo    .pc-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .pc-modes  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .pc-modes  .pc-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .pc-watch  { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .pc-watch  .pc-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .pc-url    { background: rgba(20,184,166,0.05);  border-color: rgba(20,184,166,0.2);  } .pc-url    .pc-icon { background: rgba(20,184,166,0.15);  color: #5eead4; }
+
+        /* modos de devolución */
+        .return-modes { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+        .rm-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; border: 1px solid; }
+        .rm-tag { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 5px; flex-shrink: 0; font-family: monospace; }
+        .rm-desc { font-size: 12px; color: var(--muted); }
+        .rm-all      { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .rm-all      .rm-tag { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .rm-defective{ background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .rm-defective .rm-tag { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .rm-none     { background: rgba(239,68,68,0.05);  border-color: rgba(239,68,68,0.2);  } .rm-none     .rm-tag { background: rgba(239,68,68,0.12);  color: #fca5a5; }
+
+        /* =========================================
+           SLIDE 2 — SEO Y ESTRUCTURA URL
+        ========================================= */
+        .seo-diagram { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+        .sd-url {
+            padding: 14px 18px; border-radius: 13px; background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(59,130,246,0.25); font-family: monospace;
+            display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+        }
+        .sd-seg { font-size: 14px; font-weight: 700; padding: 4px 8px; border-radius: 7px; }
+        .seg-base   { color: var(--muted); }
+        .seg-ref    { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .seg-slug   { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .seg-slash  { color: rgba(255,255,255,0.2); font-size: 16px; }
+
+        .sd-row { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
+        .sd-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .sd-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .sd-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .sd-title    { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .sd-title  .sd-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .sd-desc     { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .sd-desc   .sd-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .sd-canon    { background: rgba(20,184,166,0.05); border-color: rgba(20,184,166,0.2); } .sd-canon  .sd-icon { background: rgba(20,184,166,0.15); color: #5eead4; }
+        .sd-robots   { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .sd-robots .sd-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .serp-preview {
+            background: white; border-radius: 14px; padding: 18px 20px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3); width: 100%;
+        }
+        .sp-source { font-size: 12px; color: #1a73e8; font-weight: 600; margin-bottom: 3px; }
+        .sp-title  { font-size: 18px; color: #1558d6; font-weight: 400; margin-bottom: 4px; cursor: pointer; }
+        .sp-title:hover { text-decoration: underline; }
+        .sp-url    { font-size: 11px; color: #4d5156; margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+        .sp-url span { background: #f1f3f4; padding: 2px 7px; border-radius: 999px; font-size: 10px; }
+        .sp-desc   { font-size: 13px; color: #4d5156; line-height: 1.5; }
+
+        /* =========================================
+           SLIDE 3 — DESIGN SHELL DIAGRAMA
+        ========================================= */
+        .shell-diagram { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+        .sh-request {
+            padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(59,130,246,0.3);
+            background: rgba(59,130,246,0.06); display: flex; align-items: center; gap: 10px;
+            font-size: 13px; font-weight: 700; color: #93c5fd;
+        }
+        .sh-arrow { text-align: center; color: rgba(255,255,255,0.15); font-size: 18px; }
+
+        .sh-shell {
+            border-radius: 16px; border: 2px solid rgba(20,184,166,0.4);
+            background: rgba(20,184,166,0.04); padding: 18px;
+        }
+        .sh-shell-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #5eead4; margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+        .sh-decision-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 14px; }
+        .sh-dec { padding: 10px 12px; border-radius: 10px; border: 1px solid; text-align: center; }
+        .sh-dec-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .sh-dec-val   { font-family: monospace; font-size: 11px; font-weight: 700; }
+        .sd-preview   { background: rgba(245,158,11,0.07);  border-color: rgba(245,158,11,0.25); } .sd-preview  .sh-dec-label { color: #fcd34d; } .sd-preview  .sh-dec-val { color: #fcd34d; }
+        .sd-mall      { background: rgba(168,85,247,0.07);  border-color: rgba(168,85,247,0.25); } .sd-mall     .sh-dec-label { color: #d8b4fe; } .sd-mall     .sh-dec-val { color: #d8b4fe; }
+        .sd-plugin    { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.25); } .sd-plugin   .sh-dec-label { color: #6ee7b7; } .sd-plugin   .sh-dec-val { color: #6ee7b7; }
+        .sh-resolved { padding: 10px 14px; border-radius: 9px; background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.3); font-size: 12px; font-weight: 700; color: #5eead4; font-family: monospace; text-align: center; }
+
+        .sh-outputs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sh-out {
+            padding: 14px 16px; border-radius: 13px; border: 1px solid; display: flex; gap: 12px; align-items: flex-start;
+        }
+        .sh-out-icon { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .sh-out-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .sh-out-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.3; }
+        .so-default { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .so-default .sh-out-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .so-premium { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .so-premium .sh-out-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .so-loader  { background: rgba(20,184,166,0.05); border-color: rgba(20,184,166,0.2); } .so-loader  .sh-out-icon { background: rgba(20,184,166,0.15); color: #5eead4; }
+        .so-prefetch{ background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .so-prefetch .sh-out-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 4 — DESIGN REGISTRY + NAV
+        ========================================= */
+        .registry-demo { display: flex; flex-direction: column; gap: 12px; }
+        .rd-entry {
+            display: flex; align-items: center; gap: 14px; padding: 14px 18px;
+            border-radius: 14px; border: 1px solid;
+        }
+        .rd-slug  { font-family: monospace; font-size: 13px; font-weight: 800; flex-shrink: 0; min-width: 200px; }
+        .rd-sep   { color: rgba(255,255,255,0.15); flex-shrink: 0; }
+        .rd-name  { font-size: 13px; color: white; font-weight: 700; flex: 1; }
+        .rd-badge { font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 5px; flex-shrink: 0; }
+        .rd-default { background: rgba(59,130,246,0.06); border-color: rgba(59,130,246,0.2); } .rd-default .rd-slug { color: #93c5fd; } .rd-default .rd-badge { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+        .rd-plugin  { background: rgba(168,85,247,0.06); border-color: rgba(168,85,247,0.2); } .rd-plugin  .rd-slug { color: #d8b4fe; } .rd-plugin  .rd-badge { background: rgba(168,85,247,0.15); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.25); }
+        .rd-plus    { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.06); border-style: dashed; }
+        .rd-plus .rd-slug { color: var(--muted); font-style: italic; }
+
+        .registry-note { margin-top: 14px; padding: 14px 18px; border-radius: 13px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); font-size: 13px; color: var(--muted); line-height: 1.6; }
+        .registry-note strong { color: white; }
+
+        /* NAV */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-teal:hover   { border-color: var(--teal);   } .nav-btn.c-teal:hover   .nav-icon { color: #5eead4; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .split3 { grid-template-columns: 1fr; }
+            .pp-grid { grid-template-columns: 1fr; }
+            .sh-decision-grid { grid-template-columns: 1fr; }
+            .sh-outputs { grid-template-columns: 1fr; }
+            h1 { font-size: 38px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">4</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — POLÍTICA DE DEVOLUCIONES
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-blue"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-teal"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--teal);"></span>
+                    Tienda Online · Infraestructura
+                </div>
+                <h1>Política<br>de<br><span style="color:var(--teal);">devoluciones.</span></h1>
+                <p class="lead" style="max-width:460px;">Una página pública independiente que vive en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">/store/:ref/politica-devoluciones</code>. Es indexable por Google, tiene SEO propio por tienda y resume en cuatro bloques todo lo que un cliente necesita saber antes de comprar.</p>
+
+                <div class="return-modes" style="margin-top:22px;">
+                    <div class="rm-row rm-all">
+                        <span class="rm-tag">all</span>
+                        <span class="rm-desc">Se aceptan devoluciones de productos defectuosos y no defectuosos.</span>
+                    </div>
+                    <div class="rm-row rm-defective">
+                        <span class="rm-tag">defective_only</span>
+                        <span class="rm-desc">Solo se aceptan devoluciones por productos defectuosos.</span>
+                    </div>
+                    <div class="rm-row rm-none">
+                        <span class="rm-tag">none</span>
+                        <span class="rm-desc">No se aceptan devoluciones.</span>
+                    </div>
+                </div>
+
+                <div class="policy-callouts" style="margin-top:20px;">
+                    <div class="pc-card pc-watch">
+                        <div class="pc-icon"><i class="fas fa-arrows-rotate"></i></div>
+                        <div class="pc-body">
+                            <strong>Reactiva al cambio de ruta</strong>
+                            <p>Un <code style="font-size:11px;">watch</code> sobre <code style="font-size:11px;">route.params.storeRef</code> recarga la política si el usuario navega entre tiendas sin remontar el componente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="policy-page">
+                <div class="pp-eyebrow">Política de devoluciones</div>
+                <div class="pp-title">Aromas del Sur</div>
+                <div class="pp-desc">Esta página pública resume cómo trabaja la tienda con devoluciones y cambios para Merchant Center y para sus clientes.</div>
+                <div class="pp-grid">
+                    <div class="pp-block">
+                        <h4>Devoluciones</h4>
+                        <p>Se aceptan devoluciones de productos defectuosos y no defectuosos.</p>
+                    </div>
+                    <div class="pp-block">
+                        <h4>Cambios</h4>
+                        <p>Se aceptan cambios.</p>
+                    </div>
+                    <div class="pp-block">
+                        <h4>Plazo orientativo</h4>
+                        <p>30 días desde la recepción del pedido, salvo condiciones particulares del producto.</p>
+                    </div>
+                    <div class="pp-block">
+                        <h4>Contacto</h4>
+                        <p>Teléfono: 1123456789<br>Email: hola@aromasdelsur.com</p>
+                    </div>
+                </div>
+                <div class="pp-notes">
+                    <h4>Aclaraciones</h4>
+                    <p>Para iniciar una devolución contactarse por WhatsApp adjuntando foto del producto y número de pedido.</p>
+                </div>
+                <div class="pp-footer">
+                    <button class="pp-btn">Volver a la tienda</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — SEO DE LA POLÍTICA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    SEO y Rastreabilidad
+                </div>
+                <h2>Indexable.<br>Canónica.<br>Por tienda.</h2>
+                <p class="lead" style="max-width:500px;">La política no comparte URL ni metadatos con ninguna otra tienda. Cada una tiene su propio título, descripción, canonical y robots. Google puede indexar y mostrar la política de cada local directamente en resultados.</p>
+
+                <div class="seo-diagram" style="margin-top:24px;">
+                    <div class="sd-row sd-title">
+                        <div class="sd-icon"><i class="fas fa-heading"></i></div>
+                        <div class="sd-body">
+                            <strong>Title dinámico</strong>
+                            <p>"Política de devoluciones | <em>Aromas del Sur</em> | CompanyMarket" — el nombre de la marca se interpola en el título.</p>
+                        </div>
+                    </div>
+                    <div class="sd-row sd-canon">
+                        <div class="sd-icon"><i class="fas fa-link"></i></div>
+                        <div class="sd-body">
+                            <strong>Canonical única</strong>
+                            <p>Usa <code style="font-size:11px;">canonicalStoreRef</code> (preferentemente el slug) para que el canonical siempre apunte a la URL definitiva, aunque se accedió por ID.</p>
+                        </div>
+                    </div>
+                    <div class="sd-row sd-robots">
+                        <div class="sd-icon"><i class="fas fa-robot"></i></div>
+                        <div class="sd-body">
+                            <strong>robots: index, follow</strong>
+                            <p>Siempre indexable. A diferencia del buscador público (que usa <code style="font-size:11px;">noindex</code> cuando hay query), esta página quiere aparecer en Google.</p>
+                        </div>
+                    </div>
+                    <div class="sd-row sd-desc">
+                        <div class="sd-icon"><i class="fas fa-file-lines"></i></div>
+                        <div class="sd-body">
+                            <strong>onUnmounted resetea el SEO</strong>
+                            <p>Al salir de la página, <code style="font-size:11px;">resetSeoMeta()</code> limpia los metadatos para que la siguiente vista empiece limpia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:18px;">
+                <div class="seo-diagram">
+                    <div class="sd-url">
+                        <span class="sd-seg seg-base">companymarket.com</span>
+                        <span class="sd-seg seg-slash">/</span>
+                        <span class="sd-seg seg-base">store</span>
+                        <span class="sd-seg seg-slash">/</span>
+                        <span class="sd-seg seg-ref">aromas-del-sur</span>
+                        <span class="sd-seg seg-slash">/</span>
+                        <span class="sd-seg seg-slug">politica-devoluciones</span>
+                    </div>
+                </div>
+
+                <div class="serp-preview">
+                    <div class="sp-source">
+                        <i class="fas fa-globe" style="margin-right:5px;"></i>
+                        companymarket.com › store › aromas-del-sur
+                    </div>
+                    <div class="sp-title">Política de devoluciones | Aromas del Sur | CompanyMarket</div>
+                    <div class="sp-url">
+                        companymarket.com/store/aromas-del-sur/politica-devoluciones
+                        <span>index, follow</span>
+                    </div>
+                    <div class="sp-desc">Consultá la política de devoluciones y cambios de Aromas del Sur dentro de CompanyMarket. Devoluciones, plazos y formas de contacto.</div>
+                </div>
+
+                <div style="padding:14px 18px;border-radius:13px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.5;">
+                    <i class="fas fa-info-circle" style="color:#93c5fd;margin-right:7px;"></i>
+                    La política se carga con <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">api.getPublicReturnsPolicy(storeRef)</code>. Si falla, muestra una pantalla de error con botón para volver a la tienda.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — DESIGN SHELL
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-teal"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--teal);"></span>
+                    StoreFrontDesignShell
+                </div>
+                <h2>El enrutador<br>de diseño<br>de la tienda.</h2>
+                <p class="lead" style="max-width:500px;">El shell es el componente que recibe todas las visitas a una tienda pública. Su único trabajo es decidir qué componente de storefront cargar — el clásico o uno instalado vía plugin — y pasarle el perfil ya prefetcheado para evitar una segunda llamada a la API.</p>
+                <p class="lead" style="max-width:500px; margin-top:14px;">Lo hace antes de que el componente de tienda se monte, así cuando aparece ya tiene datos. Sin loading vacío, sin flash de contenido.</p>
+            </div>
+
+            <div class="shell-diagram">
+                <div class="sh-request">
+                    <i class="fas fa-globe"></i>
+                    Visita a <code style="font-family:monospace;">/store/aromas-del-sur</code>
+                </div>
+
+                <div class="sh-arrow"><i class="fas fa-arrow-down"></i></div>
+
+                <div class="sh-shell">
+                    <div class="sh-shell-title">
+                        <i class="fas fa-code-branch"></i>
+                        StoreFrontDesignShell — lógica de resolución
+                    </div>
+                    <div class="sh-decision-grid">
+                        <div class="sh-dec sd-preview">
+                            <div class="sh-dec-label">Preview mode?</div>
+                            <div class="sh-dec-val">?design=slug</div>
+                        </div>
+                        <div class="sh-dec sd-mall">
+                            <div class="sh-dec-label">Platform mall?</div>
+                            <div class="sh-dec-val">→ default</div>
+                        </div>
+                        <div class="sh-dec sd-plugin">
+                            <div class="sh-dec-label">Plugin activo?</div>
+                            <div class="sh-dec-val">storefront_active_adapter</div>
+                        </div>
+                    </div>
+                    <div class="sh-resolved">
+                        resolvedDesignSlug → "default" | "oficial.premium_storefront" | plugin-slug
+                    </div>
+                </div>
+
+                <div class="sh-arrow"><i class="fas fa-arrow-down"></i></div>
+
+                <div class="sh-outputs">
+                    <div class="sh-out so-default">
+                        <div class="sh-out-icon"><i class="fas fa-store"></i></div>
+                        <div class="sh-out-body">
+                            <strong>StoreFront.vue</strong>
+                            <p>Tienda clásica. Slug "default". Cargado con import dinámico.</p>
+                        </div>
+                    </div>
+                    <div class="sh-out so-premium">
+                        <div class="sh-out-icon"><i class="fas fa-crown"></i></div>
+                        <div class="sh-out-body">
+                            <strong>Plugin premium</strong>
+                            <p>Cualquier diseño registrado en el plugin registry. Cargado async.</p>
+                        </div>
+                    </div>
+                    <div class="sh-out so-loader">
+                        <div class="sh-out-icon"><i class="fas fa-spinner"></i></div>
+                        <div class="sh-out-body">
+                            <strong>Spinner de carga</strong>
+                            <p>Mientras resuelve el adapter, muestra un spinner verde. Solo dura milisegundos.</p>
+                        </div>
+                    </div>
+                    <div class="sh-out so-prefetch">
+                        <div class="sh-out-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="sh-out-body">
+                            <strong>Perfil prefetcheado</strong>
+                            <p>El perfil se pasa como prop al componente hijo para no pedir la API dos veces.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — REGISTRO DE DISEÑOS + NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:50vw;height:50vw; top:-14vw; left:50%; transform:translateX(-50%);"></div>
+
+        <div class="inner">
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--purple);"></span>
+                El Registro de Diseños
+            </div>
+            <h2 style="text-align:center; margin-bottom:10px;">Agregar un diseño<br>es registrarlo en el mapa.</h2>
+            <p class="lead" style="text-align:center; margin:0 auto 28px; max-width:680px;">El archivo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">storefrontDesigns.js</code> construye un objeto con todos los diseños disponibles: el clásico hardcodeado más todos los que exponga <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">listStorefrontPlugins()</code>. El shell solo lee ese objeto — nunca necesita saber cuántos plugins existen.</p>
+
+            <div class="registry-demo" style="max-width:860px;margin:0 auto;width:100%;">
+                <div class="rd-entry rd-default">
+                    <span class="rd-slug">default</span>
+                    <span class="rd-sep">→</span>
+                    <span class="rd-name">Tienda Clásica · StoreFront.vue</span>
+                    <span class="rd-badge">Built-in</span>
+                </div>
+                <div class="rd-entry rd-plugin">
+                    <span class="rd-slug">oficial.premium_storefront</span>
+                    <span class="rd-sep">→</span>
+                    <span class="rd-name">Storefront Premium · carga async desde plugin</span>
+                    <span class="rd-badge">Plugin</span>
+                </div>
+                <div class="rd-entry rd-plus">
+                    <span class="rd-slug">cualquier.nuevo.plugin</span>
+                    <span class="rd-sep">→</span>
+                    <span class="rd-name" style="color:var(--muted);font-style:italic;">Se registra automáticamente al instalar el plugin</span>
+                    <span class="rd-badge" style="background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);">Futuro</span>
+                </div>
+            </div>
+
+            <div class="registry-note" style="max-width:860px;margin:16px auto 0;text-align:center;">
+                La función <code style="font-size:12px;background:rgba(255,255,255,0.07);padding:1px 6px;border-radius:4px;">resolveStorefrontDesign(slug)</code> devuelve siempre un diseño válido — si el slug no existe, cae al <strong>default</strong>. Esto protege al shell de slugs inválidos o plugins desinstalados.
+            </div>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="StoreProfile.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-store"></i></div>
+                    <div class="nav-label">Perfil<br>del Local</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="StoreHowToBuyModal.html" class="nav-btn c-teal">
+                    <div class="nav-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="nav-label">Tutorial<br>de Compra</div>
+                </a>
+                <a href="StoreProduct.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-tag"></i></div>
+                    <div class="nav-label">Página de<br>Producto</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_infra';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

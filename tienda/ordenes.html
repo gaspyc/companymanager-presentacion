@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pedidos — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: #f8fafc;
+        }
+
+        /* ENGINE */
+        .slide {
+            position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.10)  0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09)  0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09)  0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08)  0%, transparent 70%); }
+        .g-red    { background: radial-gradient(circle, rgba(239,68,68,0.07)   0%, transparent 70%); }
+
+        /* CONTROLS */
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--green); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        /* TYPE */
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 58px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+
+        /* LAYOUT */
+        .split  { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .split3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+        .glass  { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           COMPONENTE FIEL — 3 COLUMNAS
+        ========================================= */
+        .three-col-demo {
+            display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; width: 100%;
+        }
+        .col-demo {
+            background: #f8fafc; border-radius: 14px; overflow: hidden;
+            border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .col-demo-header {
+            background: white; padding: 10px 14px; border-bottom: 1px solid #e2e8f0;
+            font-size: 12px; font-weight: 800; color: #334155;
+        }
+        .col-demo-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+
+        /* order card */
+        .mini-order {
+            background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden;
+        }
+        .mo-head { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .mo-type { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .mo-type.bag  { background: #eff6ff; color: #2563eb; }
+        .mo-type.cal  { background: #fff7ed; color: #d97706; }
+        .mo-meta strong { font-size: 11px; font-weight: 800; color: #0f172a; display: block; }
+        .mo-meta small  { font-size: 10px; color: #94a3b8; }
+        .mo-status { font-size: 9px; font-weight: 900; padding: 3px 7px; border-radius: 999px; text-transform: uppercase; }
+        .s-completed  { background: #d1fae5; color: #059669; }
+        .s-pending    { background: #fef3c7; color: #d97706; }
+        .s-processing { background: #dbeafe; color: #2563eb; }
+        .mo-body { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+        .mo-body span  { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; }
+        .mo-body strong { font-size: 15px; font-weight: 900; color: #0f172a; }
+        .mo-delivery { padding: 6px 12px; background: #f0f9ff; border-top: 1px solid #e0f2fe; font-size: 10px; font-weight: 800; color: #0369a1; display: flex; align-items: center; gap: 5px; }
+
+        /* cart card */
+        .mini-cart {
+            background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden;
+        }
+        .mc-head { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+        .mc-logo { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg,#3b82f6,#8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 12px; flex-shrink: 0; }
+        .mc-name strong { font-size: 12px; font-weight: 800; color: #0f172a; display: block; }
+        .mc-name small  { font-size: 10px; color: #64748b; }
+        .mc-badge { margin-left: auto; font-size: 9px; font-weight: 900; padding: 3px 7px; border-radius: 999px; background: #d1fae5; color: #059669; }
+        .mc-preview { padding: 8px 12px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; font-size: 10px; color: #64748b; }
+        .mc-preview span { font-weight: 700; color: #10b981; margin-right: 3px; }
+        .mc-footer { padding: 8px 12px; display: flex; justify-content: space-between; gap: 6px; }
+        .mc-btn-ghost  { font-size: 10px; font-weight: 600; color: #64748b; background: transparent; border: none; cursor: pointer; padding: 5px 8px; border-radius: 6px; }
+        .mc-btn-primary { font-size: 10px; font-weight: 700; color: white; background: #3b82f6; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+
+        /* map col */
+        .mini-map {
+            background: linear-gradient(#f1f5f9 1px, transparent 1px),
+                        linear-gradient(90deg, #f1f5f9 1px, transparent 1px), #fff;
+            background-size: 20px 20px;
+            border: 1px solid #e2e8f0; border-radius: 10px; position: relative;
+            height: 90px; overflow: hidden;
+        }
+        .mini-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .map-point {
+            position: absolute; width: 18px; height: 18px; border-radius: 50%;
+            border: 2px solid white; display: flex; align-items: center; justify-content: center;
+            font-size: 8px; font-weight: 900; color: white; transform: translate(-50%,-50%);
+        }
+        .mp-origin  { background: #f59e0b; }
+        .mp-courier { background: #10b981; box-shadow: 0 0 0 5px rgba(16,185,129,0.2); }
+        .mp-dest    { background: #3b82f6; }
+        .map-timeline { margin-top: 8px; }
+        .mt-bar { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; }
+        .mt-fill { height: 100%; background: #3b82f6; border-radius: 2px; }
+        .mt-labels { display: flex; justify-content: space-between; font-size: 9px; font-weight: 700; color: #94a3b8; margin-top: 4px; text-transform: uppercase; }
+        .mt-signal { font-size: 9px; font-weight: 800; color: #10b981; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+
+        /* =========================================
+           SLIDE 2 — PIN Y QR
+        ========================================= */
+        .pin-flow { display: flex; flex-direction: column; gap: 12px; }
+        .pf-step {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 14px 18px; border-radius: 14px; border: 1px solid;
+        }
+        .pf-step-num { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: white; }
+        .pf-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .pf-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .pf-1 { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .pf-1 .pf-step-num { background: rgba(16,185,129,0.3); }
+        .pf-2 { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .pf-2 .pf-step-num { background: rgba(59,130,246,0.3); }
+        .pf-3 { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .pf-3 .pf-step-num { background: rgba(168,85,247,0.3); }
+        .pf-4 { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .pf-4 .pf-step-num { background: rgba(245,158,11,0.3); }
+
+        .pin-modal-demo {
+            background: white; border-radius: 18px; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); width: 100%; max-width: 300px;
+        }
+        .pmd-header { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .pmd-header h4 { font-size: 14px; font-weight: 800; color: #0f172a; margin: 0; }
+        .pmd-close { width: 26px; height: 26px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #94a3b8; }
+        .pmd-body { padding: 20px 18px; text-align: center; background: #f8fafc; }
+        .pmd-shield { width: 52px; height: 52px; border-radius: 50%; background: #ecfdf5; color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 12px; }
+        .pmd-body h5 { font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+        .pmd-body p  { font-size: 11px; color: #64748b; margin-bottom: 14px; line-height: 1.4; }
+        .pmd-qr-box { width: 120px; height: 120px; border-radius: 12px; border: 2px dashed #bbf7d0; background: #f0fdf4; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #10b981; margin: 0 auto 14px; }
+        .pmd-pin { background: #f8fafc; border: 2px dashed #10b981; border-radius: 10px; font-size: 28px; font-weight: 900; color: #059669; letter-spacing: 10px; padding: 10px; padding-left: 20px; text-align: center; }
+        .pmd-footer { padding: 12px 18px; background: white; border-top: 1px solid #f1f5f9; }
+        .pmd-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #10b981; color: white; font-weight: 800; font-size: 13px; cursor: pointer; }
+
+        /* =========================================
+           SLIDE 3 — CARRITOS GUARDADOS
+        ========================================= */
+        .cart-cards { display: flex; flex-direction: column; gap: 14px; }
+        .cart-card {
+            background: white; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .cc-head { padding: 14px 18px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 12px; }
+        .cc-avatar { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; font-size: 14px; flex-shrink: 0; }
+        .cc-info strong { font-size: 14px; font-weight: 800; color: #0f172a; display: block; }
+        .cc-info small  { font-size: 11px; color: #64748b; }
+        .cc-items-badge { margin-left: auto; font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 999px; background: #d1fae5; color: #059669; }
+        .cc-preview { padding: 10px 18px; background: #f8fafc; border-bottom: 1px solid #f1f5f9; }
+        .cc-preview div { font-size: 12px; color: #475569; margin-bottom: 3px; }
+        .cc-preview div:last-child { margin-bottom: 0; }
+        .cc-preview span { font-weight: 700; color: #10b981; margin-right: 4px; }
+        .cc-preview em { font-style: italic; font-size: 11px; color: #94a3b8; }
+        .cc-footer { padding: 10px 18px; display: flex; justify-content: space-between; gap: 10px; }
+        .cc-btn-ghost   { background: transparent; border: none; color: #64748b; font-size: 12px; font-weight: 600; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: 0.2s; }
+        .cc-btn-ghost:hover { background: #f1f5f9; }
+        .cc-btn-primary { background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+
+        .cart-how {
+            padding: 18px; border-radius: 14px; border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02); font-size: 13px; color: var(--muted); line-height: 1.6;
+        }
+        .cart-how strong { color: white; }
+        .storage-key {
+            display: inline-block; margin-top: 8px; font-family: monospace;
+            font-size: 12px; background: rgba(0,0,0,0.25); color: #93c5fd;
+            padding: 5px 10px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.2);
+        }
+
+        /* =========================================
+           SLIDE 4 — TRACKING EN VIVO
+        ========================================= */
+        .tracking-demo {
+            background: white; border-radius: 16px; padding: 18px; width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .td-section-title { font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .td-section-title a { color: #3b82f6; font-size: 10px; font-weight: 800; text-decoration: none; }
+
+        .td-map-canvas {
+            background:
+                linear-gradient(#f1f5f9 1px, transparent 1px),
+                linear-gradient(90deg, #f1f5f9 1px, transparent 1px),
+                #fff;
+            background-size: 22px 22px;
+            border: 1px solid #e2e8f0; border-radius: 10px;
+            position: relative; height: 110px; overflow: hidden; margin-bottom: 10px;
+        }
+        .td-map-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .td-map-canvas polyline { fill: none; stroke: #3b82f6; stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+        .td-point {
+            position: absolute; width: 20px; height: 20px; border-radius: 50%;
+            border: 2px solid white; transform: translate(-50%,-50%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 9px; font-weight: 900; color: white;
+        }
+        .td-origin  { background: #f59e0b; }
+        .td-courier { background: #10b981; box-shadow: 0 0 0 6px rgba(16,185,129,0.18); }
+        .td-dest    { background: #3b82f6; }
+
+        .td-signal { display: flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; color: #10b981; margin-bottom: 10px; }
+        .td-signal.stale { color: #d97706; }
+
+        .td-timeline { }
+        .td-tl-bar { height: 4px; background: #e2e8f0; border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+        .td-tl-fill { height: 100%; background: #3b82f6; border-radius: 2px; transition: width 0.3s; }
+        .td-tl-labels { display: flex; justify-content: space-between; font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .td-tl-labels span.active { color: #3b82f6; }
+        .td-tl-status { text-align: center; font-size: 10px; color: #64748b; font-weight: 700; margin-top: 5px; }
+
+        .tracking-callouts { display: flex; flex-direction: column; gap: 14px; }
+        .tc-card { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
+        .tc-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .tc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .tc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .tc-green  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .tc-green  .tc-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .tc-blue   { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .tc-blue   .tc-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .tc-orange { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .tc-orange .tc-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 5 — POLLING Y TEMA PREMIUM
+        ========================================= */
+        .polling-timeline { display: flex; flex-direction: column; gap: 0; }
+        .pt-row { display: flex; gap: 16px; align-items: flex-start; }
+        .pt-connector { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 36px; }
+        .pt-dot  { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: white; }
+        .pt-line { width: 2px; height: 24px; }
+        .pt-body { padding-bottom: 24px; flex: 1; }
+        .pt-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; margin-top: 8px; }
+        .pt-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .pt-tag { display: inline-block; margin-top: 6px; font-size: 11px; font-family: monospace; padding: 3px 9px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); }
+
+        .pt-pin    .pt-dot { background: rgba(16,185,129,0.3); }  .pt-pin    .pt-line { background: rgba(16,185,129,0.15); }
+        .pt-track  .pt-dot { background: rgba(59,130,246,0.3); }  .pt-track  .pt-line { background: rgba(59,130,246,0.15); }
+        .pt-close  .pt-dot { background: rgba(245,158,11,0.3); }  .pt-close  .pt-line { background: rgba(245,158,11,0.15); }
+        .pt-clean  .pt-dot { background: rgba(239,68,68,0.3);  }
+
+        .premium-theme-demo {
+            border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .ptd-header { padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+        .ptd-title  { font-size: 14px; font-weight: 800; }
+        .ptd-back   { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .ptd-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 13px; }
+        .ptd-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .ptd-card { border-radius: 12px; padding: 12px; border: 1px solid; }
+        .ptd-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .ptd-card-num { font-size: 12px; font-weight: 800; }
+        .ptd-card-pill { font-size: 9px; font-weight: 900; padding: 3px 7px; border-radius: 999px; }
+        .ptd-card-total { display: flex; justify-content: space-between; align-items: center; }
+        .ptd-card-total span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
+        .ptd-card-total strong { font-size: 18px; font-weight: 900; }
+
+        /* light theme (default) */
+        .theme-light .ptd-header { background: rgba(255,255,255,0.95); border-bottom: 1px solid #e2e8f0; }
+        .theme-light .ptd-title  { color: #0f172a; }
+        .theme-light .ptd-back   { background: #f1f5f9; color: #0f172a; }
+        .theme-light .ptd-avatar { background: #10b981; color: white; }
+        .theme-light .ptd-body   { background: #f8fafc; }
+        .theme-light .ptd-card   { background: white; border-color: #e2e8f0; }
+        .theme-light .ptd-card-num { color: #0f172a; }
+        .theme-light .ptd-card-pill { background: #d1fae5; color: #059669; }
+        .theme-light .ptd-card-total span   { color: #64748b; }
+        .theme-light .ptd-card-total strong { color: #0f172a; }
+
+        /* dark theme (premium) */
+        .theme-dark .ptd-header { background: rgba(15,23,42,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .theme-dark .ptd-title  { color: #f8fafc; }
+        .theme-dark .ptd-back   { background: rgba(255,255,255,0.08); color: #f8fafc; }
+        .theme-dark .ptd-avatar { background: #7c3aed; color: white; }
+        .theme-dark .ptd-body   { background: #0f172a; }
+        .theme-dark .ptd-card   { background: rgba(30,41,59,0.8); border-color: rgba(255,255,255,0.08); }
+        .theme-dark .ptd-card-num { color: #f8fafc; }
+        .theme-dark .ptd-card-pill { background: rgba(124,58,237,0.2); color: #d8b4fe; border: 1px solid rgba(124,58,237,0.3); }
+        .theme-dark .ptd-card-total span   { color: #94a3b8; }
+        .theme-dark .ptd-card-total strong { color: #f8fafc; }
+
+        /* =========================================
+           NAV
+        ========================================= */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .three-col-demo { grid-template-columns: 1fr; }
+            .split3 { grid-template-columns: 1fr; }
+            h1 { font-size: 40px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + LAYOUT 3 COLUMNAS
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.8fr; gap:56px; align-items:center; margin-bottom:0;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--green);"></span>
+                        Tienda Online · Módulo
+                    </div>
+                    <h1>Mis<br><span style="color:var(--green);">Pedidos.</span></h1>
+                    <p class="lead" style="max-width:440px;">El panel personal del comprador. Historial de órdenes, carritos activos en otras tiendas y seguimiento en vivo del repartidor — todo en tres columnas con tabs en mobile.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-receipt" style="color:#6ee7b7;font-size:11px;"></i> Historial paginado
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-shopping-cart" style="color:#93c5fd;font-size:11px;"></i> Carritos de localStorage
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-shield-alt" style="color:#fcd34d;font-size:11px;"></i> PIN + QR de entrega
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:10px;font-size:13px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-map-marker-alt" style="color:var(--orange);font-size:11px;"></i> GPS del repartidor en vivo
+                        </span>
+                    </div>
+                </div>
+
+                <div class="three-col-demo">
+                    <!-- Col 1: Pedidos -->
+                    <div class="col-demo">
+                        <div class="col-demo-header"><i class="fas fa-receipt" style="margin-right:6px;color:#10b981;"></i>Pedidos Recientes</div>
+                        <div class="col-demo-body">
+                            <div class="mini-order">
+                                <div class="mo-head">
+                                    <div class="mo-type bag"><i class="fas fa-shopping-bag"></i></div>
+                                    <div class="mo-meta" style="margin-left:8px;flex:1;">
+                                        <strong>#2847</strong>
+                                        <small>12 jun · 18:42</small>
+                                    </div>
+                                    <span class="mo-status s-completed">Completado</span>
+                                </div>
+                                <div class="mo-body">
+                                    <span>Total</span>
+                                    <strong>$ 60.840</strong>
+                                </div>
+                            </div>
+                            <div class="mini-order">
+                                <div class="mo-head">
+                                    <div class="mo-type bag"><i class="fas fa-shopping-bag"></i></div>
+                                    <div class="mo-meta" style="margin-left:8px;flex:1;">
+                                        <strong>#2851</strong>
+                                        <small>Hoy · 14:10</small>
+                                    </div>
+                                    <span class="mo-status s-processing">En prep.</span>
+                                </div>
+                                <div class="mo-delivery"><i class="fas fa-motorcycle"></i> En camino · #TRK-9921</div>
+                                <div class="mo-body">
+                                    <span>Total</span>
+                                    <strong>$ 25.300</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Carritos -->
+                    <div class="col-demo">
+                        <div class="col-demo-header"><i class="fas fa-shopping-cart" style="margin-right:6px;color:#3b82f6;"></i>Seguir Comprando</div>
+                        <div class="col-demo-body">
+                            <div class="mini-cart">
+                                <div class="mc-head">
+                                    <div class="mc-logo">A</div>
+                                    <div class="mc-name">
+                                        <strong>Aromas del Sur</strong>
+                                        <small>Sucursal Centro</small>
+                                    </div>
+                                    <span class="mc-badge">3 items</span>
+                                </div>
+                                <div class="mc-preview">
+                                    <div><span>2x</span>Invictus</div>
+                                    <div><span>1x</span>Vainilla</div>
+                                </div>
+                                <div class="mc-footer">
+                                    <button class="mc-btn-ghost"><i class="fas fa-trash-alt"></i> Limpiar</button>
+                                    <button class="mc-btn-primary">Retomar <i class="fas fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 3: Seguimiento -->
+                    <div class="col-demo">
+                        <div class="col-demo-header"><i class="fas fa-map-marker-alt" style="margin-right:6px;color:#f59e0b;"></i>Seguimiento en vivo</div>
+                        <div class="col-demo-body">
+                            <div class="mini-map">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                                    <polyline points="16,70 54,38 84,64" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                                </svg>
+                                <div class="map-point mp-origin"  style="left:16%;top:70%;">O</div>
+                                <div class="map-point mp-courier" style="left:54%;top:38%;">R</div>
+                                <div class="map-point mp-dest"    style="left:84%;top:64%;">T</div>
+                            </div>
+                            <div class="map-timeline">
+                                <div class="mt-bar"><div class="mt-fill" style="width:70%;"></div></div>
+                                <div class="mt-labels"><span>Preparando</span><span style="color:#3b82f6;">En camino</span></div>
+                                <div class="mt-signal"><i class="fas fa-location-dot"></i> Última señal hace 2 min</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — PIN DE ENTREGA + QR
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-orange" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    La Feature Estrella
+                </div>
+                <h2>PIN + QR<br>para confirmar<br>la entrega.</h2>
+                <p class="lead" style="max-width:500px;">Cuando un pedido de delivery está en camino, el cliente puede ver un PIN de 4 dígitos y un QR generado en el cliente. El repartidor los escanea o ingresa el PIN para confirmar la entrega sin llamadas.</p>
+
+                <div class="pin-flow" style="margin-top:24px;">
+                    <div class="pf-step pf-1">
+                        <div class="pf-step-num">1</div>
+                        <div class="pf-body">
+                            <strong>Pedido de delivery en tránsito</strong>
+                            <p>El orden tiene <code style="font-size:11px;">shipping_method = "delivery"</code> y <code style="font-size:11px;">delivery_pin</code> asignado. Aparece una banda verde en la card.</p>
+                        </div>
+                    </div>
+                    <div class="pf-step pf-2">
+                        <div class="pf-step-num">2</div>
+                        <div class="pf-body">
+                            <strong>Cliente toca la card</strong>
+                            <p><code style="font-size:11px;">handleOrderClick</code> detecta la condición y abre el modal. Genera el QR en el cliente con el payload de entrega.</p>
+                        </div>
+                    </div>
+                    <div class="pf-step pf-3">
+                        <div class="pf-step-num">3</div>
+                        <div class="pf-body">
+                            <strong>Polling cada 4 segundos</strong>
+                            <p>Mientras el modal está abierto, consulta el historial silenciosamente. Si el pedido pasa a <code style="font-size:11px;">completed</code> o <code style="font-size:11px;">delivered</code>, el modal se cierra solo.</p>
+                        </div>
+                    </div>
+                    <div class="pf-step pf-4">
+                        <div class="pf-step-num">4</div>
+                        <div class="pf-body">
+                            <strong>Entrega confirmada</strong>
+                            <p>El polling detecta el cambio de estado. El modal desaparece y la card del pedido se actualiza a "Completado" sin recargar la página.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:center;">
+                <div class="pin-modal-demo">
+                    <div class="pmd-header">
+                        <h4>Confirmación de Entrega</h4>
+                        <div class="pmd-close"><i class="fas fa-times"></i></div>
+                    </div>
+                    <div class="pmd-body">
+                        <div class="pmd-shield"><i class="fas fa-shield-alt"></i></div>
+                        <h5>Mostrá este PIN o QR al repartidor</h5>
+                        <p>Para asegurar que recibas tu pedido <strong>#2851</strong> correctamente.</p>
+                        <div class="pmd-qr-box"><i class="fas fa-qrcode"></i></div>
+                        <div class="pmd-pin">2847</div>
+                    </div>
+                    <div class="pmd-footer">
+                        <button class="pmd-btn">Entendido</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — CARRITOS DE LOCALSTORAGE
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    Carritos Guardados
+                </div>
+                <h2>El carrito<br>no se pierde<br>nunca.</h2>
+                <p class="lead" style="max-width:500px;">Cada vez que el cliente agrega un ítem en cualquier tienda, el carrito se guarda en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">localStorage</code> con una key por tienda. En "Mis Pedidos", el componente los recupera todos y busca el perfil de cada tienda para mostrar nombre y logo.</p>
+
+                <div class="cart-how" style="margin-top:24px;">
+                    <strong>¿Cómo funciona la recuperación?</strong><br>
+                    Al montar, se listan todas las keys de localStorage que empiecen con <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">market_cart_</code>. Por cada una se hace un <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">getPublicProfile(businessId)</code> en paralelo con <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">Promise.allSettled</code> para no fallar si un local fue dado de baja.
+                    <div class="storage-key">market_cart_42  →  [{ sku: "INV-001", qty: 2 }, ...]</div>
+                </div>
+            </div>
+
+            <div class="cart-cards">
+                <div class="cart-card">
+                    <div class="cc-head">
+                        <div class="cc-avatar" style="background:linear-gradient(135deg,#10b981,#059669);">A</div>
+                        <div class="cc-info">
+                            <strong>Aromas del Sur</strong>
+                            <small>Sucursal Centro</small>
+                        </div>
+                        <span class="cc-items-badge">3 items</span>
+                    </div>
+                    <div class="cc-preview">
+                        <div><span>2x</span>INV-001</div>
+                        <div><span>1x</span>VAI-003</div>
+                        <div><em>+1 artículos más</em></div>
+                    </div>
+                    <div class="cc-footer">
+                        <button class="cc-btn-ghost"><i class="fas fa-trash-alt"></i> Limpiar</button>
+                        <button class="cc-btn-primary">Retomar compra <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="cart-card">
+                    <div class="cc-head">
+                        <div class="cc-avatar" style="background:linear-gradient(135deg,#7c3aed,#4f46e5);">F</div>
+                        <div class="cc-info">
+                            <strong>Ferretería Norte</strong>
+                            <small>Av. del Trabajo 1234</small>
+                        </div>
+                        <span class="cc-items-badge">1 item</span>
+                    </div>
+                    <div class="cc-preview">
+                        <div><span>1x</span>TOR-M8-50</div>
+                    </div>
+                    <div class="cc-footer">
+                        <button class="cc-btn-ghost"><i class="fas fa-trash-alt"></i> Limpiar</button>
+                        <button class="cc-btn-primary">Retomar compra <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — SEGUIMIENTO EN VIVO
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Tracking en Vivo
+                </div>
+                <h2>GPS del repartidor<br>directo en la pantalla.</h2>
+                <p class="lead" style="max-width:500px;">Mientras hay un delivery activo, el componente refresca las coordenadas del repartidor cada 20 segundos. El mapa SVG renderizado en el cliente muestra tres puntos: local, repartidor y destino.</p>
+
+                <div class="tracking-callouts" style="margin-top:24px;">
+                    <div class="tc-card tc-green">
+                        <div class="tc-icon"><i class="fas fa-location-dot"></i></div>
+                        <div class="tc-body">
+                            <strong>Señal en vivo (≤5 min)</strong>
+                            <p>El punto del repartidor aparece verde con un halo animado y el label dice "Última señal hace X min".</p>
+                        </div>
+                    </div>
+                    <div class="tc-card tc-orange">
+                        <div class="tc-icon"><i class="fas fa-clock-rotate-left"></i></div>
+                        <div class="tc-body">
+                            <strong>Señal vencida (>5 min)</strong>
+                            <p>El punto cambia a amarillo y el label advierte "Señal sin actualizar hace X min". No desaparece — muestra la última posición conocida.</p>
+                        </div>
+                    </div>
+                    <div class="tc-card tc-blue">
+                        <div class="tc-icon"><i class="fas fa-map-location-dot"></i></div>
+                        <div class="tc-body">
+                            <strong>Sin coordenadas</strong>
+                            <p>Si el backend no envió ubicación todavía, el mapa muestra solo local y destino con el overlay "Esperando señal del repartidor".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tracking-demo">
+                <div class="td-section-title">
+                    Estado del envío
+                    <a href="#">Abrir Maps</a>
+                </div>
+
+                <div class="td-map-canvas">
+                    <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <polyline points="16,70 54,38 84,64"/>
+                    </svg>
+                    <div class="td-point td-origin"  style="left:16%;top:70%;">O</div>
+                    <div class="td-point td-courier" style="left:54%;top:38%;">R</div>
+                    <div class="td-point td-dest"    style="left:84%;top:64%;">T</div>
+                </div>
+
+                <div class="td-signal">
+                    <i class="fas fa-location-dot"></i>
+                    Última señal hace 2 min
+                </div>
+
+                <div class="td-timeline">
+                    <div class="td-tl-bar">
+                        <div class="td-tl-fill" style="width:70%;"></div>
+                    </div>
+                    <div class="td-tl-labels">
+                        <span>En preparación</span>
+                        <span class="active">En camino</span>
+                    </div>
+                    <div class="td-tl-status">En camino</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — POLLING Y TEMA PREMIUM
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--purple);"></span>
+                    Intervalos y Tema
+                </div>
+                <h2>Dos loops<br>independientes.<br>Un tema heredado.</h2>
+                <p class="lead" style="max-width:480px;">El componente maneja dos ciclos de polling simultáneos con intervalos distintos, y se limpia solo al desmontarse. Además acepta un prop <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">theme</code> del storefront premium que repinta toda la UI.</p>
+
+                <div class="polling-timeline" style="margin-top:24px;">
+                    <div class="pt-row pt-pin">
+                        <div class="pt-connector">
+                            <div class="pt-dot"><i class="fas fa-shield-alt"></i></div>
+                            <div class="pt-line"></div>
+                        </div>
+                        <div class="pt-body">
+                            <strong>PIN polling — cada 4 seg</strong>
+                            <p>Solo activo mientras el modal de PIN está abierto. Si el pedido se completa, cierra el modal automáticamente.</p>
+                            <span class="pt-tag">pinPollingInterval</span>
+                        </div>
+                    </div>
+                    <div class="pt-row pt-track">
+                        <div class="pt-connector">
+                            <div class="pt-dot"><i class="fas fa-location-dot"></i></div>
+                            <div class="pt-line"></div>
+                        </div>
+                        <div class="pt-body">
+                            <strong>Tracking polling — cada 20 seg</strong>
+                            <p>Refresca el historial silenciosamente y actualiza las coordenadas del repartidor. El reloj interno se actualiza cada minuto para el label de antigüedad.</p>
+                            <span class="pt-tag">trackingRefreshInterval</span>
+                        </div>
+                    </div>
+                    <div class="pt-row pt-clean">
+                        <div class="pt-connector">
+                            <div class="pt-dot"><i class="fas fa-broom"></i></div>
+                        </div>
+                        <div class="pt-body">
+                            <strong>onUnmounted — limpieza total</strong>
+                            <p>Ambos intervalos se limpian al desmontar. No hay memory leaks aunque el usuario cierre el panel a mitad de entrega.</p>
+                            <span class="pt-tag">stopPinPolling() + stopTrackingPolling()</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div style="font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">Sin tema (default)</div>
+                <div class="premium-theme-demo theme-light">
+                    <div class="ptd-header">
+                        <div class="ptd-back"><i class="fas fa-chevron-left"></i></div>
+                        <div class="ptd-title">Mis Compras</div>
+                        <div class="ptd-avatar">N</div>
+                    </div>
+                    <div class="ptd-body">
+                        <div class="ptd-card">
+                            <div class="ptd-card-head">
+                                <div class="ptd-card-num">#2847</div>
+                                <span class="ptd-card-pill">Completado</span>
+                            </div>
+                            <div class="ptd-card-total">
+                                <span>Total</span>
+                                <strong>$ 60.840</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">Con tema premium (prop theme)</div>
+                <div class="premium-theme-demo theme-dark">
+                    <div class="ptd-header">
+                        <div class="ptd-back"><i class="fas fa-chevron-left"></i></div>
+                        <div class="ptd-title">Mis Compras</div>
+                        <div class="ptd-avatar">N</div>
+                    </div>
+                    <div class="ptd-body">
+                        <div class="ptd-card">
+                            <div class="ptd-card-head">
+                                <div class="ptd-card-num">#2847</div>
+                                <span class="ptd-card-pill">Completado</span>
+                            </div>
+                            <div class="ptd-card-total">
+                                <span>Total</span>
+                                <strong>$ 60.840</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:12px;color:var(--muted);line-height:1.5;">
+                    El storefront premium pasa sus CSS custom properties como <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">:style</code> al overlay. Todo el componente se repinta usando esas variables sin cambiar una línea de lógica.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+        <div class="inner" style="align-items:center; text-align:center;">
+
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--green);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin:0 auto; text-align:center; max-width:620px;">Ya conocés el panel completo del comprador. Podés explorar la agenda de servicios del cliente, el perfil del local o el catálogo.</p>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="Agenda.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="fas fa-id-badge"></i></div>
+                    <div class="nav-label">Mis<br>Servicios</div>
+                </a>
+                <a href="StoreProfile.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-store"></i></div>
+                    <div class="nav-label">Perfil<br>del Local</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="CheckoutModal.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-lock"></i></div>
+                    <div class="nav-label">Checkout</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_myorders';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

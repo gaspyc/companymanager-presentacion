@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+
+        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.10)  0%, transparent 70%); }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.09)  0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09)  0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08)  0%, transparent 70%); }
+        .g-red    { background: radial-gradient(circle, rgba(239,68,68,0.07)   0%, transparent 70%); }
+
+        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--blue); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 58px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           MODAL FIEL
+        ========================================= */
+        .modal-demo {
+            background: white; border-radius: 24px; padding: 32px 28px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.45); width: 100%; max-width: 380px;
+            position: relative;
+        }
+        .md-close { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; border: none; color: #64748b; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .md-header { text-align: center; margin-bottom: 22px; }
+        .md-header h3 { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 4px; }
+        .md-header p  { font-size: 13px; color: #64748b; margin: 0; }
+        .md-form { display: flex; flex-direction: column; gap: 14px; }
+        .md-group { display: flex; flex-direction: column; gap: 5px; }
+        .md-group label { font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .md-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; padding: 12px 14px; border-radius: 11px; font-size: 13px; font-family: inherit; }
+        .md-input.filled { font-weight: 700; }
+        .md-input.warning { border-color: #f59e0b; background: #fffbeb; }
+        .md-password { position: relative; }
+        .md-password .md-input { padding-right: 46px; }
+        .md-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 8px; background: white; border: 1px solid #e2e8f0; color: #64748b; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+        .md-btn { width: 100%; padding: 13px; border-radius: 11px; border: none; font-weight: 800; font-size: 14px; cursor: pointer; }
+        .md-btn.primary { background: #3b82f6; color: white; margin-top: 4px; }
+        .md-btn.secondary { background: #e2e8f0; color: #0f172a; margin-top: 6px; }
+        .md-footer { text-align: center; margin-top: 18px; font-size: 13px; color: #64748b; }
+        .md-footer a { color: #3b82f6; font-weight: 700; text-decoration: none; }
+        .md-error { padding: 10px 13px; border-radius: 10px; background: #fee2e2; border: 1px solid #fecaca; color: #b91c1c; font-size: 12px; }
+        .md-info  { padding: 10px 13px; border-radius: 10px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 12px; }
+        .md-success { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px; }
+        .md-success p { font-size: 13px; color: #1d4ed8; margin-bottom: 8px; line-height: 1.4; }
+        .md-success p:last-of-type { margin-bottom: 12px; }
+        .md-warning-text { font-size: 11px; color: #b45309; font-weight: 700; margin-top: 3px; }
+        .md-resend { background: none; border: none; color: #2563eb; font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; text-align: left; }
+
+        /* =========================================
+           SLIDE 1 — INTRO: DOS MODALES LADO A LADO
+        ========================================= */
+        .duo-modals { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; width: 100%; }
+
+        /* =========================================
+           SLIDE 2 — FLUJO DE SWITCH
+        ========================================= */
+        .switch-flow { display: flex; flex-direction: column; gap: 0; }
+        .sf-step { display: flex; gap: 16px; align-items: flex-start; }
+        .sf-connector { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 38px; }
+        .sf-dot  { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; color: white; }
+        .sf-line { width: 2px; height: 26px; }
+        .sf-body { padding-bottom: 26px; flex: 1; }
+        .sf-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; margin-top: 8px; }
+        .sf-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .sf-tag { display: inline-block; margin-top: 6px; font-size: 11px; font-family: monospace; padding: 3px 9px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); }
+
+        .sf-login    .sf-dot { background: rgba(59,130,246,0.3);  } .sf-login    .sf-line { background: rgba(59,130,246,0.15);  }
+        .sf-switch   .sf-dot { background: rgba(168,85,247,0.3);  } .sf-switch   .sf-line { background: rgba(168,85,247,0.15); }
+        .sf-verify   .sf-dot { background: rgba(16,185,129,0.3);  } .sf-verify   .sf-line { background: rgba(16,185,129,0.15); }
+        .sf-success  .sf-dot { background: rgba(245,158,11,0.3);  } .sf-success  .sf-line { background: rgba(245,158,11,0.15); }
+        .sf-done     .sf-dot { background: rgba(16,185,129,0.3);  }
+
+        .event-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+        .ev-pill { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 6px; }
+        .ep-blue   { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
+        .ep-purple { background: rgba(168,85,247,0.12); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.25); }
+        .ep-green  { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+
+        /* =========================================
+           SLIDE 3 — EMAIL GUARDS
+        ========================================= */
+        .guards-list { display: flex; flex-direction: column; gap: 14px; }
+        .guard-card { display: flex; gap: 14px; align-items: flex-start; padding: 15px 18px; border-radius: 14px; border: 1px solid; }
+        .gc-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .gc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .gc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .gc-code { margin-top: 6px; font-size: 11px; font-family: monospace; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.25); color: #93c5fd; border: 1px solid rgba(59,130,246,0.2); display: inline-block; }
+
+        .gc-normalize { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .gc-normalize .gc-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .gc-hint      { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .gc-hint      .gc-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .gc-confirm   { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .gc-confirm   .gc-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .gc-pass      { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .gc-pass      .gc-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .email-demo-box {
+            padding: 18px; border-radius: 16px; border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 12px;
+        }
+        .edb-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
+        .edb-row { display: flex; align-items: center; gap: 10px; }
+        .edb-input { flex: 1; padding: 10px 12px; border-radius: 9px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 12px; font-family: monospace; }
+        .edb-input.warn { background: #fffbeb; border-color: #f59e0b; }
+        .edb-arrow { color: var(--muted); font-size: 13px; flex-shrink: 0; }
+        .edb-result { flex: 1; padding: 10px 12px; border-radius: 9px; font-size: 12px; font-family: monospace; }
+        .edb-result.ok   { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; font-weight: 700; }
+        .edb-result.warn { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-weight: 700; font-size: 11px; }
+        .edb-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+        .edb-label.norm { color: #6ee7b7; }
+        .edb-label.hint { color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 4 — VERIFICACIÓN DE EMAIL
+        ========================================= */
+        .verify-flow { display: flex; flex-direction: column; gap: 12px; }
+        .vf-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
+        .vf-num { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: white; }
+        .vf-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .vf-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .vf-1 { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .vf-1 .vf-num { background: rgba(59,130,246,0.3);  }
+        .vf-2 { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .vf-2 .vf-num { background: rgba(16,185,129,0.3);  }
+        .vf-3 { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .vf-3 .vf-num { background: rgba(168,85,247,0.3);  }
+        .vf-4 { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .vf-4 .vf-num { background: rgba(245,158,11,0.3);  }
+
+        /* =========================================
+           SLIDE 5 — TEMA DINÁMICO
+        ========================================= */
+        .theme-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+        .theme-card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 30px rgba(0,0,0,0.35); }
+        .tc-header { padding: 16px; text-align: center; }
+        .tc-header h4 { font-size: 16px; font-weight: 800; margin: 0 0 2px; }
+        .tc-header p  { font-size: 11px; margin: 0; opacity: 0.8; }
+        .tc-body   { padding: 14px; }
+        .tc-input-fake { width: 100%; padding: 10px 12px; border-radius: 9px; font-size: 12px; margin-bottom: 8px; font-family: inherit; border: none; }
+        .tc-btn-fake { width: 100%; padding: 11px; border-radius: 9px; border: none; font-size: 13px; font-weight: 800; cursor: default; }
+        .tc-footer-fake { text-align: center; margin-top: 10px; font-size: 11px; }
+
+        /* default blue */
+        .t-blue .tc-header { background: white; }
+        .t-blue .tc-header h4 { color: #0f172a; }
+        .t-blue .tc-header p  { color: #64748b; }
+        .t-blue .tc-body   { background: #f8fafc; }
+        .t-blue .tc-input-fake { background: white; border: 1px solid #e2e8f0; color: #0f172a; }
+        .t-blue .tc-btn-fake   { background: #3b82f6; color: white; }
+        .t-blue .tc-footer-fake { color: #64748b; }
+        .t-blue .tc-footer-fake span { color: #3b82f6; font-weight: 700; }
+
+        /* green store */
+        .t-green .tc-header { background: white; }
+        .t-green .tc-header h4 { color: #0f172a; }
+        .t-green .tc-header p  { color: #64748b; }
+        .t-green .tc-body   { background: #f8fafc; }
+        .t-green .tc-input-fake { background: white; border: 1px solid #a7f3d0; color: #0f172a; }
+        .t-green .tc-btn-fake   { background: #10b981; color: white; }
+        .t-green .tc-footer-fake { color: #64748b; }
+        .t-green .tc-footer-fake span { color: #10b981; font-weight: 700; }
+
+        /* purple premium */
+        .t-purple .tc-header { background: rgba(15,23,42,0.95); }
+        .t-purple .tc-header h4 { color: #f8fafc; }
+        .t-purple .tc-header p  { color: #94a3b8; }
+        .t-purple .tc-body   { background: #0f172a; }
+        .t-purple .tc-input-fake { background: rgba(30,41,59,0.8); border: 1px solid rgba(255,255,255,0.08); color: #f8fafc; }
+        .t-purple .tc-btn-fake   { background: #a855f7; color: white; }
+        .t-purple .tc-footer-fake { color: #64748b; }
+        .t-purple .tc-footer-fake span { color: #d8b4fe; font-weight: 700; }
+
+        .theme-note { margin-top: 20px; padding: 16px 20px; border-radius: 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); font-size: 13px; color: var(--muted); line-height: 1.6; text-align: center; }
+        .theme-note strong { color: white; }
+
+        /* NAV */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .duo-modals { grid-template-columns: 1fr; }
+            .theme-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 40px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">5</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO: LOGIN + REGISTER LADO A LADO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-blue"  style="width:48vw;height:48vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-green" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:56px; align-items:center;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--blue);"></span>
+                        Tienda Online · Módulo
+                    </div>
+                    <h1>Acceso<br>al<br><span style="color:var(--blue);">ecosistema.</span></h1>
+                    <p class="lead" style="max-width:420px;">Dos modales coordinados que cubren el ciclo completo: login, registro con verificación de email, y reenvío del enlace. Se pueden intercambiar sin cerrar el overlay y adoptan el color del storefront activo.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-exchange-alt" style="color:#93c5fd;font-size:11px;"></i> Switch sin cerrar</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-envelope-circle-check" style="color:#6ee7b7;font-size:11px;"></i> Verificación de email</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-shield-halved" style="color:#fcd34d;font-size:11px;"></i> Email guards</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-palette" style="color:#d8b4fe;font-size:11px;"></i> Tema del storefront</span>
+                    </div>
+                </div>
+
+                <div class="duo-modals">
+                    <!-- LOGIN -->
+                    <div class="modal-demo">
+                        <div class="md-close"><i class="fas fa-times"></i></div>
+                        <div class="md-header">
+                            <h3>Iniciar sesión</h3>
+                            <p>Ingresá para guardar tus tiendas y hacer compras.</p>
+                        </div>
+                        <div class="md-form">
+                            <div class="md-group">
+                                <label>Email</label>
+                                <div class="md-input filled">nacho@ejemplo.com</div>
+                            </div>
+                            <div class="md-group">
+                                <label>Contraseña</label>
+                                <div class="md-password">
+                                    <div class="md-input filled" style="padding-right:46px;">••••••••</div>
+                                    <div class="md-eye"><i class="fas fa-eye"></i></div>
+                                </div>
+                            </div>
+                            <button class="md-btn primary">Entrar a mi cuenta</button>
+                        </div>
+                        <div class="md-footer">¿No tenés cuenta? <a href="#">Registrate gratis</a></div>
+                    </div>
+
+                    <!-- REGISTER -->
+                    <div class="modal-demo">
+                        <div class="md-close"><i class="fas fa-times"></i></div>
+                        <div class="md-header">
+                            <h3>Crear cuenta</h3>
+                            <p>Unite para guardar tus favoritos y comprar rápido.</p>
+                        </div>
+                        <div class="md-form">
+                            <div class="md-group">
+                                <label>Nombre completo</label>
+                                <div class="md-input filled">Nacho</div>
+                            </div>
+                            <div class="md-group">
+                                <label>Email</label>
+                                <div class="md-input filled">nacho@ejemplo.com</div>
+                            </div>
+                            <div class="md-group">
+                                <label>Confirmar Email</label>
+                                <div class="md-input filled">nacho@ejemplo.com</div>
+                            </div>
+                            <div class="md-group">
+                                <label>Contraseña</label>
+                                <div class="md-input">••••••••</div>
+                            </div>
+                            <div class="md-group">
+                                <label>Confirmar Contraseña</label>
+                                <div class="md-input">••••••••</div>
+                            </div>
+                            <button class="md-btn primary">Registrarme</button>
+                        </div>
+                        <div class="md-footer">¿Ya tenés cuenta? <a href="#">Iniciá sesión</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — FLUJO DE SWITCH Y EVENTOS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--purple);"></span>
+                    Coordinación entre Modales
+                </div>
+                <h2>Dos modales.<br>Un overlay.<br>Cero fricciones.</h2>
+                <p class="lead" style="max-width:500px;">El componente padre (generalmente el storefront) monta ambos modales y escucha sus eventos. El switch entre Login y Register no cierra el backdrop — simplemente alterna qué modal está visible con un <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">v-if</code>.</p>
+                <p class="lead" style="max-width:500px; margin-top:14px;">Cada modal emite exactamente lo que necesita el padre para orquestar la transición. No hay estado compartido entre ambos.</p>
+
+                <div class="event-pills" style="margin-top:20px;">
+                    <span class="ev-pill ep-blue">@close</span>
+                    <span class="ev-pill ep-blue">@success</span>
+                    <span class="ev-pill ep-purple">@switch-to-register</span>
+                    <span class="ev-pill ep-purple">@switch-to-login</span>
+                    <span class="ev-pill ep-green">@open-orders</span>
+                </div>
+            </div>
+
+            <div class="switch-flow">
+                <div class="sf-step sf-login">
+                    <div class="sf-connector"><div class="sf-dot"><i class="fas fa-sign-in-alt"></i></div><div class="sf-line"></div></div>
+                    <div class="sf-body">
+                        <strong>StoreLoginModal visible</strong>
+                        <p>El cliente ve el formulario de login. Si hace submit correcto, se llama a <code style="font-size:11px;">auth.login()</code> y se emite <code style="font-size:11px;">@success</code> con el usuario.</p>
+                        <span class="sf-tag">emit('success', auth.user)</span>
+                    </div>
+                </div>
+                <div class="sf-step sf-switch">
+                    <div class="sf-connector"><div class="sf-dot"><i class="fas fa-arrows-rotate"></i></div><div class="sf-line"></div></div>
+                    <div class="sf-body">
+                        <strong>Switch → Register</strong>
+                        <p>El link "Registrate gratis" emite <code style="font-size:11px;">@switch-to-register</code>. El padre oculta el login y muestra el registro sin cerrar el overlay.</p>
+                        <span class="sf-tag">emit('switch-to-register')</span>
+                    </div>
+                </div>
+                <div class="sf-step sf-verify">
+                    <div class="sf-connector"><div class="sf-dot"><i class="fas fa-envelope"></i></div><div class="sf-line"></div></div>
+                    <div class="sf-body">
+                        <strong>Registro exitoso → pantalla de verificación</strong>
+                        <p>El modal de registro reemplaza el formulario con la pantalla de éxito. El formulario desaparece, aparece el bloque con instrucciones y el botón de reenvío.</p>
+                        <span class="sf-tag">successMsg.value = result.message</span>
+                    </div>
+                </div>
+                <div class="sf-step sf-success">
+                    <div class="sf-connector"><div class="sf-dot"><i class="fas fa-check-circle"></i></div><div class="sf-line"></div></div>
+                    <div class="sf-body">
+                        <strong>Switch → Login desde verificación</strong>
+                        <p>El botón "Ya verifiqué mi correo" emite <code style="font-size:11px;">@switch-to-login</code>. El padre vuelve a mostrar el login.</p>
+                        <span class="sf-tag">emit('switch-to-login')</span>
+                    </div>
+                </div>
+                <div class="sf-step sf-done">
+                    <div class="sf-connector"><div class="sf-dot"><i class="fas fa-user-check"></i></div></div>
+                    <div class="sf-body">
+                        <strong>Login exitoso → cierre</strong>
+                        <p><code style="font-size:11px;">@success</code> llega al padre con el usuario autenticado. El padre cierra el overlay y actualiza el estado de sesión en el storefront.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — EMAIL GUARDS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Calidad del Email
+                </div>
+                <h2>El sistema<br>cuida la calidad<br>del dato.</h2>
+                <p class="lead" style="max-width:500px;">Antes de llegar al servidor, el email pasa por dos utilidades del módulo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">emailGuards</code>. Una normaliza el string para evitar duplicados por espacios o mayúsculas. La otra detecta dominios sospechosos y muestra un hint al usuario sin bloquear el registro.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:20px;">
+                <div class="guards-list">
+                    <div class="guard-card gc-normalize">
+                        <div class="gc-icon"><i class="fas fa-wand-magic-sparkles"></i></div>
+                        <div class="gc-body">
+                            <strong>normalizeEmail()</strong>
+                            <p>Hace <code style="font-size:11px;">.trim().toLowerCase()</code> antes de enviar al servidor y antes de comparar email con confirmEmail. Evita que <code style="font-size:11px;">"Nacho@Email.com "</code> y <code style="font-size:11px;">"nacho@email.com"</code> se registren dos veces.</p>
+                            <div class="gc-code">normalizeEmail("  NACHO@Email.com ") → "nacho@email.com"</div>
+                        </div>
+                    </div>
+                    <div class="guard-card gc-hint">
+                        <div class="gc-icon"><i class="fas fa-triangle-exclamation"></i></div>
+                        <div class="gc-body">
+                            <strong>getSuspiciousEmailHint()</strong>
+                            <p>Detecta dominios descartables o temporales (ej: <code style="font-size:11px;">mailinator.com</code>, <code style="font-size:11px;">yopmail.com</code>). Muestra un hint naranja debajo del campo sin impedir el registro. Es una advertencia, no un bloqueo.</p>
+                            <div class="gc-code">getSuspiciousEmailHint("a@yopmail.com") → "Este dominio parece..."</div>
+                        </div>
+                    </div>
+                    <div class="guard-card gc-confirm">
+                        <div class="gc-icon"><i class="fas fa-equals"></i></div>
+                        <div class="gc-body">
+                            <strong>Validación de confirmación</strong>
+                            <p>Email y confirmEmail se comparan <strong>después de normalizados</strong>. Lo mismo para la contraseña. Si no coinciden, el error aparece antes de llamar al servidor.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="email-demo-box">
+                    <div class="edb-title">Ejemplos de transformación</div>
+                    <div class="edb-row">
+                        <div class="edb-input">" NACHO@Email.com "</div>
+                        <div class="edb-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="edb-result ok">nacho@email.com</div>
+                        <div class="edb-label norm">Normalizado</div>
+                    </div>
+                    <div class="edb-row">
+                        <div class="edb-input warn">nacho@yopmail.com</div>
+                        <div class="edb-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="edb-result warn">⚠ Dominio sospechoso</div>
+                        <div class="edb-label hint">Hint</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — VERIFICACIÓN DE EMAIL
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    Verificación de Correo
+                </div>
+                <h2>No se entra<br>sin verificar<br>el email.</h2>
+                <p class="lead" style="max-width:500px;">El registro no da acceso directo. El sistema manda un correo con un enlace de verificación. Si el cliente intenta loguear antes de verificar, el login devuelve un error específico que activa el botón de reenvío.</p>
+                <p class="lead" style="max-width:500px; margin-top:14px;">El botón de reenvío solo aparece si el mensaje de error contiene la frase <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">"verificar tu correo"</code>. Es una detección por string, simple y efectiva.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="verify-flow">
+                    <div class="vf-step vf-1">
+                        <div class="vf-num">1</div>
+                        <div class="vf-body">
+                            <strong>Registro exitoso</strong>
+                            <p>El formulario desaparece. La pantalla de éxito muestra el mensaje del servidor y el email registrado. Aparecen dos botones: "Reenviar" y "Ya verifiqué".</p>
+                        </div>
+                    </div>
+                    <div class="vf-step vf-2">
+                        <div class="vf-num">2</div>
+                        <div class="vf-body">
+                            <strong>Reenvío del correo</strong>
+                            <p>Llama a <code style="font-size:11px;">api.resendVerification({ email })</code> con el email guardado en <code style="font-size:11px;">registeredEmail</code>. Actualiza el mensaje de éxito con la respuesta del servidor.</p>
+                        </div>
+                    </div>
+                    <div class="vf-step vf-3">
+                        <div class="vf-num">3</div>
+                        <div class="vf-body">
+                            <strong>Intento de login sin verificar</strong>
+                            <p>El store devuelve un error con la frase "verificar tu correo". El computed <code style="font-size:11px;">canResendVerification</code> lo detecta y muestra el link de reenvío también en el login.</p>
+                        </div>
+                    </div>
+                    <div class="vf-step vf-4">
+                        <div class="vf-num">4</div>
+                        <div class="vf-body">
+                            <strong>Login exitoso post-verificación</strong>
+                            <p><code style="font-size:11px;">auth.login()</code> resuelve, se emite <code style="font-size:11px;">@success</code>. El overlay se cierra y el cliente queda autenticado en el storefront.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- pantalla de éxito demo -->
+                <div class="modal-demo" style="max-width:100%;">
+                    <div class="md-header" style="margin-bottom:16px;">
+                        <h3>Revisá tu correo</h3>
+                        <p>Necesitamos validar tu email antes del primer ingreso.</p>
+                    </div>
+                    <div class="md-success">
+                        <p>Te enviamos un correo para verificar tu cuenta.</p>
+                        <p>Enviamos el enlace a <strong>nacho@ejemplo.com</strong>.</p>
+                        <button class="md-btn secondary" style="margin-bottom:8px;">Reenviar verificación</button>
+                        <button class="md-btn primary">Ya verifiqué mi correo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — TEMA DINÁMICO + NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:50vw;height:50vw; top:-14vw; left:50%; transform:translateX(-50%);"></div>
+
+        <div class="inner">
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--purple);"></span>
+                Diseño Adaptable
+            </div>
+            <h2 style="text-align:center; margin-bottom:10px;">El botón adopta<br>el color de cada tienda.</h2>
+            <p class="lead" style="text-align:center; margin:0 auto 28px; max-width:640px;">Todos los botones de acción usan <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">var(--theme-primary)</code>. El storefront inyecta esa variable en el overlay y los modales se repintan automáticamente. Sin props de color, sin lógica extra.</p>
+
+            <div class="theme-grid">
+                <div class="theme-card t-blue">
+                    <div class="tc-header">
+                        <h4>Iniciar sesión</h4>
+                        <p>Tienda default — azul</p>
+                    </div>
+                    <div class="tc-body">
+                        <div class="tc-input-fake">nacho@ejemplo.com</div>
+                        <div class="tc-input-fake">••••••••</div>
+                        <div class="tc-btn-fake">Entrar a mi cuenta</div>
+                        <div class="tc-footer-fake">¿No tenés cuenta? <span>Registrate</span></div>
+                    </div>
+                </div>
+
+                <div class="theme-card t-green">
+                    <div class="tc-header">
+                        <h4>Iniciar sesión</h4>
+                        <p>Tienda con tema verde</p>
+                    </div>
+                    <div class="tc-body">
+                        <div class="tc-input-fake">nacho@ejemplo.com</div>
+                        <div class="tc-input-fake">••••••••</div>
+                        <div class="tc-btn-fake">Entrar a mi cuenta</div>
+                        <div class="tc-footer-fake">¿No tenés cuenta? <span>Registrate</span></div>
+                    </div>
+                </div>
+
+                <div class="theme-card t-purple">
+                    <div class="tc-header">
+                        <h4>Iniciar sesión</h4>
+                        <p>Storefront premium</p>
+                    </div>
+                    <div class="tc-body">
+                        <div class="tc-input-fake">nacho@ejemplo.com</div>
+                        <div class="tc-input-fake">••••••••</div>
+                        <div class="tc-btn-fake">Entrar a mi cuenta</div>
+                        <div class="tc-footer-fake">¿No tenés cuenta? <span>Registrate</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theme-note">
+                La variable <strong>--theme-primary</strong> la inyecta el storefront en el elemento raíz del overlay. Los modales son hijos del mismo contexto CSS, por lo que heredan el color sin ninguna prop adicional.
+            </div>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="MyOrders.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+                    <div class="nav-label">Mis<br>Pedidos</div>
+                </a>
+                <a href="Agenda.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="fas fa-id-badge"></i></div>
+                    <div class="nav-label">Mis<br>Servicios</div>
+                </a>
+                <a href="StoreHowToBuyModal.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-question-circle"></i></div>
+                    <div class="nav-label">Tutorial<br>de Compra</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_auth';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

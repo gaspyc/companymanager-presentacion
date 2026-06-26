@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Producto — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+
+        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%); }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%); }
+
+        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--orange); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 56px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — HERO DE PRODUCTO FIEL
+        ========================================= */
+        .product-hero-demo { background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.45); width: 100%; }
+        .phd-breadcrumb { padding: 12px 20px 0; font-size: 11px; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+        .phd-breadcrumb span.sep { color: #cbd5e1; }
+        .phd-breadcrumb span.current { color: #334155; font-weight: 700; }
+
+        .phd-body { padding: 18px 20px 20px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 20px; }
+        .phd-img { aspect-ratio: 1; border-radius: 16px; background: linear-gradient(135deg,#f8fafc,#eef2ff); display: flex; align-items: center; justify-content: center; font-size: 48px; color: #cbd5e1; position: relative; }
+        .phd-img-badge { position: absolute; top: 10px; left: 10px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; color: #10b981; }
+
+        .phd-info { display: flex; flex-direction: column; gap: 10px; }
+        .phd-cat { font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+        .phd-name { font-size: 22px; font-weight: 900; color: #0f172a; line-height: 1.2; }
+        .phd-stock { font-size: 12px; color: #059669; font-weight: 700; display: flex; align-items: center; gap: 5px; }
+        .phd-stock i { font-size: 8px; }
+
+        .phd-price-box { background: #f8fafc; border-radius: 14px; padding: 14px 16px; margin-top: 4px; }
+        .phd-price { font-size: 28px; font-weight: 900; color: #0f172a; }
+        .phd-price-label { font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
+
+        .hero-tier-strip { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+        .ht-tier { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 10px; }
+        .ht-tier .ht-qty { color: #64748b; font-weight: 700; display: block; }
+        .ht-tier .ht-disc { color: #059669; font-weight: 900; }
+
+        .phd-qty-row { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+        .phd-qty { display: inline-flex; align-items: center; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; height: 42px; overflow: hidden; }
+        .phd-qty-btn { width: 36px; height: 100%; border: none; background: transparent; font-weight: 800; color: #334155; cursor: pointer; font-size: 16px; }
+        .phd-qty-input { width: 44px; text-align: center; border: none; background: transparent; font-size: 15px; font-weight: 800; color: #0f172a; }
+        .phd-add-btn { flex: 1; background: #0f172a; color: white; border: none; border-radius: 10px; height: 42px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px; }
+
+        .phd-desc { font-size: 12px; color: #64748b; line-height: 1.6; margin-top: 4px; }
+
+        /* =========================================
+           SLIDE 2 — HIDRATACIÓN INSTANTÁNEA
+        ========================================= */
+        .hydrate-flow { display: flex; flex-direction: column; gap: 12px; }
+        .hf-step { display: flex; gap: 13px; align-items: flex-start; padding: 15px 18px; border-radius: 14px; border: 1px solid; }
+        .hf-icon { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .hf-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .hf-body p      { font-size: 13px; color: var(--muted); margin: 0; line-height: 1.5; }
+        .hf-1 { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .hf-1 .hf-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .hf-2 { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .hf-2 .hf-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .hf-3 { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .hf-3 .hf-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .hf-4 { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .hf-4 .hf-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .timeline-compare { display: flex; flex-direction: column; gap: 16px; }
+        .tc-row { display: flex; align-items: center; gap: 12px; }
+        .tc-label { width: 110px; font-size: 11px; font-weight: 800; color: white; text-align: right; flex-shrink: 0; }
+        .tc-bar-wrap { flex: 1; height: 28px; background: rgba(255,255,255,0.03); border-radius: 8px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); }
+        .tc-bar { height: 100%; border-radius: 7px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+        .tc-bar span { font-size: 9px; font-weight: 900; color: white; }
+        .tc-bar.slow { width: 92%; background: linear-gradient(90deg, rgba(239,68,68,0.5), rgba(239,68,68,0.7)); }
+        .tc-bar.fast { width: 8%; background: linear-gradient(90deg, rgba(16,185,129,0.6), rgba(16,185,129,0.85)); }
+
+        /* =========================================
+           SLIDE 3 — JSON-LD
+        ========================================= */
+        .jsonld-graph { display: flex; flex-direction: column; gap: 10px; }
+        .jg-node { display: flex; gap: 13px; align-items: flex-start; padding: 13px 16px; border-radius: 13px; border: 1px solid; }
+        .jg-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .jg-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .jg-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .jg-breadcrumb{ background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .jg-breadcrumb .jg-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .jg-webpage   { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .jg-webpage    .jg-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .jg-business  { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .jg-business   .jg-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .jg-product   { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .jg-product    .jg-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+        .schema-code { background: rgba(0,0,0,0.35); border-radius: 14px; padding: 18px; font-family: monospace; font-size: 11px; line-height: 1.7; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.08); overflow: auto; }
+        .schema-code .k { color: #93c5fd; }
+        .schema-code .s { color: #6ee7b7; }
+        .schema-code .p { color: #d8b4fe; }
+        .schema-code .c { color: rgba(255,255,255,0.3); }
+
+        /* =========================================
+           SLIDE 4 — CATÁLOGO EMBEBIDO + NAV
+        ========================================= */
+        .embed-callouts { display: flex; flex-direction: column; gap: 14px; }
+        .ec-card { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
+        .ec-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .ec-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .ec-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .ec-reuse  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .ec-reuse  .ec-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .ec-scroll { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .ec-scroll .ec-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .ec-sticky { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .ec-sticky .ec-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .ec-expose { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .ec-expose .ec-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        .page-anatomy { border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
+        .pa-section { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; }
+        .pa-section:last-child { border-bottom: none; }
+        .pa-tag { font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 5px; flex-shrink: 0; font-family: monospace; }
+        .pa-text { font-size: 12px; color: var(--muted); }
+        .pa-text strong { color: white; }
+        .pa-1 .pa-tag { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .pa-2 .pa-tag { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .pa-3 .pa-tag { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .pa-4 .pa-tag { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        /* NAV */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .phd-body { grid-template-columns: 1fr; }
+            h1 { font-size: 38px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">4</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + HERO DEMO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-orange" style="width:46vw;height:46vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:52px; align-items:center;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--orange);"></span>
+                        Tienda Online · Módulo
+                    </div>
+                    <h1>La página<br>de<br><span style="color:var(--orange);">producto.</span></h1>
+                    <p class="lead" style="max-width:420px;">La vista individual de cada SKU, con URL propia, SEO completo y JSON-LD estructurado. Carga el perfil del local arriba y el catálogo completo abajo, como si fuera la tienda — pero con foco en un solo producto.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-bolt" style="color:#fcd34d;font-size:11px;"></i> Hidratación instantánea</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-sitemap" style="color:#93c5fd;font-size:11px;"></i> JSON-LD multi-nodo</span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-layer-group" style="color:#6ee7b7;font-size:11px;"></i> Tiers de precio mayorista</span>
+                    </div>
+                </div>
+
+                <div class="product-hero-demo">
+                    <div class="phd-breadcrumb">
+                        <span>CompanyMarket</span>
+                        <span class="sep">›</span>
+                        <span>Aromas del Sur</span>
+                        <span class="sep">›</span>
+                        <span class="current">Invictus · Aura Lotion</span>
+                    </div>
+                    <div class="phd-body">
+                        <div class="phd-img">
+                            <i class="fas fa-spray-can"></i>
+                            <div class="phd-img-badge">3 Disponibles</div>
+                        </div>
+                        <div class="phd-info">
+                            <div class="phd-cat">Aromatizantes</div>
+                            <div class="phd-name">Invictus · Aura Lotion</div>
+                            <div class="phd-stock"><i class="fas fa-circle"></i> En stock</div>
+
+                            <div class="phd-price-box">
+                                <div class="phd-price-label">Precio</div>
+                                <div class="phd-price">$ 7.475</div>
+                                <div class="hero-tier-strip">
+                                    <div class="ht-tier"><span class="ht-qty">+12 un.</span><span class="ht-disc">32% off</span></div>
+                                    <div class="ht-tier"><span class="ht-qty">+49 un.</span><span class="ht-disc">35% off</span></div>
+                                </div>
+                            </div>
+
+                            <div class="phd-qty-row">
+                                <div class="phd-qty">
+                                    <button class="phd-qty-btn">-</button>
+                                    <div class="phd-qty-input">1</div>
+                                    <button class="phd-qty-btn">+</button>
+                                </div>
+                                <button class="phd-add-btn"><i class="fas fa-cart-plus"></i> Agregar al carrito</button>
+                            </div>
+
+                            <div class="phd-desc">Loción difusora de larga duración. Ideal para ambientes de 20 a 40 m². Presentación de 250ml con varillas incluidas.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — HIDRATACIÓN INSTANTÁNEA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    Carga Instantánea
+                </div>
+                <h2>Sin spinner<br>cuando viene<br>del catálogo.</h2>
+                <p class="lead" style="max-width:500px;">Cuando el cliente toca una card en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">StoreCatalog</code>, esta página no parte de cero. Lee un caché en memoria con <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">readStorefrontPreview(storeRef, sku)</code> que ya tiene el perfil, el producto y el catálogo completo guardados.</p>
+
+                <div class="hydrate-flow" style="margin-top:22px;">
+                    <div class="hf-step hf-1">
+                        <div class="hf-icon"><i class="fas fa-save"></i></div>
+                        <div class="hf-body">
+                            <strong>saveStorefrontPreview() en el origen</strong>
+                            <p>StoreCatalog guarda perfil + producto + catálogo antes de navegar, junto con <code style="font-size:11px;">sourceScrollY</code> para poder volver al mismo punto de scroll.</p>
+                        </div>
+                    </div>
+                    <div class="hf-step hf-2">
+                        <div class="hf-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="hf-body">
+                            <strong>hydrateFromPreview() síncrono</strong>
+                            <p>Se ejecuta antes del primer render. Si hay caché válido, <code style="font-size:11px;">loading = false</code> desde el inicio — no hay flash de spinner.</p>
+                        </div>
+                    </div>
+                    <div class="hf-step hf-3">
+                        <div class="hf-icon"><i class="fas fa-cloud"></i></div>
+                        <div class="hf-body">
+                            <strong>Fetch en segundo plano</strong>
+                            <p>Aunque hidrate desde caché, igual dispara <code style="font-size:11px;">api.getPublicStorefront()</code> para refrescar datos por si cambiaron desde que se guardó el preview.</p>
+                        </div>
+                    </div>
+                    <div class="hf-step hf-4">
+                        <div class="hf-icon"><i class="fas fa-link"></i></div>
+                        <div class="hf-body">
+                            <strong>Acceso directo por URL</strong>
+                            <p>Si no hay caché (link compartido, refresh, Google), carga normal con loading visible y fetch completo antes de mostrar contenido.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="glass" style="padding:22px;">
+                    <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:18px;">Tiempo hasta contenido visible</div>
+                    <div class="timeline-compare">
+                        <div class="tc-row">
+                            <div class="tc-label">Sin caché<br><span style="color:var(--muted);font-weight:400;">(link directo)</span></div>
+                            <div class="tc-bar-wrap"><div class="tc-bar slow"><span>~600-900ms</span></div></div>
+                        </div>
+                        <div class="tc-row">
+                            <div class="tc-label">Con caché<br><span style="color:var(--muted);font-weight:400;">(desde catálogo)</span></div>
+                            <div class="tc-bar-wrap"><div class="tc-bar fast"><span>~0ms</span></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:14px; padding:14px 18px; border-radius:13px; background:rgba(255,255,255,0.02); border:1px solid var(--border); font-size:13px; color:var(--muted); line-height:1.5;">
+                    <i class="fas fa-info-circle" style="color:#93c5fd;margin-right:7px;"></i>
+                    El scroll también se restaura: si el cliente venía con scroll en el catálogo, al volver atrás <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">animateWindowScrollTo(pendingSourceScrollY)</code> lo devuelve suavemente al mismo punto.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — JSON-LD
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-orange" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--purple);"></span>
+                    SEO Estructurado
+                </div>
+                <h2>Un solo<br>JSON-LD con<br>cuatro nodos.</h2>
+                <p class="lead" style="max-width:500px;">El <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">@graph</code> conecta breadcrumbs, la página, el local y el producto en un solo bloque de schema.org. Google puede mostrar rich snippets con precio, disponibilidad y la cadena de navegación completa.</p>
+
+                <div class="jsonld-graph" style="margin-top:22px;">
+                    <div class="jg-node jg-breadcrumb">
+                        <div class="jg-icon"><i class="fas fa-route"></i></div>
+                        <div class="jg-body">
+                            <strong>BreadcrumbList</strong>
+                            <p>CompanyMarket → Nombre de la tienda → Nombre del producto. Tres niveles con URLs absolutas.</p>
+                        </div>
+                    </div>
+                    <div class="jg-node jg-webpage">
+                        <div class="jg-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="jg-body">
+                            <strong>WebPage</strong>
+                            <p>Conecta con <code style="font-size:11px;">isPartOf</code> al WebSite raíz y referencia el breadcrumb por <code style="font-size:11px;">@id</code>.</p>
+                        </div>
+                    </div>
+                    <div class="jg-node jg-business">
+                        <div class="jg-icon"><i class="fas fa-store"></i></div>
+                        <div class="jg-body">
+                            <strong>LocalBusiness</strong>
+                            <p>Nombre, teléfono e imágenes del local. Mismo <code style="font-size:11px;">@id</code> que usaría el perfil — Google los relaciona como la misma entidad.</p>
+                        </div>
+                    </div>
+                    <div class="jg-node jg-product">
+                        <div class="jg-icon"><i class="fas fa-tag"></i></div>
+                        <div class="jg-body">
+                            <strong>Product + Offer</strong>
+                            <p>Si <code style="font-size:11px;">hidePrices</code> está activo, el nodo <code style="font-size:11px;">offers</code> directamente no se incluye — no hay precio falso ni oculto en el schema.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="schema-code">
+<span class="c">{</span><br>
+&nbsp;&nbsp;<span class="k">"@context"</span>: <span class="s">"https://schema.org"</span>,<br>
+&nbsp;&nbsp;<span class="k">"@graph"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">{</span> <span class="k">"@type"</span>: <span class="s">"BreadcrumbList"</span> <span class="c">... }</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">{</span> <span class="k">"@type"</span>: <span class="s">"WebPage"</span> <span class="c">... }</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">{</span> <span class="k">"@type"</span>: <span class="s">"LocalBusiness"</span> <span class="c">... }</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"@type"</span>: <span class="s">"Product"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"name"</span>: <span class="s">"Invictus · Aura Lotion"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"sku"</span>: <span class="s">"INV-AURA-250"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"offers"</span>: <span class="c">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"@type"</span>: <span class="s">"Offer"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"priceCurrency"</span>: <span class="s">"ARS"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"price"</span>: <span class="p">"7475.00"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"availability"</span>: <span class="s">"https://schema.org/InStock"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">}</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="c">}</span><br>
+&nbsp;&nbsp;]<br>
+<span class="c">}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — CATÁLOGO EMBEBIDO + NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    Reutilización Total
+                </div>
+                <h2>Debajo del hero,<br>la tienda<br>completa otra vez.</h2>
+                <p class="lead" style="max-width:500px;">StoreProduct no reinventa nada para mostrar "más productos de esta tienda". Importa <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">StoreProfile</code> y <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">StoreCatalog</code> directamente — los mismos componentes que arma la vidriera pública — con una <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">ref</code> al catálogo para controlarlo desde el hero.</p>
+
+                <div class="embed-callouts" style="margin-top:22px;">
+                    <div class="ec-card ec-reuse">
+                        <div class="ec-icon"><i class="fas fa-recycle"></i></div>
+                        <div class="ec-body">
+                            <strong>Cero duplicación de UI</strong>
+                            <p>El perfil y el catálogo se renderizan tal cual aparecen en la tienda principal. Cualquier cambio visual en esos componentes se propaga automáticamente.</p>
+                        </div>
+                    </div>
+                    <div class="ec-card ec-expose">
+                        <div class="ec-icon"><i class="fas fa-plug"></i></div>
+                        <div class="ec-body">
+                            <strong>catalogRef.addProductBySku</strong>
+                            <p>Cuando el cliente agrega desde el hero, StoreProduct llama al método expuesto del catálogo embebido para mantener un solo estado de carrito compartido.</p>
+                        </div>
+                    </div>
+                    <div class="ec-card ec-scroll">
+                        <div class="ec-icon"><i class="fas fa-crosshairs"></i></div>
+                        <div class="ec-body">
+                            <strong>focusProductBySku</strong>
+                            <p>Resalta visualmente la card del producto actual dentro del catálogo de abajo, para que el cliente vea de dónde viene en el contexto completo.</p>
+                        </div>
+                    </div>
+                    <div class="ec-card ec-sticky">
+                        <div class="ec-icon"><i class="fas fa-thumbtack"></i></div>
+                        <div class="ec-body">
+                            <strong>heroCardRef + getStickyOffset</strong>
+                            <p>Calcula la altura del navbar público para ajustar el scroll suavemente al hero, sin que quede tapado al volver desde una navegación con offset.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="page-anatomy">
+                    <div class="pa-section pa-1"><span class="pa-tag">SEO</span><span class="pa-text">JSON-LD + meta tags aplicados en <strong>onMounted</strong></span></div>
+                    <div class="pa-section pa-2"><span class="pa-tag">HERO</span><span class="pa-text">Imagen, precio, tiers, cantidad, <strong>Agregar al carrito</strong></span></div>
+                    <div class="pa-section pa-3"><span class="pa-tag">PROFILE</span><span class="pa-text"><strong>StoreProfile.vue</strong> embebido — mismo header que la tienda</span></div>
+                    <div class="pa-section pa-4"><span class="pa-tag">CATALOG</span><span class="pa-text"><strong>StoreCatalog.vue</strong> embebido — "También en esta tienda"</span></div>
+                </div>
+
+                <div class="nav-grid" style="margin-top:24px;">
+                    <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                        <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                        <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                    </a>
+                    <a href="StoreCatalog.html" class="nav-btn c-green">
+                        <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                        <div class="nav-label">Catálogo<br>Público</div>
+                    </a>
+                    <a href="StoreProfile.html" class="nav-btn c-blue">
+                        <div class="nav-icon"><i class="fas fa-store"></i></div>
+                        <div class="nav-label">Perfil<br>del Local</div>
+                    </a>
+                    <a href="StoreFront.html" class="nav-btn c-orange">
+                        <div class="nav-icon"><i class="fas fa-globe"></i></div>
+                        <div class="nav-label">Vidriera<br>Completa</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_storeproduct';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

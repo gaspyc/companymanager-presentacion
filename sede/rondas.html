@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rondas de Despacho — Logística</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --accent:       #0ea5e9;
+            --kpi-sky:      #0ea5e9;
+            --kpi-green:    #10b981;
+            --kpi-blue:     #3b82f6;
+            --kpi-amber:    #f59e0b;
+            --kpi-red:      #ef4444;
+            --kpi-purple:   #a855f7;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        /* =========================================
+           MOTOR DE SLIDES
+        ========================================= */
+        .slide {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-sky    { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(14,165,233,0.15)  0%, transparent 70%); top: -12vw;    right: -12vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.10)   0%, transparent 70%); bottom: -10vw; left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-amber  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.12)   0%, transparent 70%); top: -10vw;    left: -10vw;   border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.10)   0%, transparent 70%); bottom: -10vw; right: -10vw;  border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px;
+            display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-sky); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+        .pill-tag i { margin-right: 8px; }
+
+        /* =========================================
+           SLIDE 2 — Las 3 etapas del toolbar
+        ========================================= */
+        .stages-row {
+            display: flex; gap: 12px; width: 100%; margin-bottom: 24px;
+        }
+        .stage-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;
+            padding: 20px 14px; border-radius: 14px; border: 1px solid;
+            transition: 0.2s; cursor: default;
+        }
+        .stage-btn.s-ready   { background: rgba(14,165,233,0.1);  border-color: rgba(56,189,248,0.35); }
+        .stage-btn.s-transit { background: rgba(16,185,129,0.07); border-color: rgba(52,211,153,0.25); }
+        .stage-btn.s-rounds  { background: rgba(255,255,255,0.02);border-color: rgba(255,255,255,0.07); }
+
+        .stage-btn .sb-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
+        .s-ready   .sb-icon { background: rgba(14,165,233,0.18);  color: #38bdf8; }
+        .s-transit .sb-icon { background: rgba(16,185,129,0.18);  color: #34d399; }
+        .s-rounds  .sb-icon { background: rgba(255,255,255,0.06); color: #94a3b8; }
+
+        .stage-btn .sb-label { font-size: 13px; font-weight: 800; text-align: center; }
+        .s-ready   .sb-label { color: #e0f2fe; }
+        .s-transit .sb-label { color: #d1fae5; }
+        .s-rounds  .sb-label { color: #94a3b8; }
+
+        .stage-btn .sb-count {
+            display: grid; min-width: 26px; height: 26px; place-items: center;
+            border-radius: 999px; font-size: 13px; font-weight: 900;
+        }
+        .s-ready   .sb-count { background: rgba(14,165,233,0.2);  color: #bae6fd; }
+        .s-transit .sb-count { background: rgba(16,185,129,0.2);  color: #6ee7b7; }
+        .s-rounds  .sb-count { background: rgba(255,255,255,0.06);color: #64748b; }
+
+        .stage-desc-list { display: flex; flex-direction: column; gap: 10px; }
+        .sdl-row {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 14px 16px; border-radius: 11px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+        }
+        .sdl-row i { font-size: 14px; margin-top: 2px; flex-shrink: 0; }
+        .sdl-row.r-sky    i { color: #38bdf8; }
+        .sdl-row.r-green  i { color: #34d399; }
+        .sdl-row.r-slate  i { color: #94a3b8; }
+        .sdl-row strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .sdl-row p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
+
+        /* =========================================
+           SLIDE 3 — Composer
+        ========================================= */
+        .composer-mock {
+            display: grid; grid-template-columns: 200px 1fr 170px; gap: 10px;
+            background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .cm-controls {
+            padding: 16px 14px; background: rgba(0,0,0,0.25);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 12px;
+        }
+        .cm-head { margin-bottom: 4px; }
+        .cm-head .eyebrow { font-size: 9px; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 4px; }
+        .cm-head strong { font-size: 14px; font-weight: 800; color: white; display: block; }
+        .cm-head span { font-size: 11px; color: var(--text-muted); }
+
+        .cm-field { display: flex; flex-direction: column; gap: 5px; }
+        .cm-field label { font-size: 9px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .cm-field .cf-input {
+            min-height: 32px; border-radius: 7px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            color: #f8fafc; padding: 0 10px; font-size: 12px; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .cf-input i { color: #64748b; font-size: 10px; }
+
+        .capacity-mini {
+            border-radius: 9px; padding: 10px;
+            background: rgba(14,165,233,0.08); border: 1px solid rgba(56,189,248,0.2);
+        }
+        .cap-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+        .cap-row span { font-size: 11px; font-weight: 700; color: var(--text-muted); }
+        .cap-row strong { font-size: 13px; color: white; }
+        .cap-bar { height: 5px; border-radius: 999px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .cap-bar span { display: block; height: 100%; border-radius: inherit; background: #38bdf8; }
+
+        .dispatch-btn-mock {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            min-height: 36px; border-radius: 8px; margin-top: 4px;
+            background: rgba(14,165,233,0.18); border: 1px solid rgba(56,189,248,0.34);
+            color: #e0f2fe; font-size: 12px; font-weight: 900;
+        }
+
+        .cm-map {
+            padding: 14px 12px;
+            background:
+                linear-gradient(rgba(59,130,246,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59,130,246,0.04) 1px, transparent 1px),
+                rgba(2,6,23,0.3);
+            background-size: 28px 28px;
+            position: relative; display: flex; flex-direction: column; gap: 10px;
+        }
+        .cm-map-label { font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; display: flex; justify-content: space-between; align-items: center; }
+        .cm-map-label strong { color: #bae6fd; }
+        .cm-map-canvas {
+            flex: 1; min-height: 200px; border-radius: 10px; position: relative;
+            background: rgba(2,6,23,0.4); overflow: hidden;
+        }
+        .cm-map-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .cm-map-canvas polyline { fill: none; stroke: #0ea5e9; stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+        .map-dot {
+            position: absolute; width: 22px; height: 22px; border-radius: 50%;
+            display: grid; place-items: center; font-size: 10px; font-weight: 900;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(15,23,42,0.9);
+        }
+        .map-dot.origin  { background: #fbbf24; color: #020617; }
+        .map-dot.pending { background: #22c55e; color: #04111d; }
+
+        .cm-orders {
+            padding: 14px 12px; background: rgba(0,0,0,0.2);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .cm-orders-label { font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .cm-orders-label strong { color: #e0f2fe; }
+        .order-row {
+            display: flex; align-items: center; gap: 8px; padding: 8px 9px;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.02);
+        }
+        .order-row.selected { border-color: rgba(56,189,248,0.45); background: rgba(56,189,248,0.08); }
+        .or-check {
+            width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.15); display: grid; place-items: center;
+            font-size: 9px; color: #38bdf8;
+        }
+        .order-row.selected .or-check { background: rgba(56,189,248,0.15); }
+        .or-text strong { display: block; font-size: 11px; font-weight: 800; color: white; }
+        .or-text span   { display: block; font-size: 10px; color: var(--text-muted); }
+
+        /* =========================================
+           SLIDE 4 — Route Execution
+        ========================================= */
+        .execution-mock {
+            display: grid; grid-template-columns: 1fr 200px; gap: 10px;
+            background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .ex-main { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+        .ex-status-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 14px; border-radius: 10px;
+            background: rgba(2,6,23,0.3); border: 1px solid rgba(255,255,255,0.06);
+        }
+        .ex-status-bar h4 { font-size: 14px; font-weight: 900; color: white; margin-bottom: 2px; }
+        .ex-status-bar p { font-size: 11px; color: var(--text-muted); }
+        .ex-progress-badge strong { font-size: 22px; font-weight: 900; color: white; display: block; text-align: right; }
+        .ex-progress-badge span   { font-size: 11px; color: var(--text-muted); }
+        .progress-track { height: 6px; border-radius: 999px; background: rgba(255,255,255,0.08); margin-top: 7px; overflow: hidden; }
+        .progress-track span { display: block; height: 100%; border-radius: inherit; background: #34d399; }
+
+        .current-stop-mock {
+            padding: 14px; border-radius: 12px;
+            border: 1px solid rgba(56,189,248,0.25); background: rgba(14,165,233,0.06);
+        }
+        .cs-eyebrow { font-size: 9px; font-weight: 900; color: #38bdf8; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; display: block; }
+        .cs-title   { font-size: 15px; font-weight: 900; color: white; margin-bottom: 10px; }
+        .cs-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-bottom: 10px; }
+        .cs-detail-box { background: rgba(2,6,23,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 7px; padding: 7px; }
+        .cs-detail-box dt { font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .cs-detail-box dd { font-size: 11px; font-weight: 800; color: #e2e8f0; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .cs-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+        .cs-btn {
+            min-height: 30px; border-radius: 7px; font-size: 10px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #e2e8f0;
+        }
+        .cs-btn.delivered { border-color: rgba(52,211,153,0.3); color: #bbf7d0; background: rgba(16,185,129,0.08); }
+        .cs-btn.issue     { border-color: rgba(251,113,133,0.3); color: #fecdd3; background: rgba(127,29,29,0.1); }
+        .cs-btn.close     { border-color: rgba(52,211,153,0.3); color: #bbf7d0; grid-column: 1 / -1; }
+
+        .stops-strip { display: flex; flex-direction: column; gap: 5px; }
+        .stop-pill-mini {
+            display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 7px;
+            padding: 7px 9px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(2,6,23,0.2);
+        }
+        .stop-pill-mini.delivered { border-color: rgba(52,211,153,0.22); }
+        .stop-pill-mini.current   { border-color: rgba(56,189,248,0.4); }
+        .stop-pill-mini .spm-num {
+            width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center;
+            font-size: 10px; font-weight: 900; background: rgba(255,255,255,0.08); color: #cbd5e1;
+        }
+        .stop-pill-mini .spm-name { font-size: 11px; font-weight: 700; color: white; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .stop-pill-mini .spm-status { font-size: 10px; font-weight: 800; color: var(--text-muted); }
+        .stop-pill-mini.delivered .spm-status { color: #6ee7b7; }
+        .stop-pill-mini.current   .spm-status { color: #38bdf8; }
+
+        .ex-side { padding: 14px 12px; background: rgba(0,0,0,0.25); border-left: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 10px; }
+        .ex-map-box {
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+            background: linear-gradient(rgba(148,163,184,0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(148,163,184,0.05) 1px, transparent 1px),
+                        rgba(2,6,23,0.3);
+            background-size: 20px 20px;
+            padding: 8px;
+        }
+        .ex-map-label { font-size: 9px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .ex-map-label a { color: #bae6fd; text-decoration: none; font-size: 9px; }
+        .ex-map-canvas { position: relative; height: 120px; border-radius: 8px; background: rgba(2,6,23,0.4); overflow: hidden; }
+        .ex-map-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .ex-map-canvas polyline { fill: none; stroke: rgba(56,189,248,0.6); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+        .ex-route-dot { position: absolute; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 9px; font-weight: 900; transform: translate(-50%,-50%); border: 2px solid rgba(15,23,42,0.9); }
+        .ex-route-dot.origin    { background: #fbbf24; color: #020617; }
+        .ex-route-dot.pending   { background: #38bdf8; color: #020617; }
+        .ex-route-dot.delivered { background: #34d399; color: #020617; }
+
+        .ex-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+        .ex-metric { border-radius: 7px; padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.07); background: rgba(2,6,23,0.25); }
+        .ex-metric strong { display: block; font-size: 16px; font-weight: 900; color: white; }
+        .ex-metric span   { font-size: 9px; color: var(--text-muted); font-weight: 700; }
+
+        .loc-btn {
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+            min-height: 34px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.3);
+            background: rgba(56,189,248,0.1); color: #bae6fd; font-size: 11px; font-weight: 900;
+        }
+
+        /* PIN modal preview */
+        .pin-preview {
+            margin-top: 16px; padding: 14px 18px; border-radius: 12px;
+            background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.22);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .pin-preview i { font-size: 22px; color: #38bdf8; flex-shrink: 0; }
+        .pin-preview strong { display: block; color: white; font-size: 14px; margin-bottom: 3px; }
+        .pin-preview span { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+        .pin-mock { font-size: 28px; font-weight: 900; letter-spacing: 10px; color: #38bdf8; background: rgba(2,6,23,0.5); border: 2px solid rgba(56,189,248,0.4); border-radius: 8px; padding: 8px 16px 8px 24px; font-family: monospace; }
+
+        /* =========================================
+           SLIDE 5 — Historial / RoundsPanel
+        ========================================= */
+        .rounds-panel-mock {
+            display: grid; grid-template-columns: 170px 1fr; gap: 10px;
+            background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; overflow: hidden; width: 100%;
+        }
+        .rp-filters {
+            padding: 14px 12px; background: rgba(0,0,0,0.25);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .rp-filter-head strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .rp-filter-head span { font-size: 10px; color: var(--text-muted); }
+        .rp-summary { display: flex; flex-direction: column; gap: 5px; }
+        .rp-sum-row { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 7px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); font-size: 11px; }
+        .rp-sum-row span   { color: var(--text-muted); font-weight: 700; }
+        .rp-sum-row strong { color: white; }
+        .rp-filter-field { display: flex; flex-direction: column; gap: 4px; }
+        .rp-filter-field label { font-size: 9px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .rp-select {
+            min-height: 28px; border-radius: 7px; padding: 0 8px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            color: white; font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .rp-select i { color: #64748b; font-size: 9px; }
+
+        .rp-list { padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
+        .round-card-mini {
+            border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(2,6,23,0.3); display: flex; flex-direction: column; gap: 8px;
+        }
+        .round-card-mini.dispatched { border-color: rgba(52,211,153,0.22); }
+        .round-card-mini.completed  { border-color: rgba(255,255,255,0.08); }
+
+        .rcm-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+        .rcm-head strong { font-size: 12px; font-weight: 800; color: white; }
+        .rcm-head small  { display: block; font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        .rcm-status {
+            font-size: 9px; font-weight: 900; padding: 3px 7px; border-radius: 5px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .dispatched .rcm-status { background: rgba(52,211,153,0.12); color: #a7f3d0; }
+        .completed  .rcm-status { background: rgba(255,255,255,0.06); color: #64748b; }
+
+        .rcm-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+        .rcm-tag  { font-size: 10px; color: #64748b; font-weight: 700; }
+
+        .rcm-progress { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 700; }
+
+        .rcm-map { position: relative; height: 72px; border-radius: 8px; background: rgba(2,6,23,0.4); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .rcm-map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .rcm-map polyline { fill: none; stroke: rgba(56,189,248,0.5); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+        .rcm-dot { position: absolute; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; font-size: 8px; font-weight: 900; transform: translate(-50%,-50%); border: 1px solid rgba(15,23,42,0.9); }
+        .rcm-dot.origin    { background: #fbbf24; color: #020617; }
+        .rcm-dot.pending   { background: #38bdf8; color: #020617; }
+        .rcm-dot.delivered { background: #34d399; color: #020617; }
+        .rcm-dot.issue     { background: #fb7185; color: #020617; }
+
+        /* =========================================
+           SLIDE 6 — Navegación
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.sky:hover    { border-color: var(--kpi-sky);   } .qa-btn.sky:hover    .qa-icon { color: #38bdf8; }
+        .qa-btn.green:hover  { border-color: var(--kpi-green); } .qa-btn.green:hover  .qa-icon { color: #34d399; }
+        .qa-btn.amber:hover  { border-color: var(--kpi-amber); } .qa-btn.amber:hover  .qa-icon { color: #fcd34d; }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple);} .qa-btn.purple:hover .qa-icon { color: #d8b4fe; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .visual-block { order: 2; width: 100%; }
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
+            .stages-row { flex-direction: column; }
+            .composer-mock { grid-template-columns: 1fr; }
+            .cm-controls { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .cm-orders { border-left: none; border-top: 1px solid rgba(255,255,255,0.05); }
+            .execution-mock { grid-template-columns: 1fr; }
+            .ex-side { border-left: none; border-top: 1px solid rgba(255,255,255,0.05); }
+            .rounds-panel-mock { grid-template-columns: 1fr; }
+            .rp-filters { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+            .rp-list { grid-template-columns: 1fr; }
+            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .qa-icon { flex-shrink: 0; } .qa-text { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO
+    ====================================================== -->
+    <div class="slide active">
+        <div class="glow-sky"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: #38bdf8;">Módulo de Logística</h3>
+                <h1>Rondas de<br><span style="color: white;">Despacho</span></h1>
+                <p>Agrupás pedidos listos en una salida, asignás un vehículo y un responsable, y despachás. Desde ese momento el sistema sigue cada parada hasta el cierre de la ronda.</p>
+                <p>Tres vistas, una pantalla: <strong style="color: white;">armar</strong>, <strong style="color: white;">ejecutar</strong> e <strong style="color: white;">historial</strong>.</p>
+            </div>
+            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
+                <i class="fas fa-truck-fast" style="font-size: 72px; color: #38bdf8;"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="pill-tag"><i class="fas fa-boxes-packing" style="color: #38bdf8;"></i> Hacer ronda</span>
+                    <span class="pill-tag"><i class="fas fa-truck-fast" style="color: #34d399;"></i> En ruta</span>
+                    <span class="pill-tag"><i class="fas fa-route" style="color: #94a3b8;"></i> Historial</span>
+                    <span class="pill-tag"><i class="fas fa-location-dot" style="color: #fbbf24;"></i> Tracking en vivo</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — LAS 3 ETAPAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: #38bdf8;">El Dashboard de Despacho</h3>
+                <h2>Tres Etapas, Una Sola Vista</h2>
+                <p>La barra de etapas en el tope del módulo tiene tres estados. Cambiás entre ellos con un clic y el contenido debajo cambia completamente. El contador en cada botón refleja el estado real en tiempo real.</p>
+                <p>Dos permisos controlan el acceso: <strong style="color: white;">logistics:plan</strong> para armar rondas y <strong style="color: white;">orders:write</strong> para ejecutarlas en ruta.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="stages-row">
+                    <div class="stage-btn s-ready">
+                        <div class="sb-icon"><i class="fas fa-boxes-packing"></i></div>
+                        <div class="sb-label">Hacer ronda</div>
+                        <div class="sb-count">8</div>
+                    </div>
+                    <div class="stage-btn s-transit">
+                        <div class="sb-icon"><i class="fas fa-truck-fast"></i></div>
+                        <div class="sb-label">En ruta</div>
+                        <div class="sb-count">2</div>
+                    </div>
+                    <div class="stage-btn s-rounds">
+                        <div class="sb-icon"><i class="fas fa-route"></i></div>
+                        <div class="sb-label">Historial</div>
+                        <div class="sb-count">47</div>
+                    </div>
+                </div>
+                <div class="stage-desc-list">
+                    <div class="sdl-row r-sky">
+                        <i class="fas fa-boxes-packing"></i>
+                        <div>
+                            <strong>Hacer ronda</strong>
+                            <p>Ves los pedidos preparados. Seleccionás cuáles salen, elegís vehículo y despacho.</p>
+                        </div>
+                    </div>
+                    <div class="sdl-row r-green">
+                        <i class="fas fa-truck-fast"></i>
+                        <div>
+                            <strong>En ruta</strong>
+                            <p>Controlás cada parada en vivo. Marcás entregado, incidencia, o cerrás la ronda.</p>
+                        </div>
+                    </div>
+                    <div class="sdl-row r-slate">
+                        <i class="fas fa-route"></i>
+                        <div>
+                            <strong>Historial</strong>
+                            <p>Buscás rondas pasadas, filtrás por responsable, vehículo, zona o prioridad.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — COMPOSER: ARMAR LA RONDA
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-amber"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: #38bdf8;">Etapa: Hacer Ronda</h3>
+                <h2>Armar la Salida en Tres Columnas</h2>
+                <p>El Composer divide el trabajo en tres paneles: <strong style="color: white;">controles</strong> a la izquierda (vehículo, prioridad, capacidad), <strong style="color: white;">mapa preview</strong> en el centro con el croquis de la ruta sugerida, y <strong style="color: white;">lista de pedidos</strong> a la derecha para seleccionar cuáles incluir.</p>
+                <p>El sistema sugiere nombre, zona y orden óptimo. Podés editar cualquier cosa antes de despachar.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="composer-mock">
+
+                    <!-- Controles -->
+                    <div class="cm-controls">
+                        <div class="cm-head">
+                            <span class="eyebrow">Hacer ronda</span>
+                            <strong>Ronda #24-A</strong>
+                            <span>6 de 8 pedidos listos</span>
+                        </div>
+                        <div class="cm-field">
+                            <label>Máx. paradas</label>
+                            <div class="cf-input">6 <i class="fas fa-sort"></i></div>
+                        </div>
+                        <div class="cm-field">
+                            <label>Prioridad</label>
+                            <div class="cf-input">Normal <i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="cm-field">
+                            <label>Vehículo</label>
+                            <div class="cf-input" style="color: #bae6fd;">Kangoo · ABC123 <i class="fas fa-chevron-down"></i></div>
+                        </div>
+                        <div class="cm-field">
+                            <label>Detalle</label>
+                            <div class="cf-input" style="color: #64748b; font-style: italic; font-size: 11px;">Nota opcional <i></i></div>
+                        </div>
+                        <div class="capacity-mini">
+                            <div class="cap-row">
+                                <span>Carga</span>
+                                <strong>42 / 60 u.</strong>
+                            </div>
+                            <div class="cap-bar"><span style="width: 70%;"></span></div>
+                        </div>
+                        <div class="dispatch-btn-mock">
+                            <i class="fas fa-truck-fast"></i> Tomar ronda
+                        </div>
+                    </div>
+
+                    <!-- Mapa preview -->
+                    <div class="cm-map">
+                        <div class="cm-map-label">
+                            <span>Mapa de ruta</span>
+                            <strong>6 paradas</strong>
+                        </div>
+                        <div class="cm-map-canvas">
+                            <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <polyline points="15,80 30,30 48,65 62,25 78,55 90,20"/>
+                            </svg>
+                            <div class="map-dot origin"  style="left:15%; top:80%;">O</div>
+                            <div class="map-dot pending" style="left:30%; top:30%;">1</div>
+                            <div class="map-dot pending" style="left:48%; top:65%;">2</div>
+                            <div class="map-dot pending" style="left:62%; top:25%;">3</div>
+                            <div class="map-dot pending" style="left:78%; top:55%;">4</div>
+                            <div class="map-dot pending" style="left:90%; top:20%;">5</div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de pedidos -->
+                    <div class="cm-orders">
+                        <div class="cm-orders-label">
+                            <span>Pedidos</span>
+                            <strong>6/8</strong>
+                        </div>
+                        <div class="order-row selected">
+                            <div class="or-check"><i class="fas fa-check"></i></div>
+                            <div class="or-text">
+                                <strong>Pedido #1041</strong>
+                                <span>Floresta · 12 u.</span>
+                            </div>
+                        </div>
+                        <div class="order-row selected">
+                            <div class="or-check"><i class="fas fa-check"></i></div>
+                            <div class="or-text">
+                                <strong>Pedido #1038</strong>
+                                <span>Boedo · 8 u.</span>
+                            </div>
+                        </div>
+                        <div class="order-row selected">
+                            <div class="or-check"><i class="fas fa-check"></i></div>
+                            <div class="or-text">
+                                <strong>Pedido #1035</strong>
+                                <span>Caballito · 9 u.</span>
+                            </div>
+                        </div>
+                        <div class="order-row">
+                            <div class="or-check"></div>
+                            <div class="or-text">
+                                <strong>Pedido #1030</strong>
+                                <span>Palermo · 14 u.</span>
+                            </div>
+                        </div>
+                        <div class="order-row">
+                            <div class="or-check"></div>
+                            <div class="or-text">
+                                <strong>Pedido #1029</strong>
+                                <span>Almagro · 5 u.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — ROUTE EXECUTION
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: #34d399;">Etapa: En Ruta</h3>
+                <h2>Controlar Cada Parada en Vivo</h2>
+                <p>Una vez despachada, la ronda entra en modo ejecución. El repartidor ve la <strong style="color: white;">próxima parada</strong> con dirección, cliente y estado. Puede marcarla como entregada, reportar una incidencia o abrir Maps directo a la dirección.</p>
+                <p>Las entregas que requieren PIN esperan que el cliente proporcione su código de 4 dígitos antes de confirmarse.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="execution-mock">
+                    <div class="ex-main">
+                        <!-- Barra de estado -->
+                        <div class="ex-status-bar">
+                            <div>
+                                <h4>Ronda #24-A</h4>
+                                <p>Juan Pérez · Kangoo ABC123 · 14:32</p>
+                            </div>
+                            <div class="ex-progress-badge">
+                                <strong>60%</strong>
+                                <span>3/5 reparto</span>
+                            </div>
+                        </div>
+                        <div class="progress-track"><span style="width: 60%;"></span></div>
+
+                        <!-- Parada actual -->
+                        <div class="current-stop-mock">
+                            <span class="cs-eyebrow">Próxima parada</span>
+                            <div class="cs-title">Pedido #1041 → Distribuidora López</div>
+                            <div class="cs-details">
+                                <div class="cs-detail-box"><dt>Cliente</dt><dd>Dist. López</dd></div>
+                                <div class="cs-detail-box"><dt>Ubicación</dt><dd>Av. Rivadavia 4200</dd></div>
+                                <div class="cs-detail-box"><dt>Estado</dt><dd>Pendiente</dd></div>
+                            </div>
+                            <div class="cs-actions">
+                                <div class="cs-btn"><i class="fas fa-location-arrow"></i> Maps</div>
+                                <div class="cs-btn"><i class="fas fa-clock"></i> Ventana</div>
+                                <div class="cs-btn delivered"><i class="fas fa-check"></i> Entregado</div>
+                                <div class="cs-btn issue"><i class="fas fa-triangle-exclamation"></i> Incidencia</div>
+                                <div class="cs-btn close"><i class="fas fa-check-double"></i> Cerrar ronda</div>
+                            </div>
+                        </div>
+
+                        <!-- Tira de paradas -->
+                        <div class="stops-strip">
+                            <div class="stop-pill-mini delivered"><div class="spm-num">1</div><div class="spm-name">Pedido #1038 — Boedo</div><div class="spm-status">Entregado</div></div>
+                            <div class="stop-pill-mini delivered"><div class="spm-num">2</div><div class="spm-name">Pedido #1035 — Caballito</div><div class="spm-status">Entregado</div></div>
+                            <div class="stop-pill-mini current"><div class="spm-num">3</div><div class="spm-name">Pedido #1041 — Floresta</div><div class="spm-status">En curso</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Lateral: mapa + métricas + ubicación -->
+                    <div class="ex-side">
+                        <div class="ex-map-box">
+                            <div class="ex-map-label"><span>Croquis</span><a>Maps ↗</a></div>
+                            <div class="ex-map-canvas">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                                    <polyline points="12,85 28,35 50,60 70,28 88,50"/>
+                                </svg>
+                                <div class="ex-route-dot origin"    style="left:12%; top:85%;">O</div>
+                                <div class="ex-route-dot delivered" style="left:28%; top:35%;">1</div>
+                                <div class="ex-route-dot delivered" style="left:50%; top:60%;">2</div>
+                                <div class="ex-route-dot pending"   style="left:70%; top:28%;">3</div>
+                                <div class="ex-route-dot pending"   style="left:88%; top:50%;">4</div>
+                            </div>
+                        </div>
+                        <div class="ex-metrics">
+                            <div class="ex-metric"><strong style="color:#38bdf8;">2</strong><span>Pendientes</span></div>
+                            <div class="ex-metric"><strong style="color:#fb7185;">0</strong><span>Incidencias</span></div>
+                            <div class="ex-metric"><strong style="color:#34d399;">3</strong><span>Entregadas</span></div>
+                        </div>
+                        <div class="loc-btn"><i class="fas fa-location-crosshairs"></i> Compartir ubicación</div>
+                    </div>
+                </div>
+
+                <!-- PIN preview -->
+                <div class="pin-preview">
+                    <i class="fas fa-lock"></i>
+                    <div>
+                        <strong>Entrega con PIN de validación</strong>
+                        <span>El cliente entrega un código de 4 dígitos para confirmar la recepción. El repartidor lo ingresa antes de marcar como entregado.</span>
+                    </div>
+                    <div class="pin-mock">••••</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — HISTORIAL / ROUNDS PANEL
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-sky"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block">
+                <h3 style="color: #94a3b8;">Etapa: Historial</h3>
+                <h2>Todas las Rondas, con Filtros y Croquis</h2>
+                <p>El panel de historial muestra cada ronda con su mapa en miniatura, el progreso de paradas y los datos del responsable y vehículo. Un carril de filtros lateral permite buscar por <strong style="color: white;">estado, responsable, vehículo, prioridad y zona</strong>.</p>
+                <p>Al expandir una ronda ves el detalle de cada parada con su estado final: entregada, incidencia o pendiente.</p>
+            </div>
+            <div class="visual-block" style="width: 100%;">
+                <div class="rounds-panel-mock">
+                    <!-- Filtros -->
+                    <div class="rp-filters">
+                        <div class="rp-filter-head">
+                            <strong>Historial</strong>
+                            <span>12 / 47 rondas</span>
+                        </div>
+                        <div class="rp-summary">
+                            <div class="rp-sum-row"><span>Activas</span><strong>2</strong></div>
+                            <div class="rp-sum-row"><span>En ruta</span><strong style="color:#34d399;">2</strong></div>
+                            <div class="rp-sum-row"><span>Cerradas</span><strong>43</strong></div>
+                        </div>
+                        <div class="rp-filter-field"><label>Estado</label><div class="rp-select">Activas <i class="fas fa-chevron-down"></i></div></div>
+                        <div class="rp-filter-field"><label>Responsable</label><div class="rp-select">Todos <i class="fas fa-chevron-down"></i></div></div>
+                        <div class="rp-filter-field"><label>Vehículo</label><div class="rp-select">Todos <i class="fas fa-chevron-down"></i></div></div>
+                        <div class="rp-filter-field"><label>Prioridad</label><div class="rp-select">Todas <i class="fas fa-chevron-down"></i></div></div>
+                        <div class="rp-filter-field"><label>Zona</label><div class="rp-select">Todas <i class="fas fa-chevron-down"></i></div></div>
+                    </div>
+
+                    <!-- Lista de rondas -->
+                    <div class="rp-list">
+                        <div class="round-card-mini dispatched">
+                            <div class="rcm-head">
+                                <div><strong>Ronda #24-A</strong><small>Juan Pérez · Kangoo</small></div>
+                                <div class="rcm-status">En ruta</div>
+                            </div>
+                            <div class="rcm-meta">
+                                <span class="rcm-tag">Normal</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">Zona Sur</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">14:32</span>
+                            </div>
+                            <div class="rcm-progress">3/5 paradas entregadas <span style="color:#34d399;">60%</span></div>
+                            <div class="rcm-map">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="10,80 25,35 50,60 72,30 90,50"/></svg>
+                                <div class="rcm-dot origin"    style="left:10%;  top:80%;">O</div>
+                                <div class="rcm-dot delivered" style="left:25%;  top:35%;">1</div>
+                                <div class="rcm-dot delivered" style="left:50%;  top:60%;">2</div>
+                                <div class="rcm-dot pending"   style="left:72%;  top:30%;">3</div>
+                                <div class="rcm-dot pending"   style="left:90%;  top:50%;">4</div>
+                            </div>
+                        </div>
+
+                        <div class="round-card-mini dispatched">
+                            <div class="rcm-head">
+                                <div><strong>Ronda #23-B</strong><small>María G. · Fiat</small></div>
+                                <div class="rcm-status">En ruta</div>
+                            </div>
+                            <div class="rcm-meta">
+                                <span class="rcm-tag">Alta</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">Zona Norte</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">13:15</span>
+                            </div>
+                            <div class="rcm-progress">1/4 paradas entregadas <span style="color:#fbbf24;">25%</span></div>
+                            <div class="rcm-map">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="12,75 35,40 58,65 80,28"/></svg>
+                                <div class="rcm-dot origin"    style="left:12%; top:75%;">O</div>
+                                <div class="rcm-dot delivered" style="left:35%; top:40%;">1</div>
+                                <div class="rcm-dot pending"   style="left:58%; top:65%;">2</div>
+                                <div class="rcm-dot issue"     style="left:80%; top:28%;">!</div>
+                            </div>
+                        </div>
+
+                        <div class="round-card-mini completed">
+                            <div class="rcm-head">
+                                <div><strong>Ronda #22-A</strong><small>Juan Pérez · Kangoo</small></div>
+                                <div class="rcm-status">Cerrada</div>
+                            </div>
+                            <div class="rcm-meta">
+                                <span class="rcm-tag">Normal</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">Ayer 16:40</span>
+                            </div>
+                            <div class="rcm-progress">5/5 paradas entregadas <span style="color:#34d399;">100%</span></div>
+                            <div class="rcm-map">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="8,85 22,50 40,70 60,35 78,55 92,25"/></svg>
+                                <div class="rcm-dot origin"    style="left:8%;  top:85%;">O</div>
+                                <div class="rcm-dot delivered" style="left:22%; top:50%;">1</div>
+                                <div class="rcm-dot delivered" style="left:40%; top:70%;">2</div>
+                                <div class="rcm-dot delivered" style="left:60%; top:35%;">3</div>
+                                <div class="rcm-dot delivered" style="left:92%; top:25%;">4</div>
+                            </div>
+                        </div>
+
+                        <div class="round-card-mini completed">
+                            <div class="rcm-head">
+                                <div><strong>Ronda #21-C</strong><small>Carlos M. · Moto</small></div>
+                                <div class="rcm-status">Cerrada</div>
+                            </div>
+                            <div class="rcm-meta">
+                                <span class="rcm-tag">Urgente</span>
+                                <span class="rcm-tag">·</span>
+                                <span class="rcm-tag">Ayer 10:20</span>
+                            </div>
+                            <div class="rcm-progress">3/3 paradas entregadas <span style="color:#34d399;">100%</span></div>
+                            <div class="rcm-map">
+                                <svg viewBox="0 0 100 100" preserveAspectRatio="none"><polyline points="15,80 42,38 70,62 90,22"/></svg>
+                                <div class="rcm-dot origin"    style="left:15%; top:80%;">O</div>
+                                <div class="rcm-dot delivered" style="left:42%; top:38%;">1</div>
+                                <div class="rcm-dot delivered" style="left:70%; top:62%;">2</div>
+                                <div class="rcm-dot delivered" style="left:90%; top:22%;">3</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAVEGACIÓN
+    ====================================================== -->
+    <div class="slide">
+        <div class="glow-sky" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: #38bdf8;">Seguir Explorando</h3>
+                <h2>¿Qué vemos ahora?</h2>
+                <p style="max-width: 880px; margin: 0 auto;">Ya entendés el ciclo completo de una ronda: del pedido preparado al cierre con historial. ¿Seguimos con otro módulo de la sede?</p>
+            </div>
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn sky" style="border-color: rgba(14,165,233,0.4);">
+                    <div class="qa-icon" style="color: #38bdf8;"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Índice<br>Logística</div>
+                </a>
+                <a href="inventario.html" class="qa-btn green">
+                    <div class="qa-icon"><i class="fas fa-boxes"></i></div>
+                    <div class="qa-text" style="color: white;">Inventario</div>
+                </a>
+                <a href="caja.html" class="qa-btn amber">
+                    <div class="qa-icon"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Caja</div>
+                </a>
+                <a href="proveedores.html" class="qa-btn purple">
+                    <div class="qa-icon"><i class="fas fa-handshake"></i></div>
+                    <div class="qa-text" style="color: white;">Proveedores</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'rondas';
+        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
+            currentSlideNum.innerText = currentIndex + 1;
+            localStorage.setItem('slide_' + pageId, currentIndex);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        }
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
+            pressedKeys.add(e.key.toLowerCase());
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
+        window.addEventListener('blur', () => pressedKeys.clear());
+        updateSlides();
+    </script>
+
+</body>
+</html>

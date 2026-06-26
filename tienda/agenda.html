@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Servicios — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --fuchsia:#d946ef;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw; overflow: hidden;
+            background: var(--bg);
+            font-family: 'Urbanist', sans-serif;
+            color: #f8fafc;
+        }
+
+        .slide {
+            position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.35s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-fuchsia { background: radial-gradient(circle, rgba(217,70,239,0.10)  0%, transparent 70%); }
+        .g-purple  { background: radial-gradient(circle, rgba(168,85,247,0.09)  0%, transparent 70%); }
+        .g-green   { background: radial-gradient(circle, rgba(16,185,129,0.09)  0%, transparent 70%); }
+        .g-blue    { background: radial-gradient(circle, rgba(59,130,246,0.08)  0%, transparent 70%); }
+        .g-orange  { background: radial-gradient(circle, rgba(245,158,11,0.08)  0%, transparent 70%); }
+
+        .controls {
+            position: fixed; bottom: 28px; right: 36px; z-index: 9999;
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+            padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border);
+        }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--fuchsia); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 58px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+
+        .split  { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .glass  { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — LAYOUT 3 COLUMNAS FIEL
+        ========================================= */
+        .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; width: 100%; }
+        .col-box { background: #f8fafc; border-radius: 14px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .col-box-header { background: white; padding: 10px 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .col-box-title { font-size: 12px; font-weight: 800; color: #334155; }
+        .col-tabs { display: flex; background: #f1f5f9; border-radius: 50px; padding: 3px; gap: 2px; }
+        .col-tab { padding: 4px 10px; border-radius: 50px; font-size: 10px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: #64748b; }
+        .col-tab.active { background: white; color: #d946ef; }
+        .col-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+        /* pase card */
+        .pass-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; cursor: pointer; transition: 0.2s; }
+        .pass-card:hover { border-color: #10b981; transform: translateY(-1px); }
+        .pc-head { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .pc-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .pc-active { background: #ecfdf5; color: #10b981; }
+        .pc-expired { background: #f1f5f9; color: #94a3b8; }
+        .pc-name strong { font-size: 11px; font-weight: 800; color: #0f172a; display: block; }
+        .pc-name small  { font-size: 10px; color: #64748b; }
+        .pc-badge { font-size: 9px; font-weight: 900; padding: 3px 7px; border-radius: 999px; }
+        .pb-active  { background: #d1fae5; color: #059669; }
+        .pb-expired { background: #f1f5f9; color: #64748b; }
+        .pc-body { padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #64748b; }
+        .pc-body strong { font-weight: 900; color: #0f172a; }
+        .pc-remaining { display: flex; align-items: center; gap: 4px; }
+        .pc-remaining i { color: #d946ef; }
+
+        /* sugerencia card */
+        .sug-card { background: white; border-radius: 10px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .sc-body { padding: 10px 12px; }
+        .sc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .sc-name { font-size: 11px; font-weight: 800; color: #0f172a; }
+        .sc-match { font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 999px; background: #d1fae5; color: #059669; }
+        .sc-place { font-size: 10px; color: #64748b; margin-bottom: 3px; }
+        .sc-time  { font-size: 10px; font-weight: 800; color: #d946ef; }
+        .sc-footer { padding: 6px 12px; background: #f8fafc; border-top: 1px solid #f1f5f9; }
+        .sc-btn { width: 100%; padding: 5px; border-radius: 7px; border: none; background: #d946ef; color: white; font-size: 10px; font-weight: 700; cursor: pointer; }
+
+        /* calendario mini */
+        .mini-cal { background: white; border-radius: 10px; border: 1px solid #e2e8f0; padding: 10px; }
+        .mc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 10px; font-weight: 800; color: #0f172a; }
+        .mc-head span { color: #94a3b8; cursor: pointer; }
+        .mc-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; margin-bottom: 3px; }
+        .mc-weekdays span { text-align: center; font-size: 8px; font-weight: 900; color: #94a3b8; padding: 2px 0; cursor: pointer; border-radius: 4px; }
+        .mc-weekdays span.blocked { background: #fee2e2; color: #ef4444; text-decoration: line-through; }
+        .mc-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; }
+        .mc-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; border-radius: 5px; cursor: pointer; color: #475569; }
+        .mc-day.today    { border: 1px solid #d946ef; color: #d946ef; }
+        .mc-day.blocked  { background: #fef2f2; color: #f87171; position: relative; }
+        .mc-day.blocked::after { content: ''; position: absolute; width: 70%; height: 1px; background: #f87171; transform: rotate(45deg); opacity: 0.6; }
+
+        /* =========================================
+           SLIDE 2 — PASES Y QR
+        ========================================= */
+        .pass-detail-cards { display: flex; flex-direction: column; gap: 14px; }
+        .pd-card { background: white; border-radius: 14px; border: 1px solid; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .pd-card.active-pass { border-color: #10b981; }
+        .pd-card.expired-pass { border-color: #e2e8f0; filter: grayscale(60%); opacity: 0.7; }
+        .pd-head { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .pd-store { display: flex; align-items: center; gap: 10px; }
+        .pd-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .active-pass  .pd-icon { background: #ecfdf5; color: #10b981; }
+        .expired-pass .pd-icon { background: #f1f5f9; color: #94a3b8; }
+        .pd-store strong { font-size: 13px; font-weight: 800; color: #0f172a; display: block; }
+        .pd-store small  { font-size: 11px; font-weight: 700; color: #64748b; }
+        .pd-status { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 999px; }
+        .ps-active  { background: #d1fae5; color: #059669; }
+        .ps-expired { background: #f1f5f9; color: #64748b; }
+        .pd-body { padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #64748b; }
+        .pd-expiry { display: flex; align-items: center; gap: 5px; }
+        .pd-remaining { display: flex; align-items: center; gap: 5px; font-weight: 800; }
+        .pd-remaining.infinite { color: #10b981; }
+        .pd-remaining.classes  { color: #d946ef; }
+
+        .qr-modal-mini {
+            background: white; border-radius: 18px; overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); width: 100%; max-width: 280px;
+        }
+        .qmm-header { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+        .qmm-header h4 { font-size: 14px; font-weight: 800; color: #0f172a; margin: 0 0 2px; }
+        .qmm-header p  { font-size: 11px; color: #10b981; font-weight: 700; margin: 0; }
+        .qmm-body { padding: 20px 16px; display: flex; flex-direction: column; align-items: center; background: #f8fafc; }
+        .qmm-qr { width: 110px; height: 110px; border-radius: 12px; border: 2px solid #e2e8f0; background: white; display: flex; align-items: center; justify-content: center; font-size: 44px; color: #86198f; padding: 8px; box-shadow: 0 4px 12px rgba(134,25,143,0.1); margin-bottom: 12px; }
+        .qmm-instruction { font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+        .qmm-footer { padding: 10px 16px; border-top: 1px solid #f1f5f9; text-align: center; font-size: 10px; color: #94a3b8; font-weight: 600; }
+
+        /* =========================================
+           SLIDE 3 — SUGERENCIAS FILTRADAS
+        ========================================= */
+        .filter-engine { display: flex; flex-direction: column; gap: 14px; }
+        .fe-rule {
+            display: flex; gap: 12px; align-items: flex-start;
+            padding: 14px 16px; border-radius: 13px; border: 1px solid;
+        }
+        .fe-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .fe-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .fe-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .fe-1 { background: rgba(217,70,239,0.05);  border-color: rgba(217,70,239,0.2);  } .fe-1 .fe-icon { background: rgba(217,70,239,0.15);  color: #f0abfc; }
+        .fe-2 { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .fe-2 .fe-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .fe-3 { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .fe-3 .fe-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        .filter-diagram {
+            background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 20px; width: 100%;
+        }
+        .fd-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 16px; }
+        .fd-suggestions { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+        .fd-sug {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 10px; border: 1px solid; font-size: 12px; font-weight: 700; transition: 0.2s;
+        }
+        .fd-sug.visible  { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.2);  color: white; }
+        .fd-sug.filtered { background: rgba(239,68,68,0.04);   border-color: rgba(239,68,68,0.15);  color: var(--muted); text-decoration: line-through; opacity: 0.5; }
+        .fd-sug-icon { width: 28px; height: 28px; border-radius: 7px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+        .visible  .fd-sug-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .filtered .fd-sug-icon { background: rgba(239,68,68,0.12);   color: #fca5a5; }
+        .fd-sug-reason { margin-left: auto; font-size: 9px; font-weight: 900; padding: 2px 7px; border-radius: 5px; }
+        .fd-sug.visible  .fd-sug-reason { background: rgba(16,185,129,0.12);  color: #6ee7b7; }
+        .fd-sug.filtered .fd-sug-reason { background: rgba(239,68,68,0.12);   color: #fca5a5; }
+
+        .fd-note { font-size: 12px; color: var(--muted); line-height: 1.5; padding-top: 12px; border-top: 1px solid var(--border); }
+        .fd-note strong { color: white; }
+
+        /* =========================================
+           SLIDE 4 — CALENDARIO DE RESTRICCIONES
+        ========================================= */
+        .cal-demo {
+            background: white; border-radius: 16px; padding: 18px; width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .cal-head strong { font-size: 14px; font-weight: 900; color: #0f172a; }
+        .cal-head span   { font-size: 11px; color: #94a3b8; font-weight: 600; }
+        .cal-weekdays { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 6px; }
+        .cw-day { text-align: center; font-size: 10px; font-weight: 900; color: #94a3b8; padding: 6px 0; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .cw-day:hover { background: #f1f5f9; color: #0f172a; }
+        .cw-day.blocked { background: #fee2e2; color: #ef4444; text-decoration: line-through; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+        .c-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border-radius: 8px; cursor: pointer; color: #475569; border: 1px solid transparent; transition: 0.2s; }
+        .c-day:hover { background: #f8fafc; }
+        .c-day.today   { border-color: #d946ef; color: #d946ef; font-weight: 900; }
+        .c-day.blocked { background: #fef2f2; color: #f87171; border-color: #fca5a5; }
+        .c-day.wblocked { background: #fef2f2; color: #f87171; opacity: 0.6; }
+
+        .busy-blocks { display: flex; flex-direction: column; gap: 10px; }
+        .bb-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 10px; background: white; border: 1px solid #e2e8f0; }
+        .bb-day   { font-size: 13px; font-weight: 800; color: #0f172a; }
+        .bb-time  { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 9px; border-radius: 6px; color: #475569; margin-top: 3px; }
+        .bb-time i { color: #d946ef; font-size: 10px; }
+        .bb-del  { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-size: 12px; }
+        .bb-del:hover { background: #fee2e2; color: #ef4444; }
+        .bb-add  { width: 100%; padding: 8px; border-radius: 8px; border: none; background: transparent; color: #d946ef; font-size: 11px; font-weight: 900; cursor: pointer; border: 1px dashed rgba(217,70,239,0.3); transition: 0.2s; }
+        .bb-add:hover { background: rgba(217,70,239,0.05); }
+
+        .cal-callouts { display: flex; flex-direction: column; gap: 12px; }
+        .cc-item { display: flex; gap: 12px; align-items: flex-start; padding: 13px 15px; border-radius: 12px; border: 1px solid; }
+        .cc-ico  { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .cc-txt strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .cc-txt p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .cc-fuchsia { background: rgba(217,70,239,0.05);  border-color: rgba(217,70,239,0.2);  } .cc-fuchsia .cc-ico { background: rgba(217,70,239,0.15);  color: #f0abfc; }
+        .cc-blue    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .cc-blue    .cc-ico { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .cc-orange  { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .cc-orange  .cc-ico { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .cc-green   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .cc-green   .cc-ico { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+
+        /* =========================================
+           SLIDE 5 — SWIPE MOBILE + STORAGE
+        ========================================= */
+        .mobile-demo {
+            border-radius: 28px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5); width: 100%; max-width: 280px;
+        }
+        .md-header { background: rgba(255,255,255,0.95); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+        .md-back  { width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; color: #0f172a; font-size: 11px; }
+        .md-title { font-size: 13px; font-weight: 800; color: #0f172a; }
+        .md-avatar{ width: 32px; height: 32px; border-radius: 50%; background: #d946ef; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 12px; }
+        .md-tabs  { background: white; padding: 8px 16px 0; border-bottom: 1px solid #e2e8f0; display: flex; gap: 0; }
+        .md-tab   { flex: 1; padding: 8px 4px; font-size: 9px; font-weight: 700; color: #64748b; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid transparent; cursor: pointer; }
+        .md-tab.active { color: #d946ef; border-bottom-color: #d946ef; }
+        .md-body  { background: #f8fafc; padding: 12px; min-height: 140px; }
+        .md-swipe-hint { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; background: rgba(217,70,239,0.08); border-radius: 8px; font-size: 10px; font-weight: 700; color: #d946ef; margin-bottom: 8px; }
+
+        .storage-keys { display: flex; flex-direction: column; gap: 10px; }
+        .sk-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+        .sk-icon { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .sk-body strong { font-size: 12px; font-family: monospace; color: #93c5fd; display: block; margin-bottom: 2px; }
+        .sk-body span   { font-size: 12px; color: var(--muted); }
+        .sk-blue   .sk-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .sk-fuchsia .sk-icon { background: rgba(217,70,239,0.15); color: #f0abfc; }
+        .sk-orange .sk-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+        .sk-green  .sk-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+
+        /* NAV */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover   { border-color: var(--green);   } .nav-btn.c-green:hover   .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover    { border-color: var(--blue);    } .nav-btn.c-blue:hover    .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover  { border-color: var(--purple);  } .nav-btn.c-purple:hover  .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-fuchsia:hover { border-color: var(--fuchsia); } .nav-btn.c-fuchsia:hover .nav-icon { color: #f0abfc; }
+        .nav-btn.c-orange:hover  { border-color: var(--orange);  } .nav-btn.c-orange:hover  .nav-icon { color: #fcd34d; }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .three-col { grid-template-columns: 1fr; }
+            h1 { font-size: 40px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">6</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + LAYOUT 3 COLUMNAS
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-fuchsia" style="width:48vw;height:48vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-blue"    style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.9fr; gap:52px; align-items:center;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--fuchsia);"></span>
+                        Tienda Online · Módulo
+                    </div>
+                    <h1>Mis<br><span style="color:var(--fuchsia);">Servicios.</span></h1>
+                    <p class="lead" style="max-width:420px;">El panel personal de la agenda del cliente. Pases activos con QR de acceso, sugerencias de clases filtradas por disponibilidad propia, y un calendario interactivo para bloquear días y horarios.</p>
+                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-id-card" style="color:#f0abfc;font-size:11px;"></i> Pases con QR
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-magic" style="color:#93c5fd;font-size:11px;"></i> Sugerencias filtradas
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-calendar-xmark" style="color:#fcd34d;font-size:11px;"></i> Bloqueo de días
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-clock" style="color:#6ee7b7;font-size:11px;"></i> Brechas horarias
+                        </span>
+                    </div>
+                </div>
+
+                <div class="three-col">
+                    <!-- Col 1: Servicios -->
+                    <div class="col-box">
+                        <div class="col-box-header">
+                            <span class="col-box-title">Mis Servicios</span>
+                            <div class="col-tabs">
+                                <button class="col-tab active">Activos</button>
+                                <button class="col-tab">Pagados</button>
+                            </div>
+                        </div>
+                        <div class="col-body">
+                            <div class="pass-card">
+                                <div class="pc-head">
+                                    <div class="pc-icon pc-active"><i class="fas fa-id-card"></i></div>
+                                    <div class="pc-name" style="margin-left:8px;flex:1;">
+                                        <strong>Studio Pilates</strong>
+                                        <small>Acceso mensual</small>
+                                    </div>
+                                    <span class="pc-badge pb-active">Vigente</span>
+                                </div>
+                                <div class="pc-body">
+                                    <span><i class="far fa-calendar-times" style="margin-right:3px;"></i>Vence 30 jul</span>
+                                    <div class="pc-remaining"><i class="fas fa-infinity"></i><strong>Ilimitado</strong></div>
+                                </div>
+                            </div>
+                            <div class="pass-card">
+                                <div class="pc-head">
+                                    <div class="pc-icon pc-expired"><i class="fas fa-id-card"></i></div>
+                                    <div class="pc-name" style="margin-left:8px;flex:1;">
+                                        <strong>Yoga Flow</strong>
+                                        <small>Pack 10 clases</small>
+                                    </div>
+                                    <span class="pc-badge pb-expired">Vencido</span>
+                                </div>
+                                <div class="pc-body">
+                                    <span>Venció 1 jun</span>
+                                    <div class="pc-remaining classes"><i class="fas fa-ticket-alt"></i><strong>2 restantes</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 2: Sugerencias -->
+                    <div class="col-box">
+                        <div class="col-box-header">
+                            <span class="col-box-title">Sugerencias para ti</span>
+                        </div>
+                        <div class="col-body">
+                            <div class="sug-card">
+                                <div class="sc-body">
+                                    <div class="sc-top">
+                                        <span class="sc-name">Pilates Reformer</span>
+                                        <span class="sc-match">95% Match</span>
+                                    </div>
+                                    <div class="sc-place"><i class="fas fa-store" style="margin-right:3px;color:#94a3b8;"></i>Studio Norte</div>
+                                    <div class="sc-time"><i class="far fa-calendar-alt" style="margin-right:3px;"></i>Lun · 10:00 - 11:00 hs</div>
+                                </div>
+                                <div class="sc-footer"><button class="sc-btn">Ver detalles</button></div>
+                            </div>
+                            <div class="sug-card">
+                                <div class="sc-body">
+                                    <div class="sc-top">
+                                        <span class="sc-name">Yoga Restaurativo</span>
+                                        <span class="sc-match">82% Match</span>
+                                    </div>
+                                    <div class="sc-place"><i class="fas fa-store" style="margin-right:3px;color:#94a3b8;"></i>Espacio Zen</div>
+                                    <div class="sc-time"><i class="far fa-calendar-alt" style="margin-right:3px;"></i>Mié · 09:00 - 10:00 hs</div>
+                                </div>
+                                <div class="sc-footer"><button class="sc-btn">Ver detalles</button></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Col 3: Calendario -->
+                    <div class="col-box">
+                        <div class="col-box-header">
+                            <span class="col-box-title">Filtro de Días</span>
+                            <span style="font-size:10px;color:#94a3b8;font-weight:600;">Tocá para bloquear</span>
+                        </div>
+                        <div class="col-body">
+                            <div class="mini-cal">
+                                <div class="mc-head">
+                                    <span><i class="fas fa-chevron-left"></i></span>
+                                    <strong style="font-size:11px;">Julio 2025</strong>
+                                    <span><i class="fas fa-chevron-right"></i></span>
+                                </div>
+                                <div class="mc-weekdays">
+                                    <span>D</span><span class="blocked">L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span>
+                                </div>
+                                <div class="mc-grid">
+                                    <div class="mc-day">1</div><div class="mc-day blocked">2</div><div class="mc-day">3</div><div class="mc-day">4</div><div class="mc-day">5</div><div class="mc-day">6</div><div class="mc-day">7</div>
+                                    <div class="mc-day">8</div><div class="mc-day blocked">9</div><div class="mc-day">10</div><div class="mc-day today">11</div><div class="mc-day">12</div><div class="mc-day">13</div><div class="mc-day">14</div>
+                                    <div class="mc-day">15</div><div class="mc-day blocked">16</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — PASES Y QR DE ACCESO
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-fuchsia" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--fuchsia);"></span>
+                    Pases y Membresías
+                </div>
+                <h2>El pase en el bolsillo.<br>QR generado<br>en el cliente.</h2>
+                <p class="lead" style="max-width:500px;">Cuando el cliente toca un pase activo, el componente genera un QR directamente en el browser con la librería <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">generateQrDataUrl</code>. El QR contiene el payload de acceso con ID del pase, nombre, negocio y timestamp de emisión.</p>
+                <p class="lead" style="max-width:500px;margin-top:14px;">Los pases vencidos no abren el modal. La condición <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">pass.status !== 'active'</code> corta la ejecución al inicio.</p>
+
+                <div class="pass-detail-cards" style="margin-top:24px;">
+                    <div class="pd-card active-pass">
+                        <div class="pd-head">
+                            <div class="pd-store">
+                                <div class="pd-icon"><i class="fas fa-id-card"></i></div>
+                                <div>
+                                    <strong>Studio Pilates</strong>
+                                    <small>Acceso mensual ilimitado</small>
+                                </div>
+                            </div>
+                            <span class="pd-status ps-active">Vigente</span>
+                        </div>
+                        <div class="pd-body">
+                            <div class="pd-expiry"><i class="far fa-calendar-times" style="color:#94a3b8;"></i>Vence 30 jul 2025</div>
+                            <div class="pd-remaining infinite"><i class="fas fa-infinity"></i> Ilimitado</div>
+                        </div>
+                    </div>
+                    <div class="pd-card expired-pass">
+                        <div class="pd-head">
+                            <div class="pd-store">
+                                <div class="pd-icon"><i class="fas fa-id-card"></i></div>
+                                <div>
+                                    <strong>Yoga Flow</strong>
+                                    <small>Pack 10 clases</small>
+                                </div>
+                            </div>
+                            <span class="pd-status ps-expired">Vencido</span>
+                        </div>
+                        <div class="pd-body">
+                            <div class="pd-expiry">Venció 1 jun 2025</div>
+                            <div class="pd-remaining classes"><i class="fas fa-ticket-alt"></i> 2 restantes</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:center;">
+                <div class="qr-modal-mini">
+                    <div class="qmm-header">
+                        <h4>Studio Pilates</h4>
+                        <p>Acceso mensual ilimitado</p>
+                    </div>
+                    <div class="qmm-body">
+                        <div class="qmm-qr"><i class="fas fa-qrcode"></i></div>
+                        <div class="qmm-instruction">Mostrá este código al ingresar</div>
+                    </div>
+                    <div class="qmm-footer">
+                        Válido hasta: dom. 30 jul 2025 · 00:00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — MOTOR DE SUGERENCIAS FILTRADAS
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-blue"    style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-fuchsia" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--blue);"></span>
+                    Sugerencias Inteligentes
+                </div>
+                <h2>Solo muestra<br>lo que entra<br>en tu agenda.</h2>
+                <p class="lead" style="max-width:500px;">El computed <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">filteredSuggestions</code> aplica tres filtros en cascada sobre el array de sugerencias. Cada restricción que el cliente agrega achica la lista en tiempo real.</p>
+
+                <div class="filter-engine" style="margin-top:24px;">
+                    <div class="fe-rule fe-1">
+                        <div class="fe-icon"><i class="fas fa-calendar-week"></i></div>
+                        <div class="fe-body">
+                            <strong>Filtro 1 — Días bloqueados</strong>
+                            <p>Si el <code style="font-size:11px;">weekdayId</code> de la sugerencia está en el array de días bloqueados, se descarta. Los lunes bloqueados eliminan todas las sugerencias del lunes.</p>
+                        </div>
+                    </div>
+                    <div class="fe-rule fe-2">
+                        <div class="fe-icon"><i class="fas fa-calendar-xmark"></i></div>
+                        <div class="fe-body">
+                            <strong>Filtro 2 — Fechas específicas</strong>
+                            <p>Si el día del mes está en el array de fechas bloqueadas individualmente, se descarta aunque el día de la semana esté libre.</p>
+                        </div>
+                    </div>
+                    <div class="fe-rule fe-3">
+                        <div class="fe-icon"><i class="fas fa-clock"></i></div>
+                        <div class="fe-body">
+                            <strong>Filtro 3 — Solapamiento horario</strong>
+                            <p><code style="font-size:11px;">checkTimeOverlap(start1, end1, start2, end2)</code> usa el clásico intervalo <code style="font-size:11px;">start1 &lt; end2 && end1 &gt; start2</code>. Si el horario del servicio choca con una brecha ocupada, se descarta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-diagram">
+                <div class="fd-title"><i class="fas fa-filter" style="margin-right:6px;color:var(--fuchsia);"></i>Ejemplo en tiempo real</div>
+
+                <div class="fd-suggestions">
+                    <div class="fd-sug visible">
+                        <div class="fd-sug-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <div>Pilates Reformer</div>
+                            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Lun · 10:00 - 11:00 hs</div>
+                        </div>
+                        <span class="fd-sug-reason">Disponible</span>
+                    </div>
+                    <div class="fd-sug filtered">
+                        <div class="fd-sug-icon"><i class="fas fa-times"></i></div>
+                        <div>
+                            <div>Yoga Matutino</div>
+                            <div style="font-size:10px;margin-top:2px;">Mar · 18:00 - 19:00 hs</div>
+                        </div>
+                        <span class="fd-sug-reason">Brecha horaria</span>
+                    </div>
+                    <div class="fd-sug filtered">
+                        <div class="fd-sug-icon"><i class="fas fa-times"></i></div>
+                        <div>
+                            <div>Stretching Express</div>
+                            <div style="font-size:10px;margin-top:2px;">Lun · 08:00 - 09:00 hs</div>
+                        </div>
+                        <span class="fd-sug-reason">Día bloqueado</span>
+                    </div>
+                    <div class="fd-sug visible">
+                        <div class="fd-sug-icon"><i class="fas fa-check"></i></div>
+                        <div>
+                            <div>Yoga Restaurativo</div>
+                            <div style="font-size:10px;color:var(--muted);margin-top:2px;">Mié · 09:00 - 10:00 hs</div>
+                        </div>
+                        <span class="fd-sug-reason">Disponible</span>
+                    </div>
+                </div>
+
+                <div class="fd-note">
+                    <strong>Los bloques ocupados</strong> configurados por el cliente son: <br>
+                    Lunes (día completo bloqueado) · Martes 18:00 - 20:00 hs
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — CALENDARIO DE RESTRICCIONES
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-orange"  style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-fuchsia" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Control de Disponibilidad
+                </div>
+                <h2>El cliente define<br>cuándo puede<br>y cuándo no.</h2>
+                <p class="lead" style="max-width:480px;">La columna derecha del panel tiene dos herramientas: un calendario donde se bloquean días tocando la celda, y un gestor de brechas horarias por día de la semana. Todo persiste en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">localStorage</code>.</p>
+
+                <div class="cal-callouts" style="margin-top:24px;">
+                    <div class="cc-item cc-fuchsia">
+                        <div class="cc-ico"><i class="fas fa-calendar-week"></i></div>
+                        <div class="cc-txt">
+                            <strong>Bloqueo por día de semana</strong>
+                            <p>Tocar una letra del encabezado bloquea todos los días de ese tipo en el mes. El color rojo cruza todas las celdas correspondientes.</p>
+                        </div>
+                    </div>
+                    <div class="cc-item cc-blue">
+                        <div class="cc-ico"><i class="fas fa-calendar-day"></i></div>
+                        <div class="cc-txt">
+                            <strong>Bloqueo de fecha puntual</strong>
+                            <p>Tocar un día específico lo agrega al array <code style="font-size:11px;">blockedDates</code>. Un segundo toque lo quita.</p>
+                        </div>
+                    </div>
+                    <div class="cc-item cc-orange">
+                        <div class="cc-ico"><i class="fas fa-clock"></i></div>
+                        <div class="cc-txt">
+                            <strong>Brecha horaria</strong>
+                            <p>Se elige un día de semana + rango de hora. El botón "+" abre el formulario inline. Cada bloque tiene su botón de eliminar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div class="cal-demo">
+                    <div class="cal-head">
+                        <strong>Julio 2025</strong>
+                        <span>Tocá para bloquear</span>
+                    </div>
+                    <div class="cal-weekdays">
+                        <span class="cw-day">D</span>
+                        <span class="cw-day blocked">L</span>
+                        <span class="cw-day">M</span>
+                        <span class="cw-day">M</span>
+                        <span class="cw-day">J</span>
+                        <span class="cw-day">V</span>
+                        <span class="cw-day">S</span>
+                    </div>
+                    <div class="cal-grid">
+                        <div class="c-day">1</div>
+                        <div class="c-day wblocked">2</div>
+                        <div class="c-day">3</div>
+                        <div class="c-day">4</div>
+                        <div class="c-day">5</div>
+                        <div class="c-day">6</div>
+                        <div class="c-day">7</div>
+                        <div class="c-day">8</div>
+                        <div class="c-day wblocked">9</div>
+                        <div class="c-day">10</div>
+                        <div class="c-day today">11</div>
+                        <div class="c-day blocked">12</div>
+                        <div class="c-day">13</div>
+                        <div class="c-day">14</div>
+                    </div>
+                </div>
+
+                <div class="busy-blocks">
+                    <div class="bb-row">
+                        <div>
+                            <div class="bb-day">Martes</div>
+                            <div class="bb-time"><i class="far fa-clock"></i> 18:00 — 20:00</div>
+                        </div>
+                        <button class="bb-del"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <div class="bb-row">
+                        <div>
+                            <div class="bb-day">Viernes</div>
+                            <div class="bb-time"><i class="far fa-clock"></i> 07:00 — 09:00</div>
+                        </div>
+                        <button class="bb-del"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    <button class="bb-add"><i class="fas fa-plus" style="margin-right:5px;"></i>Añadir hora ocupada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 5 — SWIPE MOBILE Y PERSISTENCIA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"   style="width:44vw;height:44vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-fuchsia" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    Mobile y Persistencia
+                </div>
+                <h2>Swipe nativo<br>entre las tres<br>columnas.</h2>
+                <p class="lead" style="max-width:500px;">En mobile las tres columnas se convierten en tabs con swipe táctil. Los eventos <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">touchstart</code> y <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">touchend</code> miden el desplazamiento horizontal y cambian el tab activo si supera los 60px de umbral.</p>
+                <p class="lead" style="max-width:500px;margin-top:14px;">Todo el estado de restricciones y el último tab activo persisten en <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">localStorage</code>, así el cliente retoma exactamente donde dejó la pantalla.</p>
+
+                <div class="storage-keys" style="margin-top:24px;">
+                    <div class="sk-item sk-fuchsia">
+                        <div class="sk-icon"><i class="fas fa-calendar-week"></i></div>
+                        <div class="sk-body">
+                            <strong>cm_blocked_weekdays</strong>
+                            <span>Array de IDs de días bloqueados (0–6)</span>
+                        </div>
+                    </div>
+                    <div class="sk-item sk-blue">
+                        <div class="sk-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="sk-body">
+                            <strong>cm_blocked_dates</strong>
+                            <span>Array de días del mes bloqueados puntualmente</span>
+                        </div>
+                    </div>
+                    <div class="sk-item sk-orange">
+                        <div class="sk-icon"><i class="fas fa-clock"></i></div>
+                        <div class="sk-body">
+                            <strong>cm_busy_time_blocks</strong>
+                            <span>Array de objetos {id, weekdayId, start, end}</span>
+                        </div>
+                    </div>
+                    <div class="sk-item sk-green">
+                        <div class="sk-icon"><i class="fas fa-bookmark"></i></div>
+                        <div class="sk-body">
+                            <strong>market_last_service_tab</strong>
+                            <span>Último tab visitado: active_passes | paid_appointments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:center;">
+                <div class="mobile-demo">
+                    <div class="md-header">
+                        <div class="md-back"><i class="fas fa-chevron-left"></i></div>
+                        <div class="md-title">Mis Servicios</div>
+                        <div class="md-avatar">N</div>
+                    </div>
+                    <div class="md-tabs">
+                        <div class="md-tab active">Pagados</div>
+                        <div class="md-tab">Sugerencias</div>
+                        <div class="md-tab">Restricciones</div>
+                    </div>
+                    <div class="md-body">
+                        <div class="md-swipe-hint">
+                            <i class="fas fa-arrows-left-right"></i>
+                            Deslizá entre columnas
+                        </div>
+                        <div style="background:white;border-radius:10px;border:1px solid #e2e8f0;overflow:hidden;">
+                            <div style="padding:10px 12px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:8px;">
+                                <div style="width:28px;height:28px;border-radius:7px;background:#ecfdf5;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;"><i class="fas fa-id-card"></i></div>
+                                <div style="flex:1;">
+                                    <div style="font-size:11px;font-weight:800;color:#0f172a;">Studio Pilates</div>
+                                    <div style="font-size:9px;color:#64748b;font-weight:700;">Acceso mensual</div>
+                                </div>
+                                <span style="font-size:9px;font-weight:900;padding:2px 7px;border-radius:999px;background:#d1fae5;color:#059669;">Vigente</span>
+                            </div>
+                            <div style="padding:7px 12px;display:flex;justify-content:space-between;font-size:9px;color:#64748b;">
+                                <span>Vence 30 jul</span>
+                                <span style="color:#10b981;font-weight:800;"><i class="fas fa-infinity" style="margin-right:3px;"></i>Ilimitado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 6 — NAV
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-fuchsia" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+        <div class="inner" style="align-items:center; text-align:center;">
+
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--fuchsia);"></span>
+                Seguir Explorando
+            </div>
+            <h2>¿Qué vemos ahora?</h2>
+            <p class="lead" style="margin:0 auto; text-align:center; max-width:620px;">Ya conocés el panel de servicios del cliente. Podés ir al módulo de turnos de la tienda, a los pedidos, o al catálogo.</p>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
+                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="StoreAppointments.html" class="nav-btn c-fuchsia">
+                    <div class="nav-icon"><i class="far fa-calendar-check"></i></div>
+                    <div class="nav-label">Turnos y<br>Servicios</div>
+                </a>
+                <a href="MyOrders.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-receipt"></i></div>
+                    <div class="nav-label">Mis<br>Pedidos</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="StoreLoginModal.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-user-lock"></i></div>
+                    <div class="nav-label">Acceso</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_agenda';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>
