@@ -300,50 +300,64 @@
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-keyboard text-muted mr-2"></i> Keyboard-First</span>
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-barcode text-muted mr-2"></i> Escáner Nativo</span>
                     <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-truck text-muted mr-2"></i> Logística (Maps)</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-link text-muted mr-2"></i> Magic Links</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fab fa-whatsapp text-muted mr-2"></i> Pedidos WhatsApp</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: MAGIC LINK & CLIPBOARD -->
+    <!-- SLIDE 2: PORTAPAPELES WHATSAPP -->
     <div class="slide">
         <div class="glow-green" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 60px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-green);">De Online a Offline en 1 Segundo</h3>
-                <h2>El "Magic Link" (Portapapeles)</h2>
-                <p>Imaginá que un cliente arma su carrito en su casa y te manda el pedido por WhatsApp. El cajero simplemente <strong>copia el mensaje y entra al sistema</strong>.</p>
-                <p>El POS intercepta el portapapeles, decodifica el Base64 y arma el ticket exacto al instante con datos del cliente incluidos.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 50px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green);">De WhatsApp a la Caja en 1 Segundo</h3>
+                <h2>Pegar Pedido (Portapapeles)</h2>
+                <p>El cliente manda el pedido por WhatsApp usando el formato de la tienda online. El cajero <strong>copia el mensaje y presiona "Pegar pedido"</strong> en el POS.</p>
+                <p>El sistema lee el texto en crudo, reconoce los ítems por nombre, arma el ticket al instante y completa las notas del pedido (aclaraciones, dirección, entrega).</p>
             </div>
             
-            <div class="visual-block magic-flow" style="max-width: 1100px; margin: 0 auto; width: 100%;">
+            <div class="visual-block magic-flow" style="max-width: 1200px; margin: 0 auto; width: 100%; align-items: flex-start;">
                 
-                <!-- Celular Mockup -->
-                <div class="wp-mockup">
+                <!-- Celular Mockup: mensaje de WhatsApp texto plano -->
+                <div class="wp-mockup" style="width: 380px;">
                     <div class="wp-header">
-                        <span><i class="fab fa-whatsapp"></i> Nuevo Mensaje</span>
+                        <span><i class="fab fa-whatsapp"></i> Mensaje del cliente</span>
                         <span>14:30</span>
                     </div>
-                    <div class="wp-body">
-                        Hola, quiero encargar esto para pasar a buscar: <br><br>
-                        <strong>Nombre:</strong> María López <br>
-                        <strong>Tel:</strong> 1123456789 <br>
-                        <div class="wp-code">Cód. Caja: [eyJuIjoiTWFyw61hIExvcGV6IiwicCI6IjExMjM0NTY3ODkiLCJpdGVtcyI6eyJWRUxBLTAxIjoyLCJESUYtVkFJIjoxfX0=]</div>
+                    <div class="wp-body" style="font-size: 14px; line-height: 1.7;">
+                        Hola, me interesa hacer el siguiente pedido:<br><br>
+                        - 2x Set Velas Aromáticas - $9,000<br>
+                        - 1x Difusor Lavanda - $5,200<br>
+                        - 3x Aceite Almendras - $18,600<br><br>
+                        <span style="color: rgba(255,255,255,0.6);">*Aclaraciones:* Sin madera de cedro por favor<br>
+                        *Entrega:* Retiro en local<br></span>
                     </div>
                 </div>
 
-                <i class="fas fa-arrow-right flow-arrow"></i>
+                <i class="fas fa-arrow-right flow-arrow" style="margin-top: 60px;"></i>
 
-                <!-- Toast de Éxito -->
-                <div style="display: flex; flex-direction: column; gap: 20px;">
-                    <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px dashed var(--kpi-green); text-align: center; color: var(--kpi-green); font-weight: bold; font-family: monospace;">
-                        (Ctrl + C) -> (Ctrl + V)
+                <!-- Resultado en la caja -->
+                <div style="display: flex; flex-direction: column; gap: 16px; flex: 1; min-width: 300px;">
+                    <div style="background: rgba(0,0,0,0.4); padding: 16px 20px; border-radius: 12px; border: 1px dashed var(--kpi-green); display: flex; align-items: center; gap: 14px; color: var(--kpi-green); font-weight: bold;">
+                        <i class="fas fa-clipboard-list" style="font-size: 22px;"></i>
+                        <div>
+                            <div style="font-size: 15px;">Ctrl + C &nbsp;→&nbsp; "Pegar pedido"</div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.4); font-weight: normal; margin-top: 3px;">El sistema detecta el formato automáticamente</div>
+                        </div>
+                    </div>
+
+                    <!-- Items que se cargan -->
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: white;"><span>✓ Set Velas Aromáticas</span><span style="color: var(--kpi-green);">x2</span></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: white;"><span>✓ Difusor Lavanda</span><span style="color: var(--kpi-green);">x1</span></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: white;"><span>✓ Aceite Almendras</span><span style="color: var(--kpi-green);">x3</span></div>
+                        <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; font-size: 12px; color: #94a3b8;"><i class="fas fa-sticky-note mr-2"></i>Aclaraciones: Sin madera de cedro &nbsp;|&nbsp; Entrega: Retiro en local</div>
                     </div>
                     
-                    <div class="toast-mockup">
-                        <i class="fas fa-check-circle" style="font-size: 24px;"></i>
-                        <span>🛒 ¡Pedido pegado con éxito para María López!</span>
+                    <div class="toast-mockup" style="width: 100%;">
+                        <i class="fas fa-check-circle" style="font-size: 22px;"></i>
+                        <span>🛒 ¡Pedido de WhatsApp cargado con éxito!</span>
                     </div>
                 </div>
 
@@ -528,10 +542,14 @@
                 <div class="phone-mockup">
                     <div class="phone-notch"></div>
                     
-                    <div class="pos-mobile-header">
-                        <span><i class="fas fa-arrow-left" style="color: var(--text-muted); font-size: 14px;"></i></span>
-                        <span>📱 Caja Rápida</span>
-                        <span><i class="fas fa-video text-muted"></i></span>
+                    <div class="pos-mobile-header" style="gap: 10px; padding: 35px 12px 12px;">
+                        <span style="flex-shrink: 0;"><i class="fas fa-arrow-left" style="color: var(--text-muted); font-size: 14px;"></i></span>
+                        <!-- Barra de búsqueda con lupa -->
+                        <div style="flex: 1; position: relative; display: flex; align-items: center;">
+                            <i class="fas fa-search" style="position: absolute; left: 10px; color: #64748b; font-size: 12px;"></i>
+                            <div style="width: 100%; background: rgba(15,23,42,0.8); border: 1px solid #475569; border-radius: 8px; padding: 7px 10px 7px 28px; color: #64748b; font-size: 12px; font-weight: 400;">Buscar producto...</div>
+                        </div>
+                        <span style="flex-shrink: 0; border: 1px solid #475569; border-radius: 8px; padding: 6px 9px;"><i class="fas fa-video" style="color: #94a3b8; font-size: 13px;"></i></span>
                     </div>
 
                     <div class="scanner-viewport">
