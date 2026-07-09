@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vidriera Pública — Tienda Online</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg:     #0f172a;
+            --panel:  rgba(15,23,42,0.65);
+            --muted:  #94a3b8;
+            --border: rgba(255,255,255,0.06);
+            --green:  #10b981;
+            --blue:   #3b82f6;
+            --purple: #a855f7;
+            --orange: #f59e0b;
+            --red:    #ef4444;
+            --pink:   #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+
+        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
+
+        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); }
+        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%); }
+        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); }
+        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); }
+
+        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
+        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+        .ctrl:hover { background: var(--purple); }
+        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
+
+        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; }
+        h1 { font-size: 56px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
+        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
+        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
+        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
+
+        /* =========================================
+           SLIDE 1 — INTRO + ANATOMÍA VISUAL
+        ========================================= */
+        .storefront-anatomy { display: flex; flex-direction: column; gap: 0; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+
+        .sa-section { padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 14px; transition: 0.2s; }
+        .sa-section:last-child { border-bottom: none; }
+        .sa-tag { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 4px 10px; border-radius: 6px; flex-shrink: 0; font-family: monospace; }
+        .sa-icon { width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .sa-body { flex: 1; }
+        .sa-body strong { font-size: 13px; font-weight: 800; color: white; display: block; }
+        .sa-body span   { font-size: 11px; color: var(--muted); }
+
+        .sa-seo      { background: rgba(168,85,247,0.06); }
+        .sa-seo      .sa-tag  { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .sa-seo      .sa-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+        .sa-ref      { background: rgba(245,158,11,0.06); }
+        .sa-ref      .sa-tag  { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .sa-ref      .sa-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+        .sa-profile  { background: rgba(59,130,246,0.05); }
+        .sa-profile  .sa-tag  { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .sa-profile  .sa-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+
+        .sa-switch   { background: rgba(16,185,129,0.04); }
+        .sa-switch   .sa-tag  { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+        .sa-switch   .sa-icon { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+
+        .sa-catalog  { background: rgba(16,185,129,0.04); }
+        .sa-catalog  .sa-tag  { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+        .sa-catalog  .sa-icon { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+
+        .sa-services { background: rgba(236,72,153,0.04); }
+        .sa-services .sa-tag  { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+        .sa-services .sa-icon { background: rgba(236,72,153,0.12); color: #f9a8d4; }
+
+        /* =========================================
+           SLIDE 2 — RESOLUCIÓN DEL STOREREF
+        ========================================= */
+        .ref-flow { display: flex; flex-direction: column; gap: 14px; }
+        .rf-card { display: flex; gap: 13px; align-items: flex-start; padding: 16px 18px; border-radius: 14px; border: 1px solid; }
+        .rf-icon { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .rf-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
+        .rf-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.5; }
+        .rf-params { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .rf-params .rf-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
+        .rf-domain { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .rf-domain .rf-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
+        .rf-slug   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .rf-slug   .rf-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+        .rf-view   { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .rf-view   .rf-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
+
+        .url-examples { display: flex; flex-direction: column; gap: 8px; }
+        .ue-row { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: 12px; border: 1px solid; }
+        .ue-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px; }
+        .ue-url   { font-family: monospace; font-size: 12px; color: #f8fafc; word-break: break-all; }
+        .ue-slug  { display: inline; padding: 1px 5px; border-radius: 4px; font-weight: 900; }
+        .ue-view  { display: inline; padding: 1px 5px; border-radius: 4px; }
+
+        .ue-standard  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .ue-standard  .ue-label { color: #93c5fd; } .ue-standard  .ue-slug { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .ue-services  { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .ue-services  .ue-label { color: #6ee7b7; } .ue-services  .ue-view { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .ue-custom    { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .ue-custom    .ue-label { color: #d8b4fe; }
+
+        /* =========================================
+           SLIDE 3 — JSON-LD COMPLETO
+        ========================================= */
+        .jsonld-nodes { display: flex; flex-direction: column; gap: 10px; }
+        .jn-card { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-radius: 13px; border: 1px solid; }
+        .jn-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+        .jn-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
+        .jn-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .jn-breadcrumb { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .jn-breadcrumb .jn-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
+        .jn-webpage    { background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .jn-webpage    .jn-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .jn-business   { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .jn-business   .jn-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .jn-itemlist   { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .jn-itemlist   .jn-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
+
+        .jn-business-details { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+        .jn-detail { font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 6px; background: rgba(16,185,129,0.1); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+
+        .seo-lifecycle { display: flex; flex-direction: column; gap: 0; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+        .sl-row { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+        .sl-row:last-child { border-bottom: none; }
+        .sl-row i { font-size: 11px; width: 18px; text-align: center; flex-shrink: 0; }
+        .sl-row strong { color: white; }
+        .sl-row code { font-size: 10px; font-family: monospace; background: rgba(0,0,0,0.25); padding: 1px 5px; border-radius: 4px; color: #93c5fd; }
+
+        /* =========================================
+           SLIDE 4 — SWITCH + REACTIVOS + NAV
+        ========================================= */
+        .switch-diagram { display: flex; flex-direction: column; gap: 14px; }
+        .sd-trigger { padding: 12px 16px; border-radius: 12px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); font-size: 13px; color: #6ee7b7; display: flex; align-items: center; gap: 8px; font-family: monospace; }
+        .sd-arrow { text-align: center; color: rgba(255,255,255,0.15); font-size: 16px; }
+        .sd-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sd-outcome { padding: 14px 16px; border-radius: 12px; border: 1px solid; }
+        .sd-outcome .sd-out-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .sd-outcome strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; font-family: monospace; }
+        .sd-outcome p { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
+        .sd-store    { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .sd-store    .sd-out-label { color: #6ee7b7; }
+        .sd-services { background: rgba(236,72,153,0.05); border-color: rgba(236,72,153,0.2); } .sd-services .sd-out-label { color: #f9a8d4; }
+
+        .watch-list { display: flex; flex-direction: column; gap: 10px; }
+        .wl-card { display: flex; gap: 12px; align-items: flex-start; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+        .wl-watch { font-family: monospace; font-size: 11px; font-weight: 800; color: #d8b4fe; flex-shrink: 0; width: 180px; }
+        .wl-body { font-size: 12px; color: var(--muted); line-height: 1.4; }
+        .wl-body strong { color: white; }
+
+        /* NAV FINAL */
+        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
+        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
+        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
+        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
+        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
+        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+
+        .completed-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; border-radius: 999px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; font-size: 13px; font-weight: 900; margin-bottom: 24px; }
+
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .split { grid-template-columns: 1fr; gap: 36px; }
+            .sd-outcomes { grid-template-columns: 1fr; }
+            h1 { font-size: 38px; } h2 { font-size: 30px; }
+            .lead { font-size: 16px; }
+            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
+            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
+            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="snum"><span id="cur">1</span> / <span id="tot">4</span></span>
+        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 1 — INTRO + ANATOMÍA
+    ====================================================== -->
+    <div class="slide active">
+        <div class="g g-purple" style="width:46vw;height:46vw; top:-12vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner">
+            <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:52px; align-items:center;">
+                <div>
+                    <div class="eyebrow">
+                        <span class="dot" style="background:var(--purple);"></span>
+                        Tienda Online · Módulo Final
+                    </div>
+                    <h1>La vidriera<br>pública<br><span style="color:var(--purple);">completa.</span></h1>
+                    <p class="lead" style="max-width:420px;">El componente más delgado del índice, pero el que orquesta todo. Resuelve a quién pertenece la visita, aplica el SEO más rico de la plataforma y decide qué mostrar abajo: el catálogo o la agenda de servicios.</p>
+
+                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-globe" style="color:#d8b4fe;font-size:11px;"></i> Dominios personalizados
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-arrow-right-to-bracket" style="color:#fcd34d;font-size:11px;"></i> Redirect de slug canónico
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-sitemap" style="color:#93c5fd;font-size:11px;"></i> JSON-LD de negocio completo
+                        </span>
+                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);">
+                            <i class="fas fa-toggle-on" style="color:#6ee7b7;font-size:11px;"></i> Switch tienda / servicios
+                        </span>
+                    </div>
+                </div>
+
+                <div class="storefront-anatomy">
+                    <div class="sa-section sa-seo">
+                        <div class="sa-icon"><i class="fas fa-code"></i></div>
+                        <div class="sa-body">
+                            <strong>SEO + JSON-LD</strong>
+                            <span>Aplicado en loadProfile y actualizado cuando llegan los productos del catálogo</span>
+                        </div>
+                        <span class="sa-tag">meta</span>
+                    </div>
+                    <div class="sa-section sa-ref">
+                        <div class="sa-icon"><i class="fas fa-fingerprint"></i></div>
+                        <div class="sa-body">
+                            <strong>Resolución del storeRef</strong>
+                            <span>route.params → dominio personalizado → null con error</span>
+                        </div>
+                        <span class="sa-tag">lógica</span>
+                    </div>
+                    <div class="sa-section sa-profile">
+                        <div class="sa-icon"><i class="fas fa-store"></i></div>
+                        <div class="sa-body">
+                            <strong>StoreProfile</strong>
+                            <span>Banner, logo, horarios, WhatsApp, socials — siempre visible</span>
+                        </div>
+                        <span class="sa-tag">componente</span>
+                    </div>
+                    <div class="sa-section sa-switch">
+                        <div class="sa-icon"><i class="fas fa-toggle-on"></i></div>
+                        <div class="sa-body">
+                            <strong>Switch currentView</strong>
+                            <span>'store' | 'services' — reactivo a ?view= y a la config del local</span>
+                        </div>
+                        <span class="sa-tag">estado</span>
+                    </div>
+                    <div class="sa-section sa-catalog">
+                        <div class="sa-icon"><i class="fas fa-th-large"></i></div>
+                        <div class="sa-body">
+                            <strong>StoreCatalog</strong>
+                            <span>v-if="currentView === 'store'" — emite @seo-products</span>
+                        </div>
+                        <span class="sa-tag">componente</span>
+                    </div>
+                    <div class="sa-section sa-services">
+                        <div class="sa-icon"><i class="far fa-calendar-check"></i></div>
+                        <div class="sa-body">
+                            <strong>StoreAppointments</strong>
+                            <span>v-if="currentView === 'services'" — clases, turnos y suscripciones</span>
+                        </div>
+                        <span class="sa-tag">componente</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 2 — RESOLUCIÓN DEL STOREREF Y URLs
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--orange);"></span>
+                    Resolución de Identidad
+                </div>
+                <h2>¿A qué tienda<br>pertenece<br>esta visita?</h2>
+                <p class="lead" style="max-width:500px;"><code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">getStoreRef()</code> resuelve en cascada: primero mira <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">route.params.storeRef</code>, y si no hay, compara el hostname actual con los dominios internos. Si no coincide con ninguno, asume que es un dominio personalizado y lo usa como referencia.</p>
+
+                <div class="ref-flow" style="margin-top:22px;">
+                    <div class="rf-card rf-params">
+                        <div class="rf-icon"><i class="fas fa-route"></i></div>
+                        <div class="rf-body">
+                            <strong>route.params.storeRef</strong>
+                            <p>El caso normal. La ruta pública es <code style="font-size:11px;">/store/:storeRef</code> con el slug o ID de la tienda.</p>
+                        </div>
+                    </div>
+                    <div class="rf-card rf-domain">
+                        <div class="rf-icon"><i class="fas fa-globe"></i></div>
+                        <div class="rf-body">
+                            <strong>Dominio personalizado</strong>
+                            <p>Si el hostname no es localhost, la IP local ni el dominio principal, se usa como storeRef directamente — la tienda responde en su propio dominio.</p>
+                        </div>
+                    </div>
+                    <div class="rf-card rf-slug">
+                        <div class="rf-icon"><i class="fas fa-arrow-right-to-bracket"></i></div>
+                        <div class="rf-body">
+                            <strong>Redirect de slug canónico</strong>
+                            <p>Si la API devuelve un slug diferente al usado en la URL (p.ej. se accedió por ID), hace <code style="font-size:11px;">router.replace</code> silencioso hacia el slug definitivo para consolidar el canonical.</p>
+                        </div>
+                    </div>
+                    <div class="rf-card rf-view">
+                        <div class="rf-icon"><i class="fas fa-toggle-on"></i></div>
+                        <div class="rf-body">
+                            <strong>Vista por defecto desde la config</strong>
+                            <p>Si <code style="font-size:11px;">storefront_config.default_view === 'services'</code>, la tienda arranca en la agenda sin que el cliente tenga que cambiar la URL.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="url-examples">
+                <div class="ue-row ue-standard">
+                    <div class="ue-label">URL estándar (slug)</div>
+                    <div class="ue-url">companymarket.com/store/<span class="ue-slug">aromas-del-sur</span></div>
+                </div>
+                <div class="ue-row ue-services">
+                    <div class="ue-label">Vista de servicios</div>
+                    <div class="ue-url">companymarket.com/store/aromas-del-sur<span class="ue-view">?view=services</span></div>
+                </div>
+                <div class="ue-row ue-custom">
+                    <div class="ue-label">Dominio personalizado</div>
+                    <div class="ue-url">aromas-del-sur.com/ <span style="color:var(--muted);">(hostname como storeRef)</span></div>
+                </div>
+
+                <div style="padding:16px 18px;border-radius:13px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-size:13px;color:var(--muted);line-height:1.5;margin-top:4px;">
+                    <strong style="color:white;display:block;margin-bottom:6px;">aliases de view soportados</strong>
+                    <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:3px;margin-right:6px;">?view=services</code>
+                    <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:3px;margin-right:6px;">?view=appointments</code>
+                    <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:3px;">?view=classes</code>
+                    <br><span style="margin-top:6px;display:block;">Los tres apuntan a la vista de servicios. Los alias existen por compatibilidad con links externos.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 3 — JSON-LD MÁS RICO DE LA PLATAFORMA
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
+        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+
+        <div class="inner split">
+            <div>
+                <div class="eyebrow">
+                    <span class="dot" style="background:var(--green);"></span>
+                    El SEO Más Completo
+                </div>
+                <h2>LocalBusiness<br>con horarios,<br>geo y productos.</h2>
+                <p class="lead" style="max-width:500px;">Este es el JSON-LD más rico de toda la plataforma. El nodo <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">LocalBusiness</code> incluye horarios de apertura estructurados, coordenadas geográficas, teléfono, descripción, imágenes y redes sociales como <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">sameAs</code>. El <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">ItemList</code> se agrega dinámicamente cuando el catálogo emite sus productos.</p>
+
+                <div class="seo-lifecycle" style="margin-top:22px;">
+                    <div class="sl-row"><i class="fas fa-play" style="color:#6ee7b7;"></i> <span><strong>onMounted</strong> → <code>loadProfile()</code> aplica primer SEO con datos del local</span></div>
+                    <div class="sl-row"><i class="fas fa-satellite-dish" style="color:#93c5fd;"></i> <span>Catálogo hijo emite <code>@seo-products</code> con hasta 24 productos</span></div>
+                    <div class="sl-row"><i class="fas fa-arrows-rotate" style="color:#d8b4fe;"></i> <span><strong>watch(catalogSeoProducts)</strong> llama <code>updateSeo()</code> — el JSON-LD se enriquece con el ItemList</span></div>
+                    <div class="sl-row"><i class="fas fa-stop" style="color:#fca5a5;"></i> <span><strong>onUnmounted</strong> → <code>resetSeoMeta()</code> limpia todos los metadatos</span></div>
+                </div>
+            </div>
+
+            <div class="jsonld-nodes">
+                <div class="jn-card jn-breadcrumb">
+                    <div class="jn-icon"><i class="fas fa-route"></i></div>
+                    <div class="jn-body">
+                        <strong>BreadcrumbList</strong>
+                        <p>CompanyMarket → Nombre del local. Dos niveles.</p>
+                    </div>
+                </div>
+                <div class="jn-card jn-webpage">
+                    <div class="jn-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="jn-body">
+                        <strong>WebPage</strong>
+                        <p>Conectada al WebSite raíz con <code style="font-size:11px;">isPartOf</code> y el breadcrumb por referencia.</p>
+                    </div>
+                </div>
+                <div class="jn-card jn-business">
+                    <div class="jn-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="jn-body">
+                        <strong>LocalBusiness — el más rico</strong>
+                        <div class="jn-business-details">
+                            <span class="jn-detail"><i class="fas fa-clock"></i> OpeningHoursSpecification</span>
+                            <span class="jn-detail"><i class="fas fa-map-pin"></i> GeoCoordinates</span>
+                            <span class="jn-detail"><i class="fas fa-phone"></i> telephone</span>
+                            <span class="jn-detail"><i class="fas fa-share-alt"></i> sameAs (redes)</span>
+                            <span class="jn-detail"><i class="fas fa-image"></i> images array</span>
+                            <span class="jn-detail"><i class="fas fa-file-lines"></i> description</span>
+                            <span class="jn-detail"><i class="fas fa-map"></i> PostalAddress</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="jn-card jn-itemlist">
+                    <div class="jn-icon"><i class="fas fa-list-ol"></i></div>
+                    <div class="jn-body">
+                        <strong>ItemList de productos</strong>
+                        <p>Se agrega solo si el catálogo emitió productos. Hasta 24 nodos <code style="font-size:11px;">Product</code> con precio, stock y URL de detalle.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         SLIDE 4 — SWITCH + WATCHES + NAV FINAL
+    ====================================================== -->
+    <div class="slide">
+        <div class="g g-purple" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
+
+        <div class="inner">
+            <div class="eyebrow" style="justify-content:center;">
+                <span class="dot" style="background:var(--purple);"></span>
+                Switch y Reactividad
+            </div>
+            <h2 style="text-align:center; margin-bottom:10px;">Dos vistas.<br>Un componente.</h2>
+            <p class="lead" style="text-align:center; margin:0 auto 28px; max-width:680px;">El switch entre tienda y servicios es simple: <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">currentView</code> controla cuál de los dos componentes se monta con <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">v-if</code>. Tres watchers mantienen todo en sincronía cuando la URL cambia desde fuera.</p>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1000px;margin:0 auto;width:100%;">
+                <div class="switch-diagram">
+                    <div class="sd-trigger"><i class="fas fa-user"></i> Cliente toca "Servicios" en el toolbar</div>
+                    <div class="sd-arrow"><i class="fas fa-arrow-down"></i></div>
+                    <div style="padding:12px 16px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid var(--border);font-family:monospace;font-size:12px;color:#d8b4fe;text-align:center;">
+                        changeStoreView('services')
+                    </div>
+                    <div class="sd-arrow"><i class="fas fa-arrow-down"></i></div>
+                    <div class="sd-outcomes">
+                        <div class="sd-outcome sd-store">
+                            <div class="sd-out-label">Desmonta</div>
+                            <strong>StoreCatalog</strong>
+                            <p>v-if queda false</p>
+                        </div>
+                        <div class="sd-outcome sd-services">
+                            <div class="sd-out-label">Monta</div>
+                            <strong>StoreAppointments</strong>
+                            <p>v-if queda true</p>
+                        </div>
+                    </div>
+                    <div style="padding:10px 14px;border-radius:10px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);font-size:12px;color:var(--muted);text-align:center;margin-top:4px;">
+                        URL actualizada a <code style="font-size:11px;">?view=services</code> con <code style="font-size:11px;">router.replace</code>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:12px;">Los tres watchers</div>
+                    <div class="watch-list">
+                        <div class="wl-card">
+                            <div class="wl-watch">route.params.storeRef</div>
+                            <div class="wl-body">Cuando el usuario navega a otra tienda sin recargar, relanza <strong>loadProfile()</strong> completo.</div>
+                        </div>
+                        <div class="wl-card">
+                            <div class="wl-watch">route.query.view</div>
+                            <div class="wl-body">Actualiza <strong>currentView</strong> si alguien pega un link con <code>?view=services</code> o si el botón de atrás lleva a otra vista.</div>
+                        </div>
+                        <div class="wl-card">
+                            <div class="wl-watch">catalogSeoProducts</div>
+                            <div class="wl-body">Reactiva <strong>updateSeo()</strong> cuando el catálogo hijo termina de cargar y emite sus productos, enriqueciendo el JSON-LD con el ItemList.</div>
+                        </div>
+                    </div>
+
+                    <div class="completed-badge" style="margin-top:24px;">
+                        <i class="fas fa-check-circle"></i>
+                        Módulo de Tienda Online completo
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-grid">
+                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.55);">
+                    <div class="nav-icon" style="color:#d8b4fe; background:rgba(168,85,247,0.15);"><i class="fas fa-map"></i></div>
+                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+                </a>
+                <a href="StoreProfile.html" class="nav-btn c-blue">
+                    <div class="nav-icon"><i class="fas fa-store"></i></div>
+                    <div class="nav-label">Perfil<br>del Local</div>
+                </a>
+                <a href="StoreCatalog.html" class="nav-btn c-green">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    <div class="nav-label">Catálogo<br>Público</div>
+                </a>
+                <a href="StoreProduct.html" class="nav-btn c-orange">
+                    <div class="nav-icon"><i class="fas fa-tag"></i></div>
+                    <div class="nav-label">Página de<br>Producto</div>
+                </a>
+                <a href="StoreAppointments.html" class="nav-btn c-pink">
+                    <div class="nav-icon"><i class="far fa-calendar-check"></i></div>
+                    <div class="nav-label">Turnos y<br>Servicios</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PAGE = 'tienda_storefront';
+        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
+        const slides = document.querySelectorAll('.slide');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+
+        function go(n) {
+            cur = Math.max(0, Math.min(slides.length - 1, n));
+            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
+            curEl.innerText = cur + 1;
+            localStorage.setItem('slide_' + PAGE, cur);
+            setTimeout(() => window.scrollTo(0, 0), 40);
+        }
+        function next() {
+            if (cur < slides.length - 1) go(cur + 1);
+            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
+        }
+        function prev() { if (cur > 0) go(cur - 1); }
+
+        document.getElementById('btnNext').addEventListener('click', next);
+        document.getElementById('btnPrev').addEventListener('click', prev);
+        document.addEventListener('keydown', e => {
+            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
+            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+        });
+
+        totEl.innerText = slides.length;
+        go(cur);
+    </script>
+
+</body>
+</html>

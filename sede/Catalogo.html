@@ -127,7 +127,16 @@
         .rt-export-item { padding: 12px 15px; font-size: 13px; color: white; display: flex; align-items: center; gap: 10px; border-radius: 6px; cursor: pointer; white-space: nowrap;}
         .rt-export-item:hover { background: rgba(59, 130, 246, 0.1); }
 
-        .rt-table-header { display: grid; grid-template-columns: 80px 2.5fr 1.5fr 1fr 1fr 1fr 120px; background: rgba(255,255,255,0.02); padding: 15px 20px; border: 1px solid var(--border-glass); border-radius: 0 0 12px 12px; font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; align-items: center;}
+        .rt-table-header { display: grid; grid-template-columns: 26px 70px 60px 2.2fr 1fr 1fr 26px 26px 120px; background: rgba(255,255,255,0.02); padding: 15px 20px; border: 1px solid var(--border-glass); border-radius: 0 0 12px 12px; font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; align-items: center;}
+
+        .rt-toggle-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .rt-toggle-chip { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--text-muted); padding: 5px 12px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); }
+        .rt-toggle-chip.on { color: var(--text-main); background: rgba(255,255,255,0.08); }
+        .rt-toggle-chip i.dot-cat { color: #8b5cf6; }
+        .rt-toggle-chip i.dot-brand { color: #10b981; }
+        .rt-toggle-chip i.dot-line { color: #a855f7; }
+        .rt-toggle-chip.selection { color: #bfdbfe; background: rgba(59,130,246,0.16); border-color: rgba(59,130,246,0.35); }
+        .rt-toggle-chip.priority { color: #a5f3fc; background: rgba(34,211,238,0.1); border-color: rgba(34,211,238,0.25); }
 
         /* =========================================
            SLIDE 2: ADAPTERS Y MIGRACIÓN
@@ -144,21 +153,66 @@
            SLIDE 3: TABLA VENTAS & ÁRBOL
            ========================================= */
         .mockup-table { width: 100%; background: rgba(0,0,0,0.3); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-glass); margin-top: 30px;}
-        .m-header { display: grid; grid-template-columns: 2.5fr 1fr 1fr 150px; background: rgba(255,255,255,0.05); padding: 15px 20px; font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; align-items: center;}
-        .m-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 150px; padding: 15px 20px; border-top: 1px solid var(--border-glass); align-items: center; font-size: 14px; }
+        .m-grid-cols { grid-template-columns: 30px 78px 56px 2fr 1fr 1fr 30px 30px 132px; }
+        .m-header { display: grid; background: rgba(255,255,255,0.05); padding: 14px 0; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; align-items: center; letter-spacing: 0.04em; }
+        .m-header > div { padding: 0 8px; }
+        .m-row { display: grid; border-top: 1px solid var(--border-glass); align-items: stretch; font-size: 14px; }
+        .m-row.is-child { background: rgba(0,0,0,0.18); }
+        .m-cell { display: flex; align-items: center; padding: 12px 8px; min-width: 0; }
+        .m-cell.center { justify-content: center; text-align: center; }
+
+        .m-sidebar { display: flex; align-items: flex-start; justify-content: center; position: relative; cursor: pointer; align-self: stretch; padding-top: 10px; }
+        .m-sidebar .bar-fill { position: absolute; left: 4px; width: 4px; top: 6px; bottom: 6px; border-radius: 3px; }
+        .m-sidebar.right .bar-fill { left: auto; right: 4px; }
+        .m-sidebar .bar-fill.seg-top { top: 6px; bottom: 0; border-radius: 3px 3px 0 0; }
+        .m-sidebar .bar-fill.seg-mid { top: 0; bottom: 0; border-radius: 0; }
+        .m-sidebar .bar-fill.seg-bottom { top: 0; bottom: 6px; border-radius: 0 0 3px 3px; }
+        .m-sidebar .bar-label { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 8.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+        .cat-color { background: #8b5cf6; } .cat-label { color: #a78bfa; }
+        .brand-color { background: #10b981; } .brand-label { color: #34d399; }
+        .line-color { background: #a855f7; } .line-label { color: #c084fc; }
+
+        .m-status { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .mini-toggle { width: 30px; height: 18px; border-radius: 20px; background: #10b981; position: relative; }
+        .mini-toggle::after { content:''; position:absolute; width:12px; height:12px; border-radius:50%; background:white; top:3px; right:3px; }
+        .status-pill { font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 5px; background: rgba(255,255,255,0.06); color: var(--text-muted); letter-spacing: 0.04em; }
+        .status-pill.ok { background: rgba(255,255,255,0.05); color: #94a3b8; }
+        .status-pill.new { background: rgba(16,185,129,0.15); color: #34d399; }
+
+        .m-photo { width: 40px; height: 40px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; flex-shrink: 0; overflow: hidden; margin: 0 auto; }
+        .m-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .m-folder-icon { color: var(--kpi-orange); }
+
+        .m-prod-col { flex-direction: column; align-items: flex-start; gap: 4px; }
         .m-parent { font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
-        .m-child { position: relative; padding-left: 30px; color: var(--text-muted); display: flex; flex-direction: column;}
-        .m-child::before { content: '└─'; position: absolute; left: 10px; top: 0; color: rgba(255,255,255,0.2); }
-        .m-tier { display: flex; gap: 10px; align-items: center;}
-        .tier-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); padding: 5px 10px; border-radius: 8px; display: flex; align-items: center; gap: 8px;}
-        
-        .m-actions { display: flex; gap: 8px; align-items: center; justify-content: flex-end; }
-        
+        .m-child-name { color: var(--text-main); font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .m-child-name i { color: var(--kpi-blue); font-size: 12px; }
+        .m-sku { font-size: 11px; font-family: monospace; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+
+        .tier-pair { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: nowrap; }
+        .tier-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); padding: 5px 9px; border-radius: 8px; display: flex; align-items: center; gap: 6px; font-size: 13px; white-space: nowrap; }
+        .tier-box.price { border-color: rgba(59,130,246,0.5); }
+        .tier-lbl { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+        .folder-price-note { font-size: 8.5px; color: rgba(245, 158, 11, 0.75); text-transform: uppercase; font-weight: 800; letter-spacing: 0.06em; margin-top: 5px; text-align: center; width: 100%; }
+        .add-tier-ph { border: 1px dashed rgba(59,130,246,0.4); color: #60a5fa; border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+
         .btn-add-tier { background: transparent; color: var(--kpi-blue); border: 1px solid rgba(59, 130, 246, 0.5); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 5px; cursor: pointer; transition: 0.2s;}
         .btn-add-tier:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--kpi-blue); }
-        
-        .btn-action-icon { background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        .m-tags { display: flex; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+        .m-tag { font-size: 9.5px; font-weight: 800; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.03em; display: inline-flex; align-items: center; gap: 4px; }
+        .m-tag.limited { background: rgba(99,102,241,0.18); color: #a5b4fc; }
+        .m-tag.timed { background: rgba(249,115,22,0.18); color: #fdba74; }
+
+
+        .m-actions { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .btn-action-icon { background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; }
         .btn-action-icon:hover { background: rgba(255,255,255,0.1); color: white; }
+        .btn-action-icon.save { background: var(--kpi-orange); color: #1e293b; }
+        .btn-action-icon.merge { color: #eab308; }
+        .btn-action-icon.detach { color: var(--kpi-orange); }
+        .btn-action-icon.specs { color: #c084fc; }
+        .btn-action-icon.tag { color: #34d399; }
 
         /* =========================================
            SLIDE 4: TABLA COMPRAS & MÁRGENES
@@ -173,6 +227,35 @@
         .assign-select { background: rgba(0,0,0,0.4); border: 1px solid rgba(16, 185, 129, 0.5); color: var(--kpi-green); padding: 10px 15px; border-radius: 8px; font-size: 13px; font-weight: bold; width: 100%;}
         .margins-box { display: flex; flex-direction: column; gap: 5px; align-items: flex-end;}
         .margin-item { display: flex; justify-content: space-between; width: 120px; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 6px; font-size: 13px; border: 1px solid var(--border-glass);}
+
+        .supplier-stack { display: flex; flex-direction: column; gap: 8px; }
+        .supplier-chip { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(0,0,0,0.35); border: 1px solid var(--border-glass); border-radius: 8px; padding: 8px 12px; font-size: 13px; }
+        .supplier-chip.internal { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: #bbf7d0; }
+        .supplier-chip .sc-name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+        .supplier-chip .sc-cost { font-weight: 800; color: var(--kpi-green); }
+        .supplier-chip.internal .sc-cost { color: #a7f3d0; }
+
+        /* =========================================
+           SLIDE: CLASIFICACIÓN Y ESPECIFICACIONES
+           ========================================= */
+        .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%; margin-top: 30px; align-items: start; }
+        .specs-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px; }
+        .specs-card h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 18px; text-align: left; font-weight: 800; }
+        .specs-field { margin-bottom: 14px; }
+        .specs-field label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+        .specs-fake-input { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text-main); }
+        .specs-toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .specs-toggle-row:last-child { border-bottom: none; }
+        .specs-toggle-row span { font-size: 14px; font-weight: 700; color: #e2e8f0; }
+        .mini-switch { width: 36px; height: 20px; border-radius: 20px; position: relative; flex-shrink: 0; }
+        .mini-switch.off { background: rgba(255,255,255,0.1); }
+        .mini-switch.on { background: var(--kpi-blue); }
+        .mini-switch::after { content:''; position: absolute; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: 0.2s; }
+        .mini-switch.off::after { left: 2px; }
+        .mini-switch.on::after { left: 18px; }
+        .priority-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+        .priority-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 700; }
+        .priority-row .priority-num { background: rgba(34,211,238,0.15); color: #67e8f9; border-radius: 6px; padding: 2px 10px; font-size: 12px; }
 
         /* =========================================
            SLIDE 5: NAVEGACIÓN
@@ -233,12 +316,15 @@
             
             /* Slide 3 Tabla Árbol */
             .mockup-table { width: 100%; overflow-x: auto; display: block; white-space: nowrap; }
-            .m-header { min-width: 900px; }
-            .m-row { min-width: 900px; }
+            .m-header { min-width: 920px; }
+            .m-row { min-width: 920px; }
             
             /* Slide 4 Tabla Compras */
             .purchase-mockup { overflow-x: auto; display: block; }
             .pm-row { min-width: 900px; }
+
+            /* Slide Clasificación/Specs */
+            .specs-grid { grid-template-columns: 1fr; gap: 20px; }
 
             /* Slide 2 Modal Migrate */
             .import-modal { width: 100%; max-width: 100%; }
@@ -276,7 +362,7 @@
             <div class="text-block" style="text-align: center; margin-bottom: 40px;">
                 <h3 style="color: var(--kpi-blue);">El Tablero de Control</h3>
                 <h2>Gestión de Catálogo Omnicanal</h2>
-                <p style="max-width: 900px; margin: 0 auto;">Una barra de herramientas compacta y potente. Diseñada para filtrar estados tras una importación, añadir filas sobre la marcha y exportar tu catálogo a formatos útiles en un solo clic, sin tapar tu área de trabajo.</p>
+                <p style="max-width: 900px; margin: 0 auto;">Una barra de herramientas compacta y potente: tres vistas (Ventas, Costos y Archivos Digitales), buscador con reemplazo de texto masivo, filtros por estado -incluyendo pedidos "En Revisión"- y selección múltiple para editar en lote, sin tapar tu área de trabajo.</p>
             </div>
             
             <div class="visual-block real-toolbar-container">
@@ -289,16 +375,20 @@
                             <div class="rt-views">
                                 <div class="rt-view-btn active"><i class="fas fa-store"></i> Ventas</div>
                                 <div class="rt-view-btn"><i class="fas fa-boxes"></i> Costos</div>
+                                <div class="rt-view-btn"><i class="fas fa-cloud-download-alt"></i> Digitales</div>
                             </div>
                             <div style="width: 1px; height: 16px; background: var(--border-glass); margin: 0 5px;"></div>
                             <div class="rt-filters">
                                 <span class="rt-filter active">Todos (62)</span>
                                 <span class="rt-filter">Modificados (0)</span>
                                 <span class="rt-filter">Errores (0)</span>
+                                <span class="rt-filter">En Revisión (3)</span>
                             </div>
                         </div>
                         
                         <div class="rt-right">
+                            <div class="rt-btn priority" title="Prioridades de Categoría / Marca / Línea"><i class="fas fa-sort-amount-down"></i></div>
+                            <div class="rt-btn selection" title="Modo selección múltiple"><i class="fas fa-tasks"></i></div>
                             <div class="dropdown-container">
                                 <div class="rt-btn">
                                     <i class="fas fa-file-export"></i> Exportar
@@ -311,28 +401,41 @@
                             </div>
                             <div class="rt-btn"><i class="fas fa-file-import"></i> Importar</div>
                             <div class="rt-btn"><i class="fas fa-plus"></i> Nueva Fila</div>
+                            <div class="rt-btn"><i class="fas fa-folder-plus"></i> Nueva Carpeta</div>
                             <div class="rt-btn primary"><i class="fas fa-save"></i> Confirmar Todo</div>
                         </div>
                     </div>
 
+                    <div style="background: rgba(0,0,0,0.15); border-left: 1px solid var(--border-glass); border-right: 1px solid var(--border-glass); padding: 10px 20px;">
+                        <div class="rt-toggle-row">
+                            <div class="rt-toggle-chip on"><i class="fas fa-tags dot-cat"></i> Categorías</div>
+                            <div class="rt-toggle-chip on"><i class="fas fa-copyright dot-brand"></i> Marcas</div>
+                            <div class="rt-toggle-chip on"><i class="fas fa-stream dot-line"></i> Líneas</div>
+                            <div class="rt-toggle-chip"><i class="fas fa-eye-slash"></i> Ocultar apagados</div>
+                            <div class="rt-toggle-chip"><i class="fas fa-truck"></i> Sin proveedor</div>
+                        </div>
+                    </div>
+
                     <div class="rt-table-header">
+                        <div></div>
                         <div style="text-align: center;">ESTADO</div>
+                        <div style="text-align: center;">FOTO</div>
                         <div>PRODUCTO / SKU</div>
-                        <div>CATEGORÍA</div>
                         <div style="text-align: center;">ESCALA 1</div>
                         <div style="text-align: center;">ESCALA 2</div>
-                        <div style="text-align: center;">ESCALA 3</div>
+                        <div></div>
+                        <div></div>
                         <div style="text-align: right;">ACCIONES</div>
                     </div>
                 </div>
             </div>
             
-            <div class="visual-block" style="margin-top: 60px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+            <div class="visual-block" style="margin-top: 50px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
                  <div style="display: flex; gap: 15px; align-items: center;">
                     <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--kpi-red);"><i class="fas fa-file-pdf"></i></div>
                     <div style="text-align: left;">
                         <strong style="display: block; font-size: 16px; margin-bottom: 2px;">Catálogo Visual en PDF</strong>
-                        <span style="font-size: 14px; color: var(--text-muted);">Genera un catálogo listo para clientes.</span>
+                        <span style="font-size: 14px; color: var(--text-muted);">Elegí productos destacados y personalizá logo, banner y marca.</span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 15px; align-items: center;">
@@ -340,6 +443,13 @@
                     <div style="text-align: left;">
                         <strong style="display: block; font-size: 16px; margin-bottom: 2px;">Copy/Paste a Excel</strong>
                         <span style="font-size: 14px; color: var(--text-muted);">Llevate la grilla armada en un clic.</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.05); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--kpi-blue);"><i class="fas fa-exchange-alt"></i></div>
+                    <div style="text-align: left;">
+                        <strong style="display: block; font-size: 16px; margin-bottom: 2px;">Buscar y Reemplazar</strong>
+                        <span style="font-size: 14px; color: var(--text-muted);">Corregí un texto en un producto o en todos a la vez.</span>
                     </div>
                 </div>
             </div>
@@ -395,57 +505,101 @@
         <div class="slide-content-wide">
             <div class="text-block" style="text-align: center; max-width: 1000px; margin: 0 auto 30px auto;">
                 <h3 style="color: var(--kpi-blue);">Estructuras Complejas</h3>
-                <h2>Árboles y Escalas al Vuelo</h2>
-                <p>Agrupá productos en un esquema Padre-Hijo expandible. Cada variante conserva su propio SKU, costo individual y puede ser <strong>vinculada a un código de barras en vivo.</strong></p>
-                <p><strong>Control Granular:</strong> Creá escalas de precios (Tiers) al vuelo, independizá variantes o guardá cambios fila por fila directamente desde la columna de Acciones.</p>
+                <h2>Carpetas, Variantes y Escalas al Vuelo</h2>
+                <p>Organizá tu catálogo en <strong>Carpetas</strong> expandibles (Ej: "Remera Club") que agrupan variantes. Cada variante conserva su propio SKU, foto, costo individual y puede <strong>vincularse a un código de barras en vivo.</strong></p>
+                <p><strong>Clasificación transversal:</strong> las barras de color a los costados marcan Categoría, Marca y Línea de un vistazo, colapsables con un clic. Además podés etiquetar productos como Edición o Tiempo Limitado.</p>
             </div>
             
             <div class="visual-block mockup-table custom-scrollbar">
-                <div class="m-header">
-                    <div>Producto / Variante</div>
-                    <div>Escala 1</div>
-                    <div>Escala 2</div>
-                    <div style="text-align: right;">Acciones</div>
+                <div class="m-header m-grid-cols">
+                    <div></div>
+                    <div class="center">Estado</div>
+                    <div class="center">Foto</div>
+                    <div>Producto / SKU</div>
+                    <div class="center">Escala 1</div>
+                    <div class="center">Escala 2</div>
+                    <div></div>
+                    <div></div>
+                    <div class="center">Acciones</div>
                 </div>
                 
-                <div class="m-row">
-                    <div class="m-parent">
-                        <i class="fas fa-chevron-down text-muted"></i> 
-                        Zapatilla Running Pro
+                <div class="m-row m-grid-cols">
+                    <div class="m-sidebar left" title="Categoría: Indumentaria">
+                        <div class="bar-fill cat-color seg-top"></div>
+                        <span class="bar-label cat-label">Indumentaria</span>
                     </div>
-                    <div class="m-tier">
-                        <div class="tier-box"><span style="font-size: 11px; font-weight: bold; color: var(--text-muted);">MIN</span> <span>1</span></div>
-                        <div class="tier-box" style="border-color: var(--kpi-blue);"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>45,000</span></div>
+                    <div class="m-cell center"><div class="m-status"><div class="mini-toggle"></div><span class="status-pill ok">OK</span></div></div>
+                    <div class="m-cell center"><div class="m-photo m-folder-icon"><i class="fas fa-folder"></i></div></div>
+                    <div class="m-cell m-prod-col">
+                        <div class="m-parent"><i class="fas fa-chevron-down" style="color:#64748b; font-size: 11px;"></i> Remera Club Oversize</div>
+                        <div class="m-sku">FOLDER_REMERA_CLUB</div>
+                        <div class="m-tags"><span class="m-tag limited"><i class="fas fa-star"></i> Edición Limitada</span></div>
                     </div>
-                    <div class="m-tier"></div>
-                    
-                    <div class="m-actions">
-                        <div class="btn-add-tier"><i class="fas fa-plus"></i> Añadir Escala</div>
-                        <div class="btn-action-icon"><i class="fas fa-paperclip"></i></div>
-                    </div>
-                </div>
-                
-                <div class="m-row" style="background: rgba(0,0,0,0.2);">
-                    <div class="m-child">
-                        Rojo - Talle 42
-                        <div style="font-size: 12px; font-family: monospace; color: var(--text-muted); margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-                            RUN-PROX-R42 <i class="fas fa-barcode text-blue" title="Escanear Código (Asignar al vuelo)" style="cursor: pointer;"></i>
+                    <div class="m-cell center">
+                        <div>
+                            <div class="tier-pair">
+                                <div class="tier-box"><span class="tier-lbl">Min</span> <span>1</span></div>
+                                <div class="tier-box price"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>30,000</span></div>
+                            </div>
+                            <div class="folder-price-note">Precio referencia</div>
                         </div>
                     </div>
-                    <div class="m-tier">
-                        <div class="tier-box"><span style="font-size: 11px; font-weight: bold; color: var(--text-muted);">MIN</span> <span>1</span></div>
-                        <div class="tier-box"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>45,000</span></div>
+                    <div class="m-cell center"><div class="add-tier-ph"><i class="fas fa-plus"></i> Añadir</div></div>
+                    <div class="m-sidebar right" title="Marca: Nike"><div class="bar-fill brand-color seg-top"></div><span class="bar-label brand-label">Nike</span></div>
+                    <div class="m-sidebar right" title="Línea: Oversize"><div class="bar-fill line-color seg-top"></div><span class="bar-label line-label">Oversize</span></div>
+                    <div class="m-cell"><div class="m-actions">
+                        <div class="btn-action-icon tag" title="Aplicar precios a variantes"><i class="fas fa-tags"></i></div>
+                        <div class="btn-action-icon specs" title="Heredar clasificación"><i class="fas fa-share-alt"></i></div>
+                        <div class="btn-action-icon detach" title="Liberar carpeta"><i class="fas fa-unlink"></i></div>
+                    </div></div>
+                </div>
+                
+                <div class="m-row m-grid-cols is-child">
+                    <div class="m-sidebar left"><div class="bar-fill cat-color seg-mid"></div></div>
+                    <div class="m-cell center"><div class="m-status"><div class="mini-toggle"></div><span class="status-pill ok">OK</span></div></div>
+                    <div class="m-cell center"><div class="m-photo"><i class="fas fa-image"></i></div></div>
+                    <div class="m-cell m-prod-col">
+                        <div class="m-child-name"><i class="fas fa-level-up-alt fa-rotate-90"></i> Negro M</div>
+                        <div class="m-sku">NIKE_OVERSIZE_CLUB_NEGRO_M <i class="fas fa-barcode" style="color: var(--kpi-blue);"></i></div>
                     </div>
-                    <div class="m-tier">
-                        <div class="tier-box"><span style="font-size: 11px; font-weight: bold; color: var(--text-muted);">MIN</span> <span>3</span></div>
-                        <div class="tier-box" style="border-color: var(--kpi-purple);"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>38,000</span></div>
+                    <div class="m-cell center">
+                        <div class="tier-pair">
+                            <div class="tier-box"><span class="tier-lbl">Min</span> <span>1</span></div>
+                            <div class="tier-box price"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>30,000</span></div>
+                        </div>
                     </div>
-                    
-                    <div class="m-actions">
-                        <div class="btn-add-tier"><i class="fas fa-plus"></i> Añadir Escala</div>
-                        <div class="btn-action-icon" style="color: var(--kpi-orange);" title="Independizar Variante"><i class="fas fa-unlink"></i></div>
-                        <div class="btn-action-icon" style="color: var(--kpi-orange); background: rgba(245, 158, 11, 0.1);" title="Guardar Cambios Individuales"><i class="fas fa-save"></i></div>
+                    <div class="m-cell center"><div class="add-tier-ph"><i class="fas fa-plus"></i> Añadir</div></div>
+                    <div class="m-sidebar right"><div class="bar-fill brand-color seg-mid"></div></div>
+                    <div class="m-sidebar right"><div class="bar-fill line-color seg-mid"></div></div>
+                    <div class="m-cell"><div class="m-actions">
+                        <div class="btn-action-icon merge" title="Unificar duplicado"><i class="fas fa-compress-arrows-alt"></i></div>
+                        <div class="btn-action-icon detach" title="Independizar variante"><i class="fas fa-unlink"></i></div>
+                        <div class="btn-action-icon save" title="Guardar cambios"><i class="fas fa-save"></i></div>
+                    </div></div>
+                </div>
+
+                <div class="m-row m-grid-cols is-child">
+                    <div class="m-sidebar left"><div class="bar-fill cat-color seg-bottom"></div></div>
+                    <div class="m-cell center"><div class="m-status"><div class="mini-toggle"></div><span class="status-pill ok">OK</span></div></div>
+                    <div class="m-cell center"><div class="m-photo"><i class="fas fa-image"></i></div></div>
+                    <div class="m-cell m-prod-col">
+                        <div class="m-child-name"><i class="fas fa-level-up-alt fa-rotate-90"></i> Blanco XL</div>
+                        <div class="m-sku">NIKE_OVERSIZE_CLUB_BLANCO_XL</div>
+                        <div class="m-tags"><span class="m-tag timed"><i class="fas fa-clock"></i> Hasta 31/07</span></div>
                     </div>
+                    <div class="m-cell center">
+                        <div class="tier-pair">
+                            <div class="tier-box"><span class="tier-lbl">Min</span> <span>1</span></div>
+                            <div class="tier-box price"><span style="color: var(--kpi-green); font-weight: bold;">$</span> <span>30,000</span></div>
+                        </div>
+                    </div>
+                    <div class="m-cell center"><div class="add-tier-ph"><i class="fas fa-plus"></i> Añadir</div></div>
+                    <div class="m-sidebar right"><div class="bar-fill brand-color seg-bottom"></div></div>
+                    <div class="m-sidebar right"><div class="bar-fill line-color seg-bottom"></div></div>
+                    <div class="m-cell"><div class="m-actions">
+                        <div class="btn-action-icon" style="color:#34d399;" title="Heredar precios"><i class="fas fa-coins"></i></div>
+                        <div class="btn-action-icon specs" title="Editar especificaciones"><i class="fas fa-sliders-h"></i></div>
+                    </div></div>
                 </div>
             </div>
         </div>
@@ -456,9 +610,9 @@
         <div class="slide-content-wide">
             <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 900px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-orange);">Inteligencia Financiera</h3>
-                <h2>Motor de Costos Efectivos</h2>
-                <p>Alterná a la vista de "Costos". La regla "Mejor Precio Auto" vigila a tus proveedores, calcula el costo efectivo al instante y te muestra tu margen de ganancia real (Descuento y Remarque).</p>
-                <p style="font-size: 15px; color: var(--kpi-orange); margin-top: 10px; font-weight: bold;"><i class="fas fa-link"></i> Los costos se cruzan y actualizan automáticamente desde el módulo de Proveedores.</p>
+                <h2>Motor de Costos Multi-Proveedor</h2>
+                <p>Alterná a la vista de "Costos". Cargá varios proveedores por producto -incluso costo interno heredado de una Fábrica- y la regla "Mejor Precio Auto" calcula el costo efectivo al instante junto a tu margen real (Descuento y Remarque).</p>
+                <p style="font-size: 15px; color: var(--kpi-orange); margin-top: 10px; font-weight: bold;"><i class="fas fa-coins"></i> Heredá el costo de un proveedor a toda una Línea, Marca o Categoría en un clic.</p>
             </div>
 
             <div class="visual-block glass-panel" style="width: 100%; padding: 0; background: transparent; border: none; box-shadow: none;">
@@ -468,36 +622,102 @@
                 </div>
                 
                 <div class="purchase-mockup table-responsive custom-scrollbar">
-                    <div class="pm-row">
+                    <div class="pm-row" style="grid-template-columns: 1.6fr 2fr 1fr 1fr;">
                         <div>
                             <strong style="display: block; font-size: 20px; color: white;">Set Velas Aromáticas</strong>
                             <span style="color: var(--text-muted); font-size: 15px; font-family: monospace; margin-top: 5px; display: block;">SKU: VELA-01</span>
                         </div>
-                        
-                        <div>
-                            <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Regla de Asignación</div>
-                            <div class="assign-select">✨ MEJOR PRECIO (Auto)</div>
+
+                        <div class="supplier-stack">
+                            <div class="supplier-chip internal">
+                                <span class="sc-name"><i class="fas fa-industry"></i> Fábrica Central</span>
+                                <span class="sc-cost">$3,950</span>
+                            </div>
+                            <div class="supplier-chip">
+                                <span class="sc-name"><i class="fas fa-truck"></i> Distribuidora Sur</span>
+                                <span class="sc-cost">$4,200</span>
+                            </div>
                         </div>
 
-                        <div style="text-align: right;">
-                            <span style="display: block; font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Costo Efectivo</span>
-                            <strong style="font-size: 26px; color: var(--text-main);">$4,200</strong>
+                        <div>
+                            <div style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Asignación</div>
+                            <div class="assign-select">✨ MEJOR PRECIO (Auto)</div>
+                            <div style="margin-top: 10px; text-align: center;">
+                                <span style="display: block; font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Costo Efectivo</span>
+                                <strong style="font-size: 24px; color: var(--text-main);">$3,950</strong>
+                            </div>
                         </div>
                         
                         <div class="margins-box">
                             <div class="margin-item">
                                 <span style="color: var(--kpi-red); font-weight: bold;">Desc:</span>
-                                <span style="color: white; font-weight: bold;">58.00%</span>
+                                <span style="color: white; font-weight: bold;">60.50%</span>
                             </div>
                             <div class="margin-item">
                                 <span style="color: var(--kpi-green); font-weight: bold;">Rem:</span>
-                                <span style="color: white; font-weight: bold;">138.10%</span>
+                                <span style="color: white; font-weight: bold;">153.16%</span>
                             </div>
+                            <div class="btn-add-tier" style="margin-top: 4px; justify-content: center;"><i class="fas fa-coins"></i> Heredar a Línea</div>
                         </div>
                     </div>
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="glow-blue" style="top: -200px; right: -200px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 10px; max-width: 950px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple);">Clasificación Transversal</h3>
+                <h2>Especificaciones, Etiquetas y Prioridades</h2>
+                <p>Un modal dedicado a Categoría, Marca y Línea, ficha técnica (unidad base, venta fraccionada) y etiquetas de marketing como Edición o Tiempo Limitado. Todo aplicable en lote a varios productos seleccionados a la vez.</p>
+            </div>
+
+            <div class="visual-block specs-grid">
+                <div class="specs-card">
+                    <h4><i class="fas fa-sliders-h" style="color: var(--kpi-blue); margin-right: 6px;"></i>Especificaciones del producto</h4>
+                    <div class="specs-field">
+                        <label>Categoría</label>
+                        <div class="specs-fake-input">Indumentaria</div>
+                    </div>
+                    <div class="specs-field">
+                        <label>Marca</label>
+                        <div class="specs-fake-input">Nike</div>
+                    </div>
+                    <div class="specs-field">
+                        <label>Línea</label>
+                        <div class="specs-fake-input">Oversize</div>
+                    </div>
+                    <div class="specs-toggle-row">
+                        <span><i class="fas fa-star" style="color:#818cf8; margin-right:6px;"></i>Edición Limitada</span>
+                        <div class="mini-switch on"></div>
+                    </div>
+                    <div class="specs-toggle-row">
+                        <span><i class="fas fa-clock" style="color:#fb923c; margin-right:6px;"></i>Tiempo Limitado</span>
+                        <div class="mini-switch off"></div>
+                    </div>
+                    <div class="specs-toggle-row">
+                        <span><i class="fas fa-weight-hanging" style="color:#94a3b8; margin-right:6px;"></i>Venta por Fracción / Peso</span>
+                        <div class="mini-switch off"></div>
+                    </div>
+                </div>
+
+                <div class="specs-card">
+                    <h4><i class="fas fa-sort-amount-down" style="color: #22d3ee; margin-right: 6px;"></i>Prioridades de catálogo</h4>
+                    <p style="text-align: left; font-size: 13px; margin-bottom: 14px;">Definí qué categorías, marcas o líneas aparecen primero en toda la grilla y en el PDF, sin depender del orden alfabético.</p>
+                    <div class="priority-list">
+                        <div class="priority-row"><span>Indumentaria</span><span class="priority-num">100</span></div>
+                        <div class="priority-row"><span>Calzado</span><span class="priority-num">50</span></div>
+                        <div class="priority-row"><span>Accesorios</span><span class="priority-num">0</span></div>
+                    </div>
+                    <div style="margin-top: 22px; display:flex; align-items:center; gap:10px; background: rgba(217,70,239,0.08); border: 1px solid rgba(217,70,239,0.2); border-radius: 10px; padding: 12px 14px;">
+                        <i class="fas fa-cloud-download-alt" style="color: var(--kpi-purple); font-size: 18px;"></i>
+                        <span style="font-size: 13px; color: #f0abfc; text-align:left; font-weight: 600;">Los productos digitales (e-books, licencias) tienen su propia grilla simplificada: nombre, precio y enlace de descarga.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

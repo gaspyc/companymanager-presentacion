@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directorio de Clientes (CRM) - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-amber: #fbbf24;
+            --kpi-red: #ef4444;
+            --kpi-pink: #ec4899;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh; width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0; pointer-events: none; z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%; max-width: 1400px;
+            position: relative; z-index: 2;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px;
+            z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px;
+            border-radius: 50px; border: 1px solid var(--border-glass);
+            backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-purple); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .grid-split-large-left { display: grid; grid-template-columns: 1.3fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        /* =============================================
+           SLIDE 2: TOOLBAR + TABLA FIEL A LA APP
+           ============================================= */
+
+        /* Toolbar exacta del CRM */
+        .crm-toolbar {
+            display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .search-box {
+            display: flex; align-items: center;
+            background: rgba(0,0,0,0.3); padding: 0 15px; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1); width: 240px; height: 42px;
+        }
+        .search-box i { color: #64748b; margin-right: 10px; }
+        .search-box input { background: transparent; border: none; color: #94a3b8; width: 100%; outline: none; font-size: 0.9rem; font-family: 'Urbanist', sans-serif; }
+
+        .tabs-container { display: flex; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 4px; border: 1px solid rgba(255,255,255,0.05); }
+        .tab-btn { padding: 7px 14px; border: none; background: transparent; color: #64748b; border-radius: 8px; font-weight: 600; font-size: 0.8rem; cursor: default; display: flex; align-items: center; gap: 7px; font-family: 'Urbanist', sans-serif; white-space: nowrap; }
+        .tab-btn.active { background: #3b82f6; color: white; box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
+        .badge-count { background: #ef4444; color: white; padding: 2px 6px; border-radius: 12px; font-size: 0.65rem; font-weight: bold; }
+
+        .date-filter-compact {
+            display: flex; align-items: center; gap: 8px;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+            padding: 6px 12px; background: rgba(0,0,0,0.3); height: 42px; margin-left: auto;
+        }
+        .date-input-mock { color: #cbd5e1; font-size: 0.82rem; font-family: 'Urbanist', sans-serif; }
+        .date-sep { color: #64748b; font-weight: bold; }
+
+        /* Tabla fiel a la app */
+        .crm-table { width: 100%; border-collapse: collapse; text-align: center; }
+        .crm-table th {
+            padding: 13px 16px; color: #94a3b8; font-size: 0.75rem; text-transform: uppercase;
+            font-weight: 700; border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(15, 23, 42, 0.95); letter-spacing: 0.5px; white-space: nowrap;
+        }
+        .crm-table th .sort-icon { color: #4b5563; font-size: 0.7rem; margin-left: 4px; }
+        .crm-table th .sort-active { color: #3b82f6; }
+        .crm-table td { padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.02); vertical-align: middle; }
+        .hover-row:hover { background: rgba(255,255,255,0.02); }
+
+        .customer-profile { display: flex; align-items: center; gap: 14px; text-align: left; }
+        .avatar { width: 44px; height: 44px; background: linear-gradient(135deg, #a855f7, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.15rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); flex-shrink: 0; }
+        .name-block { display: flex; flex-direction: column; align-items: flex-start; }
+        .name-block strong { font-size: 1rem; color: white; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .alias-tag { font-size: 0.72rem; background: rgba(51,65,85,0.8); color: #94a3b8; padding: 2px 7px; border-radius: 6px; font-style: italic; font-weight: 400; }
+        .customer-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+        .vip-badge { background: rgba(245,158,11,0.15); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); font-size: 0.65rem; padding: 2px 6px; border-radius: 20px; font-weight: 800; }
+        .credits-badge { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); font-size: 0.65rem; padding: 2px 6px; border-radius: 20px; font-weight: 800; }
+        .issue-badge { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); font-size: 0.65rem; padding: 2px 6px; border-radius: 20px; font-weight: 800; }
+        .customer-id { color: #64748b; font-size: 0.72rem; margin-top: 3px; }
+        .customer-notes { color: #64748b; font-size: 0.72rem; border-left: 1px solid #334155; padding-left: 6px; margin-left: 4px; }
+
+        .contact-block { display: flex; flex-direction: column; gap: 4px; font-size: 0.83rem; color: #cbd5e1; text-align: left; }
+
+        .last-date { color: #cbd5e1; font-size: 0.83rem; font-weight: 800; }
+        .last-date.muted { color: #64748b; font-style: italic; }
+        .badge-blue { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 0.83rem; }
+
+        .metric-positive { color: #34d399; font-weight: 800; font-size: 1.05rem; }
+        .metric-negative { color: #f87171; font-weight: 800; font-size: 1.05rem; }
+        .metric-warn { color: #fbbf24; font-weight: 800; font-size: 1.05rem; }
+        .metric-empty { color: #475569; font-size: 0.85rem; }
+
+        .action-buttons { display: flex; justify-content: center; gap: 7px; }
+        .btn-icon {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            color: #94a3b8; width: 34px; height: 34px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+            cursor: default; transition: 0.2s;
+        }
+        .btn-icon.vip-active { color: #fbbf24; background: rgba(245,158,11,0.1); }
+
+        /* =============================================
+           SLIDE 3: HISTORIAL & WHATSAPP
+           ============================================= */
+        .receipt-card { background: rgba(30,41,59,0.95); border: 1px solid var(--border-glass); border-radius: 12px; overflow: hidden; box-shadow: 0 15px 30px rgba(0,0,0,0.6); position: relative; }
+        .receipt-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--kpi-green); }
+        .rh-header { padding: 14px 18px 14px 22px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .rh-grid { display: flex; justify-content: space-between; align-items: stretch; }
+        .rh-left { display: flex; flex-direction: column; justify-content: space-between; }
+        .rh-title { display: flex; align-items: center; gap: 10px; }
+        .rh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .badge-status { font-size: 0.7rem; padding: 4px 10px; border-radius: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .status-completed { background: rgba(16,185,129,0.15); color: #34d399; }
+        .cashier-badge { background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px; color: #cbd5e1; font-weight: 600; font-size: 0.78rem; }
+        .btn-whatsapp { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); padding: 6px 14px; border-radius: 8px; font-size: 0.83rem; font-weight: 700; cursor: default; display: flex; align-items: center; gap: 8px; }
+
+        .rh-body { padding: 14px 18px 14px 22px; display: flex; flex-direction: column; gap: 9px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .receipt-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .item-info { display: flex; gap: 10px; flex: 1; }
+        .item-qty { font-weight: 800; color: #64748b; }
+        .item-name { color: #e2e8f0; font-size: 0.93rem; }
+        .item-prices { display: flex; flex-direction: column; align-items: flex-end; }
+        .original-price { font-size: 0.78rem; color: #ef4444; text-decoration: line-through; opacity: 0.8; }
+        .final-price { font-weight: 600; color: white; }
+
+        .rh-footer { padding: 14px 18px 14px 22px; background: rgba(0,0,0,0.2); }
+        .footer-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; font-size: 0.93rem; color: #94a3b8; }
+        .discount-row-wrap { margin-bottom: 8px; }
+        .discount-row { display: flex; justify-content: space-between; color: #34d399; font-weight: 600; background: rgba(16,185,129,0.05); padding: 5px 10px; border-radius: 8px 8px 0 0; }
+        .discount-reason { background: rgba(6,78,59,0.35); color: #6ee7b7; font-size: 0.72rem; padding: 5px 10px; border-radius: 0 0 8px 8px; border: 1px solid rgba(16,185,129,0.2); border-top: none; text-align: right; }
+        .total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 900; color: white; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; margin-top: 10px; }
+        .payment-method { margin-top: 12px; text-align: center; font-size: 0.78rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255,255,255,0.03); padding: 7px; border-radius: 8px; }
+
+        .wa-bubble { background: #005c4b; color: white; padding: 14px 18px; border-radius: 0 16px 16px 16px; font-family: monospace; white-space: pre-wrap; font-size: 11.5px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); line-height: 1.55; border: 1px solid rgba(255,255,255,0.1); }
+
+        /* =============================================
+           SLIDE 4: FIDELIZACIÓN
+           ============================================= */
+        .modal-mockup { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; width: 100%; }
+        .mm-header { padding: 18px 22px; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+        .mm-body { padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+        .mm-label { font-size: 0.78rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+        .mm-input-wrap { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 11px 14px; border-radius: 8px; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .mm-input-wrap.amber-focus { border-color: rgba(245,158,11,0.5); box-shadow: 0 0 0 2px rgba(245,158,11,0.1); }
+        .mm-input-wrap.blue-focus { border-color: rgba(59,130,246,0.5); box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .mm-input-wrap input { background: transparent; border: none; color: white; font-size: 1.15rem; font-weight: bold; width: 100%; outline: none; font-family: 'Urbanist', sans-serif; }
+        .mm-info { color: #64748b; font-size: 0.82rem; }
+        .mm-footer { padding: 14px 22px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-cancel-sm { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: default; }
+        .btn-save-amber { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fbbf24; padding: 9px 18px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: default; display: flex; align-items: center; gap: 7px; }
+        .btn-save-green { background: #10b981; color: white; padding: 9px 18px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: default; border: none; }
+        .mm-customer-desc { color: #94a3b8; font-size: 0.83rem; line-height: 1.5; }
+
+        /* =============================================
+           SLIDE 5: MERGE
+           ============================================= */
+        .alert-box { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #bfdbfe; padding: 14px; border-radius: 10px; font-size: 0.83rem; line-height: 1.55; margin-bottom: 18px; }
+        .target-option { display: flex; justify-content: space-between; align-items: center; padding: 13px 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; margin-bottom: 8px; }
+        .target-option.selected { border-color: #10b981; background: rgba(16,185,129,0.1); }
+
+        /* =============================================
+           SLIDE 6: NAVEGACIÓN
+           ============================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; cursor: pointer; text-decoration: none; }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* =============================================
+           RESPONSIVE MÓVIL — FIEL A LA APP VUE
+           ============================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+
+            .slide {
+                position: relative; width: 100%; height: auto; min-height: 100vh;
+                border-radius: 0; border: none;
+                padding: 20px 15px 140px 15px;
+                display: none; overflow-y: visible; box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split, .grid-split-large-left { grid-template-columns: 1fr; gap: 30px; }
+
+            .text-block { order: 1; text-align: center !important; margin-bottom: 10px; }
+            .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 38px; }
+            h2 { font-size: 28px; }
+            h3 { font-size: 18px; }
+            p { font-size: 15px; }
+
+            /* === TOOLBAR MÓVIL (igual que la app) === */
+            .crm-toolbar {
+                flex-direction: column; align-items: stretch; gap: 12px;
+            }
+            .search-box { width: 100%; }
+            .tabs-container { width: 100%; }
+            .tab-btn { flex: 1; justify-content: center; font-size: 0.75rem; padding: 7px 8px; }
+            .date-filter-compact { width: 100%; margin-left: 0; justify-content: space-between; }
+
+            /* === TABLA → TARJETAS (igual que la app) === */
+            .table-wrapper { overflow-x: unset !important; border-radius: 12px; }
+            .crm-table { display: block; }
+            .crm-table thead { display: none; }
+            .crm-table tbody { display: block; }
+            .crm-table tbody tr { display: flex; flex-direction: column; padding: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; gap: 10px; }
+            .crm-table tbody tr td { display: none; padding: 0; border: none; }
+            /* Solo mostramos columnas clave en tarjeta móvil */
+            .crm-table tbody tr td.td-profile { display: block; padding-right: 36px; }
+            .crm-table tbody tr td.td-contact-mobile { display: flex; flex-direction: column; gap: 4px; padding-left: 58px; margin-top: -4px; }
+            .crm-table tbody tr td.td-stats-mobile {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+                padding-left: 58px;
+            }
+            .stat-item { display: flex; flex-direction: column; }
+            .stat-label { font-size: 0.7rem; color: #64748b; font-weight: 700; text-transform: uppercase; }
+            .stat-value { font-size: 1rem; font-weight: 800; }
+
+            /* Mobile action dots (3 dots like the app) */
+            .mobile-dots-container {
+                position: absolute; top: 10px; right: 10px;
+                display: flex; gap: 5px;
+                background: rgba(0,0,0,0.4); padding: 5px 8px; border-radius: 20px;
+            }
+            .tab-dot {
+                width: 6px; height: 6px; border-radius: 50%;
+                background: rgba(255,255,255,0.2);
+            }
+            .tab-dot.active { background: #3b82f6; }
+
+            /* Botones de acción en móvil */
+            .crm-table tbody tr td.td-actions-mobile {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 4px;
+            }
+            .btn-action-mobile {
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.05);
+                color: #cbd5e1; padding: 9px 0; border-radius: 8px;
+                font-size: 0.72rem; display: flex; flex-direction: column;
+                align-items: center; gap: 4px; font-family: 'Urbanist', sans-serif;
+            }
+            .btn-action-mobile i { font-size: 1rem; }
+
+            /* Receipt card móvil */
+            .receipt-card { width: 100% !important; }
+            .wa-bubble { border-radius: 16px !important; font-size: 11px; }
+
+            /* Modals en móvil: ancho completo */
+            .modal-mockup { max-width: 100%; }
+            .mm-body { padding: 16px; }
+            .mm-body .flex-row { flex-direction: column; }
+            .mm-footer { padding: 14px 16px; }
+
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; gap: 15px; }
+            .qa-icon { width: 46px; height: 46px; font-size: 18px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 13px; }
+
+            /* Grid del modal de pases en móvil */
+            .pass-inputs-row { flex-direction: column !important; gap: 12px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
+        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRO -->
+    <div class="slide active">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-purple);">Fidelización y LTV</h3>
+                <h1>Directorio de <br><span style="color: white;">Clientes (CRM)</span></h1>
+                <p>Mucho más que una simple agenda de contactos. Es un motor de relacionamiento integrado nativamente con la Caja y el Catálogo.</p>
+                <p>Mide la rentabilidad real de tu base de datos (Lifetime Value), recompensa a tus mejores compradores de forma automática y unifica el historial de compras presenciales y online en un solo perfil.</p>
+            </div>
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; width: 100%;">
+                <i class="fas fa-users" style="font-size: 80px; color: var(--kpi-purple); margin-bottom: 30px;"></i>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 90%;">
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-chart-line mr-2" style="color: #64748b;"></i> Lifetime Value (LTV)</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fab fa-whatsapp mr-2" style="color: #64748b;"></i> Envío de Tickets</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-crown mr-2" style="color: #64748b;"></i> Reglas VIP Auto</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-link mr-2" style="color: #64748b;"></i> Limpieza de Datos</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: TOOLBAR + TABLA COMPLETA -->
+    <div class="slide">
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 28px; max-width: 900px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">La Salud de tu Base de Datos</h3>
+                <h2>Métricas de Retención en Vivo</h2>
+                <p>Identificá quiénes son los clientes que más facturan y cuánta ganancia real te dejan. El panel cruza el historial de facturación para calcular Pedidos, Total Gastado, Neto y Margen de cada cliente.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <!-- Toolbar fiel a la app -->
+                <div class="crm-toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Buscar por alias, nota, tel..." readonly>
+                    </div>
+                    <div class="tabs-container">
+                        <div class="tab-btn active"><i class="fas fa-walking"></i> Finales</div>
+                        <div class="tab-btn"><i class="fas fa-id-card"></i> Asociados</div>
+                        <div class="tab-btn"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> A revisar <span class="badge-count">2</span></div>
+                    </div>
+                    <div class="date-filter-compact">
+                        <span class="date-input-mock">27/05/2026</span>
+                        <span class="date-sep">—</span>
+                        <span class="date-input-mock">26/06/2026</span>
+                    </div>
+                </div>
+
+                <!-- Tabla con todas las columnas de la app -->
+                <div class="glass-panel" style="padding: 0; overflow: hidden; width: 100%;">
+                    <div class="table-wrapper" style="overflow-x: auto;">
+                        <table class="crm-table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: left;">Cliente <i class="fas fa-sort sort-icon"></i></th>
+                                    <th style="text-align: left;">Contacto</th>
+                                    <th>Última compra <i class="fas fa-sort sort-icon"></i></th>
+                                    <th>Pedidos <i class="fas fa-sort-down sort-active sort-icon"></i></th>
+                                    <th style="text-align: right;">Total Gastado <i class="fas fa-sort sort-icon"></i></th>
+                                    <th style="text-align: right;">Neto <i class="fas fa-sort sort-icon"></i></th>
+                                    <th style="text-align: right;">Margen <i class="fas fa-sort sort-icon"></i></th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Fila 1: Cliente VIP con notas -->
+                                <tr class="hover-row">
+                                    <td class="td-profile">
+                                        <!-- Dots móvil -->
+                                        <div class="mobile-dots-container">
+                                            <div class="tab-dot active"></div>
+                                            <div class="tab-dot"></div>
+                                            <div class="tab-dot"></div>
+                                        </div>
+                                        <div class="customer-profile">
+                                            <div class="avatar">J</div>
+                                            <div class="name-block">
+                                                <strong>
+                                                    Juan Pérez
+                                                    <span class="alias-tag">"cuenta.mp"</span>
+                                                </strong>
+                                                <div class="customer-tags">
+                                                    <span class="vip-badge"><i class="fas fa-crown mr-1"></i>15%</span>
+                                                </div>
+                                                <div class="customer-id">ID: #1045 <span class="customer-notes">- Cliente mayorista frecuente</span></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="td-contact-mobile">
+                                        <div class="contact-block">
+                                            <span><i class="fas fa-id-card mr-1" style="color:#60a5fa;"></i> 35.123.456</span>
+                                            <span><i class="fab fa-whatsapp mr-1" style="color:#4ade80;"></i> +54 9 11 2345-6789</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="last-date">15 jun. 2026</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-blue">14</span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <strong class="metric-positive" style="font-size: 1.1rem;">$ 450.000</strong>
+                                    </td>
+                                    <td style="text-align: right;" class="td-stats-mobile">
+                                        <strong class="metric-positive">$ 180.000</strong>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <strong class="metric-positive">40%</strong>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <div class="btn-icon" title="Editar"><i class="fas fa-pen"></i></div>
+                                            <div class="btn-icon" title="Historial"><i class="fas fa-history"></i></div>
+                                            <div class="btn-icon vip-active" title="Editar VIP"><i class="fas fa-star"></i></div>
+                                            <div class="btn-icon" title="Fusionar"><i class="fas fa-link"></i></div>
+                                            <div class="btn-icon" title="Cargar Pase"><i class="fas fa-ticket-alt" style="color:#34d399;"></i></div>
+                                        </div>
+                                    </td>
+                                    <!-- Columnas solo para móvil -->
+                                    <td class="td-stats-mobile" style="display:none;">
+                                        <div class="stat-item">
+                                            <span class="stat-label">Gastado</span>
+                                            <span class="stat-value metric-positive">$ 450.000</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Neto</span>
+                                            <span class="stat-value metric-positive">$ 180.000</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Pedidos</span>
+                                            <span class="stat-value"><span class="badge-blue">14</span></span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Margen</span>
+                                            <span class="stat-value metric-positive">40%</span>
+                                        </div>
+                                    </td>
+                                    <td class="td-actions-mobile">
+                                        <button class="btn-action-mobile"><i class="fas fa-pen"></i> Editar</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-history"></i> Historial</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-star" style="color:#fbbf24;"></i> VIP</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-link"></i> Fusionar</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-ticket-alt" style="color:#34d399;"></i> Pase</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Fila 2: Cliente con pases y margen bajo -->
+                                <tr class="hover-row">
+                                    <td class="td-profile">
+                                        <div class="mobile-dots-container">
+                                            <div class="tab-dot active"></div>
+                                            <div class="tab-dot"></div>
+                                            <div class="tab-dot"></div>
+                                        </div>
+                                        <div class="customer-profile">
+                                            <div class="avatar">M</div>
+                                            <div class="name-block">
+                                                <strong>María López</strong>
+                                                <div class="customer-tags">
+                                                    <span class="credits-badge"><i class="fas fa-ticket-alt mr-1"></i>4 pases</span>
+                                                </div>
+                                                <div class="customer-id">ID: #1048</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="td-contact-mobile">
+                                        <div class="contact-block">
+                                            <span><i class="fas fa-id-card mr-1" style="color:#60a5fa;"></i> 40.987.654</span>
+                                            <span style="color:#64748b; font-style: italic;">Sin teléfono</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="last-date">02 jun. 2026</span></td>
+                                    <td><span class="badge-blue">3</span></td>
+                                    <td style="text-align: right;"><strong class="metric-positive" style="font-size: 1.1rem;">$ 24.500</strong></td>
+                                    <td style="text-align: right;"><strong class="metric-warn">$ 2.940</strong></td>
+                                    <td style="text-align: right;"><strong class="metric-warn">12%</strong></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <div class="btn-icon"><i class="fas fa-pen"></i></div>
+                                            <div class="btn-icon"><i class="fas fa-history"></i></div>
+                                            <div class="btn-icon"><i class="far fa-star"></i></div>
+                                            <div class="btn-icon"><i class="fas fa-link"></i></div>
+                                            <div class="btn-icon"><i class="fas fa-ticket-alt" style="color:#34d399;"></i></div>
+                                        </div>
+                                    </td>
+                                    <td class="td-stats-mobile" style="display:none;">
+                                        <div class="stat-item"><span class="stat-label">Gastado</span><span class="stat-value metric-positive">$ 24.500</span></div>
+                                        <div class="stat-item"><span class="stat-label">Neto</span><span class="stat-value metric-warn">$ 2.940</span></div>
+                                        <div class="stat-item"><span class="stat-label">Pedidos</span><span class="stat-value"><span class="badge-blue">3</span></span></div>
+                                        <div class="stat-item"><span class="stat-label">Margen</span><span class="stat-value metric-warn">12%</span></div>
+                                    </td>
+                                    <td class="td-actions-mobile">
+                                        <button class="btn-action-mobile"><i class="fas fa-pen"></i> Editar</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-history"></i> Historial</button>
+                                        <button class="btn-action-mobile"><i class="far fa-star"></i> VIP</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-link"></i> Fusionar</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-ticket-alt" style="color:#34d399;"></i> Pase</button>
+                                    </td>
+                                </tr>
+
+                                <!-- Fila 3: Cliente con issue badge (duplicado) -->
+                                <tr class="hover-row">
+                                    <td class="td-profile">
+                                        <div class="mobile-dots-container">
+                                            <div class="tab-dot active"></div>
+                                            <div class="tab-dot"></div>
+                                            <div class="tab-dot"></div>
+                                        </div>
+                                        <div class="customer-profile">
+                                            <div class="avatar" style="background: linear-gradient(135deg,#6366f1,#8b5cf6);">C</div>
+                                            <div class="name-block">
+                                                <strong>Carlos Medina</strong>
+                                                <div class="customer-tags">
+                                                    <span class="issue-badge"><i class="fas fa-exclamation-circle mr-1"></i>Teléfono duplicado</span>
+                                                    <span class="issue-badge"><i class="fas fa-exclamation-circle mr-1"></i>Nombre duplicado</span>
+                                                </div>
+                                                <div class="customer-id">ID: #1051</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="td-contact-mobile">
+                                        <div class="contact-block">
+                                            <span><i class="fab fa-whatsapp mr-1" style="color:#4ade80;"></i> +54 9 11 5555-1234</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="last-date muted">Sin compras</span></td>
+                                    <td><span class="badge-blue">1</span></td>
+                                    <td style="text-align: right;"><strong class="metric-positive" style="font-size: 1.1rem;">$ 8.200</strong></td>
+                                    <td style="text-align: right;"><span class="metric-empty">—</span></td>
+                                    <td style="text-align: right;"><span class="metric-empty">—</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <div class="btn-icon"><i class="fas fa-pen"></i></div>
+                                            <div class="btn-icon"><i class="fas fa-history"></i></div>
+                                            <div class="btn-icon"><i class="far fa-star"></i></div>
+                                            <div class="btn-icon" style="color:#818cf8;"><i class="fas fa-link"></i></div>
+                                            <div class="btn-icon"><i class="fas fa-ticket-alt" style="color:#34d399;"></i></div>
+                                        </div>
+                                    </td>
+                                    <td class="td-stats-mobile" style="display:none;"></td>
+                                    <td class="td-actions-mobile">
+                                        <button class="btn-action-mobile"><i class="fas fa-pen"></i> Editar</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-history"></i> Historial</button>
+                                        <button class="btn-action-mobile"><i class="fas fa-link" style="color:#818cf8;"></i> Fusionar</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: HISTORIAL & WHATSAPP -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split-large-left">
+
+            <div class="visual-block" style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; gap: 0;">
+
+                <div class="receipt-card" style="width: 420px; z-index: 2;">
+                    <div class="rh-header">
+                        <div class="rh-grid">
+                            <div class="rh-left">
+                                <div class="rh-title">
+                                    <strong style="color: white; font-size: 1.1rem;">Ticket #1042</strong>
+                                    <span class="badge-status status-completed">COMPLETADO</span>
+                                </div>
+                                <span style="color: #94a3b8; font-size: 0.83rem; margin-top: 10px;"><i class="far fa-calendar-alt mr-1"></i> 15 jun. 2026 — 14:30</span>
+                            </div>
+                            <div class="rh-right">
+                                <div class="btn-whatsapp"><i class="fab fa-whatsapp"></i> Enviar</div>
+                                <span class="cashier-badge"><i class="fas fa-user-tag mr-1"></i> Ana García</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rh-body">
+                        <div class="receipt-item">
+                            <div class="item-info">
+                                <span class="item-qty">2x</span>
+                                <span class="item-name">Difusor Vainilla</span>
+                            </div>
+                            <div class="item-prices">
+                                <span class="original-price">$ 12.000</span>
+                                <span class="final-price">$ 10.000</span>
+                            </div>
+                        </div>
+                        <div class="receipt-item">
+                            <div class="item-info">
+                                <span class="item-qty">1x</span>
+                                <span class="item-name">Aceite Esencial Lavanda</span>
+                            </div>
+                            <div class="item-prices">
+                                <span class="final-price">$ 4.500</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rh-footer">
+                        <div class="footer-row">
+                            <span>Subtotal</span>
+                            <span>$ 16.500</span>
+                        </div>
+                        <div class="discount-row-wrap">
+                            <div class="discount-row">
+                                <span><i class="fas fa-tags mr-1"></i> Bonificaciones aplicadas</span>
+                                <span>-$ 2.000</span>
+                            </div>
+                            <div class="discount-reason">Motivo: <strong>Beneficio VIP</strong></div>
+                        </div>
+                        <div class="total-row">
+                            <span>TOTAL</span>
+                            <span style="color: #34d399;">$ 14.500</span>
+                        </div>
+                        <div class="payment-method">Método de pago: <strong style="color: white;">Pagado (Caja)</strong></div>
+                    </div>
+                </div>
+
+                <div style="width: 420px;">
+                    <div class="wa-bubble">
+*COMPROBANTE DE COMPRA - TICKET #1042*
+Fecha: 15/06/2026 14:30 hs
+Cliente: Juan Pérez
+-----------------------------------
+- 2x Difusor Vainilla - $ 10.000
+- 1x Aceite Esencial Lavanda - $ 4.500
+-----------------------------------
+*TOTAL ABONADO: $ 14.500*
+
+¡Muchas gracias por elegirnos!</div>
+                </div>
+
+            </div>
+
+            <div class="text-block" style="padding-left: 20px;">
+                <h3 style="color: var(--kpi-green); text-align: left;">Cero Papel y Claridad</h3>
+                <h2 style="text-align: left;">Tickets Digitales y WhatsApp</h2>
+                <p style="text-align: left;">Ahorrá en rollos fiscales y mejorá la experiencia del cliente siendo 100% transparente con los cobros.</p>
+                <p style="text-align: left;">El sistema desglosa los descuentos (manuales, por volumen o VIP) con su motivo en el historial. Con un solo clic, <strong>genera un comprobante y te abre WhatsApp Web</strong> listo para enviarlo.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 4: VIP Y PASES -->
+    <div class="slide">
+        <div class="glow-purple" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-purple); text-align: left;">Fidelización Automática</h3>
+                <h2 style="text-align: left;">Reglas VIP y Pases</h2>
+                <p style="text-align: left;">Evitá que el cajero tenga que acordarse quién es amigo de la casa o quién pagó el abono mensual.</p>
+                <p style="text-align: left;"><strong>Descuento VIP:</strong> Asigná un porcentaje. Cuando escaneen al cliente en la Caja (POS), el sistema tachará todos los precios automáticamente.</p>
+                <p style="text-align: left;"><strong>Pases (Créditos):</strong> Ideal para gimnasios o estéticas. Cargá un paquete de clases con vencimiento para que el cliente reserve turnos online sin pagar.</p>
+            </div>
+
+            <div class="visual-block" style="display: flex; flex-direction: column; gap: 18px; width: 100%;">
+
+                <!-- Modal VIP fiel a la app -->
+                <div class="modal-mockup">
+                    <div class="mm-header">
+                        <span style="color: white; font-size: 1rem;"><i class="fas fa-crown" style="color:#fbbf24; margin-right: 8px;"></i> Descuento VIP: <span style="color: #60a5fa;">Juan Pérez</span></span>
+                        <div class="btn-icon" style="width:30px; height:30px;"><i class="fas fa-times"></i></div>
+                    </div>
+                    <div class="mm-body">
+                        <p class="mm-customer-desc">Asigná un porcentaje de descuento global. Se aplicará automáticamente al seleccionar este cliente en la Caja (POS).</p>
+                        <div>
+                            <span class="mm-label">Porcentaje de Descuento (%)</span>
+                            <div class="mm-input-wrap amber-focus">
+                                <i class="fas fa-percent" style="color:#fbbf24;"></i>
+                                <input type="text" value="15" readonly>
+                            </div>
+                            <small style="color:#64748b; font-size: 0.8rem; margin-top: 6px; display: block;">El cliente tendrá un <strong style="color:#f8fafc;">15% OFF</strong> en todos los tickets.</small>
+                        </div>
+                    </div>
+                    <div class="mm-footer">
+                        <div class="btn-cancel-sm">Cancelar</div>
+                        <div class="btn-save-amber"><i class="fas fa-save"></i> Guardar Descuento</div>
+                    </div>
+                </div>
+
+                <!-- Modal Pases fiel a la app -->
+                <div class="modal-mockup">
+                    <div class="mm-header">
+                        <span style="color: white; font-size: 1rem;"><i class="fas fa-ticket-alt" style="color:#34d399; margin-right: 8px;"></i> Asignar Nuevo Pase</span>
+                        <div class="btn-icon" style="width:30px; height:30px;"><i class="fas fa-times"></i></div>
+                    </div>
+                    <div class="mm-body">
+                        <p class="mm-customer-desc">Vas a cargarle un paquete de clases a <strong style="color: #f8fafc;">María López</strong>. Podrá usarlas desde la web ingresando su email (maria@email.com).</p>
+                        <div class="pass-inputs-row" style="display: flex; gap: 14px;">
+                            <div style="flex: 1;">
+                                <span class="mm-label">Cantidad de Clases</span>
+                                <div class="mm-input-wrap blue-focus">
+                                    <i class="fas fa-layer-group" style="color:#64748b;"></i>
+                                    <input type="text" value="4" readonly>
+                                </div>
+                            </div>
+                            <div style="flex: 1;">
+                                <span class="mm-label">Validez (días)</span>
+                                <div class="mm-input-wrap">
+                                    <i class="far fa-calendar-alt" style="color:#64748b;"></i>
+                                    <input type="text" value="30" readonly>
+                                </div>
+                                <small style="color:#64748b; font-size: 0.78rem; margin-top: 5px; display: block;">Vencerán automáticamente pasados estos días.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mm-footer">
+                        <div class="btn-cancel-sm">Cancelar</div>
+                        <div class="btn-save-green">Asignar Pase</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: MERGE -->
+    <div class="slide">
+        <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="visual-block" style="display: flex; justify-content: center; width: 100%;">
+                <div class="modal-mockup" style="width: 100%; max-width: 500px;">
+                    <div class="mm-header">
+                        <span style="color: white; font-size: 1rem;"><i class="fas fa-link" style="color:#818cf8; margin-right: 8px;"></i> Fusionar Cliente</span>
+                        <div class="btn-icon" style="width:30px; height:30px;"><i class="fas fa-times"></i></div>
+                    </div>
+                    <div class="mm-body">
+                        <div class="alert-box">
+                            Estás a punto de eliminar a <strong>Juan Perez (Duplicado)</strong>. Todos sus pedidos y datos faltantes pasarán al cliente que selecciones abajo.
+                        </div>
+                        <div>
+                            <span class="mm-label">Buscar cliente principal (Destino):</span>
+                            <div class="mm-input-wrap">
+                                <i class="fas fa-search" style="color:#64748b;"></i>
+                                <input type="text" value="Juan" style="font-weight: normal; font-size: 0.95rem;" readonly>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div class="target-option selected">
+                                <div>
+                                    <strong style="color: white; display: block;">Juan Pérez <span style="font-weight: normal; font-style: italic; font-size: 0.78rem; color: #94a3b8;">- Cuenta MP</span></strong>
+                                    <span style="color: #94a3b8; font-size: 0.78rem;"><i class="fab fa-whatsapp"></i> 11 2345-6789 | Pedidos: 14</span>
+                                </div>
+                                <i class="fas fa-check-circle" style="color: #10b981; font-size: 1.2rem;"></i>
+                            </div>
+                            <div class="target-option">
+                                <div>
+                                    <strong style="color: white; display: block;">Juanma Pieri</strong>
+                                    <span style="color: #94a3b8; font-size: 0.78rem;"><i class="fab fa-whatsapp"></i> Sin tel | Pedidos: 1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mm-footer">
+                        <div class="btn-cancel-sm">Cancelar</div>
+                        <div class="btn-save-amber" style="background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.3); color: #60a5fa;">Fusionar Ahora</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-block" style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-blue); text-align: left;">Limpieza de Datos</h3>
+                <h2 style="text-align: left;">Mantenimiento (Merge)</h2>
+                <p style="text-align: left;">¿El cliente compró una vez en el mostrador y otra vez en la web con distinto mail? Te van a quedar dos perfiles separados, arruinando tus métricas de LTV.</p>
+                <p style="text-align: left;">La herramienta de <strong>Fusión de Duplicados</strong> te permite seleccionar el perfil falso y absorberlo hacia el perfil real en un clic. Todo el historial se unifica sin perder un solo dato.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Explorar Módulos</h3>
+                <h2>Continuar Recorrido</h2>
+                <p style="max-width: 900px; margin: 0 auto;">Hemos cerrado el circuito de gestión y retención de clientes. ¿Volvemos a la vista general o exploramos otros módulos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+                <a href="POS.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Ver<br>Caja (POS)</div>
+                </a>
+                <a href="Agenda.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="far fa-calendar-check"></i></div>
+                    <div class="qa-text" style="color: white;">Agenda y<br>Turnos</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const pageId = 'clientes';
+        let currentIndex = 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentIndex);
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
+            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
+        }
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--; updateSlides(); }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+        document.addEventListener('keydown', (e) => {
+            const isTyping = document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA');
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            }
+        });
+        document.addEventListener('keyup', (e) => { pressedKeys.delete(e.key.toLowerCase()); });
+        window.addEventListener('blur', () => { pressedKeys.clear(); });
+
+        updateSlides();
+    </script>
+</body>
+</html>
