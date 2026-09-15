@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Global - Pitch</title>
+    <title>Inicio de la sede - Pitch</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -88,87 +88,185 @@
         .grid-split, .grid-split-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
-        /* KPI GRID */
-        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .kpi-card { display: flex; align-items: flex-start; gap: 15px; padding: 20px; transition: 0.3s; text-decoration: none; cursor: pointer; }
-        .kpi-icon-wrapper { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-        .kpi-data { display: flex; flex-direction: column; }
-        .kpi-title { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
-        .kpi-value { font-size: 32px; font-weight: 900; color: var(--text-main); line-height: 1.2; margin-top: 4px;}
-        .kpi-desc { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.4; border-top: 1px dashed var(--border-glass); padding-top: 8px;}
+        /* =========================================
+           KPI CARD — misma anatomía que el componente de la app
+        ========================================= */
+        .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+        .kpi-card {
+            position: relative; overflow: hidden;
+            min-height: 144px; padding: 16px 20px;
+            background: var(--bg-panel); border: 1px solid var(--border-glass);
+            border-radius: 16px; text-align: left;
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        /* El ícono gigante del fondo: abajo a la derecha, girado y apenas visible. */
+        .kpi-icon-bg {
+            position: absolute; right: -15px; bottom: -20px;
+            font-size: 6rem; opacity: 0.13; transform: rotate(-15deg);
+            pointer-events: none;
+        }
+        .kpi-content { position: relative; z-index: 2; }
+        .kpi-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .kpi-title { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        .kpi-icon-sm { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .kpi-value { font-size: 2rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+        .kpi-description { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .kpi-trend { display: flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 0.75rem; font-weight: 500; }
+        .kpi-trend.up { color: #34d399; }
+        .kpi-trend.down { color: #f87171; }
+        .kpi-trend.flat { color: var(--text-muted); }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
 
-        .kpi-green .kpi-icon-wrapper { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); }
-        .kpi-green:hover { border-color: var(--kpi-green); box-shadow: 0 0 20px rgba(16, 185, 129, 0.15); transform: translateY(-3px);}
-        .kpi-blue .kpi-icon-wrapper { background: rgba(59, 130, 246, 0.15); color: var(--kpi-blue); }
-        .kpi-blue:hover { border-color: var(--kpi-blue); box-shadow: 0 0 20px rgba(59, 130, 246, 0.15); transform: translateY(-3px);}
-        .kpi-purple .kpi-icon-wrapper { background: rgba(168, 85, 247, 0.15); color: var(--kpi-purple); }
-        .kpi-purple:hover { border-color: var(--kpi-purple); box-shadow: 0 0 20px rgba(168, 85, 247, 0.15); transform: translateY(-3px);}
-        .kpi-orange .kpi-icon-wrapper { background: rgba(245, 158, 11, 0.15); color: var(--kpi-orange); }
-        .kpi-orange:hover { border-color: var(--kpi-orange); box-shadow: 0 0 20px rgba(245, 158, 11, 0.15); transform: translateY(-3px);}
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
 
-        .ui-quick-actions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .ui-action-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); padding: 15px; border-radius: 12px; text-align: center; color: var(--text-muted); transition: 0.3s; text-decoration: none; font-weight: bold; font-size: 14px;}
-        .ui-action-btn i { font-size: 24px; margin-bottom: 8px; color: var(--text-main); display: block;}
-        .ui-action-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); color: white;}
+        /* =========================================
+           SLIDE 1: TRES TABLEROS
+           ========================================= */
+        .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .dash-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .dash-card.is-default { border-color: rgba(59,130,246,0.32); }
+        .dash-head { display: flex; align-items: center; gap: 12px; }
+        .dash-ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .dash-head h4 { font-size: 18px; font-weight: 800; text-align: left; }
+        .dash-cond { font-size: 11px; font-family: monospace; color: #94a3b8; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 2px 8px; display: inline-block; }
+        .dash-card p { font-size: 13.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.5; }
 
-        /* WORKFLOW */
-        .workflow-timeline { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 60px; position: relative; width: 100%;}
-        .workflow-timeline::before { content: ''; position: absolute; top: 40px; left: 50px; right: 50px; height: 2px; background: rgba(255,255,255,0.1); z-index: 0; }
-        .workflow-step { display: flex; flex-direction: column; align-items: center; z-index: 1; width: 220px; text-align: center; }
-        .step-icon { width: 80px; height: 80px; border-radius: 50%; background: var(--bg-base); border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .step-text-wrapper { display: flex; flex-direction: column; align-items: center; }
-        
-        .step-1 .step-icon { border-color: var(--kpi-blue); color: var(--kpi-blue); }
-        .step-2 .step-icon { border-color: var(--kpi-purple); color: var(--kpi-purple); }
-        .step-3 .step-icon { border-color: var(--kpi-green); color: var(--kpi-green); }
-        .step-4 .step-icon { border-color: var(--kpi-orange); color: var(--kpi-orange); }
+        /* =========================================
+           SLIDE 2: LAS CUATRO SECCIONES
+           ========================================= */
+        .date-strip { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 9px 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; width: fit-content; }
+        .date-strip b { color: var(--text-main); font-family: monospace; font-weight: 700; }
+        .sections-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+        .section-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 16px; text-align: left; }
+        .section-card strong { display: flex; align-items: center; gap: 9px; font-size: 14px; margin-bottom: 4px; }
+        .section-card span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
 
-        .step-title { font-weight: 800; font-size: 22px; color: var(--text-main); margin-bottom: 5px;}
-        .step-desc { font-size: 15px; color: var(--text-muted); line-height: 1.4; }
+        /* =========================================
+           SLIDE 3: CONFIGURABLE
+           ========================================= */
+        .cfg-split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+        .edit-demo { background: rgba(15,23,42,0.82); border: 1px solid rgba(168,85,247,0.3); border-radius: 16px; padding: 17px; box-shadow: 0 22px 50px rgba(0,0,0,0.5); }
+        .edit-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .edit-tag { font-size: 10.5px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: #e9d5ff; background: rgba(168,85,247,0.2); border-radius: 7px; padding: 5px 11px; }
+        .edit-actions { display: flex; gap: 7px; }
+        .edit-btn { font-size: 11.5px; font-weight: 800; border-radius: 7px; padding: 5px 11px; background: rgba(255,255,255,0.05); color: var(--text-muted); }
+        .edit-btn.save { background: rgba(168,85,247,0.25); color: #f3e8ff; }
+        .edit-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .edit-kpi { position: relative; display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; }
+        .edit-kpi.dragging { border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+        .edit-kpi.hidden-kpi { border-style: dashed; opacity: .6; }
+        .edit-ctrl { margin-left: auto; display: flex; gap: 3px; }
+        .edit-ctrl span { width: 18px; height: 18px; border-radius: 5px; background: rgba(255,255,255,0.07); color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+        .edit-ctrl span.rm { color: #fca5a5; }
+        .cfg-list { display: flex; flex-direction: column; gap: 9px; }
+        .cfg-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .cfg-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .cfg-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .cfg-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .preset-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+        .preset { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 16px; text-align: left; }
+        .preset strong { display: block; font-size: 13.5px; margin-bottom: 8px; }
+        .preset .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .preset .chips span { font-size: 11px; font-weight: 700; border-radius: 7px; padding: 4px 9px; background: rgba(255,255,255,0.05); color: #cbd5e1; }
 
-        /* STATUS & ACTIVITY */
-        .status-container { height: auto; display: flex; flex-direction: column; padding: 30px;}
-        .status-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .status-item { background: rgba(0,0,0,0.2); padding: 16px 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; border-left: 4px solid; text-decoration: none; transition: 0.2s; cursor: pointer;}
-        .status-item:hover { transform: translateX(5px); background: rgba(255,255,255,0.05); }
-        .status-item.warning { border-left-color: var(--kpi-orange); }
-        .status-item.info { border-left-color: var(--kpi-blue); }
-        .status-item.success { border-left-color: var(--kpi-green); }
-        .status-item i { font-size: 20px; }
-        .status-text { display: flex; flex-direction: column; }
-        .status-text strong { font-size: 16px; color: var(--text-main); }
-        .status-text span { font-size: 13px; color: var(--text-muted); }
+        /* =========================================
+           SLIDE 4: ESTADO DEL NEGOCIO
+           ========================================= */
+        .st-split { display: grid; grid-template-columns: 440px 1fr; gap: 36px; align-items: start; }
+        .status-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; }
+        .card-title { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 800; color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border-glass); margin-bottom: 12px; }
+        .alert-row { display: flex; align-items: flex-start; gap: 12px; border-radius: 10px; padding: 11px 13px; margin-bottom: 7px; background: rgba(0,0,0,0.24); border-left: 3px solid transparent; text-align: left; }
+        .alert-row:last-child { margin-bottom: 0; }
+        .alert-row.p-danger { border-left-color: var(--kpi-red); }
+        .alert-row.p-warning { border-left-color: var(--kpi-orange); }
+        .alert-row.p-info { border-left-color: var(--kpi-blue); }
+        .alert-row i { margin-top: 2px; font-size: 13px; }
+        .alert-row strong { display: block; font-size: 13.5px; }
+        .alert-row span { font-size: 12px; color: var(--text-muted); }
+        .alert-row .go { margin-left: auto; color: #475569; font-size: 11px; align-self: center; }
+        .st-flow { display: flex; flex-direction: column; gap: 10px; }
+        .empty-demo { display: flex; flex-direction: column; align-items: center; gap: 6px; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 18px; margin-top: 14px; }
+        .empty-demo i { font-size: 22px; color: var(--kpi-green); }
+        .empty-demo h5 { font-size: 15px; font-weight: 800; }
+        .empty-demo p { font-size: 12.5px; color: var(--text-muted); margin: 0; text-align: center; }
 
-        .activity-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .activity-table th { text-align: left; padding: 12px; font-size: 12px; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border-glass); }
-        .activity-table td { padding: 16px 12px; border-bottom: 1px solid rgba(255,255,255,0.02); font-size: 15px; }
+        /* =========================================
+           SLIDE 5: ACTIVIDAD RECIENTE
+           ========================================= */
+        .ac-split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 34px; align-items: start; }
+        .activity-table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; overflow: hidden; }
+        .activity-table th { text-align: left; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 11px 14px; background: rgba(0,0,0,0.3); }
+        .activity-table td { padding: 11px 14px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 13px; vertical-align: middle; }
+        .td-time { color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+        .td-desc strong { display: block; font-size: 13.5px; }
+        .td-desc span { font-size: 11.5px; color: var(--text-muted); }
+        .td-amount { text-align: right; font-weight: 800; white-space: nowrap; }
+        .ac-badge { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+        .ac-badge.sale { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .ac-badge.expense { background: rgba(239,68,68,0.14); color: #fca5a5; }
+        .ac-badge.stock { background: rgba(59,130,246,0.14); color: #93c5fd; }
+        .ac-cell { display: flex; align-items: center; gap: 11px; }
+        .ac-group-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; background: rgba(255,255,255,0.06); border-radius: 5px; padding: 2px 7px; color: #94a3b8; margin-left: 7px; }
+        .ac-child { padding-left: 44px !important; background: rgba(0,0,0,0.2); }
+        .ac-child .td-desc strong { font-size: 12.5px; font-weight: 600; color: #cbd5e1; }
+        .reserved-pill { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; background: rgba(245,158,11,0.14); color: #fcd34d; border-radius: 5px; padding: 2px 7px; }
 
-        /* QUICK ACTIONS */
-        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 1100px; margin-left: auto; margin-right: auto;}
+        /* =========================================
+           SLIDE 6: ACCIONES RÁPIDAS
+           ========================================= */
+        .qa-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+        .qa-tile { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 15px 16px; text-align: left; display: flex; flex-direction: column; gap: 7px; }
+        .qa-tile-top { display: flex; align-items: center; gap: 10px; }
+        .qa-ico { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .qa-tile h4 { font-size: 14px; font-weight: 800; text-align: left; text-transform: none; letter-spacing: 0; color: var(--text-main); margin: 0; }
+        .qa-meta { font-size: 11.5px; font-weight: 800; color: #6ee7b7; }
+        .qa-meta.muted { color: var(--text-muted); font-weight: 600; }
+        .qa-tile p { font-size: 11.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.4; }
+        .qa-perm { font-size: 9.5px; font-family: monospace; color: #64748b; background: rgba(255,255,255,0.04); border-radius: 5px; padding: 2px 6px; align-self: flex-start; }
+
+        /* =========================================
+           SLIDE 7: ATAJOS
+           ========================================= */
+        .sc-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 40px; align-items: center; }
+        .sc-modal { background: rgba(2,6,23,0.94); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden; box-shadow: 0 26px 60px rgba(0,0,0,0.55); }
+        .sc-head { display: flex; align-items: center; gap: 10px; padding: 15px 18px; background: rgba(0,0,0,0.4); border-bottom: 1px solid var(--border-glass); font-size: 16px; font-weight: 800; }
+        .sc-tabs { display: flex; gap: 5px; padding: 11px 14px 0; flex-wrap: wrap; }
+        .sc-tab { font-size: 11.5px; font-weight: 700; border-radius: 8px 8px 0 0; padding: 7px 12px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 6px; }
+        .sc-tab.on { background: rgba(255,255,255,0.06); color: var(--text-main); }
+        .sc-body { padding: 12px 16px 16px; }
+        .sc-tip { display: flex; gap: 9px; align-items: center; background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.22); border-radius: 9px; padding: 9px 12px; font-size: 12px; color: #a7f3d0; margin-bottom: 11px; text-align: left; }
+        .shortcut-item { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .shortcut-item:last-child { border-bottom: none; }
+        .shortcut-desc { font-size: 12.5px; color: #cbd5e1; text-align: left; }
+        .keys-group { display: flex; gap: 5px; flex-shrink: 0; }
+        .key { min-width: 26px; padding: 3px 8px; border-radius: 6px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-bottom: 2px solid rgba(255,255,255,0.18); font-family: monospace; font-size: 11.5px; font-weight: 800; text-align: center; }
+        .key.accent { color: var(--kpi-green); border-color: rgba(16,185,129,0.35); }
+        .key.accent-blue { color: var(--kpi-blue); border-color: rgba(59,130,246,0.35); }
+        .key.accent-purple { color: var(--kpi-purple); border-color: rgba(168,85,247,0.35); }
+        .key.accent-orange { color: var(--kpi-orange); border-color: rgba(245,158,11,0.35); }
+        .sc-list { display: flex; flex-direction: column; gap: 9px; }
+
+
+        /* =========================================
+           SLIDE 8: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s;}
         .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center;}
-        
-        .qa-btn:nth-child(1):hover { border-color: var(--kpi-green); } .qa-btn:nth-child(1):hover .qa-icon { color: var(--kpi-green); }
-        .qa-btn:nth-child(2):hover { border-color: var(--kpi-blue); } .qa-btn:nth-child(2):hover .qa-icon { color: var(--kpi-blue); }
-        .qa-btn:nth-child(3):hover { border-color: var(--kpi-purple); } .qa-btn:nth-child(3):hover .qa-icon { color: var(--kpi-purple); }
-        .qa-btn:nth-child(4):hover { border-color: var(--kpi-orange); } .qa-btn:nth-child(4):hover .qa-icon { color: var(--kpi-orange); }
-        .qa-btn:nth-child(5):hover { border-color: #ec4899; } .qa-btn:nth-child(5):hover .qa-icon { color: #ec4899; }
-        .qa-btn:nth-child(6):hover { border-color: #06b6d4; } .qa-btn:nth-child(6):hover .qa-icon { color: #06b6d4; }
-        .qa-btn:nth-child(7):hover { border-color: #14b8a6; } .qa-btn:nth-child(7):hover .qa-icon { color: #14b8a6; }
-        .qa-btn:nth-child(8):hover { border-color: #f43f5e; } .qa-btn:nth-child(8):hover .qa-icon { color: #f43f5e; }
-
-        /* SHORTCUTS */
-        .shortcuts-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; height: 100%; align-items: center; }
-        .shortcut-list { display: flex; flex-direction: column; gap: 15px; }
-        .shortcut-item { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border-glass);}
-        .shortcut-desc { font-size: 18px; font-weight: 600; color: var(--text-main); }
-        .keys-group { display: flex; gap: 6px; align-items: center;}
-        .key { display: inline-flex; align-items: center; justify-content: center; background: #1e293b; color: #f8fafc; border: 1px solid rgba(255,255,255,0.1); border-bottom: 4px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 12px; font-family: monospace; font-size: 16px; font-weight: 800; box-shadow: 0 4px 6px rgba(0,0,0,0.4); min-width: 35px; }
-        .key.accent { color: var(--kpi-green); border-color: rgba(16, 185, 129, 0.3); border-bottom-color: rgba(16, 185, 129, 0.5); }
-        .key.accent-blue { color: var(--kpi-blue); border-color: rgba(59, 130, 246, 0.3); border-bottom-color: rgba(59, 130, 246, 0.5); }
-        .key.accent-purple { color: var(--kpi-purple); border-color: rgba(168, 85, 247, 0.3); border-bottom-color: rgba(168, 85, 247, 0.5); }
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
 
         /* =========================================
            RESPONSIVE DESIGN (MÓVILES Y TABLETS)
@@ -195,6 +293,9 @@
             
             .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
             .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -202,41 +303,52 @@
             h3 { font-size: 20px; }
             p { font-size: 16px; }
 
-            .kpi-grid { grid-template-columns: 1fr; }
-            .ui-quick-actions { grid-template-columns: 1fr 1fr; }
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
 
-            /* 🔴 FIX: El flujo de trabajo pasa a tarjetas horizontales para ahorrar espacio */
-            .workflow-timeline { flex-direction: column; gap: 15px; margin-top: 20px;}
-            .workflow-timeline::before { display: none; }
-            .workflow-step { 
-                width: 100%; max-width: 400px; margin: 0 auto; 
-                flex-direction: row; text-align: left; 
-                background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); 
-                border-radius: 12px; padding: 15px;
-            }
-            .step-text-wrapper { align-items: flex-start; }
-            .step-icon { width: 50px; height: 50px; font-size: 20px; margin-bottom: 0; margin-right: 15px; flex-shrink: 0; }
-            .step-title { font-size: 18px; margin-bottom: 2px;}
-            .step-desc { font-size: 13px; }
+            /* Slide 1 Tres tableros */
+            .dash-grid { grid-template-columns: 1fr; gap: 16px; }
 
-            .quick-actions-grid {
-                flex-direction: column !important; align-items: center; width: 100%; 
-                max-width: 350px; margin-left: auto; margin-right: auto;
-            }
+            /* Slide 2 Las cuatro secciones */
+            .kpi-grid { grid-template-columns: 1fr 1fr; gap: 11px; }
+            .sections-row { grid-template-columns: 1fr; gap: 11px; }
+
+            /* Slide 3 Configurable */
+            .cfg-split { grid-template-columns: 1fr; gap: 26px; }
+            .edit-kpis { grid-template-columns: 1fr; }
+            .edit-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .preset-row { grid-template-columns: 1fr; gap: 12px; }
+
+            /* Slide 4 Estado del negocio */
+            .st-split { grid-template-columns: 1fr; gap: 22px; }
+
+            /* Slide 5 Actividad reciente */
+            .ac-split { grid-template-columns: 1fr; gap: 22px; }
+
+            /* Slide 6 Acciones rápidas */
+            .qa-grid { grid-template-columns: 1fr; gap: 12px; }
+
+            /* Slide 7 Atajos */
+            .sc-split { grid-template-columns: 1fr; gap: 28px; }
+            .sc-tabs { justify-content: center; }
+            .shortcut-item { flex-direction: row; gap: 12px; align-items: center; }
+
+            /* Slide 8 Navegación */
+            .quick-actions-grid { flex-direction: column !important; align-items: center; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
             .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
-            .qa-icon { width: 50px; height: 50px; font-size: 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
             .qa-text { text-align: left; font-size: 14px; }
-
-            .shortcuts-grid { grid-template-columns: 1fr; }
-            .shortcut-item { flex-direction: column; gap: 15px; align-items: flex-start;}
         }
 
         @media (max-width: 600px) {
-            .activity-table th:last-child, .activity-table td:last-child { display: none; } 
+            .kpi-grid { grid-template-columns: 1fr; }
+            .activity-table th:last-child, .activity-table td:last-child { display: none; }
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <!-- CONTROLES NATIVOS (FLOTANTES) -->
     <div class="presentation-controls">
@@ -245,306 +357,503 @@
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- SLIDE 1: INTRO Y LOS 4 KPIS -->
+    <!-- SLIDE 1: TRES TABLEROS -->
     <div class="slide active">
         <div class="glow-blue"></div>
-        <div class="slide-content-wide grid-split">
-            <div class="text-block" style="padding-right: 40px; text-align: left;">
-                <h3 style="text-align: left; color: var(--kpi-blue);">Dashboard Principal</h3>
-                <h1 style="text-align: left;">Centro de<br><span style="color: var(--kpi-green);">Comando</span></h1>
-                <p style="text-align: left;">La primera pantalla que el dueño ve al abrir el sistema. Los 4 indicadores vitales que resumen el 100% de la salud de la sede en un solo vistazo, en tiempo real.</p>
-                <p style="text-align: left; font-size: 16px; opacity: 0.6; margin-top: 40px;">* Haciendo clic en los módulos accedes al desglose profundo.</p>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 26px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Inicio de la sede</h3>
+                <h2 style="text-align: center;">No hay un tablero: hay tres, y se elige solo</h2>
+                <p style="text-align: center; font-size: 18px;">La misma dirección muestra una pantalla distinta según quién entra y qué tipo de espacio es. Nadie elige: se resuelve al cargar, con el rol y los permisos que devuelve el negocio.</p>
             </div>
-            
-            <div class="visual-block" style="display: flex; flex-direction: column; gap: 20px;">
-                <!-- KPIs Interactivos (Enlaces) -->
-                <div class="kpi-grid">
-                    <a href="Caja.html" class="glass-panel kpi-card kpi-green">
-                        <div class="kpi-icon-wrapper"><i class="fas fa-wallet"></i></div>
-                        <div class="kpi-data">
-                            <span class="kpi-title">Balance en Caja</span>
-                            <span class="kpi-value">$214.450</span>
-                            <span class="kpi-desc">Liquidez diaria, arqueo y flujo de efectivo.</span>
-                        </div>
-                    </a>
-                    
-                    <a href="Auditoria.html" class="glass-panel kpi-card kpi-red">
-                        <div class="kpi-icon-wrapper" style="background: rgba(239, 68, 68, 0.15); color: var(--kpi-red);"><i class="fas fa-search-dollar"></i></div>
-                        <div class="kpi-data">
-                            <span class="kpi-title">Auditoría y LTV</span>
-                            <span class="kpi-value">$530.000</span>
-                            <span class="kpi-desc">Rentabilidad neta y comisiones descontadas.</span>
-                        </div>
-                    </a>
 
-                    <a href="Clientes.html" class="glass-panel kpi-card kpi-purple">
-                        <div class="kpi-icon-wrapper"><i class="fas fa-users"></i></div>
-                        <div class="kpi-data">
-                            <span class="kpi-title">Directorio CRM</span>
-                            <span class="kpi-value">1,240</span>
-                            <span class="kpi-desc">Retención de base de datos y métricas VIP.</span>
+            <div class="visual-block dash-grid">
+                <div class="dash-card is-default">
+                    <div class="dash-head">
+                        <div class="dash-ico" style="color: var(--kpi-blue);"><i class="fas fa-chart-line"></i></div>
+                        <div style="text-align:left;">
+                            <h4>Global</h4>
+                            <span class="dash-cond">owner · finances:read</span>
                         </div>
-                    </a>
+                    </div>
+                    <p>El del dueño: la plata del período, el estado del negocio, los accesos y la actividad. Es el que se puede reorganizar entero.</p>
+                </div>
 
-                    <a href="Encargados.html" class="glass-panel kpi-card kpi-orange">
-                        <div class="kpi-icon-wrapper"><i class="fas fa-id-badge"></i></div>
-                        <div class="kpi-data">
-                            <span class="kpi-title">Gestión Equipo</span>
-                            <span class="kpi-value">8 Activos</span>
-                            <span class="kpi-desc">Rendimiento del staff y capacidad operativa.</span>
+                <div class="dash-card">
+                    <div class="dash-head">
+                        <div class="dash-ico" style="color: var(--kpi-green);"><i class="fas fa-user-circle"></i></div>
+                        <div style="text-align:left;">
+                            <h4>Personal</h4>
+                            <span class="dash-cond">el resto del equipo</span>
                         </div>
-                    </a>
+                    </div>
+                    <p>Sin permiso de finanzas no se muestra la caja del local: se muestra lo propio. Y desde el global se puede saltar acá con un botón.</p>
                 </div>
-                
-                <div class="ui-quick-actions">
-                    <a href="POS.html" class="ui-action-btn"><i class="fas fa-cash-register" style="color: var(--kpi-green);"></i>Caja Rápida (POS)</a>
-                    <a href="Tienda.html" class="ui-action-btn"><i class="fas fa-shopping-bag" style="color: var(--kpi-pink);"></i>Tienda Activa</a>
+
+                <div class="dash-card">
+                    <div class="dash-head">
+                        <div class="dash-ico" style="color: #c4b5fd;"><i class="fas fa-industry"></i></div>
+                        <div style="text-align:left;">
+                            <h4>Fábrica</h4>
+                            <span class="dash-cond">type === 'factory'</span>
+                        </div>
+                    </div>
+                    <p>Una planta no vende en mostrador: produce y despacha. El tipo del espacio gana sobre el rol, así que ahí no se pregunta nada más.</p>
                 </div>
+            </div>
+
+            <div class="note" style="margin-top: 24px;">
+                <i class="fas fa-hourglass-half"></i>
+                <span>Mientras resuelve, la pantalla dice <b>"Preparando tu espacio"</b>; si falla, ofrece reintentar en vez de dejar un tablero vacío que parece un negocio sin ventas.</span>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: EL FLUJO DE TRABAJO -->
+    <!-- SLIDE 2: LAS CUATRO SECCIONES -->
     <div class="slide">
         <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-purple);">Orquestación Total</h3>
-                <h2>El Flujo de Trabajo Diario</h2>
-                <p>Desde que girás la llave del local hasta que cerrás la persiana, el Centro de Comando orquesta la operativa sin necesidad de saltar entre 5 aplicaciones distintas.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">El tablero del dueño</h3>
+                <h2 style="text-align: center;">Un período arriba, y todo lo de abajo mirando ese período</h2>
             </div>
-            
-            <div class="visual-block workflow-timeline">
-                <div class="workflow-step step-1">
-                    <div class="step-icon"><i class="fas fa-sun"></i></div>
-                    <div class="step-text-wrapper">
-                        <div class="step-title">Apertura</div>
-                        <div class="step-desc">Auditoría de stock, agenda y activación de promos.</div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="date-strip">
+                    <i class="fas fa-calendar-days" style="color:#c084fc;"></i>
+                    <span>Período</span> <b>16/08/2026</b> <span>a</span> <b>14/09/2026</b>
+                    <span style="opacity:.5;">·</span> <span>últimos 30 días</span>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <i class="fas fa-wallet kpi-icon-bg" style="color: #22c55e;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Balance en Caja</span>
+                                <div class="kpi-icon-sm" style="background: rgba(34,197,94,0.125); color: #22c55e;"><i class="fas fa-wallet"></i></div>
+                            </div>
+                            <div class="kpi-value">$ 214.450</div>
+                            <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> <span>12% vs período anterior</span></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <i class="fas fa-file-invoice-dollar kpi-icon-bg" style="color: #06b6d4;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Facturación</span>
+                                <div class="kpi-icon-sm" style="background: rgba(6,182,212,0.125); color: #06b6d4;"><i class="fas fa-file-invoice-dollar"></i></div>
+                            </div>
+                            <div class="kpi-value">$ 1.86M</div>
+                            <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> <span>8% vs período anterior</span></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <i class="fas fa-users kpi-icon-bg" style="color: #a855f7;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Clientes</span>
+                                <div class="kpi-icon-sm" style="background: rgba(168,85,247,0.125); color: #a855f7;"><i class="fas fa-users"></i></div>
+                            </div>
+                            <div class="kpi-value">214</div>
+                            <div class="kpi-trend down"><i class="fas fa-arrow-down"></i> <span>3% vs período anterior</span></div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <i class="fas fa-id-badge kpi-icon-bg" style="color: #f59e0b;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Personal</span>
+                                <div class="kpi-icon-sm" style="background: rgba(245,158,11,0.125); color: #f59e0b;"><i class="fas fa-id-badge"></i></div>
+                            </div>
+                            <div class="kpi-value">8</div>
+                            <div class="kpi-description">empleados activos</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card">
+                        <i class="fas fa-hand-holding-dollar kpi-icon-bg" style="color: #f43f5e;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Ventas</span>
+                                <div class="kpi-icon-sm" style="background: rgba(244,63,94,0.125); color: #f43f5e;"><i class="fas fa-hand-holding-dollar"></i></div>
+                            </div>
+                            <div class="kpi-value">312</div>
+                            <div class="kpi-description">operaciones completadas</div>
+                        </div>
                     </div>
                 </div>
-                <div class="workflow-step step-2">
-                    <div class="step-icon"><i class="fas fa-store"></i></div>
-                    <div class="step-text-wrapper">
-                        <div class="step-title">Operación</div>
-                        <div class="step-desc">Ventas omnicanal: Físico y catálogo unificados.</div>
+                <div class="sections-row">
+                    <div class="section-card">
+                        <strong><i class="fas fa-circle-info" style="color:#93c5fd;"></i> Estado del negocio</strong>
+                        <span>Lo que pide atención hoy, ordenado por urgencia.</span>
+                    </div>
+                    <div class="section-card">
+                        <strong><i class="fas fa-bolt" style="color:#fcd34d;"></i> Acciones rápidas</strong>
+                        <span>Las puertas a los módulos, con su número en vivo.</span>
+                    </div>
+                    <div class="section-card">
+                        <strong><i class="fas fa-chart-line" style="color:#6ee7b7;"></i> Rendimiento</strong>
+                        <span>El gráfico del período, y de dónde sale cada venta.</span>
+                    </div>
+                    <div class="section-card">
+                        <strong><i class="fas fa-clock" style="color:#c084fc;"></i> Actividad reciente</strong>
+                        <span>El feed de lo que se movió, agrupado.</span>
                     </div>
                 </div>
-                <div class="workflow-step step-3">
-                    <div class="step-icon"><i class="fas fa-heart"></i></div>
-                    <div class="step-text-wrapper">
-                        <div class="step-title">Fidelización</div>
-                        <div class="step-desc">Asignación de clientes VIP, tickets por WhatsApp.</div>
+
+                <div class="note warn" style="margin-top: 16px;">
+                    <i class="fas fa-hand-holding-dollar"></i>
+                    <span>"Ventas" es el único KPI <b>sin destino a propósito</b>: el detalle de las operaciones del período se abre desde el gráfico de Rendimiento, que es el que muestra de dónde sale el número.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: CONFIGURABLE -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Configurable</h3>
+                <h2 style="text-align: center;">Se reordena arrastrando, y lo que sobra se guarda</h2>
+            </div>
+
+            <div class="visual-block cfg-split">
+                <div class="edit-demo">
+                    <div class="edit-bar">
+                        <span class="edit-tag"><i class="fas fa-pen"></i> Editando el inicio</span>
+                        <div class="edit-actions">
+                            <span class="edit-btn">Restablecer</span>
+                            <span class="edit-btn">Cancelar</span>
+                            <span class="edit-btn save">Guardar</span>
+                        </div>
+                    </div>
+                    <div class="edit-kpis">
+                        <div class="edit-kpi"><i class="fas fa-wallet" style="color:#22c55e;"></i> Balance en Caja<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi dragging"><i class="fas fa-users" style="color:#a855f7;"></i> Clientes<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi"><i class="fas fa-file-invoice-dollar" style="color:#06b6d4;"></i> Facturación<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi hidden-kpi"><i class="fas fa-plus" style="color:#64748b;"></i> Ocupación</div>
+                        <div class="edit-kpi hidden-kpi"><i class="fas fa-plus" style="color:#64748b;"></i> Alertas Stock</div>
+                        <div class="edit-kpi hidden-kpi"><i class="fas fa-plus" style="color:#64748b;"></i> Pendientes</div>
                     </div>
                 </div>
-                <div class="workflow-step step-4">
-                    <div class="step-icon"><i class="fas fa-moon"></i></div>
-                    <div class="step-text-wrapper">
-                        <div class="step-title">Cierre</div>
-                        <div class="step-desc">Cuadre de caja automático y métricas de rendimiento.</div>
+
+                <div>
+                    <div class="cfg-list">
+                        <div class="cfg-item"><i class="fas fa-arrows-up-down-left-right" style="color:#c084fc;"></i><div><strong>Arrastrar para reordenar</strong><span>Con el mouse arranca a los 6 píxeles; con el dedo, manteniendo apretado un segundo. Un botón o un enlace adentro de la tarjeta no dispara el arrastre.</span></div></div>
+                        <div class="cfg-item"><i class="fas fa-eye-slash" style="color:#93c5fd;"></i><div><strong>Ocultar, no perder</strong><span>Lo que se saca queda a la vista en modo edición, listo para volver de un toque.</span></div></div>
+                        <div class="cfg-item"><i class="fas fa-layer-group" style="color:#6ee7b7;"></i><div><strong>Las secciones también</strong><span>Estado, acciones, rendimiento y actividad se ordenan igual que los KPIs.</span></div></div>
+                    </div>
+
+                    <div class="preset-row">
+                        <div class="preset">
+                            <strong>Negocio de productos</strong>
+                            <div class="chips"><span>Caja</span><span>Facturación</span><span>Clientes</span><span>Personal</span><span>Ventas</span></div>
+                        </div>
+                        <div class="preset">
+                            <strong>Negocio de servicios</strong>
+                            <div class="chips"><span>Ocupación</span><span>Clientes</span><span>Personal</span><span>Facturación</span></div>
+                        </div>
+                    </div>
+
+                    <div class="note purple" style="margin-top: 14px;">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                        <span>Un espacio de <b>servicios</b> no arranca igual: cambian los KPIs, cambian los accesos —Servicios, Turnos, Campañas, Inversiones, Contestadora— y hasta se cae la sección de Rendimiento, porque ahí lo que importa es la agenda.</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 3: ESTADO VS ACTIVIDAD -->
+    <!-- SLIDE 4: ESTADO DEL NEGOCIO -->
     <div class="slide">
         <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px;"></div>
-        <div class="slide-content-wide grid-split-equal">
-            
-            <!-- MITAD IZQUIERDA: Business Status -->
-            <div class="visual-block glass-panel status-container">
-                <h2 style="font-size: 28px; margin-bottom: 5px; text-align: left;">Estado del Negocio</h2>
-                <p style="font-size: 16px; margin-bottom: 0; text-align: left;">Gestión proactiva. El sistema te avisa qué requiere tu atención.</p>
-                
-                <div class="status-list">
-                    <a href="Operaciones.html" class="status-item warning">
-                        <i class="fas fa-exclamation-triangle" style="color: var(--kpi-orange);"></i>
-                        <div class="status-text">
-                            <strong>3 Pedidos Pendientes</strong>
-                            <span>Reservas impagas de mostrador o catálogo online.</span>
-                        </div>
-                    </a>
-                    <a href="Inventario.html" class="status-item warning">
-                        <i class="fas fa-boxes" style="color: var(--kpi-orange);"></i>
-                        <div class="status-text">
-                            <strong>2 Productos Bajo Stock</strong>
-                            <span>Han caído por debajo del umbral configurado.</span>
-                        </div>
-                    </a>
-                    <a href="Agenda.html" class="status-item info">
-                        <i class="far fa-calendar-check" style="color: var(--kpi-blue);"></i>
-                        <div class="status-text">
-                            <strong>14 Turnos Agendados</strong>
-                            <span>Próximo cliente a las 15:30hs con Martín.</span>
-                        </div>
-                    </a>
-                    <a href="Caja.html" class="status-item success">
-                        <i class="fas fa-cash-register" style="color: var(--kpi-green);"></i>
-                        <div class="status-text">
-                            <strong>Caja Abierta y Operativa</strong>
-                            <span>Último cuadre realizado ayer sin desvíos.</span>
-                        </div>
-                    </a>
-                </div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange); text-align: center;">Estado del negocio</h3>
+                <h2 style="text-align: center;">Cada aviso sabe adónde te lleva, y con qué filtro</h2>
             </div>
 
-            <!-- MITAD DERECHA: Recent Activity -->
-            <div class="visual-block glass-panel status-container">
-                <h2 style="font-size: 28px; margin-bottom: 5px; text-align: left;">Actividad Comercial</h2>
-                <p style="font-size: 16px; margin-bottom: 0; text-align: left;">Trazabilidad forense. Un feed en vivo del flujo monetario.</p>
-                
+            <div class="visual-block st-split">
+                <div class="status-card">
+                    <div class="card-title"><i class="fas fa-circle-info"></i> Estado del negocio</div>
+                    <div class="alert-row p-danger">
+                        <i class="fas fa-rotate-left" style="color:#f87171;"></i>
+                        <div><strong>Respuesta de devolución vencida</strong><span>2 sin revisar; 1 superó las 72 h</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-warning">
+                        <i class="fas fa-globe" style="color:#fbbf24;"></i>
+                        <div><strong>Reserva por web</strong><span>3 pedidos web/bot</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-warning">
+                        <i class="fas fa-motorcycle" style="color:#fbbf24;"></i>
+                        <div><strong>Envíos Pendientes</strong><span>5 para despachar</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-info">
+                        <i class="fas fa-calendar-day" style="color:#60a5fa;"></i>
+                        <div><strong>Reservas para hoy</strong><span>4 para preparar o entregar hoy</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-danger">
+                        <i class="fas fa-times-circle" style="color:#f87171;"></i>
+                        <div><strong>Productos Agotados</strong><span>2 sin stock</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="st-flow">
+                        <div class="note warn">
+                            <i class="fas fa-sort-amount-down"></i>
+                            <span>La lista está <b>ordenada por prioridad y recortada</b>: no es todo lo que pasa, es lo que hay que mirar primero. Una devolución que superó las 72 h va arriba de todo.</span>
+                        </div>
+                        <div class="note">
+                            <i class="fas fa-filter"></i>
+                            <span>Tocar un aviso no abre el módulo en blanco: <b>lleva el filtro puesto</b>. "Envíos pendientes" cae en Operaciones ya filtrado por envíos, "Stock bajo" en Inventario por stock bajo.</span>
+                        </div>
+                        <div class="note warn">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Los avisos de reserva <b>no se duplican</b>: si hay desglose por web, envío o caja se muestra ese; el genérico "Reservas pendientes" sale solo cuando ninguno de los tres tiene nada.</span>
+                        </div>
+                    </div>
+
+                    <div class="empty-demo">
+                        <i class="fas fa-check-circle"></i>
+                        <h5>Todo en orden</h5>
+                        <p>Sin nada pendiente, la tarjeta lo dice en vez de quedarse vacía.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: ACTIVIDAD RECIENTE -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Actividad reciente</h3>
+                <h2 style="text-align: center;">Un conteo entero es una fila, no cuarenta</h2>
+            </div>
+
+            <div class="visual-block ac-split">
                 <table class="activity-table">
                     <thead>
-                        <tr>
-                            <th>Hora</th>
-                            <th>Movimiento</th>
-                            <th style="text-align: right;">Monto</th>
-                        </tr>
+                        <tr><th>Hora</th><th>Movimiento</th><th style="text-align:right;">Monto</th></tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td class="td-time">14:22 hs</td>
-                            <td class="td-desc"><strong>Ticket #1045</strong><span>Pago procesado (Efectivo)</span></td>
-                            <td class="td-amount" style="color: var(--kpi-green);">+$8,400</td>
+                            <td class="td-time">14:22</td>
+                            <td>
+                                <div class="ac-cell">
+                                    <span class="ac-badge sale"><i class="fas fa-check"></i></span>
+                                    <div class="td-desc"><strong>Venta #1045</strong><span>Efectivo · Mostrador</span></div>
+                                </div>
+                            </td>
+                            <td class="td-amount" style="color: var(--kpi-green);">+8.400</td>
                         </tr>
                         <tr>
-                            <td class="td-time">13:50 hs</td>
-                            <td class="td-desc"><strong>Reserva Online</strong><span>Combo Día de la Madre</span></td>
-                            <td class="td-amount" style="color: var(--text-muted);">Pendiente</td>
+                            <td class="td-time">13:50</td>
+                            <td>
+                                <div class="ac-cell">
+                                    <span class="ac-badge stock"><i class="fas fa-clipboard-list"></i></span>
+                                    <div class="td-desc"><strong>Conteo físico<span class="ac-group-tag">12 productos</span></strong><span>Ajuste de inventario · Lote A4</span></div>
+                                </div>
+                            </td>
+                            <td class="td-amount" style="color: var(--text-muted);"><i class="fas fa-chevron-down" style="font-size:11px;"></i></td>
                         </tr>
                         <tr>
-                            <td class="td-time">11:15 hs</td>
-                            <td class="td-desc"><strong>Ajuste Inventario</strong><span>Conteo Físico (Lote A4)</span></td>
-                            <td class="td-amount" style="color: var(--text-muted);">-</td>
+                            <td class="td-time ac-child">13:50</td>
+                            <td class="ac-child"><div class="td-desc"><strong>Difusor Vainilla</strong><span>SKU DIF-VAI-01</span></div></td>
+                            <td class="td-amount ac-child" style="color:#fca5a5;">-3</td>
                         </tr>
                         <tr>
-                            <td class="td-time">10:05 hs</td>
-                            <td class="td-desc"><strong>Ticket #1044</strong><span>Pago procesado (MP)</span></td>
-                            <td class="td-amount" style="color: var(--kpi-green);">+$21,000</td>
+                            <td class="td-time ac-child">13:50</td>
+                            <td class="ac-child"><div class="td-desc"><strong>Set Velas Premium</strong><span>SKU VELA-01</span></div></td>
+                            <td class="td-amount ac-child" style="color:#6ee7b7;">+2</td>
+                        </tr>
+                        <tr>
+                            <td class="td-time">11:15</td>
+                            <td>
+                                <div class="ac-cell">
+                                    <span class="ac-badge stock"><i class="fas fa-arrow-down"></i></span>
+                                    <div class="td-desc"><strong>Remera Club Negro M <span class="reserved-pill">Reservado</span></strong><span>Comprometido por el pedido #1088</span></div>
+                                </div>
+                            </td>
+                            <td class="td-amount" style="color: var(--text-muted);">-1</td>
+                        </tr>
+                        <tr>
+                            <td class="td-time">10:05</td>
+                            <td>
+                                <div class="ac-cell">
+                                    <span class="ac-badge expense"><i class="fas fa-trash-alt"></i></span>
+                                    <div class="td-desc"><strong>Gasto de flete</strong><span>Efectivo</span></div>
+                                </div>
+                            </td>
+                            <td class="td-amount" style="color:#fca5a5;">-12.000</td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
 
+                <div class="st-flow">
+                    <div class="note ok">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Un ajuste de inventario llega <b>ya agrupado desde el backend</b>: la fila es el conteo, y adentro están los productos. La marca viene en la clave del grupo, no en el texto, así que reconocerlo no depende de leerle el nombre.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-lock"></i>
+                        <span>Un movimiento <b>reservado</b> no tocó el estante: movió el contador de comprometido. Los dos recorridos viven en la misma tabla —mismo motivo, mismo delta, mismo segundo— y lo único que los separa es esa columna.</span>
+                    </div>
+                    <div class="note">
+                        <i class="fas fa-link"></i>
+                        <span>Cada fila arma un <b>enlace compartible</b> hacia Actividad, con el foco, el grupo, la fecha y el SKU en la dirección: se manda por chat y el otro abre exactamente lo mismo.</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- SLIDE 4: LOS 8 BOTONES -->
+    <!-- SLIDE 6: ACCIONES RÁPIDAS -->
     <div class="slide">
-        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 20px;">
-                <h3 style="color: var(--kpi-blue);">Accesos Rápidos</h3>
-                <h2>El Puente hacia la Profundidad</h2>
-                <p style="max-width: 900px; margin: 0 auto;">Desde el tablero, a un solo clic de distancia, se abren los 8 módulos especializados que sostienen la operativa. Sin menús ocultos, fricción cero.</p>
-            </div>
-            
-            <div class="visual-block quick-actions-grid">
-                <a href="POS.html" class="qa-btn green">
-                    <div class="qa-icon"><i class="fas fa-cash-register"></i></div>
-                    <div class="qa-text">Punto de<br>Venta (POS)</div>
-                </a>
-                <a href="Agenda.html" class="qa-btn blue">
-                    <div class="qa-icon"><i class="far fa-calendar-check"></i></div>
-                    <div class="qa-text">Agenda y<br>Turnos</div>
-                </a>
-                <a href="Catalogo.html" class="qa-btn pink">
-                    <div class="qa-icon"><i class="fas fa-store"></i></div>
-                    <div class="qa-text"><br>Catálogo Base</div>
-                </a>
-                <a href="Inventario.html" class="qa-btn blue">
-                    <div class="qa-icon"><i class="fas fa-boxes"></i></div>
-                    <div class="qa-text">Gestión de<br>Inventario</div>
-                </a>
-                <a href="Proveedores.html" class="qa-btn orange">
-                    <div class="qa-icon"><i class="fas fa-handshake"></i></div>
-                    <div class="qa-text">Gestión de<br>Proveedores</div>
-                </a>
-                <a href="Promociones.html" class="qa-btn purple">
-                    <div class="qa-icon"><i class="fas fa-tags"></i></div>
-                    <div class="qa-text">Promociones<br>y Combos</div>
-                </a>
-                <a href="Facturacion.html" class="qa-btn blue">
-                    <div class="qa-icon"><i class="fas fa-file-invoice"></i></div>
-                    <div class="qa-text">AFIP y<br>Facturación</div>
-                </a>
-                <a href="Operaciones.html" class="qa-btn orange">
-                    <div class="qa-icon"><i class="fas fa-truck-loading"></i></div>
-                    <div class="qa-text">Operaciones<br>y Empaque</div>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 5: NAVEGACIÓN POWER-USER -->
-    <div class="slide">
-        <div class="glow-green" style="top: auto; bottom: -200px; left: -200px;"></div>
-        <div class="slide-content-wide shortcuts-grid">
-            
-            <div class="text-block" style="padding-right: 20px; text-align: left;">
-                <h3 style="color: var(--kpi-green); text-align: left;">Eficiencia Operativa</h3>
-                <h2 style="text-align: left;">Navegación Power-User</h2>
-                <p style="text-align: left;">En el mostrador, cada segundo cuenta. Desarrollamos un sistema integral de <strong>Atajos de Teclado</strong> para que tu equipo pueda saltar entre vistas a la velocidad del rayo.</p>
-                <p style="font-size: 18px; margin-top: 30px; text-align: left;">
-                    <i class="fas fa-keyboard" style="color: var(--kpi-green); margin-right: 10px;"></i>
-                    ¡Probá ahora usar <strong>A + [Letra]</strong> en tu teclado para navegar!
-                </p>
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Acciones rápidas</h3>
+                <h2 style="text-align: center;">Puertas que ya traen la respuesta escrita encima</h2>
+                <p style="text-align: center; font-size: 18px;">Cada acceso muestra su estado antes de tocarlo: si la caja está abierta, cuántos turnos hay hoy, cuántos pedidos esperan. Y el que no tiene el permiso no ve la puerta.</p>
             </div>
 
-            <div class="visual-block glass-panel">
-                <div class="shortcut-list">
-                    
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Búsqueda Global</span>
-                        <div class="keys-group"><span class="key">F2</span></div>
-                    </div>
-                    
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Abrir Caja (POS)</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent">P</span></div>
-                    </div>
-
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Ver Inventario</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-blue">I</span></div>
-                    </div>
-
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Catálogo Master</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-pink" style="color: var(--kpi-pink);">C</span></div>
-                    </div>
-
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Dashboard / Hub</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-blue" style="color: var(--kpi-blue);">H</span></div>
-                    </div>
-
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">AFIP y Facturación</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-blue">F</span></div>
-                    </div>
-                    
-                    <div class="shortcut-item">
-                        <span class="shortcut-desc">Ventas / Tesoro</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-orange" style="color: var(--kpi-orange);">V</span></div>
-                    </div>
-
-                    <div class="shortcut-item" style="border-top: 1px dashed var(--border-glass); margin-top: 5px; padding-top: 15px;">
-                        <span class="shortcut-desc" style="color: var(--kpi-purple);">Abrir Tienda Pública</span>
-                        <div class="keys-group"><span class="key">A</span><span class="key accent-purple">S</span></div>
-                    </div>
-
+            <div class="visual-block qa-grid">
+                <div class="qa-tile">
+                    <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(16,185,129,0.15); color:#34d399;"><i class="fas fa-cash-register"></i></div><h4>Anotar venta</h4></div>
+                    <span class="qa-meta">Caja abierta</span>
+                    <p>Abrir caja y registrar ventas.</p>
+                    <span class="qa-perm">pos:access</span>
+                </div>
+                <div class="qa-tile">
+                    <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(236,72,153,0.15); color:#f472b6;"><i class="far fa-calendar-check"></i></div><h4>Turnos</h4></div>
+                    <span class="qa-meta">Hoy: 14 · Próx: 15:30</span>
+                    <p>Agenda, reservas y clases.</p>
+                    <span class="qa-perm">staff:read</span>
+                </div>
+                <div class="qa-tile">
+                    <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(59,130,246,0.15); color:#60a5fa;"><i class="fas fa-table-list"></i></div><h4>Ajustar Catálogo</h4></div>
+                    <span class="qa-meta muted">248 productos activos</span>
+                    <p>Precios, variantes y clasificación.</p>
+                    <span class="qa-perm">catalog:write</span>
+                </div>
+                <div class="qa-tile">
+                    <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(79,70,229,0.15); color:#a5b4fc;"><i class="fas fa-receipt"></i></div><h4>Facturación</h4></div>
+                    <span class="qa-meta muted">Historial y AFIP</span>
+                    <p>Comprobantes e historial fiscal.</p>
+                    <span class="qa-perm">orders:read</span>
+                </div>
+                <div class="qa-tile">
+                    <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(245,158,11,0.15); color:#fbbf24;"><i class="fas fa-box-open"></i></div><h4>Pedidos</h4></div>
+                    <span class="qa-meta">3 pendientes</span>
+                    <p>Preparar, entregar y cobrar.</p>
+                    <span class="qa-perm">orders:read</span>
                 </div>
             </div>
 
+            <div class="note" style="margin-top: 20px;">
+                <i class="fas fa-plus"></i>
+                <span>El catálogo completo tiene <b>más accesos de los que se muestran</b> —Servicios, Clientes, Personal, Inventario, Proveedores, Promociones, Envíos, Inversiones, Campañas, Contestadora, la red de la marca, producción y despacho—. El inicio arranca con un conjunto y el resto se suma desde el modo edición.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: ATAJOS -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; left: -200px; right: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 26px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Sin soltar el teclado</h3>
+                <h2 style="text-align: center;">Shift + ? abre la lista, y son cinco solapas</h2>
+            </div>
+
+            <div class="visual-block sc-split">
+                <div class="sc-modal">
+                    <div class="sc-head"><i class="fas fa-keyboard" style="color: var(--kpi-green);"></i> Atajos de Teclado</div>
+                    <div class="sc-tabs">
+                        <span class="sc-tab on"><i class="fas fa-compass"></i> General</span>
+                        <span class="sc-tab"><i class="fas fa-boxes"></i> Catálogo</span>
+                        <span class="sc-tab"><i class="fas fa-truck"></i> Proveedores</span>
+                        <span class="sc-tab"><i class="fas fa-cash-register"></i> Punto de Venta</span>
+                        <span class="sc-tab"><i class="fas fa-pen"></i> Edición</span>
+                    </div>
+                    <div class="sc-body">
+                        <div class="sc-tip"><i class="fas fa-lightbulb"></i> Mantené <b>A</b> apretada y tocá la letra del destino.</div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Muestra este panel de ayuda</span><div class="keys-group"><span class="key">Shift</span><span class="key">?</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Foco en el buscador principal</span><div class="keys-group"><span class="key">F2</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Ir al Punto de Venta (POS)</span><div class="keys-group"><span class="key">A</span><span class="key accent">P</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Abrir Inventario Físico</span><div class="keys-group"><span class="key">A</span><span class="key accent-blue">I</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Ir al Catálogo de Productos</span><div class="keys-group"><span class="key">A</span><span class="key accent-blue">C</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Volver al Inicio (Dashboard)</span><div class="keys-group"><span class="key">A</span><span class="key accent-blue">H</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Ver Historial de Ventas</span><div class="keys-group"><span class="key">A</span><span class="key accent-orange">V</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Abrir Campañas y WhatsApp</span><div class="keys-group"><span class="key">A</span><span class="key accent-blue">W</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Abrir Tienda en nueva pestaña</span><div class="keys-group"><span class="key">A</span><span class="key accent-purple">T</span></div></div>
+                        <div class="shortcut-item"><span class="shortcut-desc">Reabrir la presentación de bienvenida</span><div class="keys-group"><span class="key">A</span><span class="key">-</span></div></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="sc-list">
+                        <div class="cfg-item"><i class="fas fa-boxes" style="color:#60a5fa;"></i><div><strong>Catálogo</strong><span>Seleccionar productos, editar detalles en lote, crear producto o carpeta, ver solo los apagados. Y <b style="color:#cbd5e1;">Shift + Click</b> para elegir un rango visible.</span></div></div>
+                        <div class="cfg-item"><i class="fas fa-truck" style="color:#fbbf24;"></i><div><strong>Proveedores</strong><span><b style="color:#cbd5e1;">A + 1…9</b> elige proveedor en la orden de compra; las flechas quitan el último producto o vacían la orden entera.</span></div></div>
+                        <div class="cfg-item"><i class="fas fa-cash-register" style="color:#34d399;"></i><div><strong>Punto de Venta</strong><span>Números para elegir producto por posición, <b style="color:#cbd5e1;">Espacio</b> para alternar Reserva / Mixto / Inmediato, <b style="color:#cbd5e1;">Ctrl + Z</b> para restaurar lo último liberado.</span></div></div>
+                        <div class="cfg-item"><i class="fas fa-pen" style="color:#c084fc;"></i><div><strong>Edición</strong><span>Las tres que valen en cualquier formulario: F2 al buscador, Escape para cerrar, Shift + ? para volver acá.</span></div></div>
+                    </div>
+
+                    <div class="note ok" style="margin-top: 16px;">
+                        <i class="fas fa-keyboard"></i>
+                        <span>Ningún atajo dispara mientras estás escribiendo en un campo: <b>la tecla es tuya primero</b>.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Explorar Módulos</h3>
+                <h2 style="text-align: center;">Desde el inicio se llega a todo</h2>
+                <p style="text-align: center; max-width: 900px; margin: 0 auto;">El tablero es la puerta. ¿Por dónde seguimos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="POS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
+                </a>
+
+                <a href="Operaciones.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-box-open"></i></div>
+                    <div class="qa-text" style="color: white;">Pedidos y<br>Operaciones</div>
+                </a>
+            </div>
         </div>
     </div>
 
     <!-- SCRIPT DE NAVEGACIÓN Y ATAJOS -->
     <script>
         const pageId = 'dashboard';
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -566,7 +875,7 @@
             });
             currentSlideNum.innerText = currentIndex + 1;
             
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
         }
@@ -576,7 +885,7 @@
                 currentIndex++;
                 updateSlides();
             } else {
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -595,7 +904,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -607,16 +916,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -624,6 +933,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();

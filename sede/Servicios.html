@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicios y Suscripciones - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-pink { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(236, 72, 153, 0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.11) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-pink); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(236,72,153,0.07); border: 1px solid rgba(236,72,153,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #fbcfe8; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-pink); }
+        .note b { color: #fce7f3; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+
+        /* =========================================
+           SLIDE 2: EL LISTADO
+           ========================================= */
+        .sv-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 12px 15px; margin-bottom: 16px; }
+        .sv-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex: 1; }
+        .sv-search { flex: 1; min-width: 210px; display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 13px; font-size: 13px; color: var(--text-muted); }
+        .kind-filters { display: flex; gap: 7px; flex-wrap: wrap; }
+        .kind-filter { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); border-radius: 9px; padding: 8px 13px; white-space: nowrap; }
+        .kind-filter.active { background: rgba(236,72,153,0.16); border-color: rgba(236,72,153,0.38); color: #fbcfe8; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--kpi-pink); color: white; border-radius: 10px; padding: 10px 18px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(236,72,153,0.28); white-space: nowrap; }
+
+        .data-table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; overflow: hidden; }
+        .data-table th { text-align: left; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 12px 15px; background: rgba(0,0,0,0.3); white-space: nowrap; }
+        .data-table td { padding: 13px 15px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 13.5px; vertical-align: middle; }
+        .text-center { text-align: center; } .text-right { text-align: right; }
+        .data-table th.text-center { text-align: center; } .data-table th.text-right { text-align: right; }
+        .sv-name strong { display: block; font-size: 14.5px; }
+        .sv-tags { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 5px; }
+        .sv-sku { font-size: 11.5px; font-family: monospace; color: #64748b; }
+        .badge-small { display: inline-flex; align-items: center; gap: 5px; font-size: 10.5px; font-weight: 800; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
+        .badge-indigo { background: rgba(99,102,241,0.16); color: #c7d2fe; }
+        .badge-violet { background: rgba(168,85,247,0.16); color: #e9d5ff; }
+        .badge-pending { background: rgba(245,158,11,0.16); color: #fcd34d; }
+        .badge-purple { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; border-radius: 7px; padding: 5px 10px; background: rgba(168,85,247,0.12); color: #d8b4fe; white-space: nowrap; }
+        .sv-price { font-weight: 800; color: #34d399; white-space: nowrap; }
+        .sv-switch { width: 34px; height: 18px; border-radius: 999px; background: var(--kpi-green); position: relative; display: inline-block; }
+        .sv-switch::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; top: 2px; right: 2px; }
+        .sv-switch.off { background: rgba(255,255,255,0.16); } .sv-switch.off::after { right: auto; left: 2px; }
+        .pending-badge { font-size: 10.5px; font-weight: 900; border-radius: 6px; padding: 3px 9px; background: rgba(245,158,11,0.16); color: #fcd34d; white-space: nowrap; }
+        .btn-icon { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.05); display: inline-flex; align-items: center; justify-content: center; font-size: 11.5px; color: #93c5fd; }
+        .btn-icon.muted { color: #64748b; }
+
+        /* =========================================
+           SLIDE 3: LAS TRES MODALIDADES
+           ========================================= */
+        .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .mode-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .mode-card.session { border-color: rgba(99,102,241,0.3); }
+        .mode-card.reservation { border-color: rgba(59,130,246,0.3); }
+        .mode-card.subscription { border-color: rgba(168,85,247,0.3); }
+        .mode-head { display: flex; align-items: center; gap: 12px; }
+        .mode-ico { width: 44px; height: 44px; border-radius: 12px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .mode-head h4 { font-size: 19px; font-weight: 800; text-align: left; }
+        .mode-card > p { font-size: 13.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.5; }
+        .mode-flags { display: flex; flex-direction: column; gap: 5px; background: rgba(0,0,0,0.28); border-radius: 10px; padding: 11px 13px; margin-top: auto; }
+        .mode-flag { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 11.5px; font-family: monospace; color: #94a3b8; }
+        .mode-flag b { font-weight: 700; }
+        .mode-flag .yes { color: #6ee7b7; } .mode-flag .no { color: #fca5a5; } .mode-flag .val { color: #bfdbfe; }
+        .derive-chain { display: flex; align-items: center; justify-content: center; gap: 13px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 15px 20px; margin-top: 20px; font-size: 13.5px; color: var(--text-muted); }
+        .derive-chain code { font-family: monospace; font-size: 12.5px; background: rgba(255,255,255,0.05); border-radius: 6px; padding: 3px 9px; color: #e2e8f0; }
+        .derive-chain i { color: #475569; font-size: 11px; }
+
+        /* =========================================
+           SLIDE 4: CUPOS
+           ========================================= */
+        .cap-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .drawer-mock { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .dm-header { background: rgba(0,0,0,0.3); padding: 15px 18px; border-bottom: 1px solid var(--border-glass); }
+        .dm-header strong { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .dm-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+        .dm-field { text-align: left; }
+        .dm-field label { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: var(--text-muted); margin-bottom: 6px; }
+        .dm-input { background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; color: white; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .dm-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 11px; }
+        .mode-toggle { display: flex; gap: 6px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 4px; }
+        .mode-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; font-weight: 700; border-radius: 8px; padding: 8px 10px; color: var(--text-muted); white-space: nowrap; }
+        .mode-btn.on-indigo { background: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .mode-btn.on-blue { background: rgba(59,130,246,0.22); color: #bfdbfe; }
+        .mode-btn.on-violet { background: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .cap-rule { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 15px 18px; margin-top: 16px; }
+        .cap-box { text-align: center; }
+        .cap-box .cap-n { display: block; font-size: 22px; font-weight: 900; font-family: monospace; }
+        .cap-box .cap-l { font-size: 11px; color: var(--text-muted); }
+        .cap-box.one .cap-n { color: #c7d2fe; } .cap-box.many .cap-n { color: #bfdbfe; }
+        .cap-rule i { color: #475569; font-size: 12px; }
+        .cap-out { font-family: monospace; font-size: 13px; border-radius: 8px; padding: 6px 12px; }
+        .cap-out.one { background: rgba(99,102,241,0.16); color: #c7d2fe; }
+        .cap-out.many { background: rgba(59,130,246,0.16); color: #bfdbfe; }
+        .cap-list { display: flex; flex-direction: column; gap: 9px; }
+        .cap-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .cap-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .cap-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .cap-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 5: SUSCRIPCIÓN
+           ========================================= */
+        .sub-split { display: grid; grid-template-columns: 1.05fr 1fr; gap: 38px; align-items: center; }
+        .weekday-selector { display: flex; gap: 7px; }
+        .weekday-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 800; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-muted); }
+        .weekday-circle.active { background: rgba(168,85,247,0.22); border-color: rgba(168,85,247,0.45); color: #e9d5ff; }
+        .sub-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .sub-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 15px 17px; text-align: left; }
+        .sub-card.on { border-color: rgba(168,85,247,0.32); background: rgba(168,85,247,0.06); }
+        .sub-card strong { display: block; font-size: 14.5px; margin-bottom: 6px; }
+        .sub-card p { font-size: 12.5px; color: var(--text-muted); margin: 0 0 9px; text-align: left; line-height: 1.45; }
+        .sub-fields { display: flex; flex-direction: column; gap: 4px; }
+        .sub-fields span { font-size: 11.5px; font-family: monospace; color: #cbd5e1; background: rgba(0,0,0,0.28); border-radius: 6px; padding: 4px 8px; }
+
+        /* =========================================
+           SLIDE 6: QUÉ PASA DESPUÉS
+           ========================================= */
+        .flow-split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+        .wizard { background: rgba(15,23,42,0.82); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; margin-bottom: 13px; }
+        .wizard-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: 11px; display: flex; align-items: center; gap: 9px; text-align: left; }
+        .wizard-steps { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .w-step { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; border-radius: 9px; padding: 8px 13px; background: rgba(255,255,255,0.05); color: #cbd5e1; white-space: nowrap; }
+        .w-step.skip { border: 1px dashed rgba(255,255,255,0.14); background: transparent; color: #475569; text-decoration: line-through; }
+        .w-step.pay { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+        .wizard-steps i { color: #475569; font-size: 10px; }
+        .flow-list { display: flex; flex-direction: column; gap: 11px; }
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.pink:hover { border-color: var(--kpi-pink); } .qa-btn.pink:hover .qa-icon { color: var(--kpi-pink); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .sv-toolbar { flex-direction: column; align-items: stretch; }
+            .sv-controls { flex-direction: column; align-items: stretch; }
+            .kind-filters { justify-content: center; }
+            .btn-primary { justify-content: center; }
+            .table-responsive { width: 100%; overflow-x: auto; border-radius: 14px; }
+            .data-table { min-width: 760px; }
+
+            /* El centrado movil es para el bloque de texto: adentro de una tarjeta
+               la copia sigue alineada a la izquierda. */
+            .mode-card > p, .sub-card p { text-align: left !important; margin-left: 0; margin-right: 0; }
+
+            .mode-grid { grid-template-columns: 1fr; gap: 16px; }
+            .derive-chain { flex-direction: column; gap: 9px; text-align: center; }
+
+            .cap-split { grid-template-columns: 1fr; gap: 28px; }
+            .dm-grid { grid-template-columns: 1fr; }
+            .cap-rule { flex-direction: column; gap: 12px; }
+            .cap-rule i { transform: rotate(90deg); }
+
+            .sub-split { grid-template-columns: 1fr; gap: 28px; }
+            .sub-compare { grid-template-columns: 1fr; }
+            .weekday-selector { justify-content: center; }
+
+            .flow-split { grid-template-columns: 1fr; gap: 24px; }
+            .wizard-steps { flex-direction: column; align-items: stretch; }
+            .wizard-steps i { transform: rotate(90deg); align-self: center; }
+            .w-step { justify-content: center; }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRODUCCIÓN -->
+    <div class="slide active">
+        <div class="glow-pink"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-pink);">Servicios</h3>
+                <h1>Lo que se vende <br><span style="color: white;">sin estar en el estante</span></h1>
+                <p>Acá se define la oferta; en Turnos se agenda, en el POS se cobra y en la tienda el cliente la reserva solo. Un servicio es un producto del catálogo, pero con horario en vez de stock.</p>
+                <p style="font-size: 17px;">Son tres modalidades, y la que le toca a cada uno no se elige de una lista: sale de cómo quedó configurado.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="position: relative; padding: 34px 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-concierge-bell" style="font-size: 66px; color: var(--kpi-pink); margin-bottom: 26px;"></i>
+                <div class="hero-chips">
+                    <span class="hero-chip"><i class="fas fa-chalkboard-teacher" style="color:#a5b4fc;"></i> Sesiones</span>
+                    <span class="hero-chip"><i class="fas fa-calendar-check" style="color:#93c5fd;"></i> Reservas</span>
+                    <span class="hero-chip"><i class="fas fa-ticket-alt" style="color:#d8b4fe;"></i> Suscripciones</span>
+                </div>
+                <div class="note" style="margin-top: 26px;">
+                    <i class="fas fa-circle-info"></i>
+                    <span>Una sucursal que pertenece a una marca <b>no crea el servicio directamente</b>: lo propone. Queda en la lista con "Esperando aprobación", sin interruptor y sin botón de editar.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: EL LISTADO -->
+    <div class="slide">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">El listado</h3>
+                <h2 style="text-align: center;">Una tabla, y la modalidad escrita en cada fila</h2>
+                <p style="text-align: center; font-size: 18px;">Los filtros de arriba no cambian de pantalla: recortan la misma lista. En el celular, en cambio, la oferta se parte en tres bloques apilados con su contador.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="sv-toolbar">
+                    <div class="sv-controls">
+                        <div class="sv-search"><i class="fas fa-search"></i> Buscar servicio...</div>
+                        <div class="kind-filters">
+                            <span class="kind-filter active"><i class="fas fa-layer-group"></i> Todos</span>
+                            <span class="kind-filter"><i class="fas fa-chalkboard-teacher"></i> Sesiones</span>
+                            <span class="kind-filter"><i class="fas fa-calendar-check"></i> Reservas</span>
+                            <span class="kind-filter"><i class="fas fa-ticket-alt"></i> Suscripciones</span>
+                        </div>
+                    </div>
+                    <span class="btn-primary"><i class="fas fa-plus"></i> Nuevo Servicio</span>
+                </div>
+
+                <div class="table-responsive custom-scrollbar">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 90px;">Estado</th>
+                                <th>Servicio / Sesión</th>
+                                <th class="text-center">Duración</th>
+                                <th class="text-right">Precio Base</th>
+                                <th class="text-center" style="width: 90px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center"><span class="sv-switch"></span></td>
+                                <td>
+                                    <div class="sv-name">
+                                        <strong>Masaje relajante</strong>
+                                        <div class="sv-tags">
+                                            <span class="sv-sku">Cod: SRV-MASAJE-60</span>
+                                            <span class="badge-small badge-indigo"><i class="fas fa-chalkboard-teacher"></i> Sesión individual (1 cupos)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><span class="badge-purple"><i class="far fa-clock"></i> 1h</span></td>
+                                <td class="text-right sv-price">$ 25.000</td>
+                                <td class="text-center"><span class="btn-icon"><i class="fas fa-pen"></i></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center"><span class="sv-switch"></span></td>
+                                <td>
+                                    <div class="sv-name">
+                                        <strong>Yoga grupal</strong>
+                                        <div class="sv-tags">
+                                            <span class="sv-sku">Cod: SRV-YOGA-AM</span>
+                                            <span class="badge-small badge-indigo"><i class="fas fa-chalkboard-teacher"></i> Sesión en grupo (12 cupos)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><span class="badge-purple"><i class="far fa-clock"></i> 45 min</span></td>
+                                <td class="text-right sv-price">$ 8.000</td>
+                                <td class="text-center"><span class="btn-icon"><i class="fas fa-pen"></i></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center"><span class="sv-switch off"></span></td>
+                                <td>
+                                    <div class="sv-name">
+                                        <strong>Cancha de pádel</strong>
+                                        <div class="sv-tags">
+                                            <span class="sv-sku">Cod: SRV-PADEL-1</span>
+                                            <span class="badge-small badge-indigo"><i class="fas fa-calendar-check"></i> Reserva (2 cupos)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><span class="badge-purple"><i class="far fa-clock"></i> 1.5h</span></td>
+                                <td class="text-right sv-price">$ 30.000</td>
+                                <td class="text-center"><span class="btn-icon"><i class="fas fa-pen"></i></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center"><span class="sv-switch"></span></td>
+                                <td>
+                                    <div class="sv-name">
+                                        <strong>Pase mensual</strong>
+                                        <div class="sv-tags">
+                                            <span class="sv-sku">Cod: PASE-MENSUAL</span>
+                                            <span class="badge-small badge-violet"><i class="fas fa-ticket-alt"></i> Plan fijo (8 creditos)</span>
+                                            <span class="badge-small badge-violet"><i class="far fa-calendar-alt"></i> Lun, Mié, Vie</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><span class="badge-purple"><i class="far fa-clock"></i> 30 dias</span></td>
+                                <td class="text-right sv-price">$ 48.000</td>
+                                <td class="text-center"><span class="btn-icon"><i class="fas fa-pen"></i></span></td>
+                            </tr>
+
+                            <tr>
+                                <td class="text-center"><span class="pending-badge">Pendiente</span></td>
+                                <td>
+                                    <div class="sv-name">
+                                        <strong>Clase de pilates</strong>
+                                        <div class="sv-tags">
+                                            <span class="sv-sku">Cod: SRV-PILATES</span>
+                                            <span class="badge-small badge-pending"><i class="fas fa-hourglass-half"></i> Esperando aprobación</span>
+                                            <span class="badge-small badge-indigo"><i class="fas fa-chalkboard-teacher"></i> Sesión en grupo (8 cupos)</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center"><span class="badge-purple"><i class="far fa-clock"></i> 1h</span></td>
+                                <td class="text-right sv-price">$ 12.000</td>
+                                <td class="text-center"><span class="btn-icon muted"><i class="fas fa-clock"></i></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="note indigo" style="margin-top: 16px;">
+                    <i class="fas fa-toggle-on"></i>
+                    <span>El interruptor <b>pausa el servicio, no lo borra</b>: deja de ofrecerse en la agenda y en la tienda, y los turnos que ya estaban tomados siguen donde estaban.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: LAS TRES MODALIDADES -->
+    <div class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Las tres modalidades</h3>
+                <h2 style="text-align: center;">No es un campo: es lo que queda cuando terminás de configurar</h2>
+            </div>
+
+            <div class="visual-block mode-grid">
+                <div class="mode-card session">
+                    <div class="mode-head">
+                        <div class="mode-ico" style="color:#a5b4fc;"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <div style="text-align:left;"><h4>Sesión</h4></div>
+                    </div>
+                    <p>Alguien del equipo atiende. Un corte, una consulta, una clase con profesor. El cliente elige con quién.</p>
+                    <div class="mode-flags">
+                        <div class="mode-flag"><span>type</span><b class="val">service</b></div>
+                        <div class="mode-flag"><span>requires_staff</span><b class="yes">true</b></div>
+                        <div class="mode-flag"><span>requires_schedule</span><b class="yes">true</b></div>
+                    </div>
+                </div>
+
+                <div class="mode-card reservation">
+                    <div class="mode-head">
+                        <div class="mode-ico" style="color:#93c5fd;"><i class="fas fa-calendar-check"></i></div>
+                        <div style="text-align:left;"><h4>Reserva</h4></div>
+                    </div>
+                    <p>Se reserva un recurso, no una persona. Una cancha, una sala, una mesa. No hay a quién elegir.</p>
+                    <div class="mode-flags">
+                        <div class="mode-flag"><span>type</span><b class="val">service</b></div>
+                        <div class="mode-flag"><span>requires_staff</span><b class="no">false</b></div>
+                        <div class="mode-flag"><span>requires_schedule</span><b class="yes">true</b></div>
+                    </div>
+                </div>
+
+                <div class="mode-card subscription">
+                    <div class="mode-head">
+                        <div class="mode-ico" style="color:#d8b4fe;"><i class="fas fa-ticket-alt"></i></div>
+                        <div style="text-align:left;"><h4>Suscripción</h4></div>
+                    </div>
+                    <p>Un pase con créditos y vigencia. No se agenda al comprarlo: se compra, y después se usa en cada turno.</p>
+                    <div class="mode-flags">
+                        <div class="mode-flag"><span>type</span><b class="val">pass</b></div>
+                        <div class="mode-flag"><span>requires_staff</span><b class="no">false</b></div>
+                        <div class="mode-flag"><span>requires_schedule</span><b class="no">false</b></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="derive-chain">
+                <code>type</code>
+                <i class="fas fa-plus"></i>
+                <code>service_type</code>
+                <i class="fas fa-plus"></i>
+                <code>requires_staff</code>
+                <i class="fas fa-arrow-right"></i>
+                <span>la etiqueta que ves en la fila, el filtro que la encuentra y los pasos que el cliente va a tener que dar.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: CUPOS -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Individual o en grupo</h3>
+                <h2 style="text-align: center;">Lo decide el número de cupos, no un botón</h2>
+            </div>
+
+            <div class="visual-block cap-split">
+                <div class="drawer-mock">
+                    <div class="dm-header">
+                        <strong><i class="fas fa-concierge-bell" style="color: var(--kpi-pink);"></i> Nuevo Servicio</strong>
+                    </div>
+                    <div class="dm-body">
+                        <div class="dm-field">
+                            <label>Nombre *</label>
+                            <div class="dm-input">Yoga para principiantes</div>
+                        </div>
+                        <div class="dm-field">
+                            <label>Modalidad</label>
+                            <div class="mode-toggle">
+                                <span class="mode-btn on-indigo"><i class="fas fa-chalkboard-teacher"></i> Sesión</span>
+                                <span class="mode-btn"><i class="fas fa-calendar-check"></i> Reserva</span>
+                                <span class="mode-btn"><i class="fas fa-ticket-alt"></i> Suscripción</span>
+                            </div>
+                        </div>
+                        <div class="dm-grid">
+                            <div class="dm-field">
+                                <label>Cupos por turno</label>
+                                <div class="dm-input">12</div>
+                            </div>
+                            <div class="dm-field">
+                                <label>Duración *</label>
+                                <div class="dm-input">45 minutos <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted);"></i></div>
+                            </div>
+                            <div class="dm-field">
+                                <label>Precio *</label>
+                                <div class="dm-input"><span><i class="fas fa-dollar-sign" style="color:#34d399; margin-right:5px;"></i>8.000</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="cap-list">
+                        <div class="cap-item"><i class="fas fa-user" style="color:#a5b4fc;"></i><div><strong>Un cupo</strong><span>Sesión individual. El turno bloquea a la persona y al horario: nadie más entra en esa franja.</span></div></div>
+                        <div class="cap-item"><i class="fas fa-users" style="color:#93c5fd;"></i><div><strong>Más de un cupo</strong><span>Sesión en grupo. La clase admite gente hasta llenarse, y en la agenda se dibuja como una sola columna con su cuenta.</span></div></div>
+                        <div class="cap-item"><i class="fas fa-clock" style="color:#d8b4fe;"></i><div><strong>La duración es una lista corta</strong><span>15, 30, 45 minutos, 1, 1.5 o 2 horas. No es un campo libre: la grilla de la agenda se dibuja con esos saltos.</span></div></div>
+                    </div>
+
+                    <div class="cap-rule">
+                        <div class="cap-box one"><span class="cap-n">1</span><span class="cap-l">cupo</span></div>
+                        <i class="fas fa-arrow-right"></i>
+                        <span class="cap-out one">1x1</span>
+                        <span style="color:#475569;">·</span>
+                        <div class="cap-box many"><span class="cap-n">12</span><span class="cap-l">cupos</span></div>
+                        <i class="fas fa-arrow-right"></i>
+                        <span class="cap-out many">1xn</span>
+                    </div>
+
+                    <div class="note blue" style="margin-top: 14px;">
+                        <i class="fas fa-rotate"></i>
+                        <span>El cambio es <b>en el momento</b>: se escribe el número y el tipo se recalcula solo. En una Reserva el mismo campo cambia de nombre — pasa a ser <b>"Disponibilidad simultánea"</b>, porque ahí no son alumnos, son turnos en paralelo.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: SUSCRIPCIÓN -->
+    <div class="slide">
+        <div class="glow-purple" style="top: auto; bottom: -10vw; left: auto; right: -10vw;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Suscripción</h3>
+                <h2 style="text-align: center;">Un plan fijo, o días a elección</h2>
+            </div>
+
+            <div class="visual-block sub-split">
+                <div class="drawer-mock">
+                    <div class="dm-header">
+                        <strong><i class="fas fa-ticket-alt" style="color: var(--kpi-purple);"></i> Editar Servicio · Pase mensual</strong>
+                    </div>
+                    <div class="dm-body">
+                        <div class="dm-field">
+                            <label>Tipo de suscripción</label>
+                            <div class="mode-toggle">
+                                <span class="mode-btn on-violet">Plan fijo</span>
+                                <span class="mode-btn">Días flexibles</span>
+                            </div>
+                        </div>
+                        <div class="dm-field">
+                            <label>Días habilitados</label>
+                            <div class="weekday-selector">
+                                <span class="weekday-circle active">L</span>
+                                <span class="weekday-circle">M</span>
+                                <span class="weekday-circle active">X</span>
+                                <span class="weekday-circle">J</span>
+                                <span class="weekday-circle active">V</span>
+                                <span class="weekday-circle">S</span>
+                                <span class="weekday-circle">D</span>
+                            </div>
+                        </div>
+                        <div class="dm-grid">
+                            <div class="dm-field"><label>Vigencia (días)</label><div class="dm-input">30</div></div>
+                            <div class="dm-field"><label>Usos incluidos</label><div class="dm-input">8</div></div>
+                            <div class="dm-field"><label>Desc. productos (%)</label><div class="dm-input">10</div></div>
+                        </div>
+                        <div class="dm-field">
+                            <label>Precio *</label>
+                            <div class="dm-input"><span><i class="fas fa-dollar-sign" style="color:#34d399; margin-right:5px;"></i>48.000</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="sub-compare">
+                        <div class="sub-card on">
+                            <strong>Plan fijo</strong>
+                            <p>Una bolsa de usos que dura lo que dure la vigencia. "Ocho clases en treinta días."</p>
+                            <div class="sub-fields">
+                                <span>Vigencia · 30 días</span>
+                                <span>Usos incluidos · 8</span>
+                            </div>
+                        </div>
+                        <div class="sub-card">
+                            <strong>Días flexibles</strong>
+                            <p>Se cobra por día usado, con un tope diario. La duración deja de ser un plazo y pasa a ser "por día".</p>
+                            <div class="sub-fields">
+                                <span>Usos por día · 1</span>
+                                <span>Precio por día</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="note purple" style="margin-top: 14px;">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>Los <b>días habilitados</b> son parte del pase, no del horario del local: un pase de lunes, miércoles y viernes no se puede usar un sábado. Sin elegir ninguno vale <b>todos los días</b>, y nunca se pueden dejar en cero.</span>
+                    </div>
+                    <div class="note ok" style="margin-top: 12px;">
+                        <i class="fas fa-tags"></i>
+                        <span>El <b>descuento en productos</b> viaja con el pase: quien lo tiene activo compra el resto del catálogo con ese porcentaje. Es la parte del pase que no se agenda.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: QUÉ PASA DESPUÉS -->
+    <div class="slide">
+        <div class="glow-pink" style="top: auto; bottom: -10vw; right: auto; left: -10vw;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-pink); text-align: center;">Qué pasa después</h3>
+                <h2 style="text-align: center;">La modalidad decide cuántos pasos da el cliente</h2>
+                <p style="text-align: center; font-size: 18px;">La tienda pública arma el asistente de reserva leyendo las mismas dos banderas. Lo que acá es una casilla, allá es un paso menos.</p>
+            </div>
+
+            <div class="visual-block flow-split">
+                <div>
+                    <div class="wizard">
+                        <div class="wizard-title"><i class="fas fa-chalkboard-teacher" style="color:#a5b4fc;"></i> Sesión con varios profesionales</div>
+                        <div class="wizard-steps">
+                            <span class="w-step"><i class="fas fa-concierge-bell"></i> Servicio</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step"><i class="fas fa-user"></i> Profesional</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step"><i class="far fa-clock"></i> Horario</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step pay"><i class="fas fa-credit-card"></i> Pago</span>
+                        </div>
+                    </div>
+
+                    <div class="wizard">
+                        <div class="wizard-title"><i class="fas fa-calendar-check" style="color:#93c5fd;"></i> Reserva de un recurso</div>
+                        <div class="wizard-steps">
+                            <span class="w-step"><i class="fas fa-concierge-bell"></i> Servicio</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step skip"><i class="fas fa-user"></i> Profesional</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step"><i class="far fa-clock"></i> Horario</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step pay"><i class="fas fa-credit-card"></i> Pago</span>
+                        </div>
+                    </div>
+
+                    <div class="wizard" style="margin-bottom: 0;">
+                        <div class="wizard-title"><i class="fas fa-ticket-alt" style="color:#d8b4fe;"></i> Suscripción</div>
+                        <div class="wizard-steps">
+                            <span class="w-step"><i class="fas fa-concierge-bell"></i> Servicio</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step skip"><i class="fas fa-user"></i> Profesional</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step skip"><i class="far fa-clock"></i> Horario</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="w-step pay"><i class="fas fa-credit-card"></i> Pago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flow-list">
+                    <div class="note blue">
+                        <i class="fas fa-user-slash"></i>
+                        <span>El paso del profesional <b>tampoco aparece si hay uno solo</b>: elegir entre una opción no es elegir. La pantalla se lo saltea y va derecho al horario.</span>
+                    </div>
+                    <div class="note purple">
+                        <i class="fas fa-ticket-alt"></i>
+                        <span>Una suscripción se compra, no se agenda: sin profesional y sin horario, el asistente queda en <b>dos pasos</b>. El turno se toma después, y ahí recién se descuenta un crédito.</span>
+                    </div>
+                    <div class="note indigo">
+                        <i class="far fa-calendar-check"></i>
+                        <span>En <b>Turnos</b> la misma oferta es lo que se agenda: la sesión pide profesional y la reserva no, la duración fija los saltos de la grilla y los cupos dibujan la clase.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>Un servicio propuesto por la sucursal <b>no se puede agendar ni vender</b> hasta que la marca lo apruebe: figura en la lista, pero apagado.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Explorar Módulos</h3>
+                <h2 style="text-align: center;">La oferta ya está: ahora se agenda</h2>
+                <p style="text-align: center; max-width: 900px; margin: 0 auto;">Lo que se define acá aparece en Turnos, en la tienda y en la ficha del cliente. ¿Por dónde seguimos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="Agenda.html" class="qa-btn pink" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="far fa-calendar-check"></i></div>
+                    <div class="qa-text" style="color: white;">Turnos<br>y Agenda</div>
+                </a>
+
+                <a href="Tienda.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-store"></i></div>
+                    <div class="qa-text" style="color: white;">Tienda<br>en Línea</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'servicios';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

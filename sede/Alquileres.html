@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alquileres y Contratos - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-amber: #f59e0b;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-red: #ef4444;
+            --kpi-teal: #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-teal { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20, 184, 166, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-amber { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.11) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-teal); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        code, .mono { font-family: monospace; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #fcd34d; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-amber); }
+        .note b { color: #fde68a; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.red { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.22); color: #fca5a5; }
+        .note.red i { color: var(--kpi-red); } .note.red b { color: #fecaca; }
+
+        .status-pill { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; border-radius: 5px; padding: 3px 8px; white-space: nowrap; }
+        .status-pill.reserved { background: rgba(59,130,246,0.16); color: #93c5fd; }
+        .status-pill.picked_up { background: rgba(245,158,11,0.16); color: #fcd34d; }
+        .status-pill.overdue { background: rgba(239,68,68,0.16); color: #fca5a5; }
+        .status-pill.returned { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .status-pill.cancelled { background: rgba(255,255,255,0.07); color: #94a3b8; }
+        .status-pill.available { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+
+        /* =========================================
+           LAS TRES COLUMNAS (slide 2)
+           ========================================= */
+        .three-columns { display: grid; grid-template-columns: 1fr 0.95fr 1.05fr; gap: 16px; align-items: start; }
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px; }
+        .panel-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .panel-title h4 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); }
+        .mini-tabs { display: flex; gap: 5px; }
+        .mini-tab { font-size: 10.5px; font-weight: 800; border-radius: 6px; padding: 4px 9px; background: rgba(255,255,255,0.05); color: #64748b; display: inline-flex; gap: 5px; align-items: center; }
+        .mini-tab.active { background: rgba(20,184,166,0.16); color: #5eead4; }
+        .mini-tab span { opacity: .7; }
+        .search-bar { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 7px 11px; font-size: 11.5px; color: #64748b; margin-bottom: 10px; }
+
+        .asset-row { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 9px 11px; margin-bottom: 7px; text-align: left; }
+        .asset-row:last-child { margin-bottom: 0; }
+        .asset-ico { width: 30px; height: 30px; border-radius: 9px; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; font-size: 11.5px; }
+        .asset-row strong { display: block; font-size: 12.5px; }
+        .asset-row small { display: block; font-size: 10.5px; color: #64748b; }
+        .avail-count { font-size: 11px; font-weight: 800; font-family: monospace; color: #6ee7b7; white-space: nowrap; }
+        .avail-count.none { color: #64748b; }
+        .building-row { border-color: rgba(168,85,247,0.28); }
+        .unit-row { margin-left: 16px; border-style: dashed; }
+
+        .form-field { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 8px; padding: 7px 11px; font-size: 11.5px; color: #64748b; margin-bottom: 7px; text-align: left; display: flex; justify-content: space-between; gap: 9px; align-items: center; }
+        .form-field b { color: #cbd5e1; font-weight: 700; }
+        .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        .btn-submit { background: rgba(20,184,166,0.18); color: #5eead4; border-radius: 8px; padding: 9px; font-size: 12px; font-weight: 800; text-align: center; display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 3px; }
+
+        .contract-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 11px 12px; text-align: left; }
+        .contract-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 7px; }
+        .contract-head strong { display: block; font-size: 12.5px; }
+        .contract-head small { display: block; font-size: 10.5px; color: #64748b; }
+        .timeline { display: flex; gap: 12px; font-size: 10.5px; color: var(--text-muted); font-family: monospace; margin-bottom: 7px; }
+        .money-row { display: flex; gap: 12px; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+        .money-row b { color: #cbd5e1; font-family: monospace; }
+        .charges { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+        .charges li { display: grid; grid-template-columns: 1fr auto auto; gap: 9px; align-items: center; background: rgba(0,0,0,0.28); border-radius: 7px; padding: 6px 9px; font-size: 11px; list-style: none; }
+        .charges li b { font-family: monospace; color: #cbd5e1; }
+        .chip-cobrar { background: rgba(16,185,129,0.16); color: #6ee7b7; border-radius: 5px; padding: 2px 8px; font-size: 10px; font-weight: 800; }
+        .chip-estado { font-size: 10px; color: #64748b; font-weight: 700; white-space: nowrap; }
+        .chip-estado.custodia { color: #fcd34d; }
+        .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        .act { font-size: 10.5px; font-weight: 700; border-radius: 6px; padding: 5px 9px; background: rgba(255,255,255,0.06); color: #cbd5e1; white-space: nowrap; }
+        .act.danger { color: #fca5a5; }
+        .act.money { background: rgba(245,158,11,0.13); color: #fcd34d; }
+
+        /* =========================================
+           CUATRO ORÍGENES (slide 3)
+           ========================================= */
+        .origins-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .origin-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 9px; text-align: left; }
+        .origin-ico { width: 36px; height: 36px; border-radius: 11px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .origin-card strong { font-size: 14px; font-weight: 800; }
+        .origin-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.45; }
+        .origin-foot { margin-top: auto; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: #64748b; background: rgba(0,0,0,0.3); border-radius: 7px; padding: 5px 9px; }
+        .building-chain { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; background: rgba(0,0,0,0.26); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 17px; margin-top: 18px; }
+        .chain-box { text-align: left; }
+        .chain-box strong { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .chain-box span { display: block; font-size: 12px; color: var(--text-muted); margin-top: 3px; line-height: 1.45; }
+        .building-chain > i { color: #475569; font-size: 13px; }
+
+        /* =========================================
+           AGRUPACIÓN (slide 4)
+           ========================================= */
+        .group-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 32px; align-items: start; }
+        .key-fields { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+        .key-field { background: rgba(20,184,166,0.1); border: 1px solid rgba(20,184,166,0.24); color: #5eead4; border-radius: 7px; padding: 5px 10px; font-size: 11.5px; font-weight: 700; }
+        .split-demo { background: rgba(0,0,0,0.26); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px; margin-top: 14px; }
+        .split-label { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .7px; color: var(--text-muted); margin-bottom: 9px; text-align: left; }
+        .search-demo { display: flex; flex-direction: column; gap: 8px; }
+        .search-hit { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; background: rgba(0,0,0,0.26); border-radius: 9px; padding: 8px 11px; font-size: 12px; text-align: left; }
+        .search-hit.child { margin-left: 20px; background: rgba(168,85,247,0.07); border: 1px solid rgba(168,85,247,0.2); }
+        .search-hit i { font-size: 11px; color: #64748b; }
+        .search-hit em { font-style: normal; font-size: 10.5px; color: #64748b; white-space: nowrap; }
+        .search-hit mark { background: rgba(245,158,11,0.28); color: #fde68a; border-radius: 3px; padding: 0 3px; }
+
+        /* =========================================
+           CICLO Y CALENDARIO (slide 5)
+           ========================================= */
+        .cycle-table { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; overflow: hidden; }
+        .cycle-row { display: grid; grid-template-columns: 150px 1fr 1fr; gap: 12px; align-items: center; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); text-align: left; }
+        .cycle-row:last-child { border-bottom: none; }
+        .cycle-row.head { background: rgba(0,0,0,0.3); font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); }
+        .cycle-row .status-pill { justify-self: start; }
+        .cycle-row .what { font-size: 12px; color: #cbd5e1; }
+        .cycle-row .what b { color: var(--text-main); font-family: monospace; font-weight: 700; }
+        .cycle-row .what.mut { color: #64748b; }
+        /* La barra es el dibujo; el texto va al costado y no adentro del tramo,
+           que en el telefono mide 130px y recortaria la frase. */
+        .hold-bar { display: grid; grid-template-columns: 92px 1fr 270px; gap: 12px; align-items: center; margin-bottom: 7px; }
+        .hold-bar > span { font-size: 11.5px; color: #cbd5e1; font-weight: 700; text-align: right; }
+        .hold-bar > em { font-style: normal; font-size: 11.5px; color: var(--text-muted); font-family: monospace; text-align: left; }
+        .hold-bar > em b { color: #cbd5e1; }
+        .hold-track { position: relative; height: 24px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 8px; overflow: hidden; }
+        .hold-seg { position: absolute; top: 3px; bottom: 3px; border-radius: 6px; }
+        .hold-seg.a { background: rgba(59,130,246,0.26); color: #dbeafe; }
+        .hold-seg.b { background: rgba(16,185,129,0.26); color: #d1fae5; }
+        .hold-seg.x { background: rgba(239,68,68,0.24); color: #fecaca; }
+
+        /* =========================================
+           PLATA (slides 6 y 7)
+           ========================================= */
+        .money-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 32px; align-items: start; }
+        .two-states { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; }
+        .state-card { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px; text-align: left; }
+        .state-card.debe { border-color: rgba(245,158,11,0.26); }
+        .state-card.entro { border-color: rgba(16,185,129,0.3); }
+        .state-card strong { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 5px; }
+        .state-card span { display: block; font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+        .state-card code { display: block; font-size: 11px; color: #94a3b8; margin-top: 7px; }
+        .two-states > i { color: #475569; font-size: 13px; }
+        .deposit-flow { display: flex; flex-direction: column; gap: 8px; }
+        .dep-step { display: grid; grid-template-columns: 24px 1fr auto; gap: 11px; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 13px; text-align: left; }
+        .dep-step i { width: 24px; height: 24px; border-radius: 7px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 10.5px; }
+        .dep-step strong { display: block; font-size: 12.5px; }
+        .dep-step span { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .dep-step .tag { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; border-radius: 5px; padding: 3px 8px; }
+        .dep-step .tag.ajena { background: rgba(245,158,11,0.14); color: #fcd34d; }
+        .dep-step .tag.propia { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .dep-step .tag.nada { background: rgba(255,255,255,0.06); color: #64748b; }
+
+        .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .mode-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 17px; text-align: left; }
+        .mode-card.credit { border-color: rgba(59,130,246,0.3); }
+        .mode-card.fee { border-color: rgba(168,85,247,0.3); }
+        .mode-card > strong { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 800; }
+        .mode-card > code { display: inline-block; font-size: 11px; color: #94a3b8; margin: 4px 0 9px; }
+        .mode-card > p { font-size: 12.5px; color: var(--text-muted); margin: 0 0 12px; text-align: left; line-height: 1.45; }
+        .ledger { display: flex; flex-direction: column; gap: 5px; }
+        .ledger-line { display: flex; justify-content: space-between; gap: 12px; background: rgba(0,0,0,0.28); border-radius: 7px; padding: 7px 11px; font-size: 12px; }
+        .ledger-line b { font-family: monospace; color: #cbd5e1; }
+        .ledger-line.total { background: rgba(255,255,255,0.06); font-weight: 800; }
+        .ledger-line.total b { color: var(--text-main); }
+        .ledger-line.strike b { color: #64748b; text-decoration: line-through; }
+
+        /* =========================================
+           NAVEGACIÓN (slide 8)
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.teal:hover { border-color: var(--kpi-teal); } .qa-btn.teal:hover .qa-icon { color: var(--kpi-teal); }
+        .qa-btn.amber:hover { border-color: var(--kpi-amber); } .qa-btn.amber:hover .qa-icon { color: var(--kpi-amber); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            /* El centrado de arriba es para el bloque de texto: adentro de una
+               tarjeta la copia sigue alineada a la izquierda. */
+            .visual-block p { text-align: left !important; margin-left: 0; margin-right: 0; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .three-columns { grid-template-columns: 1fr; gap: 14px; }
+            .origins-grid { grid-template-columns: 1fr; gap: 14px; }
+            .building-chain { grid-template-columns: 1fr; gap: 12px; }
+            .building-chain > i { transform: rotate(90deg); text-align: center; }
+            .group-split { grid-template-columns: 1fr; gap: 24px; }
+            .money-split { grid-template-columns: 1fr; gap: 24px; }
+            .mode-grid { grid-template-columns: 1fr; gap: 14px; }
+            .two-states { grid-template-columns: 1fr; gap: 12px; }
+            .two-states > i { transform: rotate(90deg); text-align: center; }
+            .cycle-row { grid-template-columns: 1fr; gap: 5px; }
+            .cycle-row.head { display: none; }
+            .hold-bar { grid-template-columns: 1fr; gap: 5px; margin-bottom: 12px; }
+            .hold-bar > span, .hold-bar > em { text-align: left; }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">8</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- ===== SLIDE 1: PORTADA ===== -->
+    <div class="slide active" id="slide-1">
+        <div class="glow-teal"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">CompanyManager · Sede</h3>
+            <h1 style="text-align: center; max-width: 1100px;">Lo que sale y tiene que volver</h1>
+            <p style="text-align: center; max-width: 930px; margin-bottom: 34px;">
+                Una herramienta, un departamento o una camioneta salen del local con fecha de regreso. El módulo
+                sigue las tres cosas que eso mueve: el calendario del activo, el estado del contrato y una plata
+                que no toda es del negocio.
+            </p>
+            <div class="hero-chips">
+                <div class="hero-chip"><i class="fas fa-boxes-packing" style="color: var(--kpi-teal);"></i> Cuatro orígenes de alquilable</div>
+                <div class="hero-chip"><i class="fas fa-calendar-check" style="color: var(--kpi-blue);"></i> El calendario lo cuida la base</div>
+                <div class="hero-chip"><i class="fas fa-vault" style="color: var(--kpi-amber);"></i> El depósito es plata ajena</div>
+                <div class="hero-chip"><i class="fas fa-hand-holding-dollar" style="color: var(--kpi-purple);"></i> La seña, en dos políticas</div>
+            </div>
+            <div class="note blue" style="margin-top: 34px; max-width: 1000px;">
+                <i class="fas fa-store"></i>
+                <div>Los contratos nacen <b>en el mostrador</b>. La vitrina pública lista los hospedajes, pero todavía no
+                    reserva: entrar por ahí es el paso siguiente, no algo que ya esté.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 2: LAS TRES COLUMNAS ===== -->
+    <div class="slide" id="slide-2">
+        <div class="glow-indigo"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La pantalla</h3>
+                <h2>Qué hay, qué se reserva, qué pasó</h2>
+                <p style="margin-bottom: 0;">Tres columnas que se leen de izquierda a derecha: el inventario alquilable,
+                    el formulario de la reserva y los contratos. En el teléfono son tres etapas, una por vez.</p>
+            </div>
+            <div class="visual-block">
+                <div class="three-columns">
+                    <div class="panel">
+                        <div class="panel-title"><h4>Alquilables</h4><div class="mini-tab active"><i class="fas fa-plus"></i> Nuevo</div></div>
+                        <div class="search-bar"><i class="fas fa-magnifying-glass"></i> Buscar alquilable…</div>
+                        <div class="asset-row">
+                            <div class="asset-ico" style="color: #5eead4;"><i class="fas fa-bicycle"></i></div>
+                            <div><strong>Bicicleta de montaña r29</strong><small>Objeto · ALQ-014</small></div>
+                            <span class="avail-count">3 de 5</span>
+                        </div>
+                        <div class="asset-row">
+                            <div class="asset-ico" style="color: #93c5fd;"><i class="fas fa-truck-pickup"></i></div>
+                            <div><strong>Furgón Kangoo</strong><small>Objeto · ALQ-022 · AB 123 CD</small></div>
+                            <span class="avail-count none">0 de 1</span>
+                        </div>
+                        <div class="asset-row building-row">
+                            <div class="asset-ico" style="color: #d8b4fe;"><i class="fas fa-building"></i></div>
+                            <div><strong>Edificio Centro</strong><small>Edificio · EDI-01</small></div>
+                            <span class="chip-estado">no se alquila</span>
+                        </div>
+                        <div class="asset-row unit-row">
+                            <div class="asset-ico" style="color: #d8b4fe;"><i class="fas fa-door-open"></i></div>
+                            <div><strong>Unidad 2A</strong><small>Edificio Centro · Unidad · U-2A</small></div>
+                            <span class="status-pill available">Disponible</span>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-title"><h4>Reservas y contratos</h4></div>
+                        <div class="form-field">Activo <b>Bicicleta de montaña r29</b></div>
+                        <div class="form-field">Cliente <b>Mariana Gómez</b></div>
+                        <div class="form-row2">
+                            <div class="form-field" style="flex-direction: column; align-items: flex-start; gap: 2px;">Inicio <b>15/09 10:00</b></div>
+                            <div class="form-field" style="flex-direction: column; align-items: flex-start; gap: 2px;">Devolución <b>18/09 10:00</b></div>
+                        </div>
+                        <div class="form-row2">
+                            <div class="form-field">Alquiler <b>$10.000</b></div>
+                            <div class="form-field">Depósito <b>$10.000</b></div>
+                        </div>
+                        <div class="form-field">Notas, condiciones o accesorios</div>
+                        <div class="btn-submit"><i class="fas fa-calendar-plus"></i> Crear reserva</div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-title">
+                            <h4>Historial</h4>
+                            <div class="mini-tabs">
+                                <div class="mini-tab active">Activos <span>4</span></div>
+                                <div class="mini-tab">Historial <span>37</span></div>
+                            </div>
+                        </div>
+                        <div class="contract-card">
+                            <div class="contract-head">
+                                <div><strong>Bicicleta de montaña r29</strong><small>Mariana Gómez</small></div>
+                                <span class="status-pill picked_up">Retirado</span>
+                            </div>
+                            <div class="timeline"><span>15/09 10:00</span><span>→ 18/09 10:00</span></div>
+                            <div class="money-row"><span>Alquiler <b>$10.000</b></span><span>Depósito <b>$10.000</b></span></div>
+                            <ul class="charges">
+                                <li><span>Alquiler</span><b>$8.000</b><span class="chip-cobrar">Cobrar</span></li>
+                                <li><span>Depósito en garantía</span><b>$10.000</b><span class="chip-estado custodia">En custodia</span></li>
+                                <li><span>Seña</span><b>$2.000</b><span class="chip-estado">Cobrado</span></li>
+                            </ul>
+                            <div class="actions">
+                                <div class="act">Devolver</div>
+                                <div class="act money">Registrar seña</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 14px;">
+                <i class="fas fa-eye-slash"></i>
+                <div>En el historial cada contrato muestra <b>solo lo que falta cobrar</b>. Ahí la fila es angosta y el
+                    contrato ya terminó: volver a listar el alquiler cobrado y el depósito devuelto es ruido.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 3: CUATRO ORÍGENES ===== -->
+    <div class="slide" id="slide-3">
+        <div class="glow-amber"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>El alta</h3>
+                <h2>Un formulario, cuatro orígenes</h2>
+                <p style="margin-bottom: 0;">Lo que se pone a alquilar puede venir de cuatro lados. Es el mismo
+                    formulario: lo que cambia es el título, la etiqueta del botón y el origen que queda guardado.
+                    Tenerlos separados era tener cuatro formularios que se desincronizan.</p>
+            </div>
+            <div class="visual-block">
+                <div class="origins-grid">
+                    <div class="origin-card">
+                        <div class="origin-ico" style="color: #5eead4;"><i class="fas fa-screwdriver-wrench"></i></div>
+                        <strong>Un objeto</strong>
+                        <p>Lo que existe solo para alquilarse y no está en el catálogo de venta: una escalera, un
+                            andamio, una hidrolavadora.</p>
+                        <div class="origin-foot">Nuevo objeto</div>
+                    </div>
+                    <div class="origin-card">
+                        <div class="origin-ico" style="color: #d8b4fe;"><i class="fas fa-building"></i></div>
+                        <strong>Un departamento</strong>
+                        <p>Cuelga de un edificio. Si el edificio no existe, se crea primero y en el mismo paso: son
+                            dos altas encadenadas.</p>
+                        <div class="origin-foot">Nuevo departamento</div>
+                    </div>
+                    <div class="origin-card">
+                        <div class="origin-ico" style="color: #93c5fd;"><i class="fas fa-box-open"></i></div>
+                        <strong>Un producto del catálogo</strong>
+                        <p>El producto queda de plantilla y el alquilable hereda su nombre. El catálogo ofrece justo
+                            lo que <i>todavía no</i> es alquilable.</p>
+                        <div class="origin-foot">Desde plantilla</div>
+                    </div>
+                    <div class="origin-card">
+                        <div class="origin-ico" style="color: #fcd34d;"><i class="fas fa-truck"></i></div>
+                        <strong>Un vehículo de logística</strong>
+                        <p>El mismo furgón que hace los repartos se habilita para alquilar. Al activarlo desaparece
+                            de la lista de vehículos por habilitar.</p>
+                        <div class="origin-foot">Habilitar vehículo</div>
+                    </div>
+                </div>
+                <div class="building-chain">
+                    <div class="chain-box">
+                        <strong><i class="fas fa-building" style="color: #d8b4fe;"></i> El edificio</strong>
+                        <span>Nace sin tarifas ni depósito. No se alquila: no aparece entre lo reservable ni en la
+                            solapa de objetos, y el backend rechaza un contrato contra él.</span>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="chain-box">
+                        <strong><i class="fas fa-door-open" style="color: #d8b4fe;"></i> La unidad</strong>
+                        <span>Es la que tiene precio y la que se reserva. Lleva el edificio adelante en su renglón
+                            chico, que es lo que ubica a un departamento.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="note indigo" style="margin-top: 14px;">
+                <i class="fas fa-lock"></i>
+                <div>Editar un alquilable <b>no toca su clasificación</b>: el tipo, el edificio padre y el origen se
+                    decidieron al crearlo y se reenvían tal cual. Recalcularlos desde el formulario movería de
+                    edificio a un departamento por el solo hecho de abrirle la ficha. Y habilitar un producto del
+                    catálogo desde una sucursal puede quedar <b>pendiente de aprobación de la marca</b>: ahí no hay
+                    todavía nada que configurar.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 4: LA FILA QUE DICE 3 DE 5 ===== -->
+    <div class="slide" id="slide-4">
+        <div class="glow-teal"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La lista</h3>
+                <h2>«3 de 5 disponibles» tiene que ser cierto</h2>
+                <p style="margin-bottom: 0;">Cinco bicicletas iguales son una sola fila. Pero esa fila solo dice la
+                    verdad si al cliente le da igual cuál le toca, así que dos activos se juntan únicamente cuando
+                    coinciden en todo lo que el cliente podría notar.</p>
+            </div>
+            <div class="visual-block">
+                <div class="group-split">
+                    <div>
+                        <div class="asset-row" style="margin-bottom: 0;">
+                            <div class="asset-ico" style="color: #5eead4;"><i class="fas fa-bicycle"></i></div>
+                            <div><strong>Bicicleta de montaña r29</strong><small>Objeto · ALQ-014</small></div>
+                            <span class="avail-count">3 de 5</span>
+                        </div>
+                        <div class="key-fields">
+                            <span class="key-field">origen</span>
+                            <span class="key-field">tipo</span>
+                            <span class="key-field">edificio</span>
+                            <span class="key-field">nombre</span>
+                            <span class="key-field">tarifa por hora</span>
+                            <span class="key-field">tarifa por día</span>
+                            <span class="key-field">depósito</span>
+                            <span class="key-field">valor de reposición</span>
+                            <span class="key-field">moneda</span>
+                            <span class="key-field">estado de conservación</span>
+                        </div>
+                        <div class="split-demo">
+                            <div class="split-label">Cualquier diferencia las separa</div>
+                            <div class="asset-row">
+                                <div class="asset-ico" style="color: #5eead4;"><i class="fas fa-bicycle"></i></div>
+                                <div><strong>Bicicleta de montaña r29</strong><small>$6.000 por día · depósito $10.000</small></div>
+                                <span class="avail-count">3 de 5</span>
+                            </div>
+                            <div class="asset-row" style="margin-bottom: 0;">
+                                <div class="asset-ico" style="color: #5eead4;"><i class="fas fa-bicycle"></i></div>
+                                <div><strong>Bicicleta de montaña r29</strong><small>$8.000 por día · depósito $10.000</small></div>
+                                <span class="avail-count">1 de 2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="split-label">Buscar «2A»</div>
+                        <div class="search-demo">
+                            <div class="search-hit">
+                                <i class="fas fa-building"></i>
+                                <span>Edificio Centro</span>
+                                <em>no coincide, pero se queda</em>
+                            </div>
+                            <div class="search-hit child">
+                                <i class="fas fa-door-open"></i>
+                                <span>Unidad <mark>2A</mark></span>
+                                <em>coincide</em>
+                            </div>
+                            <div class="search-hit" style="opacity: .5;">
+                                <i class="fas fa-building"></i>
+                                <span>Edificio Norte</span>
+                                <em>sin unidades que coincidan</em>
+                            </div>
+                        </div>
+                        <div class="note ok" style="margin-top: 14px;">
+                            <i class="fas fa-magnifying-glass"></i>
+                            <div>Un edificio se queda en la lista si coincide <b>él o alguna de sus unidades</b>. Buscar el
+                                número de un departamento tiene que encontrar al edificio que lo contiene: es el único
+                                camino para llegar a la unidad.</div>
+                        </div>
+                        <div class="note" style="margin-top: 10px;">
+                            <i class="fas fa-percent"></i>
+                            <div>El «3 de 5» cuenta solo lo activo y disponible. Lo que está afuera con un contrato vivo,
+                                en mantenimiento o perdido suma al total y no al disponible.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 5: EL CICLO Y EL CALENDARIO ===== -->
+    <div class="slide" id="slide-5">
+        <div class="glow-blue"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1060px; margin-bottom: 18px;">
+                <h3>El ciclo</h3>
+                <h2>Cada paso mueve tres cosas</h2>
+                <p style="margin-bottom: 0;">Cambiar el estado de un contrato no es cambiar una etiqueta: arrastra al
+                    activo y al bloqueo de calendario. Por eso las tres columnas se escriben juntas, en la misma
+                    transacción.</p>
+            </div>
+            <div class="visual-block">
+                <div class="cycle-table">
+                    <div class="cycle-row head"><span>El contrato pasa a</span><span>El activo queda</span><span>El bloqueo de calendario</span></div>
+                    <div class="cycle-row">
+                        <span class="status-pill reserved">Reservado</span>
+                        <span class="what">Disponible — <b>pero con las fechas tomadas</b></span>
+                        <span class="what">Se crea, <b>active</b></span>
+                    </div>
+                    <div class="cycle-row">
+                        <span class="status-pill picked_up">Retirado</span>
+                        <span class="what">Alquilado (<b>rented</b>)</span>
+                        <span class="what mut">Sigue igual</span>
+                    </div>
+                    <div class="cycle-row">
+                        <span class="status-pill overdue">Demorado</span>
+                        <span class="what">Demorado (<b>overdue</b>)</span>
+                        <span class="what mut">Sigue igual</span>
+                    </div>
+                    <div class="cycle-row">
+                        <span class="status-pill returned">Devuelto</span>
+                        <span class="what">Disponible otra vez</span>
+                        <span class="what">Se libera, <b>released</b></span>
+                    </div>
+                    <div class="cycle-row">
+                        <span class="status-pill cancelled">Cancelado</span>
+                        <span class="what">Disponible otra vez</span>
+                        <span class="what">Se anula, <b>cancelled</b></span>
+                    </div>
+                </div>
+                <div style="margin-top: 16px;">
+                    <div class="split-label">El mismo activo, del 15 al 20</div>
+                    <div class="hold-bar">
+                        <span>Contrato A</span>
+                        <div class="hold-track"><div class="hold-seg a" style="left: 0; width: 60%;"></div></div>
+                        <em>15/09 10:00 → 18/09 10:00</em>
+                    </div>
+                    <div class="hold-bar">
+                        <span>entra B</span>
+                        <div class="hold-track"><div class="hold-seg b" style="left: 60%; width: 40%;"></div></div>
+                        <em>18/09 10:00 → <b>arranca justo, entra</b></em>
+                    </div>
+                    <div class="hold-bar">
+                        <span>entra C</span>
+                        <div class="hold-track"><div class="hold-seg x" style="left: 40%; width: 40%;"></div></div>
+                        <em>17/09 12:00 → <b>409, reservado</b></em>
+                    </div>
+                </div>
+            </div>
+            <div class="note red" style="margin-top: 16px;">
+                <i class="fas fa-database"></i>
+                <div>El solapamiento <b>lo prohíbe la base, no el endpoint</b>. Preguntar si hay conflicto y después
+                    insertar deja un hueco entre las dos cosas por donde entra otra request: dos personas alquilando
+                    la misma bici los mismos días pasaban las dos, y eso no lo arregla ningún proceso — hay que
+                    llamar a un cliente. Ahora pierde el que llega segundo, con el mismo error que si hubiera llegado
+                    un minuto más tarde. El rango es semiabierto: <b>devolver a las 10 y que otro retire a las 10 no
+                    es un conflicto</b>.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 6: CARGO Y ASIENTO ===== -->
+    <div class="slide" id="slide-6">
+        <div class="glow-amber"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La plata</h3>
+                <h2>Lo que se debe no es lo que entró</h2>
+                <p style="margin-bottom: 0;">Un contrato firmado el lunes y pagado el viernes no es ingreso del lunes.
+                    Por eso el cargo nace al firmar y el asiento recién cuando alguien aprieta «Cobrar».</p>
+            </div>
+            <div class="visual-block">
+                <div class="money-split">
+                    <div>
+                        <div class="two-states">
+                            <div class="state-card debe">
+                                <strong><i class="fas fa-file-invoice" style="color: var(--kpi-amber);"></i> El cargo</strong>
+                                <span>Lo que el cliente debe. Nace con el contrato y los números del negocio todavía no
+                                    lo cuentan.</span>
+                            </div>
+                            <i class="fas fa-arrow-right"></i>
+                            <div class="state-card entro">
+                                <strong><i class="fas fa-vault" style="color: var(--kpi-green);"></i> El asiento</strong>
+                                <span>La plata que entró. Aparece en los cortes de finanzas con categoría propia, al
+                                    lado de las ventas y los turnos.</span>
+                            </div>
+                        </div>
+                        <div class="note" style="margin-top: 14px;">
+                            <i class="fas fa-tag"></i>
+                            <div>El medio de pago <b>se pregunta siempre y con lista cerrada</b>. El libro contable no tiene
+                                columna para el medio: lo deduce de una etiqueta en la descripción, y sin decirlo todo
+                                alquiler caería en efectivo — con un corte de finanzas mostrando efectivo que nunca
+                                entró.</div>
+                        </div>
+                        <div class="note blue" style="margin-top: 10px;">
+                            <i class="fas fa-arrow-down"></i>
+                            <div>Un cargo <b>negativo</b> es válido — una bonificación por haber entregado la bici tarde — y
+                                entra al libro como egreso: el signo lo lleva el tipo de asiento, no el monto.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="split-label">El depósito en garantía, de punta a punta</div>
+                        <div class="deposit-flow">
+                            <div class="dep-step">
+                                <i class="fas fa-file-signature" style="color: #93c5fd;"></i>
+                                <div><strong>Se firma: entran $10.000</strong><span>Queda como cargo, pero sin botón de cobrar. No es del negocio.</span></div>
+                                <span class="tag ajena">Plata ajena</span>
+                            </div>
+                            <div class="dep-step">
+                                <i class="fas fa-rotate-left" style="color: #6ee7b7;"></i>
+                                <div><strong>Se devuelve el activo</strong><span>El depósito pasa a «a liquidar». Antes se quedaba ahí para siempre: ni devuelto ni retenido.</span></div>
+                                <span class="tag nada">En limbo</span>
+                            </div>
+                            <div class="dep-step">
+                                <i class="fas fa-scale-unbalanced" style="color: #fcd34d;"></i>
+                                <div><strong>Se liquida: se retienen $3.400</strong><span>Se pide el monto, no un final enlatado: retener una parte por una rueda rota es el caso normal. Los $6.600 vuelven.</span></div>
+                                <span class="tag propia">Ingreso</span>
+                            </div>
+                            <div class="dep-step">
+                                <i class="fas fa-ban" style="color: #f87171;"></i>
+                                <div><strong>Y no se puede liquidar dos veces</strong><span>La segunda vez cobraría la retención de nuevo.</span></div>
+                                <span class="tag nada">Rechazado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note red" style="margin-top: 16px;">
+                <i class="fas fa-triangle-exclamation"></i>
+                <div>Asentar el depósito como ingreso <b>infla la facturación del mes con guita que hay que devolver</b>, y
+                    devolverla no escribe ningún egreso que lo compense: el saldo queda mal para siempre. Lo que sí
+                    es ingreso es la retención, y va derecho al libro al liquidar — sin pasar por «cobrar», porque
+                    esa plata está en la caja desde que se firmó el contrato.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 7: LA SEÑA ===== -->
+    <div class="slide" id="slide-7">
+        <div class="glow-indigo"></div>
+        <div class="glow-teal"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La seña</h3>
+                <h2>¿Adelanto del precio o precio de reservar?</h2>
+                <p style="margin-bottom: 0;">La seña sí es del negocio desde que entra: nunca vuelve, y va al libro
+                    entera en el momento. Lo que no tiene respuesta universal es qué hace con lo que el cliente ya
+                    debía, así que lo elige cada negocio en la pantalla de Cobros.</p>
+            </div>
+            <div class="visual-block">
+                <div class="mode-grid">
+                    <div class="mode-card credit">
+                        <strong><i class="fas fa-arrow-down-short-wide" style="color: #93c5fd;"></i> Se imputa al alquiler</strong>
+                        <code>credit · el valor por defecto</code>
+                        <p>Es lo que espera el cliente que adelanta plata a cuenta del precio. La seña baja el cargo
+                            de alquiler pendiente.</p>
+                        <div class="ledger">
+                            <div class="ledger-line"><span>Seña cobrada</span><b>$2.000</b></div>
+                            <div class="ledger-line strike"><span>Alquiler original</span><b>$10.000</b></div>
+                            <div class="ledger-line"><span>Alquiler por cobrar</span><b>$8.000</b></div>
+                            <div class="ledger-line total"><span>Total del contrato</span><b>$10.000</b></div>
+                        </div>
+                    </div>
+                    <div class="mode-card fee">
+                        <strong><i class="fas fa-lock" style="color: #d8b4fe;"></i> Cargo aparte</strong>
+                        <code>fee</code>
+                        <p>La seña es el precio de reservar — de que el activo quede bloqueado y nadie más lo pueda
+                            alquilar. No descuenta nada.</p>
+                        <div class="ledger">
+                            <div class="ledger-line"><span>Seña cobrada</span><b>$2.000</b></div>
+                            <div class="ledger-line"><span>Alquiler</span><b>$10.000</b></div>
+                            <div class="ledger-line"><span>Alquiler por cobrar</span><b>$10.000</b></div>
+                            <div class="ledger-line total"><span>Total del contrato</span><b>$12.000</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note ok" style="margin-top: 16px;">
+                <i class="fas fa-snowflake"></i>
+                <div>La política elegida <b>se congela en la seña</b>, no se relee después. Si mañana el negocio cambia de
+                    criterio, las señas de ayer tienen que seguir contando la historia que contaban: releer la
+                    configuración para explicar el pasado es reescribirlo.</div>
+            </div>
+            <div class="note" style="margin-top: 10px;">
+                <i class="fas fa-equals"></i>
+                <div>En el modo «se imputa», la seña <b>baja el cargo</b> en vez de llevar un saldo aparte. La alternativa
+                    era anotar en cada cargo cuánto se pagó de él —pagos parciales— y eso son dos números que se
+                    pueden desincronizar. Así hay uno solo: el cargo dice lo que falta cobrar. Solo se puede hacer
+                    porque ese alquiler todavía no se asentó; una vez en el libro es historia y no se toca.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 8: NAVEGACIÓN ===== -->
+    <div class="slide" id="slide-8">
+        <div class="glow-green"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">Con qué se toca</h3>
+            <h1 style="text-align: center; font-size: 52px;">Ni el activo ni la plata viven solos</h1>
+            <p style="text-align: center; max-width: 900px;">El alquilable puede salir del catálogo o de la flota, y lo
+                que se cobra aparece después en la caja y en la actividad de la sede.</p>
+            <div class="quick-actions-grid">
+                <a class="qa-btn teal" href="Catalogo.html">
+                    <div class="qa-icon"><i class="fas fa-sitemap"></i></div>
+                    <div class="qa-text">Catálogo</div>
+                </a>
+                <a class="qa-btn amber" href="Caja.html">
+                    <div class="qa-icon"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text">Caja y finanzas</div>
+                </a>
+                <a class="qa-btn blue" href="Actividad.html">
+                    <div class="qa-icon"><i class="fas fa-clock-rotate-left"></i></div>
+                    <div class="qa-text">Actividad</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'alquileres';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

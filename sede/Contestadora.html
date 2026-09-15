@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contestadora de WhatsApp - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-amber: #f59e0b;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-red: #ef4444;
+            --kpi-orange: #f97316;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-amber { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-green); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        code, .mono { font-family: monospace; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #fcd34d; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-amber); }
+        .note b { color: #fde68a; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.red { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.22); color: #fca5a5; }
+        .note.red i { color: var(--kpi-red); } .note.red b { color: #fecaca; }
+
+        /* =========================================
+           LA TARJETA DE REGLA (slide 2)
+           ========================================= */
+        .rules-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .rules-section { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 15px; }
+        .section-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 13px; }
+        .section-head strong { font-size: 13.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--kpi-orange); color: #fff; border-radius: 7px; padding: 6px 12px; font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(249,115,22,0.3); white-space: nowrap; }
+
+        .rule-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 9px; }
+        .rule-card.rule-inactive { opacity: 0.5; }
+        .inputs-row { display: flex; flex-direction: column; gap: 8px; }
+        .keyword-container { display: flex; align-items: center; gap: 9px; }
+        .form-input { flex: 1; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 8px 11px; font-size: 12.5px; color: var(--text-main); text-align: left; min-width: 0; }
+        .form-input.ph { color: #64748b; }
+        .toggle-switch { width: 38px; height: 21px; border-radius: 999px; background: rgba(255,255,255,0.12); position: relative; flex-shrink: 0; }
+        .toggle-switch.active { background: var(--kpi-green); }
+        .toggle-thumb { position: absolute; top: 3px; left: 3px; width: 15px; height: 15px; border-radius: 50%; background: #fff; }
+        .toggle-switch.active .toggle-thumb { left: auto; right: 3px; }
+        .condition-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+        .condition-select { background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 7px 11px; font-size: 11.5px; color: #cbd5e1; display: inline-flex; align-items: center; gap: 7px; }
+        .rule-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+        .btn-icon { font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-save-compact { background: rgba(16,185,129,0.16); color: #6ee7b7; border-radius: 7px; padding: 6px 11px; font-size: 11.5px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px; }
+        .variables-drawer { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 11px; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+        .drawer-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
+        .variable-chip { background: rgba(59,130,246,0.14); color: #bfdbfe; border-radius: 6px; padding: 4px 9px; font-size: 11px; font-weight: 700; }
+        .stored-as { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 12px; font-size: 11.5px; color: var(--text-muted); margin-top: 11px; }
+        .stored-as code { color: #fcd34d; font-size: 12px; }
+        .stored-as i { color: #475569; }
+
+        /* =========================================
+           COMPARACIÓN (slide 3)
+           ========================================= */
+        .norm-chain { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 13px 16px; }
+        .norm-step { font-family: monospace; font-size: 12.5px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 7px 11px; color: #cbd5e1; }
+        .norm-step.final { background: rgba(16,185,129,0.13); color: #a7f3d0; }
+        .norm-chain i { color: #475569; font-size: 10px; }
+        .norm-chain small { font-size: 10px; display: block; color: #64748b; text-transform: uppercase; letter-spacing: .5px; font-family: 'Urbanist', sans-serif; margin-bottom: 3px; }
+
+        .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .match-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; padding: 15px; }
+        .match-card > strong { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 800; margin-bottom: 4px; }
+        .match-card > span { display: block; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 11px; }
+        .msg-list { display: flex; flex-direction: column; gap: 6px; }
+        .msg { display: grid; grid-template-columns: 18px 1fr auto; gap: 9px; align-items: center; background: rgba(0,0,0,0.26); border-radius: 8px; padding: 7px 11px; font-size: 12px; text-align: left; }
+        .msg i { font-size: 11px; }
+        .msg.yes i { color: var(--kpi-green); } .msg.no i { color: #64748b; }
+        .msg.no { opacity: 0.68; }
+        .msg em { font-style: normal; color: #64748b; font-size: 10.5px; white-space: nowrap; }
+        .msg span { color: #cbd5e1; min-width: 0; }
+
+        /* =========================================
+           PRIORIDAD (slide 4)
+           ========================================= */
+        .prio-split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 32px; align-items: start; }
+        .prio-ladder { display: flex; flex-direction: column; gap: 8px; }
+        .prio-step { display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 11px 14px; text-align: left; }
+        .prio-step.wins { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+        .prio-num { width: 26px; height: 26px; border-radius: 8px; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 900; color: #94a3b8; font-family: monospace; }
+        .prio-step.wins .prio-num { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .prio-step strong { display: block; font-size: 13.5px; }
+        .prio-step small { display: block; font-size: 11.5px; color: var(--text-muted); font-family: monospace; }
+        .prio-tag { font-size: 10px; font-weight: 900; letter-spacing: .5px; text-transform: uppercase; border-radius: 5px; padding: 3px 8px; white-space: nowrap; }
+        .prio-tag.ok { background: rgba(16,185,129,0.18); color: #6ee7b7; }
+        .prio-tag.off { background: rgba(255,255,255,0.06); color: #64748b; }
+        .scope-tree { display: flex; flex-direction: column; gap: 9px; }
+        .scope-node { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 14px; text-align: left; }
+        .scope-node.brand { border-color: rgba(168,85,247,0.28); }
+        .scope-node.self { border-color: rgba(16,185,129,0.32); }
+        .scope-node.sibling { border-style: dashed; border-color: rgba(239,68,68,0.28); opacity: 0.72; }
+        .scope-node strong { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .scope-node span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 3px; line-height: 1.45; }
+        .scope-arrow { text-align: center; color: #475569; font-size: 11px; }
+
+        /* =========================================
+           LA CONDICIÓN (slide 5)
+           ========================================= */
+        .cond-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 32px; align-items: start; }
+        .cond-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; padding: 15px; margin-bottom: 12px; }
+        .cond-card strong { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+        .cond-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.5; }
+        .stock-math { display: grid; grid-template-columns: repeat(3, 1fr) ; gap: 9px; margin-top: 11px; }
+        .stock-math > div { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; text-align: center; }
+        .stock-math small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: var(--text-muted); margin-bottom: 4px; }
+        .stock-math b { font-size: 18px; font-family: monospace; }
+        .stock-math > div.res b { color: #fcd34d; }
+        .stock-math > div.fin { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
+        .stock-math > div.fin b { color: #6ee7b7; }
+        .outcome-list { display: flex; flex-direction: column; gap: 9px; }
+        .outcome { display: grid; grid-template-columns: 20px 1fr auto; gap: 11px; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 13px; text-align: left; font-size: 12.5px; }
+        .outcome i { font-size: 12px; }
+        .outcome strong { display: block; font-size: 12.5px; }
+        .outcome span { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .outcome .verdict { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; white-space: nowrap; }
+        .outcome .verdict.si { color: #6ee7b7; } .outcome .verdict.no { color: #64748b; }
+
+        /* =========================================
+           VARIABLES Y CAMINO (slide 6)
+           ========================================= */
+        .var-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
+        .var-table { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; overflow: hidden; }
+        .var-row { display: grid; grid-template-columns: 175px 1fr; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .var-row:last-child { border-bottom: none; }
+        .var-row.head { background: rgba(0,0,0,0.3); font-size: 10.5px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: var(--text-muted); }
+        .var-row code { font-size: 11.5px; color: #bfdbfe; }
+        .var-row .what { font-size: 11.5px; color: var(--text-muted); text-align: left; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+        .var-row .what b { color: #cbd5e1; font-weight: 700; }
+        .pipe-list { display: flex; flex-direction: column; gap: 7px; }
+        .pipe-step { display: grid; grid-template-columns: 24px 1fr; gap: 11px; align-items: flex-start; background: rgba(0,0,0,0.26); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 13px; text-align: left; }
+        .pipe-step i { width: 24px; height: 24px; border-radius: 7px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 10.5px; margin-top: 1px; }
+        .pipe-step strong { display: block; font-size: 12.5px; }
+        .pipe-step span { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.42; }
+
+        /* =========================================
+           NAVEGACIÓN (slide 7)
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            /* El centrado de arriba es para el bloque de texto: adentro de una
+               tarjeta la copia sigue alineada a la izquierda. */
+            .visual-block p { text-align: left !important; margin-left: 0; margin-right: 0; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .rules-columns { grid-template-columns: 1fr; gap: 14px; }
+            .match-grid { grid-template-columns: 1fr; gap: 14px; }
+            .norm-chain { justify-content: center; }
+            .norm-chain i { transform: rotate(90deg); }
+
+            .prio-split { grid-template-columns: 1fr; gap: 24px; }
+            .cond-split { grid-template-columns: 1fr; gap: 24px; }
+            .var-split { grid-template-columns: 1fr; gap: 24px; }
+            .var-row { grid-template-columns: 1fr; gap: 4px; }
+            .stock-math { grid-template-columns: 1fr; }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- ===== SLIDE 1: PORTADA ===== -->
+    <div class="slide active" id="slide-1">
+        <div class="glow-green"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">CompanyManager · Sede</h3>
+            <h1 style="text-align: center; max-width: 1150px;">Contesta sola, pero solo cuando la llaman</h1>
+            <p style="text-align: center; max-width: 920px; margin-bottom: 34px;">
+                Una lista de palabras y qué responder a cada una, sobre el WhatsApp de la sede. No abre
+                conversaciones ni persigue a nadie: reacciona al mensaje que entra, una vez, y se calla.
+            </p>
+            <div class="hero-chips">
+                <div class="hero-chip"><i class="fas fa-bullseye" style="color: var(--kpi-green);"></i> Dos formas de coincidir</div>
+                <div class="hero-chip"><i class="fas fa-reply" style="color: var(--kpi-blue);"></i> Una sola respuesta por mensaje</div>
+                <div class="hero-chip"><i class="fas fa-box-open" style="color: var(--kpi-amber);"></i> Condición por stock</div>
+                <div class="hero-chip"><i class="fas fa-code" style="color: var(--kpi-purple);"></i> Variables que se rellenan solas</div>
+            </div>
+            <div class="note ok" style="margin-top: 34px; max-width: 1000px;">
+                <i class="fas fa-code-branch"></i>
+                <div>La frontera con Campañas es simple: <b>acá se responde a quien escribió</b>. Los mensajes que salen
+                    solos — por inactividad, después de una compra, o cuando arranca una campaña — viven en Campañas,
+                    porque eso es difusión y no una respuesta.</div>
+            </div>
+            <div class="note blue" style="margin-top: 12px; max-width: 1000px;">
+                <i class="fas fa-plug"></i>
+                <div>Necesita un canal vinculado. Sin teléfono cargado y sin la sesión de WhatsApp funcionando, arriba
+                    del listado aparece <b>«Sin mensajería vinculada»</b> con el atajo a la solapa de Difusión de Ajustes.
+                    El apartado lo abre quien tenga <code>settings:write</code>.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 2: LAS DOS LISTAS ===== -->
+    <div class="slide" id="slide-2">
+        <div class="glow-amber"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 20px;">
+                <h3>El listado</h3>
+                <h2>Dos listas, no una</h2>
+                <p style="margin-bottom: 0;">Las reglas se separan por cómo comparan: a la izquierda las que piden el
+                    mensaje entero, a la derecha las que se conforman con encontrar la palabra adentro. Es la misma
+                    tarjeta en las dos columnas.</p>
+            </div>
+            <div class="visual-block">
+                <div class="rules-columns">
+                    <div class="rules-section">
+                        <div class="section-head">
+                            <strong><i class="fas fa-bullseye" style="color: var(--kpi-green);"></i> Mensaje exacto</strong>
+                            <div class="btn-primary"><i class="fas fa-plus"></i> Añadir exacta</div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="inputs-row">
+                                <div class="keyword-container">
+                                    <div class="form-input">horarios</div>
+                                    <div class="toggle-switch active"><div class="toggle-thumb"></div></div>
+                                </div>
+                                <div class="form-input">Atendemos de lunes a viernes de 9 a 18 y sábados de 9 a 13. Cualquier cosa escribinos al {business_phone}.</div>
+                            </div>
+                            <div class="condition-row">
+                                <div class="condition-select">Siempre <i class="fas fa-chevron-down" style="font-size: 9px;"></i></div>
+                                <div class="rule-actions">
+                                    <div class="btn-icon" style="color: #60a5fa;"><i class="fas fa-code"></i> Variables</div>
+                                    <div class="btn-icon" style="color: #f87171;"><i class="fas fa-trash"></i></div>
+                                    <div class="btn-save-compact"><i class="fas fa-check"></i> Guardar</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stored-as">
+                            <i class="fas fa-equals"></i>
+                            <div>Coincide si el mensaje entero es <code>horarios</code>. Nada más, nada menos.</div>
+                        </div>
+                    </div>
+
+                    <div class="rules-section">
+                        <div class="section-head">
+                            <strong><i class="fas fa-magnifying-glass-plus" style="color: var(--kpi-blue);"></i> Palabra suelta</strong>
+                            <div class="btn-primary"><i class="fas fa-plus"></i> Añadir palabra suelta</div>
+                        </div>
+                        <div class="rule-card">
+                            <div class="inputs-row">
+                                <div class="keyword-container">
+                                    <div class="form-input">envio</div>
+                                    <div class="toggle-switch active"><div class="toggle-thumb"></div></div>
+                                </div>
+                                <div class="form-input">Hacemos envíos a todo el país. Mirá el catálogo acá: [TUCATALOGO]</div>
+                            </div>
+                            <div class="condition-row">
+                                <div class="condition-select">Siempre <i class="fas fa-chevron-down" style="font-size: 9px;"></i></div>
+                                <div class="rule-actions">
+                                    <div class="btn-icon" style="color: #60a5fa;"><i class="fas fa-code"></i> Variables</div>
+                                    <div class="btn-icon" style="color: #f87171;"><i class="fas fa-trash"></i></div>
+                                    <div class="btn-save-compact"><i class="fas fa-check"></i> Guardar</div>
+                                </div>
+                            </div>
+                            <div class="variables-drawer">
+                                <span class="drawer-label">Insertar variable:</span>
+                                <span class="variable-chip">Catálogo web</span>
+                                <span class="variable-chip">PDF catálogo</span>
+                                <span class="variable-chip">Tienda pública</span>
+                                <span class="variable-chip">Nombre del negocio</span>
+                                <span class="variable-chip">Teléfono</span>
+                                <span class="variable-chip">Horarios</span>
+                            </div>
+                        </div>
+                        <div class="stored-as">
+                            <i class="fas fa-asterisk"></i>
+                            <div>Se escribe <code>envio</code> y se guarda <code>*envio*</code>. Los asteriscos son la marca
+                                interna del «contiene»; nadie los tipea.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 16px;">
+                <i class="fas fa-toggle-on"></i>
+                <div>El interruptor <b>apaga la regla sin borrarla</b>, y ese cambio viaja solo — no hace falta guardar.
+                    Pero una regla recién agregada todavía no existe del otro lado: hasta que no se guarda con palabra
+                    <i>y</i> mensaje, el interruptor solo la pinta. En el teléfono las dos columnas se vuelven dos
+                    paneles que se pasan de costado.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 3: CÓMO COMPARA ===== -->
+    <div class="slide" id="slide-3">
+        <div class="glow-blue"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La comparación</h3>
+                <h2>Antes de comparar, se aplana</h2>
+                <p style="margin-bottom: 0;">El mensaje y la palabra clave pasan por la misma función: se descomponen los
+                    acentos, se tira todo lo que no sea ASCII, se baja a minúsculas y se colapsan los espacios. Recién
+                    ahí se comparan.</p>
+            </div>
+            <div class="visual-block">
+                <div class="norm-chain">
+                    <div class="norm-step"><small>Lo que llegó</small>¿Cuál es el ENVÍO?</div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="norm-step"><small>Sin acentos ni signos raros</small>Cual es el ENVIO?</div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="norm-step final"><small>Lo que se compara</small>cual es el envio?</div>
+                </div>
+                <div class="match-grid">
+                    <div class="match-card">
+                        <strong><i class="fas fa-bullseye" style="color: var(--kpi-green);"></i> Regla exacta: <code>horarios</code></strong>
+                        <span>El mensaje aplanado tiene que ser igual, entero.</span>
+                        <div class="msg-list">
+                            <div class="msg yes"><i class="fas fa-check"></i><span>Horarios</span><em>igual</em></div>
+                            <div class="msg yes"><i class="fas fa-check"></i><span>HORARIOS<span style="color:#475569;"> (con espacios de más)</span></span><em>igual</em></div>
+                            <div class="msg no"><i class="fas fa-xmark"></i><span>hola, horarios?</span><em>sobra texto</em></div>
+                            <div class="msg no"><i class="fas fa-xmark"></i><span>horario</span><em>falta la s</em></div>
+                        </div>
+                    </div>
+                    <div class="match-card">
+                        <strong><i class="fas fa-magnifying-glass-plus" style="color: var(--kpi-blue);"></i> Regla suelta: <code>envio</code></strong>
+                        <span>Alcanza con que la palabra aparezca en algún lado.</span>
+                        <div class="msg-list">
+                            <div class="msg yes"><i class="fas fa-check"></i><span>¿Cuál es el ENVÍO?</span><em>contiene</em></div>
+                            <div class="msg yes"><i class="fas fa-check"></i><span>hacen envios a Córdoba</span><em>contiene</em></div>
+                            <div class="msg yes"><i class="fas fa-triangle-exclamation" style="color: var(--kpi-amber);"></i><span>te reenvio el comprobante</span><em style="color:#fcd34d;">también entra</em></div>
+                            <div class="msg no"><i class="fas fa-xmark"></i><span>mandan a domicilio?</span><em>no aparece</em></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 16px;">
+                <i class="fas fa-lightbulb"></i>
+                <div>Como los acentos se van en el camino, <b>escribir «envío» o «envio» da lo mismo</b>: la regla se guarda
+                    como se tipeó y se aplana al comparar. Lo que no se va son los signos: por eso una regla exacta
+                    sirve para la palabra que alguien manda sola, y todo lo que venga adentro de una frase es trabajo
+                    de la columna de al lado — con el riesgo de <b>«reenvío»</b> incluido.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 4: UNA SOLA RESPUESTA ===== -->
+    <div class="slide" id="slide-4">
+        <div class="glow-indigo"></div>
+        <div class="glow-amber"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 20px;">
+                <h3>Prioridad</h3>
+                <h2>Contesta una vez y corta</h2>
+                <p style="margin-bottom: 0;">Un mensaje puede disparar cuatro reglas a la vez. No se mandan las cuatro:
+                    se ordenan, se toma la primera que da y ahí termina la búsqueda.</p>
+            </div>
+            <div class="visual-block">
+                <div class="prio-split">
+                    <div>
+                        <div class="prio-ladder">
+                            <div class="prio-step">
+                                <div class="prio-num">1</div>
+                                <div>
+                                    <strong>Exactas de la sede</strong>
+                                    <small>horarios · precios · ubicacion</small>
+                                </div>
+                                <span class="prio-tag ok">Gana</span>
+                            </div>
+                            <div class="prio-step">
+                                <div class="prio-num">2</div>
+                                <div>
+                                    <strong>Exactas de la marca</strong>
+                                    <small>institucionales, para todas las sedes</small>
+                                </div>
+                                <span class="prio-tag off">Solo si no hay</span>
+                            </div>
+                            <div class="prio-step">
+                                <div class="prio-num">3</div>
+                                <div>
+                                    <strong>Sueltas de la sede</strong>
+                                    <small>*envio* · *precio* · *stock*</small>
+                                </div>
+                                <span class="prio-tag off">Solo si no hay</span>
+                            </div>
+                            <div class="prio-step">
+                                <div class="prio-num">4</div>
+                                <div>
+                                    <strong>Sueltas de la marca</strong>
+                                    <small>el último respaldo</small>
+                                </div>
+                                <span class="prio-tag off">Solo si no hay</span>
+                            </div>
+                        </div>
+                        <div class="note ok" style="margin-top: 14px;">
+                            <i class="fas fa-scissors"></i>
+                            <div>La forma de coincidir manda sobre de quién es la regla: <b>una exacta de la marca le gana a
+                                una suelta de la sede</b>. Es a propósito — la exacta describe mejor lo que preguntaron.
+                                Y si una regla coincide pero su condición no se cumple, no corta: se sigue con la
+                                siguiente de la lista.</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="scope-tree">
+                            <div class="scope-node self">
+                                <strong><i class="fas fa-store" style="color: #6ee7b7;"></i> Las de esta sede</strong>
+                                <span>Operativas: stock, horarios de este local, quién entrega. Van primero.</span>
+                            </div>
+                            <div class="scope-arrow"><i class="fas fa-arrow-down"></i> si ninguna coincide</div>
+                            <div class="scope-node brand">
+                                <strong><i class="fas fa-sitemap" style="color: #d8b4fe;"></i> Las de la marca</strong>
+                                <span>Respaldo institucional: qué es la empresa, políticas generales. Sirven para la sede
+                                    que no escribió las suyas.</span>
+                            </div>
+                            <div class="scope-arrow"><i class="fas fa-ban" style="color: #f87171;"></i> nunca</div>
+                            <div class="scope-node sibling">
+                                <strong><i class="fas fa-store-slash" style="color: #f87171;"></i> Las de las sedes hermanas</strong>
+                                <span>No se miran. La sede de Lanús no contesta con el horario de la de Centro.</span>
+                            </div>
+                        </div>
+                        <div class="note blue" style="margin-top: 12px;">
+                            <i class="fas fa-rotate-right"></i>
+                            <div>La conversación se recuerda una hora. Si el cliente repite la misma palabra, <b>no le llega
+                                dos veces la misma respuesta</b>; si pregunta otra cosa, el freno se levanta.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 5: LA CONDICIÓN ===== -->
+    <div class="slide" id="slide-5">
+        <div class="glow-amber"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 20px;">
+                <h3>La condición</h3>
+                <h2>Una regla que solo habla cuando no hay</h2>
+                <p style="margin-bottom: 0;">Cada regla lleva una condición. <em style="font-style: normal; color: #cbd5e1;">Siempre</em> es la de todos los días;
+                    la otra mira el inventario antes de abrir la boca.</p>
+            </div>
+            <div class="visual-block">
+                <div class="cond-split">
+                    <div>
+                        <div class="cond-card">
+                            <strong><i class="fas fa-check-double" style="color: var(--kpi-green);"></i> Siempre</strong>
+                            <p>Coincide la palabra, sale la respuesta. Es el valor por defecto de toda regla nueva.</p>
+                        </div>
+                        <div class="cond-card" style="margin-bottom: 0;">
+                            <strong><i class="fas fa-box-open" style="color: var(--kpi-amber);"></i> Si producto sin stock</strong>
+                            <p>Busca un producto por texto — el que se escribió al lado, o la misma palabra clave si el
+                                campo quedó vacío — y responde solo si no queda nada para vender. El texto se compara
+                                contra el SKU, el nombre, la variante, la categoría y la marca.</p>
+                            <div class="stock-math">
+                                <div><small>Físico</small><b>8</b></div>
+                                <div class="res"><small>Reservado</small><b>8</b></div>
+                                <div class="fin"><small>Disponible</small><b>0</b></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="outcome-list">
+                            <div class="outcome">
+                                <i class="fas fa-xmark" style="color: #64748b;"></i>
+                                <div><strong>Hay 6 disponibles</strong><span>La regla coincide, la condición no. Sigue buscando en la lista.</span></div>
+                                <span class="verdict no">No sale</span>
+                            </div>
+                            <div class="outcome">
+                                <i class="fas fa-check" style="color: var(--kpi-green);"></i>
+                                <div><strong>8 físicas, 8 reservadas</strong><span>Están en el estante pero ya tienen dueño. Para vender, no hay.</span></div>
+                                <span class="verdict si">Sale</span>
+                            </div>
+                            <div class="outcome">
+                                <i class="fas fa-check" style="color: var(--kpi-green);"></i>
+                                <div><strong>El producto existe y no tiene inventario cargado</strong><span>Sin fila de stock en esta sede, disponible es cero.</span></div>
+                                <span class="verdict si">Sale</span>
+                            </div>
+                            <div class="outcome">
+                                <i class="fas fa-xmark" style="color: #64748b;"></i>
+                                <div><strong>Ningún producto coincide con el texto</strong><span>«No lo encuentro» no es «no queda»: callarse es la respuesta honesta.</span></div>
+                                <span class="verdict no">No sale</span>
+                            </div>
+                        </div>
+                        <div class="note indigo" style="margin-top: 12px;">
+                            <i class="fas fa-link"></i>
+                            <div>La búsqueda respeta la herencia del catálogo: un producto de la marca cuenta <b>solo si
+                                esta sede lo tiene enlazado y activo</b>. Lo que la sede no vende no puede dejarla sin
+                                stock.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 6: VARIABLES Y CAMINO ===== -->
+    <div class="slide" id="slide-6">
+        <div class="glow-green"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 20px;">
+                <h3>El mensaje que sale</h3>
+                <h2>Seis huecos y un camino</h2>
+                <p style="margin-bottom: 0;">La respuesta se escribe una vez y se completa en el momento de mandarla.
+                    Después tiene que recorrer el mismo camino que cualquier mensaje entrante.</p>
+            </div>
+            <div class="visual-block">
+                <div class="var-split">
+                    <div class="var-table">
+                        <div class="var-row head"><span>Se inserta</span><span class="what">Se reemplaza por</span></div>
+                        <div class="var-row"><code>[TUCATALOGO]</code><span class="what">La <b>tienda pública</b> de la sede</span></div>
+                        <div class="var-row"><code>{store_url}</code><span class="what">La misma dirección, con otro nombre</span></div>
+                        <div class="var-row"><code>{catalog_pdf_url}</code><span class="what">El <b>catálogo en PDF</b> que arma el servidor</span></div>
+                        <div class="var-row"><code>{business_name}</code><span class="what">El nombre del negocio</span></div>
+                        <div class="var-row"><code>{business_phone}</code><span class="what">El teléfono cargado en la sede</span></div>
+                        <div class="var-row"><code>{schedule}</code><span class="what">Los horarios cargados en la sede</span></div>
+                    </div>
+                    <div class="pipe-list">
+                        <div class="pipe-step">
+                            <i class="fas fa-lock" style="color: #fcd34d;"></i>
+                            <div><strong>Un candado por cliente</strong><span>Diez segundos, en Redis. Dos mensajes seguidos de la
+                                misma persona no se pisan ni dejan la conversación a medio camino.</span></div>
+                        </div>
+                        <div class="pipe-step">
+                            <i class="fas fa-cart-shopping" style="color: #93c5fd;"></i>
+                            <div><strong>Primero, ¿es un pedido?</strong><span>Si el texto viene con el formato de la tienda, lo toma
+                                el importador. La contestadora todavía puede hablar después.</span></div>
+                        </div>
+                        <div class="pipe-step">
+                            <i class="fas fa-list-ol" style="color: #c4b5fd;"></i>
+                            <div><strong>Escape, contestadora, vendedor</strong><span>«cancelar», «menu», «salir» o «reiniciar» borran el
+                                estado sin consultar nada. Después mira la contestadora — en cualquier punto de la
+                                conversación — y recién al final el bot de ventas, si está encendido.</span></div>
+                        </div>
+                        <div class="pipe-step">
+                            <i class="fas fa-database" style="color: #6ee7b7;"></i>
+                            <div><strong>Se guarda antes de contestar</strong><span>Si el guardado falla, el cliente no recibe un
+                                «pedido recibido» por algo que no quedó.</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 16px;">
+                <i class="fas fa-eraser"></i>
+                <div>Los huecos se rellenan con lo que hay: si la sede no cargó teléfono u horarios, <b>el reemplazo es
+                    texto vacío</b> y el mensaje sale con el bache, no con el nombre de la variable. Vale revisar esos dos
+                    campos en Ajustes antes de usarlos en una respuesta.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 7: NAVEGACIÓN ===== -->
+    <div class="slide" id="slide-7">
+        <div class="glow-blue"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">Del otro lado del mensaje</h3>
+            <h1 style="text-align: center; font-size: 52px;">Con qué se conecta</h1>
+            <p style="text-align: center; max-width: 880px;">La contestadora sola no alcanza: el canal se configura en
+                otro lado, los mensajes que salen por su cuenta viven en otro, y el cliente que escribe termina en la ficha.</p>
+            <div class="quick-actions-grid">
+                <a class="qa-btn purple" href="Campanas.html">
+                    <div class="qa-icon"><i class="fas fa-bullhorn"></i></div>
+                    <div class="qa-text">Campañas</div>
+                </a>
+                <a class="qa-btn green" href="Ajustes.html">
+                    <div class="qa-icon"><i class="fas fa-sliders"></i></div>
+                    <div class="qa-text">Ajustes de la sede</div>
+                </a>
+                <a class="qa-btn blue" href="Clientes.html">
+                    <div class="qa-icon"><i class="fas fa-user-group"></i></div>
+                    <div class="qa-text">Clientes</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'contestadora';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

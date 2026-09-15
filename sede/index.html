@@ -3,17 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        (function() {
-            const referrer = document.referrer;
-            if (referrer && (referrer.includes('/ecosystem') || referrer.includes('localhost') || referrer.includes('127.0.0.1') || referrer.includes('duckdns.org'))) {
-                window.location.href = referrer;
-            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                window.location.href = 'http://localhost:5173/ecosystem';
-            }
-        })();
-    </script>
-    <title>Ecosistema CompanyManager - Mapa Interactivo</title>
+<title>Ecosistema CompanyManager - Mapa Interactivo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -212,6 +202,18 @@
             width: 100%;
         }
         .card-dashboard .module-icon { width: 70px; height: 70px; font-size: 30px; background: rgba(59, 130, 246, 0.2); color: var(--kpi-blue);}
+        /* Los modulos que todavia no tienen su presentacion: se ven, se sabe que
+           faltan, y no ensucian el contador de explorados. */
+        .module-card.pending { border-style: dashed; opacity: 0.62; }
+        .module-card.pending:hover { opacity: 0.85; }
+        .module-card.pending .status-indicator { display: none; }
+        .pending-tag {
+            position: absolute; top: 12px; right: 12px;
+            font-size: 9.5px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;
+            color: #fcd34d; background: rgba(245, 158, 11, 0.14);
+            border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 999px; padding: 3px 9px;
+        }
+
         .card-dashboard .module-info strong { font-size: 24px; }
         .card-dashboard .module-info span { font-size: 15px; }
 
@@ -255,11 +257,11 @@
 
     <div class="map-header">
         <h1>Sistema a nivel sede</h1>
-        <p>Hacé clic en cualquier módulo para abrir la presentación interactiva correspondiente. Tu navegador recordará cuáles ya visitaste.</p>
+        <p>Hacé clic en cualquier módulo para abrir la presentación interactiva correspondiente. Tu navegador recordará cuáles ya visitaste. Contenido revisado el 14 de septiembre de 2026; los módulos marcados <em>en preparación</em> todavía no tienen su presentación.</p>
         
         <div class="progress-container">
             <div class="progress-text">
-                <strong id="progressCount">0 / 16</strong>
+                <strong id="progressCount">0 / 25</strong>
                 <span>Módulos Explorados</span>
             </div>
             <div class="progress-bar-bg">
@@ -274,20 +276,20 @@
 
         <div class="pillars-row">
             <div class="category-column" id="col-sales">
-                <div class="category-header"><i class="fas fa-shopping-bag text-blue-500" style="color: var(--kpi-blue);"></i> Ventas & Front-End</div>
+                <div class="category-header"><i class="fas fa-shopping-bag text-blue-500" style="color: var(--kpi-blue);"></i> Ventas y tienda</div>
             </div>
 
             <div class="category-column" id="col-crm">
-                <div class="category-header"><i class="fas fa-users text-purple-500" style="color: var(--kpi-purple);"></i> Retención & Fidelidad</div>
+                <div class="category-header"><i class="fas fa-users text-purple-500" style="color: var(--kpi-purple);"></i> Clientes y atención</div>
             </div>
 
             <div class="category-column" id="col-ops">
-                <div class="category-header"><i class="fas fa-boxes text-orange-500" style="color: var(--kpi-orange);"></i> Operaciones & Stock</div>
+                <div class="category-header"><i class="fas fa-boxes text-orange-500" style="color: var(--kpi-orange);"></i> Operaciones y stock</div>
             </div>
         </div>
 
         <div class="finance-row">
-            <div class="category-header center-header"><i class="fas fa-search-dollar text-green-500" style="color: var(--kpi-green);"></i> Finanzas, Admin & Setup</div>
+            <div class="category-header center-header"><i class="fas fa-search-dollar text-green-500" style="color: var(--kpi-green);"></i> Finanzas y administración</div>
             <div class="finance-grid" id="col-finance"></div>
         </div>
 
@@ -298,41 +300,245 @@
     <script>
         // Nombres actualizados para que coincidan con la estructura de tu carpeta
         const modules = [
-            { id: 'dashboard', name: 'Home', desc: 'Dashboard global de operaciones.', file: 'BranchDashboard.html', icon: 'fas fa-chart-line', color: '#3b82f6', target: 'dashboard' },
-            
-            // Ventas (3 items)
-            { id: 'pos', name: 'Punto de Venta (POS)', desc: 'Caja rápida y cobro mixto y reservas', file: 'POS.html', icon: 'fas fa-cash-register', color: '#10b981', target: 'col-sales' },
-            { id: 'catalogo', name: 'Catálogo', desc: 'Árbol de variantes y precios.', file: 'Catalogo.html', icon: 'fas fa-sitemap', color: '#ec4899', target: 'col-sales' },
-            { id: 'tienda', name: 'Tienda online', desc: 'Vidriera y Checkout B2C.', file: 'Tienda.html', icon: 'fas fa-shopping-bag', color: '#ec4899', target: 'col-sales' },
+            {
+                        "id": "dashboard",
+                        "name": "Inicio de la sede",
+                        "desc": "Tres tableros que se eligen solos según el rol, con KPIs y secciones que se reordenan arrastrando.",
+                        "file": "BranchDashboard.html",
+                        "target": "dashboard",
+                        "color": "#3b82f6",
+                        "icon": "fas fa-chart-line"
+            },
+            {
+                        "id": "pos",
+                        "name": "Punto de Venta",
+                        "desc": "El ticket, los envíos y las tres formas de cerrar una venta: inmediata, reserva o mixta.",
+                        "file": "POS.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-cash-register"
+            },
+            {
+                        "id": "catalogo",
+                        "name": "Ajustar Catálogo",
+                        "desc": "Dos temáticas para la misma tabla, seis niveles de clasificación y la ficha larga del producto.",
+                        "file": "Catalogo.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-sitemap"
+            },
+            {
+                        "id": "tienda",
+                        "name": "Tienda en Línea",
+                        "desc": "Siete diseños de tienda, el armador de combos y los cuatro caminos del checkout.",
+                        "file": "Tienda.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-store"
+            },
+            {
+                        "id": "clientes",
+                        "name": "Clientes",
+                        "desc": "Las cuatro lentes del directorio, el estado de cuenta y el cliente destacado.",
+                        "file": "Clientes.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "fas fa-users"
+            },
+            {
+                        "id": "agenda",
+                        "name": "Turnos",
+                        "desc": "La grilla por profesional, los servicios en su propia pantalla y la lista de espera.",
+                        "file": "Agenda.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "far fa-calendar-check"
+            },
+            {
+                        "id": "promociones",
+                        "name": "Promos y Combos",
+                        "desc": "Combos cerrados o abiertos, eventos con fecha y una papelera que deja reutilizar.",
+                        "file": "Promociones.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "fas fa-tags"
+            },
+            {
+                        "id": "inventario",
+                        "name": "Inventario",
+                        "desc": "Tabla clásica o tarjetas agrupadas, el ajuste por lote y el ingreso rápido desde el celular.",
+                        "file": "Inventario.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-boxes"
+            },
+            {
+                        "id": "operaciones",
+                        "name": "Pedidos",
+                        "desc": "Los cinco contextos, el checklist de preparación y la edición del pedido desde el POS.",
+                        "file": "Operaciones.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-clipboard-list"
+            },
+            {
+                        "id": "proveedores",
+                        "name": "Proveedores",
+                        "desc": "Sugerencias de reposición, la orden con remito y lote, y la recepción parcial.",
+                        "file": "Proveedores.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-handshake"
+            },
+            {
+                        "id": "rondas",
+                        "name": "Despachos",
+                        "desc": "Armar la salida, ejecutarla parada por parada y el historial con croquis.",
+                        "file": "rondas.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-truck"
+            },
+            {
+                        "id": "caja",
+                        "name": "Finanzas",
+                        "desc": "Cuatro solapas de finanzas: resumen, movimientos, deudas y tesorería.",
+                        "file": "Caja.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-wallet"
+            },
+            {
+                        "id": "auditoria",
+                        "name": "Auditoría de rentabilidad",
+                        "desc": "Trece métricas elegibles, y qué mide exactamente cada número — y qué no.",
+                        "file": "Auditoria.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-search-dollar"
+            },
+            {
+                        "id": "inversiones",
+                        "name": "Gastos e Inversiones",
+                        "desc": "El gasto por campaña, el tablero del período y la pauta importada con su impuesto.",
+                        "file": "Inversiones.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-coins"
+            },
+            {
+                        "id": "facturacion",
+                        "name": "Facturación",
+                        "desc": "Qué comprobante sale, con qué CUIT se firma, y el circuito de devoluciones.",
+                        "file": "Facturacion.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-file-invoice"
+            },
+            {
+                        "id": "encargados",
+                        "name": "Equipo y Roles",
+                        "desc": "Equipo, puestos con permisos encadenados, vehículos y pagos al equipo.",
+                        "file": "Encargados.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-user-shield"
+            },
+            {
+                        "id": "ajustes",
+                        "name": "Ajustes",
+                        "desc": "Dieciocho secciones en seis grupos, con ranuras para adaptadores y el cierre seguro.",
+                        "file": "Ajustes.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-cogs"
+            },
+            {
+                        "id": "servicios",
+                        "name": "Servicios",
+                        "desc": "Sesiones, reservas y suscripciones: tres modalidades que salen de cómo quedó configurado el servicio.",
+                        "file": "Servicios.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "fas fa-concierge-bell"
+            },
+            {
+                        "id": "alquileres",
+                        "name": "Alquileres",
+                        "desc": "Objetos, departamentos y vehículos que salen con fecha de regreso: calendario del activo, ciclo del contrato, seña y depósito en garantía.",
+                        "file": "Alquileres.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-key"
+            },
+            {
+                        "id": "campanas",
+                        "name": "Campañas",
+                        "desc": "El tablero de campañas, la cobertura de contactos y la comparación qué no es atribución.",
+                        "file": "Campanas.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "fas fa-bullhorn"
+            },
+            {
+                        "id": "contestadora",
+                        "name": "Contestadora",
+                        "desc": "Palabras clave y qué responder a cada una en el WhatsApp de la sede: coincidencia exacta o suelta, con condición por stock.",
+                        "file": "Contestadora.html",
+                        "target": "col-crm",
+                        "color": "#a855f7",
+                        "icon": "fas fa-comment-dots"
+            },
+            {
+                        "id": "impuestos",
+                        "name": "Impuestos",
+                        "desc": "El registro de comprobantes por alícuota, con los huecos que impiden declararlo a la vista.",
+                        "file": "Impuestos.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-receipt"
+            },
+            {
+                        "id": "fabricacion",
+                        "name": "Fabricación",
+                        "desc": "Recetas por corrida, capacidad según el insumo más ajustado, costo del lote y remitos internos hacia el resto de la red.",
+                        "file": "Fabricacion.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-industry"
+            },
+            {
+                        "id": "actividad",
+                        "name": "Actividad",
+                        "desc": "Ventas, gastos y stock en una sola lista, agrupados por la operación que los produjo; y el historial completo de un producto.",
+                        "file": "Actividad.html",
+                        "target": "col-ops",
+                        "color": "#f59e0b",
+                        "icon": "fas fa-history"
+            },
+            {
+                        "id": "presupuestos",
+                        "name": "Presupuestos",
+                        "desc": "Versiones que no se pisan, vigencia que se hace cumplir y el descuento prorrateado al convertir.",
+                        "file": "Presupuestos.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-file-alt"
+            }
+];
 
-            // CRM (3 items)
-            { id: 'clientes', name: 'Directorio CRM', desc: 'LTV, fusiones y Whatsapp.', file: 'Clientes.html', icon: 'fas fa-users', color: '#a855f7', target: 'col-crm' },
-            { id: 'agenda', name: 'Agenda', desc: 'clases individuales, grupales y subscripciones', file: 'Agenda.html', icon: 'far fa-calendar-check', color: '#4f46e5', target: 'col-crm' },
-            { id: 'promociones', name: 'Motor Promociones', desc: 'Eventos automáticos y Combos.', file: 'Promociones.html', icon: 'fas fa-tags', color: '#d946ef', target: 'col-crm' },
-            
-            // Operaciones (3 items)
-            { id: 'inventario', name: 'Inventario', desc: 'Doble barra, Lotes y Mermas.', file: 'Inventario.html', icon: 'fas fa-boxes', color: '#3b82f6', target: 'col-ops' },
-            { id: 'operaciones', name: 'Fulfillment', desc: 'Desarme de combos y entregas.', file: 'Operaciones.html', icon: 'fas fa-truck-loading', color: '#f59e0b', target: 'col-ops' },
-            { id: 'proveedores', name: 'Proveedores', desc: 'Compras predictivas y gestion multi-proveedor', file: 'Proveedores.html', icon: 'fas fa-handshake', color: '#f59e0b', target: 'col-ops' },
-            
-            // Finanzas & Admin (6 items)
-            { id: 'caja', name: 'Flujo de Caja', desc: 'Libro diario y Heatmaps.', file: 'Caja.html', icon: 'fas fa-wallet', color: '#10b981', target: 'col-finance' },
-            { id: 'auditoria', name: 'Auditoría de rentabilidad', desc: 'Márgenes netos y comisiones.', file: 'Auditoria.html', icon: 'fas fa-search-dollar', color: '#ef4444', target: 'col-finance' },
-            { id: 'inversiones', name: 'Inversiones (CapEx)', desc: 'Registro de gastos y egresos.', file: 'Inversiones.html', icon: 'fas fa-rocket', color: '#f43f5e', target: 'col-finance' },
-            { id: 'facturacion', name: 'Facturación', desc: 'WeServices y Remitos PDF.', file: 'Facturacion.html', icon: 'fas fa-file-invoice', color: '#3b82f6', target: 'col-finance' },
-            { id: 'encargados', name: 'Staff y Roles', desc: 'Roles y Portal de Empleos.', file: 'Encargados.html', icon: 'fas fa-user-shield', color: '#6366f1', target: 'col-finance' },
-            { id: 'ajustes', name: 'Config. y Plugins', desc: 'Módulos y Pasarelas de Pago.', file: 'Ajustes.html', icon: 'fas fa-cogs', color: '#4f46e5', target: 'col-finance' }
-        ];
-
+        function readProgress(key) { try { return localStorage.getItem(key); } catch { return null; } }
         function renderModules() {
+            document.querySelectorAll('.module-card').forEach(card => card.remove());
             let visitedCount = 0;
 
             modules.forEach(mod => {
-                const isVisited = localStorage.getItem(`pitch_visited_${mod.id}`) === 'true';
+                const isVisited = !mod.pending && readProgress(`pitch_20260907_visited_${mod.id}`) === 'true';
                 if (isVisited) visitedCount++;
 
                 const cardHTML = `
-                    <a href="${mod.file}" onclick="markVisited('${mod.id}')" class="module-card ${isVisited ? 'visited' : ''}" ${mod.id === 'dashboard' ? 'class="module-card card-dashboard '+(isVisited ? 'visited':'')+'"' : ''}>
+                    <a href="${mod.file}" onclick="markVisited('${mod.id}')" class="module-card ${isVisited ? 'visited' : ''} ${mod.pending ? 'pending' : ''} ${mod.id === 'dashboard' ? 'card-dashboard' : ''}">
+                        ${mod.pending ? '<span class="pending-tag">En preparación</span>' : ''}
                         <div class="module-icon" style="color: ${mod.color};"><i class="${mod.icon}"></i></div>
                         <div class="module-info">
                             <strong>${mod.name}</strong>
@@ -356,11 +562,11 @@
         }
 
         function markVisited(id) {
-            localStorage.setItem(`pitch_visited_${id}`, 'true');
+            try { localStorage.setItem(`pitch_20260907_visited_${id}`, 'true'); } catch {}
         }
 
         function updateProgress(count) {
-            const total = modules.length;
+            const total = modules.filter(mod => !mod.pending).length;
             const percentage = (count / total) * 100;
             
             document.getElementById('progressCount').innerText = `${count} / ${total}`;
@@ -368,10 +574,11 @@
         }
 
         function resetProgress() {
-            modules.forEach(mod => localStorage.removeItem(`pitch_visited_${mod.id}`));
+            try { modules.forEach(mod => localStorage.removeItem(`pitch_20260907_visited_${mod.id}`)); } catch {}
             location.reload();
         }
 
+        window.addEventListener('pageshow', renderModules);
         // Iniciar render
         renderModules();
 

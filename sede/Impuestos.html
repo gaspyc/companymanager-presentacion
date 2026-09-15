@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros de IVA - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-sky: #38bdf8;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-sky { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(56, 189, 248, 0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-sky); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #bae6fd; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-sky); }
+        .note b { color: #e0f2fe; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.red { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.22); color: #fca5a5; }
+        .note.red i { color: var(--kpi-red); } .note.red b { color: #fecaca; }
+
+        /* =========================================
+           SLIDE 1: LOS DOS LIBROS
+           ========================================= */
+        .two-books { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: stretch; }
+        .book-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 11px; }
+        .book-card.ledger { border-color: rgba(99,102,241,0.28); }
+        .book-card.vat { border-color: rgba(56,189,248,0.3); }
+        .book-head { display: flex; align-items: center; gap: 12px; }
+        .book-ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+        .book-head h4 { font-size: 18px; font-weight: 800; text-align: left; }
+        .book-head small { display: block; font-size: 11px; font-family: monospace; color: #64748b; }
+        .book-card p { font-size: 13px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.5; }
+        .book-facts { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+        .book-fact { display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; color: #cbd5e1; text-align: left; }
+        .book-fact i { width: 15px; text-align: center; margin-top: 3px; font-size: 10px; }
+        .vs-mark { display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #475569; letter-spacing: 1px; }
+
+        /* =========================================
+           SLIDE 2 y 3: LA PANTALLA
+           ========================================= */
+        .books-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+        .book-tabs { display: flex; gap: 8px; }
+        .tab-btn { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); border-radius: 10px; padding: 9px 16px; white-space: nowrap; }
+        .tab-btn.active { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.35); color: #bae6fd; }
+        .period-pick { display: inline-flex; align-items: center; gap: 11px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 8px 14px; font-size: 13px; color: var(--text-muted); }
+        .period-pick strong { color: var(--text-main); font-size: 13.5px; }
+        .period-status { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; border-radius: 10px; padding: 9px 15px; }
+        .period-status.ok { background: rgba(16,185,129,0.09); border: 1px solid rgba(16,185,129,0.22); color: #a7f3d0; }
+        .period-status.ok strong { color: #d1fae5; }
+        .period-status.bad { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+        .period-status.bad strong { color: #fde68a; }
+        .banner-action { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; opacity: .8; border-left: 1px solid rgba(255,255,255,0.14); padding-left: 10px; margin-left: 2px; }
+
+        .book-table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; overflow: hidden; }
+        .book-table th { font-size: 9.5px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); padding: 10px 12px; background: rgba(0,0,0,0.3); text-align: left; white-space: nowrap; }
+        .book-table td { padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12.5px; vertical-align: middle; white-space: nowrap; }
+        .book-table .num { text-align: right; font-family: monospace; }
+        .book-table th.num { text-align: right; }
+        .book-table .strong { font-weight: 800; }
+        .book-table tr.incomplete { background: rgba(245,158,11,0.05); box-shadow: inset 3px 0 0 var(--kpi-orange); }
+        .book-table .missing { display: block; font-size: 10.5px; color: #fcd34d; margin-top: 2px; white-space: normal; }
+        .book-table tfoot td { background: rgba(0,0,0,0.32); border-top: 1px solid var(--border-glass); font-weight: 800; font-size: 12.5px; }
+        .ghost-bar { display: inline-block; height: 9px; border-radius: 4px; background: rgba(255,255,255,0.07); }
+        .ghost-row td { opacity: .7; }
+        .num-bar { width: 54px; }
+        .table-note { background: rgba(0,0,0,0.3); border: 1px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 16px 18px; text-align: center; margin-top: -6px; }
+        .note-title { font-size: 14.5px; font-weight: 800; color: var(--text-main); margin: 0 0 5px; text-align: center; }
+        .note-body { font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5; text-align: center; }
+        .note-body .month { color: #bae6fd; font-weight: 700; }
+
+        /* =========================================
+           SLIDE 4: LO QUE FALTA SE MUESTRA
+           ========================================= */
+        .gap-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 34px; align-items: start; }
+        .gap-list { display: flex; flex-direction: column; gap: 10px; }
+        .gap-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .gap-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .gap-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .gap-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .gap-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+        .gap-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 6px 12px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.26); color: #fcd34d; }
+
+        /* =========================================
+           SLIDE 5: QUÉ ENTRA
+           ========================================= */
+        .in-out { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+        .io-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; }
+        .io-card.yes { border-color: rgba(16,185,129,0.28); }
+        .io-card.no { border-color: rgba(239,68,68,0.24); }
+        .io-title { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800; margin-bottom: 13px; }
+        .io-row { display: flex; gap: 11px; align-items: flex-start; padding: 9px 0; border-top: 1px solid rgba(255,255,255,0.04); text-align: left; }
+        .io-row:first-of-type { border-top: none; }
+        .io-row i { width: 16px; text-align: center; margin-top: 3px; font-size: 11px; }
+        .io-row strong { display: block; font-size: 13px; }
+        .io-row span { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 6: HASTA DÓNDE LLEGA
+           ========================================= */
+        .scope-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+        .scope-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 17px; display: flex; flex-direction: column; gap: 9px; text-align: left; }
+        .scope-card.done { border-color: rgba(16,185,129,0.26); }
+        .scope-card.todo { border-style: dashed; }
+        .scope-tag { font-size: 9.5px; font-weight: 900; letter-spacing: .9px; text-transform: uppercase; border-radius: 999px; padding: 3px 9px; align-self: flex-start; }
+        .scope-tag.done { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .scope-tag.todo { background: rgba(148,163,184,0.16); color: #cbd5e1; }
+        .scope-card strong { font-size: 14.5px; font-weight: 800; }
+        .scope-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; text-align: left; line-height: 1.45; }
+        .cpa-demo { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 20px; margin-top: 18px; font-size: 13.5px; color: var(--text-muted); }
+        .cpa-code { font-family: monospace; font-size: 17px; font-weight: 800; letter-spacing: 2px; color: #cbd5e1; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 6px 13px; }
+        .cpa-code b { color: #7dd3fc; }
+        .cpa-demo i { color: #475569; font-size: 11px; }
+        .cpa-demo .prov { color: #bae6fd; font-weight: 700; }
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.sky:hover { border-color: var(--kpi-sky); } .qa-btn.sky:hover .qa-icon { color: var(--kpi-sky); }
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.orange:hover { border-color: var(--kpi-orange); } .qa-btn.orange:hover .qa-icon { color: var(--kpi-orange); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            /* El centrado de arriba es para el bloque de texto: adentro de una
+               tarjeta la copia sigue alineada a la izquierda. */
+            .visual-block p:not(.note-title):not(.note-body) { text-align: left !important; margin-left: 0; margin-right: 0; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .two-books { grid-template-columns: 1fr; gap: 14px; }
+            .vs-mark { padding: 4px 0; }
+
+            .books-header { flex-direction: column; align-items: stretch; }
+            .book-tabs { justify-content: center; }
+            .tab-btn { flex: 1; justify-content: center; }
+            .period-pick, .period-status { justify-content: center; }
+            .table-responsive { width: 100%; overflow-x: auto; border-radius: 14px; }
+            .book-table { min-width: 900px; }
+
+            .gap-split { grid-template-columns: 1fr; gap: 24px; }
+            .gap-chips { justify-content: center; }
+
+            .in-out { grid-template-columns: 1fr; gap: 16px; }
+
+            .scope-grid { grid-template-columns: 1fr; gap: 14px; }
+            .cpa-demo { flex-direction: column; gap: 10px; text-align: center; }
+            .cpa-demo i { transform: rotate(90deg); }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: LA CONFUSIÓN DE ARRANQUE -->
+    <div class="slide active">
+        <div class="glow-sky"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 26px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-sky); text-align: center;">Impuestos</h3>
+                <h2 style="text-align: center;">"Libro contable" y "libro de IVA" no son lo mismo</h2>
+                <p style="text-align: center; font-size: 18px;">Este apartado nació de ese malentendido. La solapa que ya existía en Finanzas es el diario del dueño; lo que pide el contador es otra familia de documentos, y no se deriva del otro.</p>
+            </div>
+
+            <div class="visual-block two-books">
+                <div class="book-card ledger">
+                    <div class="book-head">
+                        <div class="book-ico" style="color:#a5b4fc;"><i class="fas fa-book"></i></div>
+                        <div style="text-align:left;">
+                            <h4>Libro contable</h4>
+                            <small>finance / ledger</small>
+                        </div>
+                    </div>
+                    <p>Qué entró y qué salió, con su categoría. Vive en Finanzas.</p>
+                    <div class="book-facts">
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#818cf8;"></i><span>Se ordena por <b>movimiento de plata</b>.</span></div>
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#818cf8;"></i><span>Lo mira <b>el dueño, todos los días</b>.</span></div>
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#818cf8;"></i><span>Un asiento <b>no sabe qué alícuota</b> tuvo ni qué comprobante lo respalda.</span></div>
+                    </div>
+                </div>
+
+                <div class="vs-mark">NO ES</div>
+
+                <div class="book-card vat">
+                    <div class="book-head">
+                        <div class="book-ico" style="color:#7dd3fc;"><i class="fas fa-file-invoice"></i></div>
+                        <div style="text-align:left;">
+                            <h4>Libro de IVA</h4>
+                            <small>finance / taxes</small>
+                        </div>
+                    </div>
+                    <p>El registro de comprobantes que se presenta. Apartado propio.</p>
+                    <div class="book-facts">
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#38bdf8;"></i><span>Se ordena por <b>comprobante</b> y se declara <b>por alícuota</b>.</span></div>
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#38bdf8;"></i><span>Lo mira <b>el contador, una vez por mes</b>, contra el vencimiento.</span></div>
+                        <div class="book-fact"><i class="fas fa-circle" style="color:#38bdf8;"></i><span>Tiene que <b>cuadrar</b> con lo que se declara.</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 22px;">
+                <i class="fas fa-door-open"></i>
+                <span>Por eso es un apartado y no una octava solapa de Finanzas: al lado de "Libro contable" quedaban dos nombres que empiezan igual y significan cosas distintas. <b>Los dos tienen que convivir; ninguno reemplaza al otro.</b></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: LA PANTALLA -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 18px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">La pantalla</h3>
+                <h2 style="text-align: center;">Dos libros, un mes calendario</h2>
+                <p style="text-align: center; font-size: 18px;">El período no es un rango libre: así se declara. Dejar elegir "del 12 al 27" daría un libro que no se puede presentar contra ningún vencimiento, y el que lo mire va a creer que sí.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="books-header">
+                    <div class="book-tabs">
+                        <span class="tab-btn active"><i class="fas fa-file-invoice"></i> IVA Ventas</span>
+                        <span class="tab-btn"><i class="fas fa-receipt"></i> IVA Compras</span>
+                    </div>
+                    <div class="period-pick">
+                        <i class="fas fa-chevron-left" style="font-size:10px;"></i>
+                        <strong>agosto 2026</strong>
+                        <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+                    </div>
+                    <div class="period-status ok">
+                        <i class="fas fa-circle-check"></i>
+                        <span><strong>34</strong> comprobantes, todos completos</span>
+                    </div>
+                </div>
+
+                <div class="table-responsive custom-scrollbar">
+                    <table class="book-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th><th>Comprobante</th><th>Cliente</th><th>CUIT / Doc.</th>
+                                <th class="num">Neto</th><th class="num">IVA 10.5%</th><th class="num">IVA 21%</th>
+                                <th class="num">Exento</th><th class="num">No grav.</th><th class="num">Percep.</th><th class="num">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>04/08/2026</td><td>Factura A 0003-00001271</td><td>Distribuidora López</td><td>30-71234567-9</td>
+                                <td class="num">184.297,52</td><td class="num">—</td><td class="num">38.702,48</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">0,00</td><td class="num strong">223.000,00</td>
+                            </tr>
+                            <tr>
+                                <td>09/08/2026</td><td>Factura B 0003-00001272</td><td>Juan Pérez</td><td>30.412.556</td>
+                                <td class="num">37.190,08</td><td class="num">—</td><td class="num">7.809,92</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">0,00</td><td class="num strong">45.000,00</td>
+                            </tr>
+                            <tr>
+                                <td>15/08/2026</td><td>Factura A 0003-00001278</td><td>Almacén San Martín</td><td>27-30998877-4</td>
+                                <td class="num">96.380,00</td><td class="num">5.128,20</td><td class="num">9.983,40</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">2.891,40</td><td class="num strong">114.383,00</td>
+                            </tr>
+                            <tr>
+                                <td>22/08/2026</td><td>Factura C 0003-00001284</td><td>Marina Suárez</td><td>32.114.907</td>
+                                <td class="num">62.000,00</td><td class="num">—</td><td class="num">—</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">0,00</td><td class="num strong">62.000,00</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">Totales del período</td>
+                                <td class="num">379.867,60</td><td class="num">5.128,20</td><td class="num">56.495,80</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">2.891,40</td><td class="num strong">444.383,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="note blue" style="margin-top: 16px;">
+                    <i class="fas fa-table-columns"></i>
+                    <span>Las columnas de alícuota van <b>siempre en el mismo orden y sin huecos</b> —0, 2.5, 5, 10.5, 21 y 27—. Si se dibujaran solo las que tuvieron movimiento, comparar dos meses sería leer dos tablas distintas.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: EL MES VACÍO -->
+    <div class="slide">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">El mes vacío</h3>
+                <h2 style="text-align: center;">La tabla se dibuja igual, con o sin comprobantes</h2>
+                <p style="text-align: center; font-size: 18px;">Los encabezados, las columnas de alícuota y el pie de totales son la forma del libro, no el resultado de la consulta. Antes el mes vacío colapsaba a una línea de texto y cada carga corría todo de lugar.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="table-responsive custom-scrollbar">
+                    <table class="book-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th><th>Comprobante</th><th>Proveedor</th><th>CUIT / Doc.</th>
+                                <th class="num">Neto</th><th class="num">IVA 10.5%</th><th class="num">IVA 21%</th>
+                                <th class="num">Exento</th><th class="num">No grav.</th><th class="num">Percep.</th><th class="num">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="ghost-row"><td><span class="ghost-bar" style="width:62px"></span></td><td><span class="ghost-bar" style="width:104px"></span></td><td><span class="ghost-bar" style="width:128px"></span></td><td><span class="ghost-bar" style="width:88px"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td></tr>
+                            <tr class="ghost-row"><td><span class="ghost-bar" style="width:62px"></span></td><td><span class="ghost-bar" style="width:104px"></span></td><td><span class="ghost-bar" style="width:128px"></span></td><td><span class="ghost-bar" style="width:88px"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td></tr>
+                            <tr class="ghost-row"><td><span class="ghost-bar" style="width:62px"></span></td><td><span class="ghost-bar" style="width:104px"></span></td><td><span class="ghost-bar" style="width:128px"></span></td><td><span class="ghost-bar" style="width:88px"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td><td class="num"><span class="ghost-bar num-bar"></span></td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4">Totales del período</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">0,00</td>
+                                <td class="num">0,00</td><td class="num">0,00</td><td class="num">0,00</td><td class="num strong">0,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="table-note" style="margin-top: 14px;">
+                    <p class="note-title">No hay comprobantes en este período.</p>
+                    <p class="note-body">Acá va un renglón por cada factura, nota de crédito y nota de débito que recibas de tus proveedores en <span class="month">julio 2026</span>, con el neto y el IVA discriminado por alícuota. Los totales del pie son los que se declaran.</p>
+                </div>
+
+                <div class="note indigo" style="margin-top: 14px;">
+                    <i class="fas fa-percent"></i>
+                    <span>Sin movimiento, las columnas que se dibujan son <b>10.5% y 21%</b>: las dos generales de Argentina. Así la tabla vacía tiene la forma que va a tener casi siempre, y el que abre un mes en blanco puede anticipar qué va a ver ahí.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: LO QUE FALTA SE MUESTRA -->
+    <div class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange); text-align: center;">Los huecos</h3>
+                <h2 style="text-align: center;">Un libro que cierra lindo y está mal no sirve</h2>
+            </div>
+
+            <div class="visual-block gap-split">
+                <div>
+                    <div class="period-status bad" style="margin-bottom: 12px;">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        <span><strong>3</strong> sin poder declararse</span>
+                        <span class="banner-action">Ver solo esos</span>
+                    </div>
+
+                    <div class="table-responsive custom-scrollbar">
+                        <table class="book-table">
+                            <thead>
+                                <tr><th>Fecha</th><th>Comprobante</th><th>Proveedor</th><th>CUIT / Doc.</th><th class="num">Neto</th><th class="num">IVA 21%</th><th class="num">Total</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr class="incomplete">
+                                    <td>06/08/2026</td>
+                                    <td>Factura A 0012-00004417<small class="missing">Falta: CUIT del proveedor</small></td>
+                                    <td>Insumos del Sur</td><td>—</td>
+                                    <td class="num">41.322,31</td><td class="num">8.677,69</td><td class="num strong">50.000,00</td>
+                                </tr>
+                                <tr class="incomplete">
+                                    <td>14/08/2026</td>
+                                    <td>Factura A<small class="missing">Falta: Numero de comprobante</small></td>
+                                    <td>Gráfica Lanús</td><td>30-99887766-1</td>
+                                    <td class="num">24.793,39</td><td class="num">5.206,61</td><td class="num strong">30.000,00</td>
+                                </tr>
+                                <tr class="incomplete">
+                                    <td>27/08/2026</td>
+                                    <td>Factura A 0007-00000912<small class="missing">Falta: Desglose por alicuota</small></td>
+                                    <td>Distribuidora Norte</td><td>33-70112233-9</td>
+                                    <td class="num">72.400,00</td><td class="num">—</td><td class="num strong">88.120,00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="gap-list">
+                        <div class="gap-item"><i class="fas fa-eye" style="color:#fbbf24;"></i><div><strong>Se listan igual</strong><span>Esconder un comprobante incompleto daría un libro que cuadra y está mal. El que arma la declaración tiene que ver qué le falta.</span></div></div>
+                        <div class="gap-item"><i class="fas fa-comment-dots" style="color:#7dd3fc;"></i><div><strong>El motivo va escrito en la fila</strong><span>Una fila marcada sin decir qué le falta obliga a adivinar cuál de los datos es.</span></div></div>
+                        <div class="gap-item"><i class="fas fa-scale-unbalanced" style="color:#fca5a5;"></i><div><strong>Un IVA raro no se reparte a ojo</strong><span>Si el importe no cae en ninguna alícuota conocida —típicamente dos mezcladas— el comprobante se guarda <b>sin desglose</b>. Inventarlo sería peor que dejarlo vacío.</span></div></div>
+                        <div class="gap-item"><i class="fas fa-arrow-up-right-from-square" style="color:#a5b4fc;"></i><div><strong>El libro señala, no edita</strong><span>Solo lee. El hueco se arregla donde se cargó el dato: la ficha del proveedor, el gasto, el comprobante.</span></div></div>
+                    </div>
+
+                    <div class="gap-chips">
+                        <span class="gap-chip"><i class="fas fa-id-card"></i> CUIT del proveedor</span>
+                        <span class="gap-chip"><i class="fas fa-hashtag"></i> Número de comprobante</span>
+                        <span class="gap-chip"><i class="fas fa-percent"></i> Desglose por alícuota</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: QUÉ ENTRA -->
+    <div class="slide">
+        <div class="glow-sky" style="top: auto; bottom: -10vw; right: auto; left: -10vw;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-sky); text-align: center;">Qué entra al libro</h3>
+                <h2 style="text-align: center;">Y qué parece que falta, pero está bien así</h2>
+            </div>
+
+            <div class="visual-block in-out">
+                <div class="io-card yes">
+                    <div class="io-title"><i class="fas fa-circle-check" style="color:#34d399;"></i> Entra</div>
+                    <div class="io-row"><i class="fas fa-check" style="color:#6ee7b7;"></i><div><strong>Ventas aprobadas</strong><span>Las que tienen CAE. Un rechazo o un borrador no se declara.</span></div></div>
+                    <div class="io-row"><i class="fas fa-check" style="color:#6ee7b7;"></i><div><strong>Compras fiscales</strong><span>Solo los gastos con comprobante. Uno sin comprobante existe para el dueño, no para el fisco.</span></div></div>
+                    <div class="io-row"><i class="fas fa-check" style="color:#6ee7b7;"></i><div><strong>La mercadería comprada</strong><span>Una orden de compra arma su propio comprobante, y la factura del proveedor lo completa cuando llega.</span></div></div>
+                    <div class="io-row"><i class="fas fa-check" style="color:#6ee7b7;"></i><div><strong>Las percepciones, con su detalle</strong><span>Por tipo y jurisdicción: IVA, IIBB, DGR y Ganancias. Es como el libro las declara.</span></div></div>
+                </div>
+
+                <div class="io-card no">
+                    <div class="io-title"><i class="fas fa-circle-minus" style="color:#f87171;"></i> No entra, o no falta</div>
+                    <div class="io-row"><i class="fas fa-xmark" style="color:#fca5a5;"></i><div><strong>Los comprobantes anulados</strong><span>Una nota de crédito de compra anula el comprobante con su contraasiento, y el libro no lo cuenta dos veces.</span></div></div>
+                    <div class="io-row"><i class="fas fa-minus" style="color:#94a3b8;"></i><div><strong>Una venta exenta sin IVA</strong><span>No le falta desglose: no tiene IVA. Marcarla como incompleta mandaría a completar algo que no existe.</span></div></div>
+                    <div class="io-row"><i class="fas fa-minus" style="color:#94a3b8;"></i><div><strong>Una Factura C</strong><span>No discrimina IVA —no es IVA al 0%—. Es un renglón legítimo del libro con sus columnas de alícuota vacías.</span></div></div>
+                </div>
+            </div>
+
+            <div class="note ok" style="margin-top: 20px;">
+                <i class="fas fa-database"></i>
+                <span>Todo esto se apoya en una tabla que no existía: <b>los impuestos por comprobante</b>. Antes el IVA era un número solo y una factura con 21% y 10,5% mezclados quedaba irreconstruible. Su única puerta de escritura <b>reemplaza en vez de insertar</b>, así re-emitir o re-importar no duplica el IVA.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: HASTA DÓNDE LLEGA -->
+    <div class="slide">
+        <div class="glow-indigo" style="top: -10vw; left: -10vw; bottom: auto; right: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">Hasta dónde llega</h3>
+                <h2 style="text-align: center;">Lo que el libro resuelve, y lo que todavía no</h2>
+            </div>
+
+            <div class="visual-block scope-grid">
+                <div class="scope-card done">
+                    <span class="scope-tag done">Resuelto</span>
+                    <strong>IVA por alícuota</strong>
+                    <p>Ventas y compras, con el desglose guardado por comprobante y no recalculado.</p>
+                </div>
+                <div class="scope-card done">
+                    <span class="scope-tag done">Resuelto</span>
+                    <strong>Jurisdicción de la venta</strong>
+                    <p>Se deduce del código postal, sin agregar una columna "provincia".</p>
+                </div>
+                <div class="scope-card todo">
+                    <span class="scope-tag todo">Todavía no</span>
+                    <strong>Retenciones</strong>
+                    <p>No hay modelo ni catálogo, y hay un obstáculo: una retención cancela deuda <b>sin que entre plata a ninguna cuenta</b>, y hoy un pago exige cuenta.</p>
+                </div>
+                <div class="scope-card todo">
+                    <span class="scope-tag todo">Todavía no</span>
+                    <strong>Archivo digital</strong>
+                    <p>El libro se mira en pantalla. Exportarlo en el formato del régimen digital es el paso siguiente: el dato ya está.</p>
+                </div>
+            </div>
+
+            <div class="cpa-demo">
+                <span class="cpa-code"><b>B</b>1824ABC</span>
+                <i class="fas fa-arrow-right"></i>
+                <span class="prov">Buenos Aires</span>
+                <span style="opacity:.6;">— la primera letra del código postal ya lleva la jurisdicción adentro, y esa asignación es del Correo, no una convención nuestra.</span>
+            </div>
+
+            <div class="note warn" style="margin-top: 14px;">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span>La jurisdicción <b>se deduce al leer, no se congela al vender</b> —la excepción a la regla del resto del sistema—. El hecho es el código postal; la provincia es una interpretación. Si mañana la tabla tiene un error, las ventas viejas se corrigen solas en vez de arrastrarlo.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-sky" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px; right: auto;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-sky); text-align: center;">Explorar Módulos</h3>
+                <h2 style="text-align: center;">De dónde sale cada renglón</h2>
+                <p style="text-align: center; max-width: 900px; margin: 0 auto;">El libro no se carga: se arma con lo que ya pasó por facturación y por proveedores. ¿Por dónde seguimos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn sky" style="border-color: var(--kpi-sky);">
+                    <div class="qa-icon" style="color: var(--kpi-sky);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="Facturacion.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-file-invoice"></i></div>
+                    <div class="qa-text" style="color: white;">Facturación<br>y Comprobantes</div>
+                </a>
+
+                <a href="Proveedores.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
+                    <div class="qa-icon" style="color: var(--kpi-orange);"><i class="fas fa-handshake"></i></div>
+                    <div class="qa-text" style="color: white;">Proveedores<br>y Compras</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'impuestos';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

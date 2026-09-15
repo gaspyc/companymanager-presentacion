@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fabricación y Red Interna - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-amber: #f59e0b;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-red: #ef4444;
+            --kpi-orange: #f97316;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-amber { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245, 158, 11, 0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.11) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168, 85, 247, 0.11) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-amber); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        code, .mono { font-family: monospace; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #fcd34d; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-amber); }
+        .note b { color: #fde68a; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.red { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.22); color: #fca5a5; }
+        .note.red i { color: var(--kpi-red); } .note.red b { color: #fecaca; }
+
+        .split-label { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .7px; color: var(--text-muted); margin-bottom: 9px; text-align: left; }
+
+        /* =========================================
+           LOS CUATRO PANELES (slide 2)
+           ========================================= */
+        .plant-layout { display: grid; grid-template-columns: 1fr 1.05fr 1fr; gap: 16px; align-items: start; }
+        .panel { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px; }
+        .panel.highlight { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05); }
+        .panel-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+        .panel-header h4 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--text-main); }
+        .panel-header .subtitle { font-size: 10.5px; color: #64748b; margin-top: 2px; }
+        .badge { font-size: 10.5px; font-weight: 900; background: rgba(255,255,255,0.08); border-radius: 6px; padding: 3px 8px; color: #cbd5e1; }
+        .stack { display: flex; flex-direction: column; gap: 8px; }
+        .list-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 11px; text-align: left; }
+        .list-card strong { display: block; font-size: 12.5px; }
+        .list-card .muted { display: block; font-size: 10.5px; color: #64748b; }
+        .recipe-metrics { display: flex; gap: 11px; font-size: 10.5px; color: var(--text-muted); font-family: monospace; margin: 6px 0; }
+        .component-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .component-chip { font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.06); border-radius: 5px; padding: 3px 7px; color: #94a3b8; }
+        .component-chip.danger { background: rgba(239,68,68,0.14); color: #fca5a5; }
+        .form-group { margin-bottom: 9px; text-align: left; }
+        .form-group label { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 4px; }
+        .field { background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 8px 11px; font-size: 12.5px; color: var(--text-main); display: flex; justify-content: space-between; align-items: center; gap: 9px; }
+        .field .unit { font-size: 10.5px; color: #64748b; font-family: monospace; }
+        .hint { font-size: 10.5px; color: #64748b; margin-top: 4px; text-align: left; }
+        .hint.danger { color: #fca5a5; }
+        .box { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px; }
+        .box-header { display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 8px; }
+        .box-header b { color: #fcd34d; font-family: monospace; font-size: 11.5px; }
+        .component-row { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; padding: 4px 0; color: #cbd5e1; }
+        .component-row b { font-family: monospace; color: var(--text-muted); }
+        .component-row.danger { color: #fca5a5; } .component-row.danger b { color: #fca5a5; }
+        .btn-primary { background: var(--kpi-orange); color: #fff; border-radius: 8px; padding: 9px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 10px; box-shadow: 0 4px 12px rgba(249,115,22,0.28); }
+        .btn-secondary { background: rgba(255,255,255,0.07); color: #cbd5e1; border-radius: 7px; padding: 6px 10px; font-size: 10.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .btn-secondary.go { background: rgba(245,158,11,0.16); color: #fcd34d; }
+        .request-top { display: flex; justify-content: space-between; font-size: 11.5px; margin-bottom: 4px; }
+        .request-top span { color: #64748b; font-family: monospace; }
+        .request-stock { display: flex; gap: 12px; font-size: 10.5px; font-family: monospace; margin: 6px 0 8px; color: var(--text-muted); }
+        .request-stock .ok-text { color: #6ee7b7; }
+        .request-stock .danger-text { color: #fca5a5; }
+
+        /* =========================================
+           LA RECETA (slide 3)
+           ========================================= */
+        .recipe-split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+        .recipe-panel { background: var(--bg-panel); border: 1px solid rgba(245,158,11,0.26); border-radius: 14px; padding: 16px; }
+        .rp-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+        .rp-head h4 { font-size: 17px; font-weight: 800; }
+        .pill { font-size: 10.5px; font-weight: 800; background: rgba(255,255,255,0.07); border-radius: 6px; padding: 3px 9px; color: #94a3b8; font-family: monospace; }
+        .rp-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .ing-row { display: grid; grid-template-columns: 1fr 78px 34px 22px; gap: 8px; align-items: center; padding: 5px 0; font-size: 12px; text-align: left; }
+        .ing-row .ing-qty { background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 7px; padding: 5px 9px; font-family: monospace; font-size: 11.5px; text-align: right; }
+        .ing-row .unit-badge { font-size: 10.5px; color: #64748b; font-family: monospace; }
+        .ing-row .rm { color: #f87171; font-size: 11px; text-align: center; }
+        .select-fake { background: rgba(0,0,0,0.32); border: 1px dashed rgba(255,255,255,0.14); border-radius: 8px; padding: 8px 11px; font-size: 11.5px; color: #64748b; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+        .groups-list { display: flex; flex-direction: column; gap: 7px; }
+        .group-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: rgba(0,0,0,0.26); border: 1px solid var(--border-glass); border-radius: 9px; padding: 8px 12px; font-size: 12px; text-align: left; }
+        .group-item.new { border-style: dashed; border-color: rgba(245,158,11,0.32); color: #fcd34d; }
+        .group-item em { font-style: normal; font-size: 10.5px; color: #64748b; }
+        .rules-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .rule-item { display: grid; grid-template-columns: 18px 1fr; gap: 10px; align-items: flex-start; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.18); border-radius: 9px; padding: 8px 12px; font-size: 12px; color: #fca5a5; text-align: left; }
+        .rule-item i { margin-top: 2px; font-size: 11px; }
+        .rule-item b { color: #fecaca; }
+
+        /* =========================================
+           DOS CATÁLOGOS (slide 4)
+           ========================================= */
+        .cat-split { display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: stretch; }
+        .cat-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px; text-align: left; display: flex; flex-direction: column; }
+        .cat-card.own { border-color: rgba(245,158,11,0.3); }
+        .cat-card.parent { border-color: rgba(168,85,247,0.3); }
+        .cat-card > strong { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+        .cat-card > span { display: block; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 11px; }
+        .role-list { display: flex; flex-direction: column; gap: 6px; }
+        .role-item { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: center; background: rgba(0,0,0,0.26); border-radius: 8px; padding: 7px 11px; font-size: 12px; }
+        .role-item i { font-size: 11px; }
+        .role-item em { font-style: normal; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: #64748b; white-space: nowrap; }
+        .role-item.both { border: 1px dashed rgba(99,102,241,0.35); background: rgba(99,102,241,0.07); }
+        .cat-join { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; color: #475569; }
+        .cat-join i { font-size: 15px; }
+        .cat-join span { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; writing-mode: vertical-rl; }
+
+        /* =========================================
+           CAPACIDAD (slide 5)
+           ========================================= */
+        .calc-table { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; overflow: hidden; }
+        .calc-row { display: grid; grid-template-columns: 1.4fr 110px 110px 1fr; gap: 12px; align-items: center; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); text-align: left; font-size: 12.5px; }
+        .calc-row:last-child { border-bottom: none; }
+        .calc-row.head { background: rgba(0,0,0,0.3); font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); }
+        .calc-row.limits { background: rgba(245,158,11,0.09); box-shadow: inset 3px 0 0 var(--kpi-amber); }
+        .calc-row b { font-family: monospace; font-weight: 700; color: #cbd5e1; }
+        .calc-row .runs { font-family: monospace; font-weight: 800; color: #94a3b8; }
+        .calc-row.limits .runs { color: #fcd34d; }
+        .calc-result { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+        .calc-result > div { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 14px; text-align: left; }
+        .calc-result small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 4px; }
+        .calc-result b { font-size: 20px; font-family: monospace; font-weight: 900; }
+        .calc-result > div.fin { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.09); }
+        .calc-result > div.fin b { color: #fcd34d; }
+
+        /* =========================================
+           LA CORRIDA (slide 6)
+           ========================================= */
+        .run-split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start; }
+        .run-steps { display: flex; flex-direction: column; gap: 8px; }
+        .run-step { display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 13px; text-align: left; }
+        .run-step > i { width: 26px; height: 26px; border-radius: 8px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 1px; }
+        .run-step strong { display: block; font-size: 12.5px; }
+        .run-step span { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.42; }
+        .run-step code { font-size: 11px; color: #fcd34d; }
+        .cost-table { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; overflow: hidden; }
+        .cost-row { display: grid; grid-template-columns: 1.3fr 90px 90px 1fr; gap: 10px; align-items: center; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; text-align: left; }
+        .cost-row:last-child { border-bottom: none; }
+        .cost-row.head { background: rgba(0,0,0,0.3); font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); }
+        .cost-row b, .cost-row .num { font-family: monospace; text-align: right; color: #cbd5e1; }
+        .cost-row.sub { background: rgba(255,255,255,0.03); font-weight: 700; }
+        .cost-row.total { background: rgba(245,158,11,0.1); font-weight: 800; }
+        .cost-row.total .num { color: #fcd34d; }
+
+        /* =========================================
+           LA RED (slide 7)
+           ========================================= */
+        .net-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+        .way-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px; text-align: left; }
+        .way-card.pull { border-color: rgba(59,130,246,0.28); }
+        .way-card.push { border-color: rgba(16,185,129,0.28); }
+        .way-card > strong { display: flex; align-items: center; gap: 9px; font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+        .way-card > span { display: block; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; margin-bottom: 11px; }
+        .flow-chain { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+        .flow-step { font-size: 10.5px; font-weight: 800; background: rgba(255,255,255,0.06); border-radius: 6px; padding: 5px 9px; color: #cbd5e1; font-family: monospace; }
+        .flow-step.hit { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .flow-chain i { color: #475569; font-size: 9px; }
+        .ledger-pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; margin-top: 16px; }
+        .led-box { background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 14px; text-align: left; }
+        .led-box.out { border-color: rgba(16,185,129,0.28); }
+        .led-box.in { border-color: rgba(239,68,68,0.24); }
+        .led-box strong { display: block; font-size: 12.5px; margin-bottom: 3px; }
+        .led-box span { display: block; font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .led-box code { display: block; font-size: 10.5px; color: #94a3b8; margin-top: 5px; }
+        .ledger-pair > i { color: #475569; font-size: 13px; }
+
+        /* =========================================
+           NAVEGACIÓN (slide 8)
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.amber:hover { border-color: var(--kpi-amber); } .qa-btn.amber:hover .qa-icon { color: var(--kpi-amber); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+        .qa-btn.purple:hover { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            /* El centrado de arriba es para el bloque de texto: adentro de una
+               tarjeta la copia sigue alineada a la izquierda. */
+            .visual-block p { text-align: left !important; margin-left: 0; margin-right: 0; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .plant-layout { grid-template-columns: 1fr; gap: 14px; }
+            .recipe-split { grid-template-columns: 1fr; gap: 24px; }
+            .rp-row2 { grid-template-columns: 1fr; gap: 9px; }
+            .cat-split { grid-template-columns: 1fr; gap: 14px; }
+            .cat-join span { writing-mode: horizontal-tb; }
+            .cat-join i { transform: rotate(90deg); }
+            .calc-row { grid-template-columns: 1fr; gap: 4px; }
+            .calc-row.head { display: none; }
+            .calc-result { grid-template-columns: 1fr; }
+            .run-split { grid-template-columns: 1fr; gap: 24px; }
+            .cost-row { grid-template-columns: 1fr 1fr; gap: 6px; }
+            .cost-row.head { display: none; }
+            .cost-row b, .cost-row .num { text-align: left; }
+            .net-split { grid-template-columns: 1fr; gap: 14px; }
+            .ledger-pair { grid-template-columns: 1fr; gap: 12px; }
+            .ledger-pair > i { transform: rotate(90deg); text-align: center; }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">8</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- ===== SLIDE 1: PORTADA ===== -->
+    <div class="slide active" id="slide-1">
+        <div class="glow-amber"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">CompanyManager · Sede</h3>
+            <h1 style="text-align: center; max-width: 1150px;">Lo que entra como insumo y sale como producto</h1>
+            <p style="text-align: center; max-width: 930px; margin-bottom: 34px;">
+                Una receta dice qué consume cada corrida. Fabricar descuenta los insumos del estante, crea un lote
+                nuevo con lo terminado y calcula cuánto costó. Después, eso viaja a las sedes que lo venden.
+            </p>
+            <div class="hero-chips">
+                <div class="hero-chip"><i class="fas fa-flask" style="color: var(--kpi-amber);"></i> La receta es por corrida</div>
+                <div class="hero-chip"><i class="fas fa-layer-group" style="color: var(--kpi-purple);"></i> Dos catálogos en un tablero</div>
+                <div class="hero-chip"><i class="fas fa-calculator" style="color: var(--kpi-blue);"></i> El costo sale de la corrida</div>
+                <div class="hero-chip"><i class="fas fa-truck-fast" style="color: var(--kpi-green);"></i> Remitos entre nodos</div>
+            </div>
+            <div class="note indigo" style="margin-top: 34px; max-width: 1020px;">
+                <i class="fas fa-network-wired"></i>
+                <div>No es una pantalla exclusiva de las fábricas. Lo que decide qué se ve <b>no es la vocación del nodo,
+                    es si tiene de quién leer un catálogo además del propio</b>: la condición era el tipo, y por eso
+                    cualquier otro nodo que llegara acá la veía vacía. Una sucursal que además arma cosas la usa
+                    igual, con <code>inventory:write</code>.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 2: LOS CUATRO PANELES ===== -->
+    <div class="slide" id="slide-2">
+        <div class="glow-blue"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La planta</h3>
+                <h2>Cuatro paneles y una mesa</h2>
+                <p style="margin-bottom: 0;">A la izquierda lo que se sabe fabricar, en el medio la mesa donde se
+                    trabaja, a la derecha lo que la red pide y lo que ya salió. <b style="color: #cbd5e1;">La mesa hace una cosa a la
+                    vez</b>: escribir una receta, fabricar un lote o armar un remito.</p>
+            </div>
+            <div class="visual-block">
+                <div class="plant-layout">
+                    <div class="panel">
+                        <div class="panel-header"><div><h4>Recetas</h4><div class="subtitle">Stock terminado y capacidad actual</div></div></div>
+                        <div class="stack">
+                            <div class="list-card">
+                                <strong>Vela artesanal 200ml</strong>
+                                <span class="muted">SKU: VEL-200</span>
+                                <div class="recipe-metrics"><span>stock: 24 u</span><span>fabricable: 96 u</span></div>
+                                <div class="component-tags">
+                                    <span class="component-chip">Frasco 200ml: 96/1 u</span>
+                                    <span class="component-chip">Cera de soja: 54/0,3 kg</span>
+                                </div>
+                            </div>
+                            <div class="list-card" style="border-style: dashed;">
+                                <strong style="color: #94a3b8;">Sin receta todavía</strong>
+                                <span class="muted">Lo que la red vende y esta planta no sabe fabricar.</span>
+                                <div class="component-tags" style="margin-top: 7px;">
+                                    <span class="component-chip"><i class="fas fa-plus"></i> Difusor 100ml</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel highlight">
+                        <div class="panel-header"><div><h4>Mesa de Producción</h4><div class="subtitle">Fabricar suma stock terminado</div></div><i class="fas fa-xmark" style="color: #f87171; font-size: 12px;"></i></div>
+                        <div class="form-group">
+                            <label>Unidades a fabricar</label>
+                            <div class="field">96 <span class="unit">u</span></div>
+                            <div class="hint">Máximo actual: 96 u</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Nota de fabricación</label>
+                            <div class="field" style="color: #64748b;">Remito interno #318</div>
+                        </div>
+                        <div class="box">
+                            <div class="box-header"><span>Consumo del lote</span><b>$245.280,00</b></div>
+                            <div class="component-row"><span>Frasco de vidrio 200ml</span><b>96/96 u</b></div>
+                            <div class="component-row"><span>Cera de soja</span><b>28,8/54 kg</b></div>
+                            <div class="component-row"><span>Etiqueta adhesiva</span><b>96/300 u</b></div>
+                        </div>
+                        <div class="btn-primary"><i class="fas fa-gears"></i> Confirmar producción</div>
+                    </div>
+
+                    <div>
+                        <div class="panel" style="margin-bottom: 14px;">
+                            <div class="panel-header"><div><h4>Solicitudes</h4><div class="subtitle">Pedidos de sedes y depósitos</div></div><span class="badge">2</span></div>
+                            <div class="stack">
+                                <div class="list-card">
+                                    <div class="request-top"><strong>Sede Lanús</strong><span>#318</span></div>
+                                    <div style="font-size: 12px; color: #cbd5e1;">120 x Vela artesanal 200ml</div>
+                                    <div class="request-stock"><span>stock: 24</span><span class="danger-text">faltante: 96</span></div>
+                                    <div class="btn-secondary"><i class="fas fa-hammer"></i> Fabricar faltante</div>
+                                </div>
+                                <div class="list-card">
+                                    <div class="request-top"><strong>Sede Centro</strong><span>#319</span></div>
+                                    <div style="font-size: 12px; color: #cbd5e1;">20 x Vela artesanal 200ml</div>
+                                    <div class="request-stock"><span>stock: 24</span><span class="ok-text">faltante: 0</span></div>
+                                    <div class="btn-secondary go"><i class="fas fa-truck"></i> Enviar productos</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel-header"><div><h4>Despachos</h4><div class="subtitle">Últimos movimientos</div></div><div class="btn-secondary"><i class="fas fa-truck-fast"></i> Enviar</div></div>
+                            <div class="list-card">
+                                <strong>Difusor 100ml</strong>
+                                <span class="muted">40 u → Sede Centro · $86.400,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 14px;">
+                <i class="fas fa-eye"></i>
+                <div>El faltante <b>se ve siempre</b>. Lo que la planta puede apagar en sus ajustes es el rojo — su
+                    etiqueta dice «resalta» —, no el número: esconderlo dejaría despachar sin saber qué falta.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 3: LA RECETA ===== -->
+    <div class="slide" id="slide-3">
+        <div class="glow-amber"></div>
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La receta</h3>
+                <h2>Las cantidades son por corrida, no por unidad</h2>
+                <p style="margin-bottom: 0;">Es la distinción que ordena todo el módulo. La receta dice cuánto rinde
+                    una corrida y qué consume esa corrida entera; fabricar N unidades consume <code style="font-family: monospace; color: #fcd34d;">N ÷ rinde</code> corridas
+                    de cada insumo.</p>
+            </div>
+            <div class="visual-block">
+                <div class="recipe-split">
+                    <div class="recipe-panel">
+                        <div class="rp-head"><h4>Vela artesanal 200ml</h4><span class="pill">SKU: VEL-200</span></div>
+                        <div class="rp-row2">
+                            <div class="form-group">
+                                <label>Rinde</label>
+                                <div class="field">12 <span class="unit">u</span></div>
+                                <div class="hint">Cuánto sale de una corrida con los insumos de abajo.</div>
+                            </div>
+                            <div class="form-group">
+                                <label>Qué es</label>
+                                <div class="field">Producto terminado <i class="fas fa-chevron-down" style="font-size: 9px; color: #64748b;"></i></div>
+                                <div class="hint">La otra opción es «intermedio».</div>
+                            </div>
+                        </div>
+                        <div class="box" style="margin-top: 4px;">
+                            <div class="box-header"><span>Insumos por corrida</span><b>4</b></div>
+                            <div class="ing-row"><span>Cera de soja</span><span class="ing-qty">3,6</span><span class="unit-badge">kg</span><span class="rm"><i class="fas fa-xmark"></i></span></div>
+                            <div class="ing-row"><span>Pabilo encerado</span><span class="ing-qty">12</span><span class="unit-badge">u</span><span class="rm"><i class="fas fa-xmark"></i></span></div>
+                            <div class="ing-row"><span>Frasco de vidrio 200ml</span><span class="ing-qty">12</span><span class="unit-badge">u</span><span class="rm"><i class="fas fa-xmark"></i></span></div>
+                            <div class="ing-row"><span>Etiqueta adhesiva</span><span class="ing-qty">12</span><span class="unit-badge">u</span><span class="rm"><i class="fas fa-xmark"></i></span></div>
+                            <div class="select-fake"><span>Agregar un insumo…</span><i class="fas fa-chevron-down"></i></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="split-label">El desplegable viene agrupado</div>
+                        <div class="groups-list">
+                            <div class="group-item new"><span><i class="fas fa-plus"></i> Cargar un insumo nuevo…</span><em>sin salir de acá</em></div>
+                            <div class="group-item"><span>Materia prima</span><em>cera, esencias, alcohol</em></div>
+                            <div class="group-item"><span>Empaque</span><em>frascos, etiquetas, cajas</em></div>
+                            <div class="group-item"><span>Intermedios</span><em>los fabrica esta planta</em></div>
+                            <div class="group-item"><span>Terminados propios</span><em>lo que ya sabe hacer</em></div>
+                            <div class="group-item"><span>Sin clasificar</span><em>se muestra igual, al final</em></div>
+                            <div class="group-item"><span>Del catálogo de la marca</span><em>lo que la red vende</em></div>
+                        </div>
+                        <div class="rules-list">
+                            <div class="rule-item"><i class="fas fa-rotate-left"></i><div>Un producto <b>no puede consumirse a sí mismo</b>.</div></div>
+                            <div class="rule-item"><i class="fas fa-clone"></i><div>Un insumo <b>repetido</b> en la misma receta se rechaza por su nombre.</div></div>
+                            <div class="rule-item"><i class="fas fa-ghost"></i><div>Y un insumo que <b>no existe en este nodo</b> tampoco entra.</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 14px;">
+                <i class="fas fa-list-check"></i>
+                <div>Se puede elegir cualquier producto físico como insumo — el rol <b>no limita qué se consume, eso lo
+                    decide quien fabrica</b> — pero sí dice qué es cada uno: en una lista plana «Cera» y «Vela
+                    artesanal» se ven igual. Lo que no cae en ningún grupo conocido se muestra al final sin rótulo
+                    lindo, porque no poder elegirlo sería peor que no saber qué es.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 4: DOS CATÁLOGOS ===== -->
+    <div class="slide" id="slide-4">
+        <div class="glow-purple"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>El alcance</h3>
+                <h2>Dos catálogos en un solo tablero</h2>
+                <p style="margin-bottom: 0;">Un nodo que cuelga de una marca arma la pantalla con dos consultas: lo
+                    suyo, que son los insumos que solo él consume, y lo de la marca, que es lo que la red vende. Un
+                    nodo sin marca arriba tiene una sola, porque todo es propio.</p>
+            </div>
+            <div class="visual-block">
+                <div class="cat-split">
+                    <div class="cat-card own">
+                        <strong><i class="fas fa-warehouse" style="color: #fcd34d;"></i> Lo propio: los insumos</strong>
+                        <span>Solo los roles productivos. Se editan acá porque es el único lugar donde se usan.</span>
+                        <div class="role-list">
+                            <div class="role-item"><i class="fas fa-wheat-awn" style="color: #fcd34d;"></i><span>Materia prima</span><em>no se vende</em></div>
+                            <div class="role-item"><i class="fas fa-box" style="color: #fcd34d;"></i><span>Empaque</span><em>no se vende</em></div>
+                            <div class="role-item both"><i class="fas fa-repeat" style="color: #a5b4fc;"></i><span>Intermedio</span><em>se fabrica y se consume</em></div>
+                        </div>
+                    </div>
+                    <div class="cat-join">
+                        <i class="fas fa-plus"></i>
+                        <span>un tablero</span>
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="cat-card parent">
+                        <strong><i class="fas fa-sitemap" style="color: #d8b4fe;"></i> Lo de la marca: lo terminado</strong>
+                        <span>Los productos activos que la red vende. Son el objetivo de cada receta.</span>
+                        <div class="role-list">
+                            <div class="role-item"><i class="fas fa-fire" style="color: #d8b4fe;"></i><span>Vela artesanal 200ml</span><em>con receta</em></div>
+                            <div class="role-item"><i class="fas fa-spray-can" style="color: #d8b4fe;"></i><span>Difusor 100ml</span><em>sin receta</em></div>
+                            <div class="role-item both"><i class="fas fa-repeat" style="color: #a5b4fc;"></i><span>Intermedio</span><em>también puede venir de acá</em></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note red" style="margin-top: 16px;">
+                <i class="fas fa-store-slash"></i>
+                <div><b>Un insumo no se ofrece a la venta.</b> Activo quiere decir «se puede usar», no «se puede
+                    comprar», y quien lo pregunta son varias pantallas: el mostrador, la tienda pública y cualquier
+                    vista de cara al cliente. La regla no se cumplía en ningún lado — el catálogo completo devuelve
+                    los insumos propios del nodo, tiene que hacerlo porque es donde se editan, y el mostrador los
+                    tomaba como un producto más.</div>
+            </div>
+            <div class="note indigo" style="margin-top: 10px;">
+                <i class="fas fa-arrows-to-dot"></i>
+                <div>De ahí salen las dos mitades de dónde vive cada cosa: la receta <b>se guarda sobre el producto de
+                    la marca</b>, porque es lo que la red vende; y un insumo <b>se busca primero en el catálogo propio</b> y
+                    recién después en el de ella — si los dos lo tienen, manda el del nodo, que es el que sale de su
+                    estante.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 5: CAPACIDAD ===== -->
+    <div class="slide" id="slide-5">
+        <div class="glow-amber"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>Capacidad</h3>
+                <h2>Manda el insumo que menos alcanza</h2>
+                <p style="margin-bottom: 0;">Cada insumo dice para cuántas corridas alcanza. La menor de todas es la
+                    que se puede hacer, y multiplicada por el rinde da las unidades. Fabricar más que eso lo rechaza
+                    el servidor con el máximo escrito en el mensaje.</p>
+            </div>
+            <div class="visual-block">
+                <div class="calc-table">
+                    <div class="calc-row head"><span>Insumo</span><span>Por corrida</span><span>Disponible</span><span>Alcanza para</span></div>
+                    <div class="calc-row"><span>Cera de soja</span><b>3,6 kg</b><b>54 kg</b><span class="runs">15 corridas</span></div>
+                    <div class="calc-row"><span>Pabilo encerado</span><b>12 u</b><b>500 u</b><span class="runs">41,6 corridas</span></div>
+                    <div class="calc-row limits"><span>Frasco de vidrio 200ml</span><b>12 u</b><b>96 u</b><span class="runs">8 corridas ← el que manda</span></div>
+                    <div class="calc-row"><span>Etiqueta adhesiva</span><b>12 u</b><b>300 u</b><span class="runs">25 corridas</span></div>
+                </div>
+                <div class="calc-result">
+                    <div><small>Corridas posibles</small><b>8</b></div>
+                    <div><small>Rinde por corrida</small><b>× 12 u</b></div>
+                    <div class="fin"><small>Máximo fabricable ahora</small><b>96 u</b></div>
+                </div>
+            </div>
+            <div class="note blue" style="margin-top: 16px;">
+                <i class="fas fa-eye-low-vision"></i>
+                <div>La tarjeta de cada receta muestra los <b>tres insumos más ajustados</b>, no los diez que tenga: los
+                    ordena por cuánto aguantan y corta. Y el disponible es físico menos reservado — lo que ya tiene
+                    dueño no se puede fundir en una vela.</div>
+            </div>
+            <div class="note" style="margin-top: 10px;">
+                <i class="fas fa-ruler-horizontal"></i>
+                <div>La planta puede fijar un <b>lote mínimo</b> en sus ajustes. Cero significa sin mínimo y es el
+                    default, pero ojo: la pantalla lo ofrecía con un 1 puesto, así que una planta que guardó el
+                    formulario sin tocarlo tiene ese 1 escrito — y ahora empieza a valer, que es lo que la etiqueta
+                    decía todo este tiempo.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 6: LA CORRIDA ===== -->
+    <div class="slide" id="slide-6">
+        <div class="glow-indigo"></div>
+        <div class="glow-amber"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La corrida</h3>
+                <h2>Qué escribe apretar «Confirmar»</h2>
+                <p style="margin-bottom: 0;">No es un número que sube: son movimientos de inventario con motivo, lotes
+                    que se cierran, un lote nuevo que nace y un costo que se calcula sobre lo que realmente se
+                    consumió.</p>
+            </div>
+            <div class="visual-block">
+                <div class="run-split">
+                    <div class="run-steps">
+                        <div class="run-step">
+                            <i class="fas fa-arrow-down" style="color: #fca5a5;"></i>
+                            <div><strong>Descuenta los insumos por lote</strong><span>Empieza por el que vence antes y, a igual
+                                vencimiento, por el más viejo. Cada lote que llega a cero se da de baja.</span></div>
+                        </div>
+                        <div class="run-step">
+                            <i class="fas fa-triangle-exclamation" style="color: #fcd34d;"></i>
+                            <div><strong>Y si los lotes no alcanzan, lo dice</strong><span>El sobrante se anota como un movimiento
+                                aparte marcado <code>_backorder</code>, en vez de desaparecer.</span></div>
+                        </div>
+                        <div class="run-step">
+                            <i class="fas fa-box-open" style="color: #6ee7b7;"></i>
+                            <div><strong>Crea el lote de lo terminado</strong><span>Numerado con el prefijo de la planta y la fecha
+                                y hora. El default es la ele que la corrida tenía escrita a mano.</span></div>
+                        </div>
+                        <div class="run-step">
+                            <i class="fas fa-tag" style="color: #93c5fd;"></i>
+                            <div><strong>Deja el motivo escrito</strong><span><code>production_run:VEL-200:Remito interno #318</code> — es
+                                lo que después agrupa la fila en la actividad de la sede.</span></div>
+                        </div>
+                        <div class="run-step">
+                            <i class="fas fa-pen-to-square" style="color: #c4b5fd;"></i>
+                            <div><strong>Y actualiza el costo, si se lo dejan</strong><span>La corrida lo reescribía sin preguntarle a
+                                nadie. Ahora es un ajuste que arranca prendido: una planta que fija sus costos a mano
+                                no quiere que una corrida se los pise.</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="split-label">El costo del lote de 96 unidades</div>
+                        <div class="cost-table">
+                            <div class="cost-row head"><span>Insumo</span><span class="num">Consumido</span><span class="num">Costo unit.</span><span class="num">Subtotal</span></div>
+                            <div class="cost-row"><span>Cera de soja</span><span class="num">28,8 kg</span><span class="num">$4.200</span><span class="num">$120.960,00</span></div>
+                            <div class="cost-row"><span>Pabilo encerado</span><span class="num">96 u</span><span class="num">$85</span><span class="num">$8.160,00</span></div>
+                            <div class="cost-row"><span>Frasco de vidrio 200ml</span><span class="num">96 u</span><span class="num">$1.150</span><span class="num">$110.400,00</span></div>
+                            <div class="cost-row"><span>Etiqueta adhesiva</span><span class="num">96 u</span><span class="num">$60</span><span class="num">$5.760,00</span></div>
+                            <div class="cost-row sub"><span>Materiales</span><span class="num"></span><span class="num"></span><span class="num">$245.280,00</span></div>
+                            <div class="cost-row sub"><span>Costo adicional del lote</span><span class="num"></span><span class="num"></span><span class="num">$12.000,00</span></div>
+                            <div class="cost-row total"><span>Base del lote</span><span class="num">96 u</span><span class="num"></span><span class="num">$257.280,00</span></div>
+                            <div class="cost-row total"><span>Costo unitario</span><span class="num"></span><span class="num"></span><span class="num">$2.680,00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="note ok" style="margin-top: 16px;">
+                <i class="fas fa-forward"></i>
+                <div>Al terminar, la mesa <b>no queda vacía</b>: pasa de «cuánto hago» a «a dónde va», ya cargada con lo
+                    recién fabricado. Sin destino elegido, así que cerrarla cuesta un clic y mandar sigue siendo una
+                    decisión.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 7: LA RED ===== -->
+    <div class="slide" id="slide-7">
+        <div class="glow-green"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="max-width: 1020px; margin-bottom: 18px;">
+                <h3>La red</h3>
+                <h2>Dos caminos para que la mercadería salga</h2>
+                <p style="margin-bottom: 0;">Uno lo abre el que necesita; el otro, el que fabricó. Los dos terminan en
+                    el mismo remito interno y en los mismos dos asientos.</p>
+            </div>
+            <div class="visual-block">
+                <div class="net-split">
+                    <div class="way-card pull">
+                        <strong><i class="fas fa-hand" style="color: #93c5fd;"></i> Lo piden: la solicitud</strong>
+                        <span>Una sede o un depósito pide, y el pedido aparece en el panel con su faltante calculado
+                            contra el stock de acá.</span>
+                        <div class="flow-chain">
+                            <span class="flow-step">pedido</span><i class="fas fa-chevron-right"></i>
+                            <span class="flow-step">aprobado</span><i class="fas fa-chevron-right"></i>
+                            <span class="flow-step">preparado</span><i class="fas fa-chevron-right"></i>
+                            <span class="flow-step hit">despachado</span>
+                        </div>
+                    </div>
+                    <div class="way-card push">
+                        <strong><i class="fas fa-truck-fast" style="color: #6ee7b7;"></i> Lo mandan: el remito</strong>
+                        <span>Se fabrica y se manda sin que nadie lo haya pedido. Nace aprobado y recorre el mismo
+                            camino de una vez; el destino arranca sin elegir, a propósito.</span>
+                        <div class="flow-chain">
+                            <span class="flow-step">nace aprobado</span><i class="fas fa-chevron-right"></i>
+                            <span class="flow-step">preparado</span><i class="fas fa-chevron-right"></i>
+                            <span class="flow-step hit">despachado</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="ledger-pair">
+                    <div class="led-box out">
+                        <strong>En la planta: ingreso</strong>
+                        <span>Por el costo base de lo que salió, con categoría de traslado interno.</span>
+                        <code>internal_transfer_out · $257.280,00</code>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="led-box in">
+                        <strong>En la sede: egreso</strong>
+                        <span>El mismo monto, del otro lado. La mercadería le entra cuando confirma la recepción.</span>
+                        <code>internal_transfer_in · $257.280,00</code>
+                    </div>
+                </div>
+            </div>
+            <div class="note" style="margin-top: 16px;">
+                <i class="fas fa-arrows-left-right"></i>
+                <div>A quién le puedo <b>mandar</b> no es a quién le puedo <b>pedir</b>, y no son la misma lista al revés: quien
+                    abastece lo declara cada nodo, y el que recibe no tiene por qué abastecer a nadie — una sucursal
+                    que solo vende es un destino perfectamente válido y nunca un proveedor. La marca queda afuera de
+                    las dos: es donde vive el catálogo, no un punto que reciba mercadería. Y eso es lo que la pantalla
+                    <b>ofrece</b>, no una validación: la regla real es pertenecer a la misma red.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SLIDE 8: NAVEGACIÓN ===== -->
+    <div class="slide" id="slide-8">
+        <div class="glow-amber"></div>
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <h3 style="text-align: center; width: 100%;">De dónde sale y a dónde va</h3>
+            <h1 style="text-align: center; font-size: 52px;">Los dos extremos de la corrida</h1>
+            <p style="text-align: center; max-width: 900px;">Los insumos entran por las compras y viven en el
+                inventario; lo terminado sale hacia las sedes, y cada movimiento queda en la actividad.</p>
+            <div class="quick-actions-grid">
+                <a class="qa-btn amber" href="Inventario.html">
+                    <div class="qa-icon"><i class="fas fa-boxes-stacked"></i></div>
+                    <div class="qa-text">Inventario</div>
+                </a>
+                <a class="qa-btn purple" href="Proveedores.html">
+                    <div class="qa-icon"><i class="fas fa-truck-ramp-box"></i></div>
+                    <div class="qa-text">Proveedores</div>
+                </a>
+                <a class="qa-btn blue" href="Actividad.html">
+                    <div class="qa-icon"><i class="fas fa-clock-rotate-left"></i></div>
+                    <div class="qa-text">Actividad</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'fabricacion';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

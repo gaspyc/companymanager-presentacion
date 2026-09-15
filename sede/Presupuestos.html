@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuestos y Versiones - Pitch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* =========================================
+           PALETA DE COLORES EXACTA DE LA APP
+           ========================================= */
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-teal: #14b8a6;
+            --kpi-indigo: #6366f1;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-red: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Luces de fondo */
+        .glow-teal { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20, 184, 166, 0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59, 130, 246, 0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16, 185, 129, 0.11) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover { background: var(--kpi-teal); }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; text-align: left; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; text-align: left; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; text-align: left; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; height: 100%; align-items: center; }
+        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* =========================================
+           COMUNES
+           ========================================= */
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(20,184,166,0.07); border: 1px solid rgba(20,184,166,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #99f6e4; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-teal); }
+        .note b { color: #ccfbf1; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.indigo { background: rgba(99,102,241,0.07); border-color: rgba(99,102,241,0.22); color: #c7d2fe; }
+        .note.indigo i { color: #818cf8; } .note.indigo b { color: #e0e7ff; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.red { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.22); color: #fca5a5; }
+        .note.red i { color: var(--kpi-red); } .note.red b { color: #fecaca; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+
+        /* =========================================
+           SLIDE 2: EL LISTADO
+           ========================================= */
+        .page-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+        .title-row { display: flex; align-items: center; gap: 13px; }
+        .back-btn { width: 34px; height: 34px; border-radius: 10px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); }
+        .eyebrow { display: block; font-size: 10px; font-weight: 900; letter-spacing: 1.4px; color: var(--kpi-teal); text-align: left; }
+        .title-row h4 { font-size: 21px; font-weight: 800; text-align: left; }
+        .head-actions { display: flex; align-items: center; gap: 11px; flex-wrap: wrap; }
+        .pq-search { display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 13px; font-size: 13px; color: var(--text-muted); min-width: 230px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--kpi-teal); color: #042f2e; border-radius: 10px; padding: 10px 18px; font-size: 14px; font-weight: 800; white-space: nowrap; }
+
+        .status-strip { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .status-strip span { display: inline-flex; align-items: baseline; gap: 7px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 9px 15px; font-size: 12.5px; color: var(--text-muted); }
+        .status-strip strong { font-size: 17px; font-weight: 900; color: var(--text-main); }
+
+        .quote-card { display: grid; grid-template-columns: minmax(200px, 1.6fr) 90px 130px 130px 110px auto; align-items: center; gap: 14px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px 17px; margin-bottom: 9px; }
+        .quote-identity { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        .document-icon { width: 36px; height: 36px; border-radius: 11px; background: rgba(20,184,166,0.12); color: #5eead4; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+        .quote-identity strong { display: block; font-size: 14.5px; font-family: monospace; }
+        .quote-identity small { font-size: 12px; color: var(--text-muted); }
+        .qc-col { text-align: left; }
+        .qc-col span { display: block; font-size: 9.5px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; }
+        .qc-col strong { font-size: 14px; font-weight: 800; }
+        .qc-col.total strong { color: #34d399; }
+        .q-status { font-size: 11px; font-weight: 900; border-radius: 999px; padding: 5px 12px; text-align: center; white-space: nowrap; }
+        .q-status.draft { background: rgba(148,163,184,0.16); color: #cbd5e1; }
+        .q-status.sent { background: rgba(59,130,246,0.16); color: #93c5fd; }
+        .q-status.accepted { background: rgba(16,185,129,0.16); color: #6ee7b7; }
+        .q-status.expired { background: rgba(245,158,11,0.16); color: #fcd34d; }
+        .q-status.converted { background: rgba(99,102,241,0.18); color: #c7d2fe; }
+        .q-status.rejected { background: rgba(239,68,68,0.14); color: #fca5a5; }
+        .q-actions { display: flex; gap: 5px; justify-content: flex-end; }
+        .q-act { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 11.5px; color: var(--text-muted); }
+        .q-act.convert { background: rgba(99,102,241,0.18); color: #c7d2fe; }
+        .q-act.danger { color: #fca5a5; }
+
+        /* =========================================
+           SLIDE 3: VERSIONES
+           ========================================= */
+        .ver-split { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+        .ver-panel { background: rgba(15,23,42,0.82); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; box-shadow: 0 22px 50px rgba(0,0,0,0.5); }
+        .version-tabs { display: flex; gap: 7px; margin-bottom: 14px; flex-wrap: wrap; }
+        .v-tab { display: inline-flex; align-items: baseline; gap: 7px; font-size: 12.5px; font-weight: 800; border-radius: 9px; padding: 7px 13px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: var(--text-muted); }
+        .v-tab small { font-size: 11px; font-weight: 600; opacity: .75; }
+        .v-tab.active { background: rgba(20,184,166,0.16); border-color: rgba(20,184,166,0.4); color: #99f6e4; }
+        .detail-lines { display: flex; flex-direction: column; gap: 6px; }
+        .detail-lines > div { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; background: rgba(0,0,0,0.26); border-radius: 9px; padding: 9px 12px; font-size: 12.5px; color: #cbd5e1; }
+        .detail-lines strong { font-weight: 800; }
+        .detail-closing { display: flex; justify-content: flex-end; gap: 18px; flex-wrap: wrap; margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--border-glass); font-size: 12.5px; color: var(--text-muted); }
+        .detail-closing strong { color: var(--text-main); font-size: 14px; }
+        .ver-flow { display: flex; align-items: center; justify-content: center; gap: 11px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 18px; margin-top: 18px; font-size: 13px; color: var(--text-muted); }
+        .ver-pill { font-family: monospace; font-size: 12.5px; border-radius: 7px; padding: 4px 10px; background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .ver-pill.draft { background: rgba(148,163,184,0.18); color: #cbd5e1; }
+        .ver-pill.new { background: rgba(20,184,166,0.18); color: #99f6e4; }
+        .ver-flow i { color: #475569; font-size: 11px; }
+        .ver-list { display: flex; flex-direction: column; gap: 9px; }
+        .ver-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .ver-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .ver-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .ver-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 4: ESTADOS
+           ========================================= */
+        .st-table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; overflow: hidden; }
+        .st-table th { text-align: left; font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 11px 14px; background: rgba(0,0,0,0.3); white-space: nowrap; }
+        .st-table td { padding: 11px 14px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12.5px; vertical-align: middle; }
+        .st-table td.acts { display: flex; gap: 5px; flex-wrap: wrap; }
+        .st-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; border-radius: 7px; padding: 4px 9px; background: rgba(255,255,255,0.05); color: #cbd5e1; white-space: nowrap; }
+        .st-chip.no { color: #475569; border: 1px dashed rgba(255,255,255,0.1); background: transparent; }
+        .st-desc { color: var(--text-muted); }
+
+        /* =========================================
+           SLIDE 5: EL CAJÓN DEL POS
+           ========================================= */
+        .pick-split { display: grid; grid-template-columns: 430px 1fr; gap: 38px; align-items: start; }
+        .drawer-mock { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .dm-header { background: rgba(0,0,0,0.3); padding: 15px 18px; border-bottom: 1px solid var(--border-glass); }
+        .dm-header strong { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .dm-header small { display: block; font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .dm-body { padding: 15px; display: flex; flex-direction: column; gap: 11px; }
+        .dm-search { display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 12px; font-size: 12.5px; color: var(--text-muted); }
+        .cart-warning { display: flex; gap: 9px; align-items: flex-start; background: rgba(245,158,11,0.09); border: 1px solid rgba(245,158,11,0.25); border-radius: 9px; padding: 10px 12px; font-size: 12px; color: #fcd34d; text-align: left; line-height: 1.45; }
+        .quote-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; background: rgba(0,0,0,0.26); border: 1px solid var(--border-glass); border-radius: 10px; padding: 11px 13px; text-align: left; }
+        .quote-row.blocked { opacity: .55; border-style: dashed; }
+        .quote-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+        .quote-number { font-size: 13px; font-family: monospace; font-weight: 700; }
+        .quote-customer { font-size: 12px; color: var(--text-muted); }
+        .quote-meta { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: #64748b; margin-top: 4px; }
+        .quote-side { text-align: right; }
+        .quote-side strong { display: block; font-size: 14px; font-weight: 800; color: #34d399; }
+        .quote-open { font-size: 10.5px; font-weight: 800; color: #5eead4; }
+        .quote-blocked { font-size: 10.5px; font-weight: 800; color: #fca5a5; }
+        .pick-list { display: flex; flex-direction: column; gap: 11px; }
+
+        /* =========================================
+           SLIDE 6: CONVERTIR
+           ========================================= */
+        .cv-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 36px; align-items: start; }
+        .prorate { background: rgba(15,23,42,0.82); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; }
+        .prorate-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .6px; color: var(--text-muted); margin-bottom: 12px; }
+        .pr-row { display: grid; grid-template-columns: 1fr 96px 96px; gap: 12px; align-items: center; background: rgba(0,0,0,0.26); border-radius: 9px; padding: 10px 13px; margin-bottom: 6px; font-size: 12.5px; }
+        .pr-row.head { background: transparent; padding-block: 0; margin-bottom: 8px; font-size: 9.5px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); }
+        .pr-row .n { text-align: right; font-family: monospace; }
+        .pr-row .was { color: #64748b; text-decoration: line-through; }
+        .pr-row .now { color: #5eead4; font-weight: 700; }
+        .pr-row.last { border: 1px solid rgba(20,184,166,0.32); }
+        .pr-total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--border-glass); font-size: 13px; color: var(--text-muted); }
+        .pr-total strong { font-size: 18px; font-weight: 900; color: #34d399; }
+        .cv-list { display: flex; flex-direction: column; gap: 10px; }
+        .err-row { display: flex; gap: 11px; align-items: flex-start; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2); border-radius: 10px; padding: 10px 13px; text-align: left; }
+        .err-code { font-family: monospace; font-size: 11px; font-weight: 800; color: #fca5a5; background: rgba(239,68,68,0.14); border-radius: 6px; padding: 3px 8px; flex-shrink: 0; }
+        .err-row span { font-size: 12.5px; color: #fecaca; line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
+           ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
+        .qa-text { font-size: 16px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+        .qa-btn.teal:hover { border-color: var(--kpi-teal); } .qa-btn.teal:hover .qa-icon { color: var(--kpi-teal); }
+        .qa-btn.green:hover { border-color: var(--kpi-green); } .qa-btn.green:hover .qa-icon { color: var(--kpi-green); }
+        .qa-btn.blue:hover { border-color: var(--kpi-blue); } .qa-btn.blue:hover .qa-icon { color: var(--kpi-blue); }
+
+        /* =========================================
+           RESPONSIVE DESIGN (MÓVILES Y TABLETS)
+           ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide {
+                position: relative;
+                width: 100%;
+                height: auto;
+                min-height: 100vh;
+                border-radius: 0;
+                border: none;
+                padding: 40px 20px 140px 20px;
+                display: none;
+                overflow-y: visible;
+                box-shadow: none;
+            }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { height: auto; justify-content: flex-start; }
+
+            .grid-split { grid-template-columns: 1fr; gap: 40px; }
+
+            .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
+            /* El centrado de arriba es para el bloque de texto: adentro de una
+               tarjeta la copia sigue alineada a la izquierda. */
+            .visual-block p { text-align: left !important; margin-left: 0; margin-right: 0; }
+            h1 { font-size: 46px; }
+            h2 { font-size: 32px; }
+            h3 { font-size: 20px; }
+            p { font-size: 16px; }
+
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            .page-head { flex-direction: column; align-items: stretch; }
+            .head-actions { flex-direction: column; align-items: stretch; }
+            .btn-primary { justify-content: center; }
+            .status-strip { justify-content: center; }
+            .table-responsive { width: 100%; overflow-x: auto; border-radius: 14px; }
+            .quote-card { grid-template-columns: 1fr; gap: 11px; }
+            .q-actions { justify-content: flex-start; }
+
+            .ver-split { grid-template-columns: 1fr; gap: 28px; }
+            .ver-flow { flex-direction: column; gap: 9px; }
+            .ver-flow i { transform: rotate(90deg); }
+
+            .st-table { min-width: 680px; }
+
+            .pick-split { grid-template-columns: 1fr; gap: 26px; }
+
+            .cv-split { grid-template-columns: 1fr; gap: 26px; }
+            .pr-row { grid-template-columns: 1fr 80px 80px; gap: 8px; }
+
+            .quick-actions-grid {
+                flex-direction: column !important; align-items: center; width: 100%;
+                max-width: 350px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+        }
+    </style>
+    <link rel="stylesheet" href="actualizacion.css">
+</head>
+<body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: INTRODUCCIÓN -->
+    <div class="slide active">
+        <div class="glow-teal"></div>
+        <div class="slide-content-wide grid-split">
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-teal);">Presupuestos</h3>
+                <h1>Un número <br><span style="color: white;">que hay que sostener</span></h1>
+                <p>Un presupuesto es una promesa con fecha: el precio que se le pasó al cliente, y hasta cuándo vale. Cuando vuelve con ese papel en la mano, el carrito tiene que dar exactamente ese total.</p>
+                <p style="font-size: 17px;">Por eso no se edita: se versiona. Y por eso los precios que entran al POS son los de la versión, no los del catálogo de hoy.</p>
+            </div>
+
+            <div class="visual-block glass-panel" style="position: relative; padding: 34px 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-file-invoice-dollar" style="font-size: 66px; color: var(--kpi-teal); margin-bottom: 26px;"></i>
+                <div class="hero-chips">
+                    <span class="hero-chip"><i class="fas fa-code-branch" style="color:#5eead4;"></i> Versiones</span>
+                    <span class="hero-chip"><i class="far fa-clock" style="color:#fcd34d;"></i> Vigencia</span>
+                    <span class="hero-chip"><i class="fas fa-cart-plus" style="color:#c7d2fe;"></i> Convertir en orden</span>
+                    <span class="hero-chip"><i class="fas fa-cash-register" style="color:#6ee7b7;"></i> Traer al POS</span>
+                </div>
+                <div class="note" style="margin-top: 26px;">
+                    <i class="fas fa-hashtag"></i>
+                    <span>El número se arma solo con el año y el id: <b>PRE-2026-000148</b>. No hay contador que configurar ni serie que elegir.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: EL LISTADO -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 18px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">El listado</h3>
+                <h2 style="text-align: center;">Cada fila muestra solo lo que se puede hacer con ella</h2>
+                <p style="text-align: center; font-size: 18px;">Los botones no se apagan: no están. Un presupuesto convertido no ofrece revisar ni cancelar, y uno rechazado tampoco admite versiones.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="page-head">
+                    <div class="title-row">
+                        <span class="back-btn"><i class="fas fa-arrow-left"></i></span>
+                        <div>
+                            <span class="eyebrow">VENTAS</span>
+                            <h4>Presupuestos</h4>
+                        </div>
+                    </div>
+                    <div class="head-actions">
+                        <span class="pq-search"><i class="fas fa-search"></i> Numero o cliente...</span>
+                        <span class="btn-primary"><i class="fas fa-plus"></i> Nuevo presupuesto</span>
+                    </div>
+                </div>
+
+                <div class="status-strip">
+                    <span><strong>4</strong> borradores</span>
+                    <span><strong>9</strong> vigentes</span>
+                    <span><strong>23</strong> convertidos</span>
+                    <span><strong>$ 4.180.500,00</strong> vendidos</span>
+                </div>
+
+                <div class="table-responsive custom-scrollbar">
+                    <div class="quote-card">
+                        <div class="quote-identity">
+                            <span class="document-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                            <div><strong>PRE-2026-000148</strong><small>Distribuidora López</small></div>
+                        </div>
+                        <div class="qc-col"><span>Version</span><strong>v3</strong></div>
+                        <div class="qc-col"><span>Vigencia</span><strong>29/09/2026</strong></div>
+                        <div class="qc-col total"><span>Total</span><strong>$ 184.200,00</strong></div>
+                        <span class="q-status sent">Enviado</span>
+                        <div class="q-actions">
+                            <span class="q-act"><i class="fas fa-eye"></i></span>
+                            <span class="q-act"><i class="fas fa-pen"></i></span>
+                            <span class="q-act"><i class="fas fa-check"></i></span>
+                            <span class="q-act convert"><i class="fas fa-cart-plus"></i></span>
+                            <span class="q-act danger"><i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="quote-card">
+                        <div class="quote-identity">
+                            <span class="document-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                            <div><strong>PRE-2026-000147</strong><small>Consumidor final</small></div>
+                        </div>
+                        <div class="qc-col"><span>Version</span><strong>v1</strong></div>
+                        <div class="qc-col"><span>Vigencia</span><strong>02/09/2026</strong></div>
+                        <div class="qc-col total"><span>Total</span><strong>$ 62.000,00</strong></div>
+                        <span class="q-status expired">Vencido</span>
+                        <div class="q-actions">
+                            <span class="q-act"><i class="fas fa-eye"></i></span>
+                            <span class="q-act"><i class="fas fa-pen"></i></span>
+                            <span class="q-act danger"><i class="fas fa-times"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="quote-card">
+                        <div class="quote-identity">
+                            <span class="document-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                            <div><strong>PRE-2026-000144</strong><small>Marina Suárez</small></div>
+                        </div>
+                        <div class="qc-col"><span>Version</span><strong>v2</strong></div>
+                        <div class="qc-col"><span>Vigencia</span><strong>Sin limite</strong></div>
+                        <div class="qc-col total"><span>Total</span><strong>$ 310.750,00</strong></div>
+                        <span class="q-status converted">Convertido</span>
+                        <div class="q-actions">
+                            <span class="q-act"><i class="fas fa-eye"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note blue" style="margin-top: 16px;">
+                    <i class="fas fa-chart-simple"></i>
+                    <span>La tira de arriba no es un tablero aparte: cuenta lo que ya está en la lista. <b>"Vendidos" suma el total de los convertidos</b>, que es lo único de acá que terminó siendo plata.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: VERSIONES -->
+    <div class="slide">
+        <div class="glow-indigo"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">Versiones</h3>
+                <h2 style="text-align: center;">Revisar no edita: agrega</h2>
+            </div>
+
+            <div class="visual-block ver-split">
+                <div class="ver-panel">
+                    <div class="version-tabs">
+                        <span class="v-tab">v1 <small>$ 210.000,00</small></span>
+                        <span class="v-tab">v2 <small>$ 196.400,00</small></span>
+                        <span class="v-tab active">v3 <small>$ 184.200,00</small></span>
+                    </div>
+                    <div class="detail-lines">
+                        <div><span><strong>6x</strong> Difusor Vainilla</span><span>$ 15.000,00 c/u</span><strong>$ 90.000,00</strong></div>
+                        <div><span><strong>4x</strong> Set Velas Premium</span><span>$ 21.800,00 c/u</span><strong>$ 87.200,00</strong></div>
+                        <div><span><strong>2x</strong> Textil Lavanda</span><span>$ 8.500,00 c/u</span><strong>$ 17.000,00</strong></div>
+                    </div>
+                    <div class="detail-closing">
+                        <span>Descuento <strong>$ 10.000,00</strong></span>
+                        <span>Total <strong>$ 184.200,00</strong></span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="ver-list">
+                        <div class="ver-item"><i class="fas fa-layer-group" style="color:#a5b4fc;"></i><div><strong>Las anteriores quedan</strong><span>Cada versión guarda sus renglones, su descuento y su total. Se miran por solapa: lo que se le mandó al cliente en v1 sigue ahí, aunque hoy valga otra cosa.</span></div></div>
+                        <div class="ver-item"><i class="fas fa-rotate-left" style="color:#5eead4;"></i><div><strong>La versión nueva reabre el documento</strong><span>Revisar sube el número y <b>devuelve el estado a Borrador</b>: si cambió el precio, lo que estaba enviado o aceptado ya no es lo que se está ofreciendo.</span></div></div>
+                        <div class="ver-item"><i class="fas fa-lock" style="color:#fca5a5;"></i><div><strong>Tres estados no admiten versiones</strong><span>Convertido, cancelado y rechazado. El primero porque ya es una orden; los otros dos porque el cliente dijo que no.</span></div></div>
+                    </div>
+
+                    <div class="ver-flow">
+                        <span class="ver-pill">v2 · Enviado</span>
+                        <i class="fas fa-arrow-right"></i>
+                        <span>revisar</span>
+                        <i class="fas fa-arrow-right"></i>
+                        <span class="ver-pill new">v3</span>
+                        <span class="ver-pill draft">Borrador</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: ESTADOS -->
+    <div class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Los ocho estados</h3>
+                <h2 style="text-align: center;">Dónde está, y qué se puede hacer ahí</h2>
+            </div>
+
+            <div class="visual-block table-responsive custom-scrollbar">
+                <table class="st-table">
+                    <thead>
+                        <tr><th style="width: 130px;">Estado</th><th>Qué significa</th><th style="width: 340px;">Acciones disponibles</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="q-status draft">Borrador</span></td>
+                            <td class="st-desc">Se está armando, o acaba de nacer una versión nueva.</td>
+                            <td class="acts"><span class="st-chip">Revisar</span><span class="st-chip">Enviar</span><span class="st-chip">Aceptar</span><span class="st-chip">Convertir</span><span class="st-chip">Cancelar</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status sent">Enviado</span></td>
+                            <td class="st-desc">Ya se le pasó al cliente y está esperando respuesta.</td>
+                            <td class="acts"><span class="st-chip">Revisar</span><span class="st-chip">Aceptar</span><span class="st-chip">Convertir</span><span class="st-chip">Cancelar</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status accepted">Aceptado</span></td>
+                            <td class="st-desc">El cliente dijo que sí, pero todavía no hay orden.</td>
+                            <td class="acts"><span class="st-chip">Revisar</span><span class="st-chip">Convertir</span><span class="st-chip">Cancelar</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status expired">Vencido</span></td>
+                            <td class="st-desc">Se pasó la fecha. No es un estado guardado: se calcula al listar.</td>
+                            <td class="acts"><span class="st-chip">Revisar</span><span class="st-chip">Cancelar</span><span class="st-chip no">Convertir</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status converted" style="background: rgba(148,163,184,0.16); color:#cbd5e1;">Convirtiendo</span></td>
+                            <td class="st-desc">Estado de tránsito: existe para que dos clics no creen dos órdenes.</td>
+                            <td class="acts"><span class="st-chip no">Todo bloqueado</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status converted">Convertido</span></td>
+                            <td class="st-desc">Ya es una orden. El documento queda de consulta.</td>
+                            <td class="acts"><span class="st-chip">Ver detalle</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status rejected">Rechazado</span></td>
+                            <td class="st-desc">El cliente lo bajó.</td>
+                            <td class="acts"><span class="st-chip">Ver detalle</span><span class="st-chip">Cancelar</span></td>
+                        </tr>
+                        <tr>
+                            <td><span class="q-status rejected" style="background: rgba(148,163,184,0.16); color:#cbd5e1;">Cancelado</span></td>
+                            <td class="st-desc">Lo bajó el negocio.</td>
+                            <td class="acts"><span class="st-chip">Ver detalle</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note warn">
+                <i class="fas fa-triangle-exclamation"></i>
+                <span><b>"Vencido" no se calcula para todos.</b> El listado lo deriva solo desde Borrador y Enviado: un presupuesto <b>Aceptado</b> y vencido se sigue mostrando como aceptado, y la conversión igual lo rechaza. Por eso el cajón del POS mira la fecha siempre, sin confiar en el estado.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: EL CAJÓN DEL POS -->
+    <div class="slide">
+        <div class="glow-teal" style="top: auto; bottom: -10vw; right: auto; left: -10vw;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-teal); text-align: center;">En el mostrador</h3>
+                <h2 style="text-align: center;">El cliente llega con el papel y el carrito se arma solo</h2>
+                <p style="text-align: center; font-size: 18px;">El presupuesto dejó de ser un apartado aparte: se busca sin salir del POS y sus renglones caen en el carrito con los precios de la versión.</p>
+            </div>
+
+            <div class="visual-block pick-split">
+                <div class="drawer-mock">
+                    <div class="dm-header">
+                        <strong><i class="fas fa-file-invoice-dollar" style="color: var(--kpi-teal);"></i> Presupuestos</strong>
+                        <small>Traé uno al carrito con sus precios.</small>
+                    </div>
+                    <div class="dm-body">
+                        <div class="dm-search"><i class="fas fa-search"></i> Número, cliente o producto</div>
+
+                        <div class="cart-warning">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            <span>El carrito ya tiene productos y se reemplaza por el presupuesto.</span>
+                        </div>
+
+                        <div class="quote-row">
+                            <div class="quote-main">
+                                <span class="quote-number">PRE-2026-000148</span>
+                                <span class="quote-customer">Distribuidora López</span>
+                                <div class="quote-meta"><span>3 productos · 12 u.</span><span>vence 29/09</span></div>
+                            </div>
+                            <div class="quote-side">
+                                <strong>$ 184.200</strong>
+                                <small class="quote-open">Traer al carrito</small>
+                            </div>
+                        </div>
+
+                        <div class="quote-row blocked">
+                            <div class="quote-main">
+                                <span class="quote-number">PRE-2026-000147</span>
+                                <span class="quote-customer">Sin cliente</span>
+                                <div class="quote-meta"><span>1 producto · 4 u.</span><span>vence 02/09</span></div>
+                            </div>
+                            <div class="quote-side">
+                                <strong>$ 62.000</strong>
+                                <small class="quote-blocked">Vencido: hace falta una versión nueva</small>
+                            </div>
+                        </div>
+
+                        <div class="quote-row blocked">
+                            <div class="quote-main">
+                                <span class="quote-number">PRE-2026-000144</span>
+                                <span class="quote-customer">Marina Suárez</span>
+                                <div class="quote-meta"><span>5 productos · 9 u.</span></div>
+                            </div>
+                            <div class="quote-side">
+                                <strong>$ 310.750</strong>
+                                <small class="quote-blocked">Ya se convirtió en pedido</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pick-list">
+                    <div class="note">
+                        <i class="fas fa-lock"></i>
+                        <span>Los renglones entran con <b>precio forzado</b>, el mismo camino que usa el POS cuando el cajero escribe un precio a mano. Si se recalcularan contra el catálogo de hoy, el total dejaría de ser el que se prometió.</span>
+                    </div>
+                    <div class="note red">
+                        <i class="fas fa-comment-slash"></i>
+                        <span>Una fila bloqueada <b>dice por qué</b> en vez de solo apagarse: "Vencido", "Ya se convirtió", "Anulado", "Rechazado". Una fila apagada sin explicación se vuelve a intentar.</span>
+                    </div>
+                    <div class="note blue">
+                        <i class="fas fa-sort-amount-down"></i>
+                        <span>Los que se pueden traer van arriba, y adentro de cada grupo manda el más nuevo. El cajón se abre <b>para levantar uno</b>, no para auditar los vencidos.</span>
+                    </div>
+                    <div class="note ok">
+                        <i class="fas fa-arrow-right-arrow-left"></i>
+                        <span>El camino inverso también existe: <b>un carrito armado se guarda como presupuesto</b>. Viaja el precio que se ve en el ticket —con su escala y su descuento— y el de lista va aparte, para poder mostrar el tachado.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: CONVERTIR -->
+    <div class="slide">
+        <div class="glow-green" style="top: -10vw; left: -10vw; bottom: auto; right: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Convertir</h3>
+                <h2 style="text-align: center;">El descuento se reparte entre los renglones</h2>
+            </div>
+
+            <div class="visual-block cv-split">
+                <div class="prorate">
+                    <div class="prorate-head">
+                        <span>PRE-2026-000148 · v3</span>
+                        <span>Descuento $ 10.000,00</span>
+                    </div>
+                    <div class="pr-row head"><span>Renglón</span><span class="n">Presupuesto</span><span class="n">En la orden</span></div>
+                    <div class="pr-row"><span>6x Difusor Vainilla</span><span class="n was">15.000,00</span><span class="n now">14.227,60</span></div>
+                    <div class="pr-row"><span>4x Set Velas Premium</span><span class="n was">21.800,00</span><span class="n now">20.677,45</span></div>
+                    <div class="pr-row last"><span>2x Textil Lavanda</span><span class="n was">8.500,00</span><span class="n now">8.062,31</span></div>
+                    <div class="pr-total">
+                        <span>Total de la orden</span>
+                        <strong>$ 184.200,00</strong>
+                    </div>
+                </div>
+
+                <div class="cv-list">
+                    <div class="note ok">
+                        <i class="fas fa-equals"></i>
+                        <span>El <b>último renglón absorbe el redondeo</b>: en vez de multiplicar por la proporción, se calcula con lo que falta para llegar al total. Así la suma da exacto y no queda un peso perdido.</span>
+                    </div>
+                    <div class="note indigo">
+                        <i class="fas fa-tag"></i>
+                        <span>Cada línea rebajada queda con su motivo escrito —<b>"Descuento de presupuesto"</b>— y conserva su precio de lista, así la auditoría después puede ver de dónde salió el recorte.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>Mientras corre, el presupuesto pasa a <b>"Convirtiendo"</b>. Es un candado: dos clics seguidos no crean dos órdenes.</span>
+                    </div>
+
+                    <div class="err-row">
+                        <span class="err-code">409</span>
+                        <span>Este presupuesto ya fue convertido.</span>
+                    </div>
+                    <div class="err-row">
+                        <span class="err-code">409</span>
+                        <span>La conversión ya está en proceso.</span>
+                    </div>
+                    <div class="err-row">
+                        <span class="err-code">409</span>
+                        <span>El presupuesto venció. Creá una nueva versión.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
+    <div class="slide">
+        <div class="glow-teal" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px; right: auto;"></div>
+        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-teal); text-align: center;">Explorar Módulos</h3>
+                <h2 style="text-align: center;">Del papel a la orden</h2>
+                <p style="text-align: center; max-width: 900px; margin: 0 auto;">El presupuesto vive entre el historial de ventas y el mostrador. ¿Por dónde seguimos?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+                <a href="index.html" class="qa-btn teal" style="border-color: var(--kpi-teal);">
+                    <div class="qa-icon" style="color: var(--kpi-teal);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
+                </a>
+
+                <a href="POS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
+                    <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
+                </a>
+
+                <a href="Facturacion.html" class="qa-btn blue" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-file-invoice"></i></div>
+                    <div class="qa-text" style="color: white;">Facturación<br>y Devoluciones</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const pageId = 'presupuestos';
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
+
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const currentSlideNum = document.getElementById('currentSlideNum');
+        const totalSlidesDisplay = document.getElementById('totalSlides');
+
+        function updateSlides() {
+            if (totalSlidesDisplay) {
+                totalSlidesDisplay.innerText = slides.length;
+            }
+
+            slides.forEach((slide, index) => {
+                if (index === currentIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+            currentSlideNum.innerText = currentIndex + 1;
+
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
+
+            setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlides();
+            } else {
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
+                window.location.href = 'index.html';
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlides();
+            }
+        }
+
+        btnNext.addEventListener('click', nextSlide);
+        btnPrev.addEventListener('click', prevSlide);
+
+        const pressedKeys = new Set();
+
+        document.addEventListener('keydown', (e) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
+
+            const key = e.key.toLowerCase();
+            pressedKeys.add(key);
+
+            if (key === 'f2') {
+                e.preventDefault();
+                alert("\u00a1Comando F2 activado! (En la app real, abrir\u00eda la barra superior de b\u00fasqueda global)");
+                return;
+            }
+
+            if (pressedKeys.has('a') && !isTyping) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
+                    e.preventDefault();
+                    switch (key) {
+                        case 'p': window.location.href = 'POS.html'; break;
+                        case 'i': window.location.href = 'Inventario.html'; break;
+                        case 'c': window.location.href = 'Catalogo.html'; break;
+                        case 'h': window.location.href = 'BranchDashboard.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
+                    }
+                    return;
+                }
+            }
+
+            if (!isTyping) {
+                if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            pressedKeys.delete(e.key.toLowerCase());
+        });
+
+        window.addEventListener('blur', () => {
+            pressedKeys.clear();
+        });
+
+        updateSlides();
+    </script>
+
+</body>
+</html>

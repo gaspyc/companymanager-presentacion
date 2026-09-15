@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Equipo y Seguridad - Pitch</title>
+    <title>Equipo y Roles - Pitch</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -100,89 +100,194 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         /* =========================================
-           SLIDE 2: RENDIMIENTO Y STAFF CARDS
+           SLIDE 1: PORTADA
            ========================================= */
-        .insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
-        .insight-card { padding: 20px; display: flex; align-items: center; gap: 15px; border-left: 4px solid var(--border-glass); }
-        .insight-card.i-blue { border-left-color: var(--kpi-blue); }
-        .insight-card.i-green { border-left-color: var(--kpi-green); }
-        .insight-card.i-orange { border-left-color: var(--kpi-orange); }
-        .insight-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
-        .insight-data { display: flex; flex-direction: column; }
-        .insight-data small { font-size: 12px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; margin-bottom: 4px; text-transform: uppercase;}
-        .insight-data h3 { margin: 0; font-size: 26px; font-weight: 800; color: white; line-height: 1;}
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
 
-        .staff-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .staff-card { display: flex; flex-direction: column; position: relative; overflow: hidden; padding: 0;}
-        .color-ribbon { height: 6px; width: 100%; }
-        .card-content { padding: 20px; display: flex; flex-direction: column; flex: 1; }
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .avatar-circle { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; }
-        .card-info h3 { margin: 0 0 8px 0; font-size: 20px; font-weight: 800; color: white; }
-        .role-badge { background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 8px; font-size: 13px; color: var(--text-muted); font-weight: 700; border: 1px solid rgba(255,255,255,0.05);}
-        .staff-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 20px;}
-        .metric-box { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .metric-box:first-child { border-right: 1px solid rgba(255,255,255,0.05); }
-        .metric-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; margin-bottom: 5px;}
-        .metric-val { font-size: 20px; font-weight: 900; color: white; }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(79,70,229,0.07); border: 1px solid rgba(79,70,229,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #c7d2fe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: #818cf8; }
+        .note b { color: #e0e7ff; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
 
         /* =========================================
-           SLIDE 3: ROLES Y PERMISOS MOCKUP
+           SLIDE 2: MI EQUIPO
            ========================================= */
-        .roles-layout { display: flex; gap: 20px; height: 450px; align-items: stretch; width: 100%;}
-        .roles-sidebar { width: 250px; display: flex; flex-direction: column; flex-shrink: 0; background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden;}
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); font-weight: bold; color: white;}
-        .role-item { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.02); display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--text-muted); cursor: pointer; transition: 0.2s;}
-        .role-item.active { background: rgba(59, 130, 246, 0.15); color: var(--kpi-blue); border-left: 4px solid var(--kpi-blue); }
-        
-        .role-details { flex: 1; display: flex; flex-direction: column; background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden;}
-        .details-header { padding: 20px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center;}
-        .editable-title { font-size: 24px; font-weight: 800; color: white; border-bottom: 1px dashed rgba(255,255,255,0.2); padding-bottom: 5px;}
-        
-        .permissions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px;}
-        .perm-group { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .perm-group h5 { margin: 0 0 15px 0; font-size: 14px; font-weight: bold; color: white; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;}
-        .perm-item { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--text-muted);}
-        .checkbox-custom { width: 20px; height: 20px; border-radius: 6px; border: 2px solid #475569; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3);}
-        .checkbox-custom.checked { background: var(--kpi-blue); border-color: var(--kpi-blue); color: white; }
+        .staff-nav { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 12px; padding: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+        .tabs-container { display: flex; gap: 9px; flex: 1 1 auto; flex-wrap: wrap; }
+        .tab-btn { padding: 11px 17px; border: 1px solid transparent; color: var(--text-muted); font-weight: 600; border-radius: 8px; display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; white-space: nowrap; }
+        .tab-btn.active { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+        .team-kpis { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+        .kpi-chip { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 10px; background: rgba(15,23,42,0.7); border: 1px solid var(--border-glass); color: var(--text-muted); white-space: nowrap; }
+        .kpi-chip i { color: #60a5fa; }
+        .kpi-chip span { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+        .kpi-chip strong { color: var(--text-main); font-size: 13.5px; }
+        .kpi-chip small { color: #4ade80; font-weight: 700; font-size: 12px; }
 
-        .god-mode-badge { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px 15px; border-radius: 8px; color: var(--kpi-orange); font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 8px;}
+        .team-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+        .team-search { flex: 1; min-width: 240px; display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 9px; padding: 9px 13px; font-size: 13px; color: var(--text-muted); }
+        .team-pill { font-size: 12.5px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); border-radius: 8px; padding: 7px 13px; white-space: nowrap; }
+        .team-pill.active { background: rgba(79,70,229,0.18); border-color: rgba(79,70,229,0.4); color: #c7d2fe; }
+        .team-pill.primary { background: #4f46e5; border-color: transparent; color: white; }
+
+        .staff-group { margin-bottom: 16px; }
+        .group-head { text-align: left; margin-bottom: 10px; }
+        .group-head strong { display: block; font-size: 15px; font-weight: 800; }
+        .group-head span { font-size: 12.5px; color: var(--text-muted); }
+        .staff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .staff-card { position: relative; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 15px 16px 15px 20px; overflow: hidden; }
+        .color-ribbon { position: absolute; left: 0; top: 0; bottom: 0; width: 5px; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+        .avatar-circle { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 900; flex-shrink: 0; }
+        .card-info h3 { font-size: 15px; font-weight: 800; text-align: left; margin: 0; text-transform: none; letter-spacing: 0; color: var(--text-main); }
+        .card-info .role-badge { font-size: 11px; font-weight: 700; color: var(--text-muted); background: rgba(255,255,255,0.05); border-radius: 6px; padding: 2px 8px; display: inline-block; margin-top: 3px; }
+        .card-info .card-mail { display: block; font-size: 11px; color: #64748b; font-family: monospace; margin-top: 4px; }
+        .mini-toggle { width: 34px; height: 18px; border-radius: 999px; background: var(--kpi-green); position: relative; flex-shrink: 0; }
+        .mini-toggle::after { content: ''; position: absolute; width: 14px; height: 14px; border-radius: 50%; background: white; top: 2px; right: 2px; }
+        .mini-toggle.off { background: rgba(255,255,255,0.16); } .mini-toggle.off::after { right: auto; left: 2px; }
+        .staff-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 13px; }
+        .metric-box { background: rgba(0,0,0,0.28); border-radius: 9px; padding: 8px 11px; text-align: left; }
+        .metric-label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); margin-bottom: 2px; }
+        .metric-val { font-size: 15px; font-weight: 800; }
 
         /* =========================================
-           SLIDE 4: HORARIOS Y MODALIDAD
+           SLIDE 3: LA FICHA DEL TRABAJADOR
            ========================================= */
-        .modal-mockup { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; max-width: 600px; margin: 0 auto;}
-        .mm-header { padding: 20px; border-bottom: 1px solid var(--border-glass); font-weight: 800; font-size: 18px; color: white; display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2);}
-        .mm-body { padding: 25px; display: flex; flex-direction: column;}
-        
-        .view-mode-toggle { display: flex; background: rgba(0, 0, 0, 0.4); padding: 4px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); gap: 4px; margin-bottom: 20px;}
-        .btn-toggle { padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 700; color: var(--text-muted); background: transparent; border: none; flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer;}
-        .btn-toggle.active { background: var(--kpi-blue); color: white; }
-        
-        .schedule-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border-glass); margin-bottom: 12px;}
-        .day-toggle { display: flex; align-items: center; gap: 10px;}
-        .day-name { font-weight: 700; font-size: 15px; color: white; }
-        
-        .time-inputs { display: flex; align-items: center; gap: 15px; } 
-        .time-stack { display: flex; align-items: center; gap: 5px; } 
-        
-        .time-box { background: rgba(0,0,0,0.5); padding: 8px 15px; border-radius: 6px; color: white; font-family: monospace; font-size: 14px;}
-        .break-box { background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.3); padding: 6px 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px;}
+        .dr-split { display: grid; grid-template-columns: 440px 1fr; gap: 40px; align-items: center; }
+        .drawer-mock { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .dm-header { background: rgba(0,0,0,0.3); padding: 15px 18px; border-bottom: 1px solid var(--border-glass); }
+        .dm-header strong { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+        .dm-header small { display: block; font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .dm-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+        .dm-section { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; display: flex; align-items: center; gap: 8px; text-align: left; }
+        .dm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+        .dm-field { text-align: left; }
+        .dm-field label { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: var(--text-muted); margin-bottom: 5px; }
+        .dm-input { background: rgba(0,0,0,0.32); border: 1px solid var(--border-glass); border-radius: 8px; padding: 9px 11px; font-size: 13px; color: white; display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+        .dm-input.locked { color: #64748b; border-style: dashed; }
+        .dm-input.pick { color: #a5b4fc; }
+        .dm-help { font-size: 10.5px; color: #64748b; margin-top: 4px; display: block; text-align: left; }
+        .dm-colors { display: flex; gap: 7px; }
+        .dm-color { width: 22px; height: 22px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
+        .dm-days { display: flex; flex-direction: column; gap: 7px; }
+        .dm-day { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.24); border-radius: 9px; padding: 8px 11px; }
+        .dm-day.closed { opacity: .5; }
+        .dm-dot { width: 10px; height: 10px; border-radius: 50%; background: #34d399; flex-shrink: 0; }
+        .dm-dot.off { background: #475569; }
+        .dm-dayname { font-size: 12.5px; font-weight: 700; width: 66px; text-align: left; }
+        .dm-time { background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px 9px; font-size: 12px; font-family: monospace; }
+        .dm-sep { font-size: 11px; color: var(--text-muted); }
+        .dm-tag { margin-left: auto; font-size: 10px; font-weight: 800; text-transform: uppercase; color: #64748b; }
+
+        .md-list { display: flex; flex-direction: column; gap: 9px; }
+        .md-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .md-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .md-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .md-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .md-item.is-default { border-color: rgba(79,70,229,0.3); background: rgba(79,70,229,0.06); }
 
         /* =========================================
-           SLIDE 5: RECRUITING (HR HUB)
+           SLIDE 4: PUESTOS Y PERMISOS
            ========================================= */
-        .recruiting-banner { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: linear-gradient(90deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border-left: 4px solid var(--kpi-purple); border-radius: 12px; border: 1px solid var(--border-glass); margin-bottom: 25px;}
-        
-        .cv-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 15px;}
-        .cv-info strong { font-size: 20px; color: white; display: block; margin-bottom: 5px;}
-        .cv-contact { display: flex; gap: 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 10px;}
-        .cv-msg { font-size: 14px; color: #cbd5e1; font-style: italic; border-left: 2px solid var(--kpi-blue); padding-left: 15px; margin-bottom: 10px;}
-        
-        .btn-hire { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .roles-layout { display: grid; grid-template-columns: 210px 1fr; gap: 16px; }
+        .roles-sidebar { background: rgba(15,23,42,0.7); border: 1px solid var(--border-glass); border-radius: 14px; padding: 13px; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); margin-bottom: 11px; }
+        .role-item { display: flex; align-items: center; gap: 9px; padding: 9px 11px; border-radius: 9px; font-size: 13px; color: var(--text-muted); margin-bottom: 5px; }
+        .role-item.active { background: rgba(79,70,229,0.18); color: #c7d2fe; }
+        .color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .hiring-dot { width: 9px; height: 9px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.8); margin-left: auto; flex-shrink: 0; }
+        .role-details { background: rgba(15,23,42,0.7); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px 18px; }
+        .details-header { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding-bottom: 13px; border-bottom: 1px solid var(--border-glass); margin-bottom: 14px; }
+        .editable-title { font-size: 18px; font-weight: 800; text-align: left; }
+        .details-header .sub { font-size: 12px; color: var(--text-muted); }
+        .god-mode-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #fcd34d; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.28); border-radius: 8px; padding: 7px 13px; }
+        .templates-strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+        .tpl-label { font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .8px; color: var(--text-muted); margin-right: 3px; }
+        .tpl-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; border-radius: 8px; padding: 6px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: #cbd5e1; }
+        .tpl-chip.own { border-style: dashed; }
+        .permissions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .perm-group { background: rgba(0,0,0,0.24); border-radius: 10px; padding: 11px 13px; text-align: left; }
+        .perm-group h5 { font-size: 11.5px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 7px; }
+        .perm-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .perm-item:last-child { margin-bottom: 0; }
+        .perm-item.auto { color: #6ee7b7; }
+        .checkbox-custom { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.22); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; }
+        .checkbox-custom.checked { background: var(--kpi-indigo); border-color: var(--kpi-indigo); color: white; }
+        .checkbox-custom.auto { background: rgba(16,185,129,0.7); border-color: rgba(16,185,129,0.7); color: white; }
+        .dep-chain { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 20px; font-size: 13.5px; color: var(--text-muted); }
+        .dep-pill { font-family: monospace; font-size: 12.5px; background: rgba(79,70,229,0.16); color: #c7d2fe; border-radius: 7px; padding: 4px 10px; }
+        .dep-pill.auto { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+        .dep-chain i { color: #475569; font-size: 11px; }
 
         /* =========================================
-           SLIDE 6: NAVEGACIÓN
+           SLIDE 5: VACANTES Y POSTULANTES
+           ========================================= */
+        .vc-split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+        .hiring-box { display: flex; align-items: center; justify-content: space-between; gap: 15px; background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 18px; margin-bottom: 14px; }
+        .hiring-text { text-align: left; }
+        .hiring-text strong { font-size: 15px; }
+        .hiring-text small { display: block; font-size: 12px; color: var(--text-muted); }
+        .big-toggle { width: 44px; height: 24px; border-radius: 20px; background: var(--kpi-green); position: relative; flex-shrink: 0; }
+        .big-toggle::after { content: ''; position: absolute; right: 3px; top: 3px; width: 18px; height: 18px; background: white; border-radius: 50%; }
+        .inbox { background: rgba(15,23,42,0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.45); }
+        .inbox-head { font-weight: 800; font-size: 14.5px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 13px; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; }
+        .cv-card { display: flex; justify-content: space-between; gap: 16px; background: rgba(0,0,0,0.24); border-radius: 12px; padding: 14px 16px; }
+        .cv-info { text-align: left; min-width: 0; }
+        .cv-info strong { font-size: 14.5px; }
+        .cv-contact { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+        .cv-msg { font-size: 12.5px; color: #cbd5e1; font-style: italic; margin: 9px 0 0; text-align: left; line-height: 1.45; }
+        .cv-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .cv-btn { border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 800; text-align: center; white-space: nowrap; }
+        .cv-btn.cv { background: var(--kpi-blue); color: white; }
+        .cv-btn.hire { background: var(--kpi-green); color: white; }
+        .cv-btn.drop { background: rgba(239,68,68,0.14); color: #fca5a5; border: 1px solid rgba(239,68,68,0.28); }
+
+        /* =========================================
+           SLIDE 6: VEHÍCULOS
+           ========================================= */
+        .vh-split { display: grid; grid-template-columns: 380px 1fr; gap: 36px; align-items: start; }
+        .vh-form { background: rgba(15,23,42,0.75); border: 1px solid var(--border-glass); border-radius: 14px; padding: 17px; display: flex; flex-direction: column; gap: 12px; }
+        .vh-form h4 { font-size: 16px; font-weight: 800; text-align: left; display: flex; align-items: center; gap: 9px; }
+        .vh-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .vh-toggle-line { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--text-muted); text-align: left; }
+        .vh-kinds { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .vh-kind { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; border-radius: 8px; padding: 6px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: #cbd5e1; }
+        .vh-states { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin-bottom: 16px; }
+        .vh-state { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 13px 15px; text-align: left; }
+        .vh-state strong { display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin-bottom: 4px; }
+        .vh-state span { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+        .vh-state.route { border-color: rgba(245,158,11,0.28); }
+
+        /* =========================================
+           SLIDE 7: PAGOS AL EQUIPO
+           ========================================= */
+        .py-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 13px; margin-bottom: 20px; }
+        .py-kpi { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 13px; padding: 14px 16px; text-align: left; }
+        .py-kpi span { display: block; font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--text-muted); margin-bottom: 4px; }
+        .py-kpi strong { display: block; font-size: 21px; font-weight: 900; }
+        .py-kpi small { display: block; font-size: 11.5px; color: #64748b; margin-top: 2px; }
+        .py-split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: start; }
+        .py-modes { display: flex; flex-direction: column; gap: 9px; }
+        .py-mode { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .py-mode i { width: 20px; text-align: center; margin-top: 2px; }
+        .py-mode strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .py-mode span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .py-flow { display: flex; align-items: center; justify-content: center; gap: 9px; flex-wrap: wrap; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; }
+        .py-step { font-size: 11.5px; font-weight: 900; border-radius: 999px; padding: 5px 12px; background: rgba(255,255,255,0.05); color: var(--text-muted); white-space: nowrap; }
+        .py-step.approved { background: #112e51; color: #72b7ff; }
+        .py-step.partial { background: #382c14; color: #ffca63; }
+        .py-step.paid { background: #10392f; color: #5fe1b5; }
+        .py-flow i { color: #475569; font-size: 10px; }
+        .py-bases { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 13px; }
+        .py-base { font-size: 12px; font-weight: 700; border-radius: 8px; padding: 6px 12px; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.24); color: #bfdbfe; }
+
+        /* =========================================
+           SLIDE 8: NAVEGACIÓN
            ========================================= */
         .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
@@ -219,6 +324,9 @@
             /* Textos apilados arriba */
             .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
             .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -226,24 +334,49 @@
             h3 { font-size: 20px; }
             p { font-size: 16px; }
 
-            .insights-grid { grid-template-columns: 1fr; gap: 15px;}
-            .staff-grid { grid-template-columns: 1fr; gap: 15px;}
-            
-            /* Fix Roles (Slide 3) */
-            .roles-layout { flex-direction: column; height: auto; }
-            .roles-sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 15px; gap: 10px;}
-            .sidebar-header { width: 100%; text-align: center; justify-content: center;}
-            .permissions-grid { grid-template-columns: 1fr; padding: 15px;}
+            /* Slide 1 Portada */
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
 
-            /* Fix Horarios (Slide 4) */
-            .modal-mockup { width: 100%; margin-top: 0; }
-            .schedule-row { flex-wrap: wrap; gap: 15px; justify-content: center; }
-            .time-inputs { flex-wrap: wrap; justify-content: center; }
+            /* Slide 2 Mi Equipo */
+            .staff-nav { flex-direction: column; align-items: stretch; }
+            .tab-btn { flex: 1; justify-content: center; }
+            .team-kpis { justify-content: stretch; }
+            .kpi-chip { flex: 1 1 0; }
+            .staff-grid { grid-template-columns: 1fr; gap: 14px; }
+            .team-tools { flex-direction: column; align-items: stretch; }
+            .team-search { min-width: 0; }
+            .team-pill { text-align: center; }
 
-            /* Fix Recruiting (Slide 5) */
-            .recruiting-banner { flex-direction: column; text-align: center; gap: 15px; }
-            .cv-card { flex-direction: column; align-items: center; text-align: center;}
-            .cv-contact { justify-content: center; flex-wrap: wrap;}
+            /* Slide 3 La ficha */
+            .dr-split { grid-template-columns: 1fr; gap: 28px; }
+            .dm-grid { grid-template-columns: 1fr; }
+            .dm-day { flex-wrap: wrap; }
+
+            /* Slide 4 Puestos y permisos */
+            .roles-layout { grid-template-columns: 1fr; gap: 16px; }
+            .roles-sidebar { display: flex; flex-wrap: wrap; gap: 8px; }
+            .sidebar-header { width: 100%; }
+            .role-item { margin-bottom: 0; }
+            .permissions-grid { grid-template-columns: 1fr; }
+            .dep-chain { flex-direction: column; gap: 9px; text-align: center; }
+
+            /* Slide 5 Vacantes */
+            .vc-split { grid-template-columns: 1fr; gap: 24px; }
+            .cv-card { flex-direction: column; }
+            .cv-actions { flex-direction: row; flex-wrap: wrap; }
+            .cv-contact { flex-direction: column; gap: 4px; }
+
+            /* Slide 6 Vehículos */
+            .vh-split { grid-template-columns: 1fr; gap: 24px; }
+            .vh-row { grid-template-columns: 1fr; }
+            .vh-states { grid-template-columns: 1fr; gap: 10px; }
+
+            /* Slide 7 Pagos al equipo */
+            .py-kpis { grid-template-columns: 1fr 1fr; gap: 11px; }
+            .py-split { grid-template-columns: 1fr; gap: 22px; }
+            .py-flow { flex-direction: column; }
+            .py-flow i { transform: rotate(90deg); }
 
             /* Botones apilados verticalmente */
             .quick-actions-grid {
@@ -262,8 +395,10 @@
             .qa-text { text-align: left; font-size: 14px; }
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
@@ -277,291 +412,510 @@
         <div class="glow-indigo"></div>
         <div class="slide-content-wide grid-split">
             <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-indigo);">Recursos Humanos</h3>
-                <h1>Equipo y <br><span style="color: white;">Seguridad Base</span></h1>
-                <p>Tu equipo es el motor del negocio, pero vos tenés el control de las llaves. A medida que el local crece, delegar tareas operativas se vuelve obligatorio.</p>
-                <p>Este módulo te permite invitar a tu staff, medir su rendimiento comercial en tiempo real, configurar sus horarios de trabajo y blindar las partes sensibles del sistema a través de un estricto sistema de Roles.</p>
+                <h3 style="color: var(--kpi-indigo);">Equipo y Roles</h3>
+                <h1>Cuatro solapas <br><span style="color: white;">para todo el equipo</span></h1>
+                <p>Quién trabaja acá, qué puede tocar cada uno, con qué se mueve y cómo cobra. Son cuatro pantallas distintas de un mismo apartado.</p>
+                <p style="font-size: 17px;">El puesto no es una etiqueta: es el juego de permisos que el sistema hace cumplir en cada endpoint, y la vacante que se publica en la tienda.</p>
             </div>
-            
-            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <i class="fas fa-user-shield" style="font-size: 80px; color: var(--kpi-indigo); margin-bottom: 30px;"></i>
-                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-lock text-muted mr-2"></i> Roles Granulares</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-chart-bar text-muted mr-2"></i> Rendimiento (KPIs)</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-clock text-muted mr-2"></i> Horarios de Agenda</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-briefcase text-muted mr-2"></i> Portal de Empleo</span>
+
+            <div class="visual-block glass-panel" style="position: relative; padding: 34px 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-user-shield" style="font-size: 66px; color: var(--kpi-indigo); margin-bottom: 26px;"></i>
+                <div class="hero-chips">
+                    <span class="hero-chip"><i class="fas fa-users" style="color:#93c5fd;"></i> Mi Equipo</span>
+                    <span class="hero-chip"><i class="fas fa-user-tag" style="color:#c7d2fe;"></i> Puestos y Vacantes</span>
+                    <span class="hero-chip"><i class="fas fa-truck" style="color:#fcd34d;"></i> Vehículos</span>
+                    <span class="hero-chip"><i class="fas fa-wallet" style="color:#6ee7b7;"></i> Pagos al equipo</span>
+                </div>
+                <div class="note" style="margin-top: 26px;">
+                    <i class="fas fa-circle-info"></i>
+                    <span>No todo el que figura acá <b>entra a la app</b>: hay trabajadores que el dueño administra a mano, sin cuenta propia, y aparecen igual en la agenda y en las liquidaciones.</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: RENDIMIENTO Y KPIs -->
+    <!-- SLIDE 2: MI EQUIPO -->
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            
-            <!-- Visual Block primero en Desktop, pero CSS Grid lo manejará en Móvil -->
-            <div class="visual-block">
-                <div class="insights-grid">
-                    <div class="insight-card glass-panel i-blue">
-                        <div class="insight-icon" style="background: rgba(59, 130, 246, 0.2); color: var(--kpi-blue);"><i class="fas fa-user-check"></i></div>
-                        <div class="insight-data">
-                            <small>Staff Activo</small>
-                            <h3>8 <span style="color: var(--text-muted); font-size: 16px; font-weight: normal;">/ 10</span></h3>
-                        </div>
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Mi Equipo</h3>
+                <h2 style="text-align: center;">Los que entran con su cuenta, y los que no</h2>
+                <p style="text-align: center; font-size: 18px;">La lista se parte en dos grupos porque no se administran igual: en un usuario real el teléfono y el DNI salen de su perfil y no se editan desde acá.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="staff-nav">
+                    <div class="tabs-container">
+                        <span class="tab-btn active"><i class="fas fa-users"></i> Mi Equipo</span>
+                        <span class="tab-btn"><i class="fas fa-user-tag"></i> Puestos y Vacantes</span>
+                        <span class="tab-btn"><i class="fas fa-truck"></i> Vehiculos</span>
+                        <span class="tab-btn"><i class="fas fa-wallet"></i> Pagos al equipo</span>
                     </div>
-                    <div class="insight-card glass-panel i-green">
-                        <div class="insight-icon" style="background: rgba(16, 185, 129, 0.2); color: var(--kpi-green);"><i class="fas fa-calendar-check"></i></div>
-                        <div class="insight-data">
-                            <small>Turnos para Hoy</small>
-                            <h3>24</h3>
-                        </div>
-                    </div>
-                    <div class="insight-card glass-panel i-orange">
-                        <div class="insight-icon" style="background: rgba(245, 158, 11, 0.2); color: var(--kpi-orange);"><i class="fas fa-trophy"></i></div>
-                        <div class="insight-data">
-                            <small>Mejor Rendimiento (Mes)</small>
-                            <h3 style="font-size: 20px;">Martín Domínguez</h3>
-                            <span style="color: var(--kpi-green); font-weight: bold; font-size: 13px;">$ 825.000 generados</span>
-                        </div>
+                    <div class="team-kpis">
+                        <div class="kpi-chip"><i class="fas fa-user-check"></i><span>Staff activo</span><strong>8 / 10</strong></div>
+                        <div class="kpi-chip"><i class="fas fa-calendar-check"></i><span>Turnos hoy</span><strong>24</strong></div>
+                        <div class="kpi-chip"><i class="fas fa-trophy"></i><span>Mejor mes</span><strong>Martín D.</strong><small>$ 825.000</small></div>
                     </div>
                 </div>
 
-                <div class="staff-grid">
-                    
-                    <div class="staff-card glass-panel">
-                        <div class="color-ribbon" style="background-color: var(--kpi-blue);"></div>
-                        <div class="card-content">
+                <div class="team-tools">
+                    <div class="team-search"><i class="fas fa-search"></i> Buscar por nombre, email, teléfono, DNI o puesto...</div>
+                    <span class="team-pill active">Todos</span>
+                    <span class="team-pill">Activos</span>
+                    <span class="team-pill">Inactivos</span>
+                    <span class="team-pill primary"><i class="fas fa-plus"></i> Nuevo trabajador</span>
+                </div>
+
+                <div class="staff-group">
+                    <div class="group-head">
+                        <strong>Usuarios con acceso</strong>
+                        <span>Personas que entran a la app con su propia cuenta.</span>
+                    </div>
+                    <div class="staff-grid">
+                        <div class="staff-card">
+                            <div class="color-ribbon" style="background-color: var(--kpi-blue);"></div>
                             <div class="card-top">
-                                <div style="display: flex; gap: 15px; align-items: center;">
-                                    <div class="avatar-circle" style="background: rgba(59,130,246,0.1); color: var(--kpi-blue); border: 1px solid rgba(59,130,246,0.3);">M</div>
+                                <div style="display:flex; gap:13px; align-items:center;">
+                                    <div class="avatar-circle" style="background: rgba(59,130,246,0.12); color: var(--kpi-blue); border: 1px solid rgba(59,130,246,0.3);">M</div>
                                     <div class="card-info">
                                         <h3>Martín Domínguez</h3>
                                         <span class="role-badge">Cajero Principal</span>
+                                        <span class="card-mail">martin@auralotion.com</span>
                                     </div>
                                 </div>
-                                <div style="width: 40px; height: 20px; background: var(--kpi-green); border-radius: 20px; position: relative;"><span style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></span></div>
+                                <div class="mini-toggle"></div>
                             </div>
-                            
                             <div class="staff-metrics">
-                                <div class="metric-box">
-                                    <span class="metric-label">Turnos Hoy</span>
-                                    <span class="metric-val" style="color: var(--kpi-green);">0</span>
-                                </div>
-                                <div class="metric-box">
-                                    <span class="metric-label">Ventas Mes</span>
-                                    <span class="metric-val">$ 825.000</span>
-                                </div>
+                                <div class="metric-box"><span class="metric-label">Turnos hoy</span><span class="metric-val" style="color: var(--kpi-green);">0</span></div>
+                                <div class="metric-box"><span class="metric-label">Ventas mes</span><span class="metric-val">$ 825.000</span></div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="staff-card glass-panel">
-                        <div class="color-ribbon" style="background-color: var(--kpi-purple);"></div>
-                        <div class="card-content">
+                        <div class="staff-card">
+                            <div class="color-ribbon" style="background-color: var(--kpi-purple);"></div>
                             <div class="card-top">
-                                <div style="display: flex; gap: 15px; align-items: center;">
-                                    <div class="avatar-circle" style="background: rgba(168,85,247,0.1); color: var(--kpi-purple); border: 1px solid rgba(168,85,247,0.3);">A</div>
+                                <div style="display:flex; gap:13px; align-items:center;">
+                                    <div class="avatar-circle" style="background: rgba(168,85,247,0.12); color: var(--kpi-purple); border: 1px solid rgba(168,85,247,0.3);">A</div>
                                     <div class="card-info">
-                                        <h3>Dra. Ana Ruiz</h3>
-                                        <span class="role-badge">Especialista (1x1)</span>
+                                        <h3>Ana Ruiz</h3>
+                                        <span class="role-badge">Profesional Base</span>
+                                        <span class="card-mail">ana.ruiz@gmail.com</span>
                                     </div>
                                 </div>
-                                <div style="width: 40px; height: 20px; background: var(--kpi-green); border-radius: 20px; position: relative;"><span style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></span></div>
+                                <div class="mini-toggle"></div>
                             </div>
-                            
                             <div class="staff-metrics">
-                                <div class="metric-box">
-                                    <span class="metric-label">Turnos Hoy</span>
-                                    <span class="metric-val" style="color: var(--kpi-green);">8</span>
+                                <div class="metric-box"><span class="metric-label">Turnos hoy</span><span class="metric-val" style="color: var(--kpi-green);">8</span></div>
+                                <div class="metric-box"><span class="metric-label">Ventas mes</span><span class="metric-val">$ 275.000</span></div>
+                            </div>
+                        </div>
+
+                        <div class="staff-card">
+                            <div class="color-ribbon" style="background-color: var(--kpi-orange);"></div>
+                            <div class="card-top">
+                                <div style="display:flex; gap:13px; align-items:center;">
+                                    <div class="avatar-circle" style="background: rgba(245,158,11,0.12); color: var(--kpi-orange); border: 1px solid rgba(245,158,11,0.3);">L</div>
+                                    <div class="card-info">
+                                        <h3>Lucas Ferreyra</h3>
+                                        <span class="role-badge">Manager</span>
+                                        <span class="card-mail">lucas@auralotion.com</span>
+                                    </div>
                                 </div>
-                                <div class="metric-box">
-                                    <span class="metric-label">Ventas Mes</span>
-                                    <span class="metric-val">$ 275.000</span>
-                                </div>
+                                <div class="mini-toggle"></div>
+                            </div>
+                            <div class="staff-metrics">
+                                <div class="metric-box"><span class="metric-label">Turnos hoy</span><span class="metric-val" style="color: var(--kpi-green);">2</span></div>
+                                <div class="metric-box"><span class="metric-label">Ventas mes</span><span class="metric-val">$ 410.000</span></div>
                             </div>
                         </div>
                     </div>
+                </div>
 
+                <div class="staff-group" style="margin-bottom: 0;">
+                    <div class="group-head">
+                        <strong>Trabajadores gestionados</strong>
+                        <span>Personas que el dueño administra manualmente desde el negocio.</span>
+                    </div>
+                    <div class="staff-grid">
+                        <div class="staff-card">
+                            <div class="color-ribbon" style="background-color: #64748b;"></div>
+                            <div class="card-top">
+                                <div style="display:flex; gap:13px; align-items:center;">
+                                    <div class="avatar-circle" style="background: rgba(148,163,184,0.12); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3);">N</div>
+                                    <div class="card-info">
+                                        <h3>Nacho caja</h3>
+                                        <span class="role-badge">Cajero Finde</span>
+                                        <span class="card-mail">11 4455-6677 · DNI 38.221.045</span>
+                                    </div>
+                                </div>
+                                <div class="mini-toggle off"></div>
+                            </div>
+                            <div class="staff-metrics">
+                                <div class="metric-box"><span class="metric-label">Turnos hoy</span><span class="metric-val" style="color:#64748b;">0</span></div>
+                                <div class="metric-box"><span class="metric-label">Ventas mes</span><span class="metric-val">$ 96.500</span></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="text-block" style="text-align: center; margin-top: 30px;">
-                <h2 style="font-size: 32px;">Radiografía del Equipo</h2>
-                <p style="font-size: 18px; max-width: 800px; margin: 0 auto;">El dashboard cruza automáticamente la actividad de la Caja y la Agenda para mostrarte quién está vendiendo más y quién tiene la agenda más llena, sin necesidad de hacer reportes manuales.</p>
-            </div>
-
         </div>
     </div>
 
-    <!-- SLIDE 3: ROLES Y PERMISOS -->
+    <!-- SLIDE 3: LA FICHA DEL TRABAJADOR -->
     <div class="slide">
-        <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px;"></div>
-        <div class="slide-content-wide grid-split-large-left">
-            
-            <div class="visual-block roles-layout">
-                <!-- Sidebar de Roles -->
-                <div class="roles-sidebar custom-scrollbar" style="overflow-y: auto;">
-                    <div class="sidebar-header">Roles Creados <i class="fas fa-plus" style="float: right; color: var(--kpi-blue);"></i></div>
-                    <div class="role-item"><div style="width: 12px; height: 12px; background: var(--kpi-orange); border-radius: 50%;"></div> Manager (Admin)</div>
-                    <div class="role-item active"><div style="width: 12px; height: 12px; background: var(--kpi-blue); border-radius: 50%;"></div> Cajero Principal</div>
-                    <div class="role-item"><div style="width: 12px; height: 12px; background: var(--kpi-purple); border-radius: 50%;"></div> Profesional Base</div>
+        <div class="glow-indigo" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">La ficha</h3>
+                <h2 style="text-align: center;">Un cajón que también alimenta la agenda</h2>
+            </div>
+
+            <div class="visual-block dr-split">
+                <div class="drawer-mock">
+                    <div class="dm-header">
+                        <strong><i class="fas fa-id-badge" style="color:#34d399;"></i> Editar Perfil de Ana Ruiz</strong>
+                        <small>Configurá los datos, el puesto y los horarios.</small>
+                    </div>
+                    <div class="dm-body">
+                        <div class="dm-section" style="color:#93c5fd;"><i class="fas fa-id-card"></i> Perfil del empleado</div>
+                        <div class="dm-grid">
+                            <div class="dm-field"><label>Apodo / nombre interno *</label><div class="dm-input">Ana</div></div>
+                            <div class="dm-field"><label>Puesto *</label><div class="dm-input pick">Profesional Base <i class="fas fa-chevron-down" style="font-size:10px;"></i></div></div>
+                            <div class="dm-field"><label>Teléfono / WhatsApp</label><div class="dm-input locked">11 5566-7788</div><small class="dm-help">Se toma del perfil de la cuenta.</small></div>
+                            <div class="dm-field"><label>DNI / Documento</label><div class="dm-input locked">32.114.907</div><small class="dm-help">Se toma del perfil de la cuenta.</small></div>
+                        </div>
+                        <div class="dm-field">
+                            <label>Color de identificación (Agenda)</label>
+                            <div class="dm-colors">
+                                <span class="dm-color" style="background:#ef4444;"></span>
+                                <span class="dm-color" style="background:#f59e0b;"></span>
+                                <span class="dm-color" style="background:#10b981;"></span>
+                                <span class="dm-color" style="background:#3b82f6;"></span>
+                                <span class="dm-color" style="background:#a855f7;"><i class="fas fa-check"></i></span>
+                                <span class="dm-color" style="background:#ec4899;"></span>
+                            </div>
+                        </div>
+
+                        <div class="dm-section" style="color:#fcd34d;"><i class="fas fa-clock"></i> Horario laboral</div>
+                        <div class="dm-days">
+                            <div class="dm-day"><span class="dm-dot"></span><span class="dm-dayname">Lunes</span><span class="dm-time">09:00</span><span class="dm-sep">a</span><span class="dm-time">18:00</span></div>
+                            <div class="dm-day"><span class="dm-dot"></span><span class="dm-dayname">Martes</span><span class="dm-time">09:00</span><span class="dm-sep">a</span><span class="dm-time">13:00</span><span class="dm-time">14:00</span><span class="dm-sep">a</span><span class="dm-time">18:00</span></div>
+                            <div class="dm-day closed"><span class="dm-dot off"></span><span class="dm-dayname">Domingo</span><span class="dm-tag">Local cerrado</span></div>
+                        </div>
+
+                        <div class="dm-field">
+                            <label>Modalidad de turnos</label>
+                            <div class="dm-input pick">Flexible (Cualquier servicio) <i class="fas fa-chevron-down" style="font-size:10px;"></i></div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Matriz de Permisos -->
+                <div>
+                    <div class="md-list">
+                        <div class="md-item is-default"><i class="fas fa-shuffle" style="color:#a5b4fc;"></i><div><strong>Flexible</strong><span>Cualquier servicio. Es lo que viene puesto: la mayoría del equipo no se limita a un formato.</span></div></div>
+                        <div class="md-item"><i class="fas fa-user" style="color:#60a5fa;"></i><div><strong>Solo individuales (1x1)</strong><span>Turnos de a uno. Ej: un corte, una consulta.</span></div></div>
+                        <div class="md-item"><i class="fas fa-users" style="color:#c084fc;"></i><div><strong>Solo grupales (1xN)</strong><span>Clases con cupo. La agenda dibuja la columna distinto según esto.</span></div></div>
+                    </div>
+
+                    <div class="note warn" style="margin-top: 16px;">
+                        <i class="fas fa-door-closed"></i>
+                        <span><b>Nadie trabaja un día que el local está cerrado.</b> Los días que la empresa no abre salen apagados y rotulados "Local cerrado": no se puede darle horario a un día que no existe.</span>
+                    </div>
+                    <div class="note blue" style="margin-top: 12px;">
+                        <i class="fas fa-user-plus"></i>
+                        <span>En el selector de puesto está <b>"+ Nuevo puesto…"</b>: crear uno no obliga a salir de la ficha e ir a la otra solapa, abre el cajón ahí mismo.</span>
+                    </div>
+                    <div class="note" style="margin-top: 12px;">
+                        <i class="fas fa-palette"></i>
+                        <span>El color no es decoración: es con lo que se reconoce a esa persona en la <b>columna de la agenda</b>.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: PUESTOS Y PERMISOS -->
+    <div class="slide">
+        <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange); text-align: center;">Puestos y permisos</h3>
+                <h2 style="text-align: center;">Tildar una casilla prende las que hacen falta</h2>
+            </div>
+
+            <div class="visual-block roles-layout">
+                <div class="roles-sidebar">
+                    <div class="sidebar-header">Puestos <i class="fas fa-plus" style="color: var(--kpi-blue);"></i></div>
+                    <div class="role-item"><span class="color-dot" style="background: #f97316;"></span> Manager</div>
+                    <div class="role-item active"><span class="color-dot" style="background: #3b82f6;"></span> Cajero Principal</div>
+                    <div class="role-item"><span class="color-dot" style="background: #a855f7;"></span> Profesional Base<span class="hiring-dot" title="Buscando candidatos"></span></div>
+                    <div class="role-item"><span class="color-dot" style="background: #10b981;"></span> Repartidor</div>
+                </div>
+
                 <div class="role-details">
                     <div class="details-header">
                         <div>
                             <div class="editable-title">Cajero Principal</div>
-                            <span style="font-size: 13px; color: var(--text-muted);">2 trabajadores asignados a este rol.</span>
+                            <span class="sub">2 trabajador(es) asignado(s)</span>
                         </div>
-                        <div class="god-mode-badge"><i class="fas fa-star"></i> Acceso Total (Apagado)</div>
+                        <div class="god-mode-badge"><i class="fas fa-star"></i> Acceso Total</div>
                     </div>
-                    
-                    <div class="permissions-grid custom-scrollbar" style="overflow-y: auto;">
-                        <div class="perm-group">
-                            <h5><i class="fas fa-cash-register text-green-400"></i> Punto de Venta</h5>
-                            <div class="perm-item"><div class="checkbox-custom checked"><i class="fas fa-check"></i></div> Acceder a Caja (Cobrar)</div>
-                            <div class="perm-item"><div class="checkbox-custom checked"><i class="fas fa-check"></i></div> Gestionar Pedidos</div>
-                        </div>
 
+                    <div class="templates-strip">
+                        <span class="tpl-label">Plantillas</span>
+                        <span class="tpl-chip"><i class="fas fa-cash-register" style="color:#10b981;"></i> Cajero</span>
+                        <span class="tpl-chip"><i class="fas fa-truck-fast" style="color:#38bdf8;"></i> Delivery</span>
+                        <span class="tpl-chip"><i class="fas fa-boxes-stacked" style="color:#f59e0b;"></i> Stock</span>
+                        <span class="tpl-chip own"><i class="fas fa-layer-group" style="color:#94a3b8;"></i> Finde noche</span>
+                    </div>
+
+                    <div class="permissions-grid">
                         <div class="perm-group">
-                            <h5><i class="fas fa-shield-alt text-orange-400"></i> Administración (Bloqueado)</h5>
-                            <div class="perm-item"><div class="checkbox-custom"></div> Ver Balance y Finanzas</div>
-                            <div class="perm-item"><div class="checkbox-custom"></div> Ver Configuración Core</div>
+                            <h5><i class="fas fa-cash-register" style="color:#34d399;"></i> Punto de Venta y Pedidos</h5>
+                            <div class="perm-item"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Acceder a Caja (Cobrar)</div>
+                            <div class="perm-item"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Ver Historial de Pedidos</div>
+                            <div class="perm-item"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Gestionar/Cancelar Pedidos</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Armar rondas de envío</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-boxes" style="color:#60a5fa;"></i> Catálogo e Inventario</h5>
+                            <div class="perm-item auto"><span class="checkbox-custom auto"><i class="fas fa-check"></i></span> Ver Catálogo</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Editar Productos/Precios</div>
+                            <div class="perm-item"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Ver Stock</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ajustar Stock Físico</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-users" style="color:#c084fc;"></i> CRM y Equipo</h5>
+                            <div class="perm-item"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Ver Base de Clientes</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Editar clientes y destacados</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ver Agenda y Staff</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Gestionar Trabajadores</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-bullhorn" style="color:#f472b6;"></i> Marketing</h5>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ver Campañas y Fidelización</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Crear y Enviar Campañas</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-file-invoice-dollar" style="color:#34d399;"></i> Facturación Electrónica</h5>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ver Facturación Electrónica</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Emitir Facturas (ARCA/AFIP)</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-scale-balanced" style="color:#38bdf8;"></i> Identidad Legal y Fiscal</h5>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Modificar identidad y políticas legales</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-shield-alt" style="color:#fb923c;"></i> Administración Avanzada</h5>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ver Balance y Auditoría</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Registrar Gastos</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Ver / Editar Configuración</div>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Gestionar Roles</div>
+                        </div>
+                        <div class="perm-group">
+                            <h5><i class="fas fa-file-import" style="color:#fbbf24;"></i> Importación de Datos</h5>
+                            <div class="perm-item"><span class="checkbox-custom"></span> Importar datos históricos</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="text-block" style="padding-left: 20px;">
-                <h3 style="color: var(--kpi-orange); text-align: left;">Ciberseguridad Interna</h3>
-                <h2 style="text-align: left;">Control Granular</h2>
-                <p style="text-align: left;">Protege la información sensible de tu negocio. Creá "Roles" personalizados (Ej: Cajero Finde, Manager) y tildá exactamente a qué módulos pueden entrar.</p>
-                <p style="text-align: left;">Un Cajero puede tener acceso a cobrar en el POS, pero tener el acceso bloqueado a la Auditoría Financiera y al Ajuste de Inventario. Para dueños o socios, el switch de <strong>"Acceso Total (Modo Dios)"</strong> habilita el control absoluto en un clic.</p>
+            <div class="dep-chain">
+                <span class="dep-pill">Acceder a Caja</span>
+                <i class="fas fa-arrow-right"></i>
+                <span class="dep-pill auto">+ Ver Catálogo</span>
+                <span style="opacity:.5;">·</span>
+                <span class="dep-pill">Ajustar Stock</span>
+                <i class="fas fa-arrow-right"></i>
+                <span class="dep-pill auto">+ Ver Stock</span>
+                <i class="fas fa-arrow-right"></i>
+                <span class="dep-pill auto">+ Ver Catálogo</span>
+                <span style="margin-left:8px;">y al revés: <b style="color:var(--text-main);">destildar el catálogo apaga la caja</b>.</span>
             </div>
 
+            <div class="note warn" style="margin-top: 14px;">
+                <i class="fas fa-copy"></i>
+                <span>Las plantillas <b>solo tildan casillas</b> sobre el puesto elegido; después se ajusta a mano. Las tres de fábrica —Cajero, Delivery, Stock— son del producto y aparecen en todas las sedes; las del negocio se guardan y se editan.</span>
+            </div>
         </div>
     </div>
 
-    <!-- SLIDE 4: HORARIOS Y MODALIDAD -->
-    <div class="slide">
-        <div class="glow-indigo" style="top: auto; bottom: -200px; left: -200px;"></div>
-        <div class="slide-content-wide grid-split">
-            
-            <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-indigo); text-align: left;">El Motor de la Agenda</h3>
-                <h2 style="text-align: left;">Disponibilidad y Modalidad</h2>
-                <p style="text-align: left;">Acá es donde la Agenda cobra vida. Cuando creas el perfil de un empleado, le decís al sistema cómo trabaja.</p>
-                <p style="text-align: left;"><strong>Horario Inteligente:</strong> Configurá sus horas de ingreso/egreso y cortes de almuerzo (Breaks). Si el cliente intenta reservar online en ese hueco, el sistema lo bloqueará automáticamente.</p>
-                <p style="text-align: left;"><strong>Modalidad Dual:</strong> Definí si el profesional atiende 1x1 (turnos individuales), si da clases grupales (1xN) o ambas. La agenda mutará visualmente según esta regla.</p>
-            </div>
-
-            <div class="visual-block" style="display: flex; justify-content: center;">
-                <div class="modal-mockup">
-                    <div class="mm-header">
-                        <span><i class="fas fa-clock text-blue mr-2"></i> Horario de: Dra. Ana</span>
-                    </div>
-                    <div class="mm-body">
-                        
-                        <div style="margin-bottom: 20px;">
-                            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; display: block;">MODALIDAD DE TURNOS</span>
-                            <div class="view-mode-toggle">
-                                <button class="btn-toggle active"><i class="fas fa-user mr-2"></i> Solo Individuales (1x1)</button>
-                                <button class="btn-toggle" style="background: transparent; color: var(--text-muted);"><i class="fas fa-users mr-2"></i> Solo Grupales (1xN)</button>
-                            </div>
-                        </div>
-
-                        <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin: 10px 0 20px 0;"></div>
-
-                        <div class="schedule-row">
-                            <div class="day-toggle">
-                                <div style="width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
-                                <span class="day-name">Lunes</span>
-                            </div>
-                            <div class="time-inputs">
-                                <div class="time-stack">
-                                    <div class="time-box">09:00</div>
-                                    <span style="font-size: 12px; color: var(--text-muted); margin: 0 2px;">a</span>
-                                    <div class="time-box">18:00</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="schedule-row">
-                            <div class="day-toggle">
-                                <div style="width: 12px; height: 12px; background: white; border-radius: 50%;"></div>
-                                <span class="day-name">Martes</span>
-                            </div>
-                            <div class="time-inputs">
-                                <div class="time-stack">
-                                    <div class="time-box">09:00</div>
-                                    <span style="font-size: 12px; color: var(--text-muted); margin: 0 2px;">a</span>
-                                    <div class="time-box">18:00</div>
-                                </div>
-                                <div class="break-box">
-                                    <span style="color: var(--kpi-orange); font-size: 10px; font-weight: bold;">CORTA:</span>
-                                    <div class="time-box" style="background: rgba(0,0,0,0.6); padding: 4px 8px; font-size: 12px;">13:00</div> 
-                                    <span style="font-size: 10px; color: var(--text-muted);">a</span> 
-                                    <div class="time-box" style="background: rgba(0,0,0,0.6); padding: 4px 8px; font-size: 12px;">14:00</div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- SLIDE 5: RECRUITING / HR HUB -->
+    <!-- SLIDE 5: VACANTES Y POSTULANTES -->
     <div class="slide">
         <div class="glow-green" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide">
-            
-            <div class="visual-block recruiting-banner">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div style="width: 40px; height: 40px; background: rgba(168, 85, 247, 0.2); color: #c084fc; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;"><i class="fas fa-briefcase"></i></div>
-                    <div>
-                        <h4 style="margin: 0 0 5px 0; font-size: 18px; color: white;">Portal de Empleos Activo</h4>
-                        <p style="margin: 0; font-size: 14px; color: var(--text-muted);">Tu tienda online está mostrando un cartel de "Trabaja con nosotros" y recibiendo postulaciones.</p>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <div style="width: 44px; height: 24px; background: var(--kpi-green); border-radius: 20px; position: relative;"><span style="position: absolute; right: 3px; top: 3px; width: 18px; height: 18px; background: white; border-radius: 50%;"></span></div>
-                </div>
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Vacantes</h3>
+                <h2 style="text-align: center;">La búsqueda se abre por puesto, no en general</h2>
             </div>
 
-            <div class="grid-split" style="gap: 40px;">
-                <div class="text-block">
-                    <h3 style="color: var(--kpi-green); text-align: left;">Expansión del Negocio</h3>
-                    <h2 style="text-align: left;">Bandeja de Postulantes (HR)</h2>
-                    <p style="text-align: left;">Las empresas crecen y necesitan talento. Encender el "Modo Reclutamiento" habilita un formulario en tu Tienda Pública para que los candidatos suban su CV.</p>
-                    <p style="text-align: left;">Caen directo a esta bandeja de entrada. Evaluá los perfiles y, si te gusta uno, el botón <strong>"Contratar"</strong> lo convierte automáticamente en un usuario de tu sistema, listo para trabajar.</p>
+            <div class="visual-block vc-split">
+                <div>
+                    <div class="hiring-box">
+                        <div class="hiring-text">
+                            <strong style="color:#6ee7b7;">Vacante Abierta</strong>
+                            <small>Búsqueda pública · Profesional Base</small>
+                        </div>
+                        <div class="big-toggle"></div>
+                    </div>
+
+                    <div class="note ok">
+                        <i class="fas fa-circle-dot"></i>
+                        <span>El puesto con la búsqueda abierta lleva un <b>punto verde</b> en la lista de la izquierda: se ve cuál está buscando gente sin entrar a cada uno.</span>
+                    </div>
+                    <div class="note" style="margin-top: 12px;">
+                        <i class="fas fa-store"></i>
+                        <span>Aparte, el negocio tiene su propio interruptor: es el que decide si <b>la tienda pública muestra el formulario</b> de postulación.</span>
+                    </div>
+                    <div class="note warn" style="margin-top: 12px;">
+                        <i class="fas fa-user-check"></i>
+                        <span><b>Contratar crea el perfil en el equipo</b>, no una cuenta con permisos. Los permisos llegan cuando se le asigna un puesto.</span>
+                    </div>
                 </div>
 
-                <div class="visual-block" style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
-                    <div style="font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 15px;"><i class="fas fa-inbox text-blue"></i> Bandeja de Postulantes (2)</div>
-                    
+                <div class="inbox">
+                    <div class="inbox-head"><i class="fas fa-inbox" style="color: var(--kpi-blue);"></i> Postulaciones recibidas (2)</div>
                     <div class="cv-card">
                         <div class="cv-info">
                             <strong>Sofía Martínez</strong>
-                            <div class="cv-contact"><span><i class="fas fa-envelope"></i> sofia.m@gmail.com</span> <span><i class="fas fa-phone"></i> 11 4455-6677</span></div>
+                            <div class="cv-contact">
+                                <span><i class="fas fa-envelope"></i> sofia.m@gmail.com</span>
+                                <span><i class="fas fa-phone"></i> 11 4455-6677</span>
+                            </div>
                             <p class="cv-msg">"Tengo 5 años de experiencia en mostrador y manejo de caja..."</p>
                         </div>
-                        <div style="display: flex; flex-direction: column; gap: 10px;">
-                            <div style="background: var(--kpi-blue); color: white; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; text-align: center; cursor: pointer;"><i class="fas fa-file-pdf"></i> Ver CV</div>
-                            <button class="btn-hire"><i class="fas fa-check"></i> Contratar</button>
+                        <div class="cv-actions">
+                            <span class="cv-btn cv"><i class="fas fa-file-pdf"></i> Ver CV</span>
+                            <span class="cv-btn hire"><i class="fas fa-check"></i> Contratar</span>
+                            <span class="cv-btn drop"><i class="fas fa-times"></i> Descartar</span>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- SLIDE 6: NAVEGACIÓN -->
+    <!-- SLIDE 6: VEHÍCULOS -->
+    <div class="slide">
+        <div class="glow-indigo" style="top: -200px; right: -200px; left: auto; bottom: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-indigo); text-align: center;">Vehículos</h3>
+                <h2 style="text-align: center;">Con qué se reparte, y quién lo tiene</h2>
+                <p style="text-align: center; font-size: 18px;">Lo que se registra acá es lo que después se puede asignar a una ronda de envíos. Un repartidor con su propia moto también es un recurso.</p>
+            </div>
+
+            <div class="visual-block vh-split">
+                <div class="vh-form">
+                    <h4><i class="fas fa-truck" style="color:#a5b4fc;"></i> Registrar vehículo</h4>
+                    <div class="dm-field"><label>Nombre</label><div class="dm-input">Moto 1 / Utilitario norte</div></div>
+                    <div class="vh-row">
+                        <div class="dm-field"><label>Tipo</label><div class="dm-input pick">Moto <i class="fas fa-chevron-down" style="font-size:10px;"></i></div></div>
+                        <div class="dm-field"><label>Patente / código</label><div class="dm-input">AB123CD</div></div>
+                    </div>
+                    <div class="vh-row">
+                        <div class="dm-field"><label>Responsable</label><div class="dm-input pick">Nacho caja <i class="fas fa-chevron-down" style="font-size:10px;"></i></div></div>
+                        <div class="dm-field"><label>Capacidad</label><div class="dm-input">18 unidades</div></div>
+                    </div>
+                    <div class="vh-row">
+                        <div class="dm-field"><label>Teléfono</label><div class="dm-input">11 4455-6677</div></div>
+                        <div class="dm-field"><label>Estado</label><div class="dm-input pick">Disponible <i class="fas fa-chevron-down" style="font-size:10px;"></i></div></div>
+                    </div>
+                    <div class="dm-field"><label>Notas</label><div class="dm-input locked">Seguro, zona habitual, condiciones del vehículo personal...</div></div>
+                    <div class="vh-toggle-line"><span class="checkbox-custom checked"><i class="fas fa-check"></i></span> Disponible para asignar en rondas</div>
+                </div>
+
+                <div>
+                    <div class="vh-kinds">
+                        <span class="vh-kind"><i class="fas fa-truck" style="color:#cbd5e1;"></i> Vehículo</span>
+                        <span class="vh-kind"><i class="fas fa-motorcycle" style="color:#60a5fa;"></i> Moto</span>
+                        <span class="vh-kind"><i class="fas fa-car" style="color:#34d399;"></i> Auto</span>
+                        <span class="vh-kind"><i class="fas fa-van-shuttle" style="color:#fcd34d;"></i> Utilitario</span>
+                        <span class="vh-kind"><i class="fas fa-person-biking" style="color:#c084fc;"></i> Repartidor</span>
+                        <span class="vh-kind"><i class="fas fa-handshake" style="color:#f472b6;"></i> Personal / externo</span>
+                    </div>
+
+                    <div class="vh-states">
+                        <div class="vh-state"><strong><i class="fas fa-circle-check" style="color:#34d399;"></i> Disponible</strong><span>Se puede sumar a la próxima ronda.</span></div>
+                        <div class="vh-state route"><strong><i class="fas fa-route" style="color:#fbbf24;"></i> En ruta</strong><span>Lo pone el despacho, no la mano: con una ronda encima el selector queda bloqueado.</span></div>
+                        <div class="vh-state"><strong><i class="fas fa-screwdriver-wrench" style="color:#94a3b8;"></i> Fuera de servicio</strong><span>Existe, pero no se ofrece para asignar.</span></div>
+                    </div>
+
+                    <div class="note">
+                        <i class="fas fa-user-tie"></i>
+                        <span>El <b>responsable</b> se elige entre los trabajadores activos, así que un vehículo queda atado a una persona del equipo y no a un nombre suelto.</span>
+                    </div>
+                    <div class="note blue" style="margin-top: 12px;">
+                        <i class="fas fa-weight-hanging"></i>
+                        <span>La <b>capacidad en unidades</b> es lo que el armador de rondas usa para saber cuánto entra en cada salida.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: PAGOS AL EQUIPO -->
+    <div class="slide">
+        <div class="glow-green" style="top: -200px; left: -200px; bottom: auto; right: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 20px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green); text-align: center;">Pagos al equipo</h3>
+                <h2 style="text-align: center;">Sueldos y comisiones, con lo que cada uno generó</h2>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="py-kpis">
+                    <div class="py-kpi"><span>Total del período</span><strong>$ 2.140.000</strong><small>Pagos aprobados y cargas</small></div>
+                    <div class="py-kpi"><span>Falta pagar</span><strong style="color: var(--kpi-orange);">$ 480.000</strong><small>Pagos aprobados pendientes</small></div>
+                    <div class="py-kpi"><span>Ya pagado</span><strong style="color: var(--kpi-green);">$ 1.660.000</strong><small>Registrado en caja y bancos</small></div>
+                    <div class="py-kpi"><span>Por revisar</span><strong>3</strong><small>Pagos todavía en borrador</small></div>
+                </div>
+
+                <div class="py-split">
+                    <div>
+                        <div class="py-modes">
+                            <div class="py-mode"><i class="fas fa-money-bill" style="color:#6ee7b7;"></i><div><strong>Monto fijo</strong><span>Siempre cobra el mismo importe.</span></div></div>
+                            <div class="py-mode"><i class="fas fa-percent" style="color:#93c5fd;"></i><div><strong>Porcentaje</strong><span>Cobra una parte de lo que generó.</span></div></div>
+                            <div class="py-mode"><i class="fas fa-code-branch" style="color:#c084fc;"></i><div><strong>Fijo + porcentaje</strong><span>Combina una base con una comisión.</span></div></div>
+                        </div>
+                        <div class="py-bases">
+                            <span class="py-base">Servicios cobrados</span>
+                            <span class="py-base">Ventas POS cobradas</span>
+                            <span class="py-base">Todo lo cobrado</span>
+                        </div>
+                        <div class="note ok" style="margin-top: 13px;">
+                            <i class="fas fa-hand-holding-dollar"></i>
+                            <span>La comisión sale de <b>lo cobrado</b>, no de lo vendido: una venta que todavía no entró no genera comisión.</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="py-flow">
+                            <span class="py-step">Borrador</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="py-step approved">Aprobada</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="py-step partial">Pago parcial</span>
+                            <i class="fas fa-chevron-right"></i>
+                            <span class="py-step paid">Pagada</span>
+                        </div>
+
+                        <div class="note warn">
+                            <i class="fas fa-file-signature"></i>
+                            <span>El comprobante que imprime dice lo que es: <b>"Documento de control. No reemplaza el recibo laboral oficial ni la revisión de un profesional."</b></span>
+                        </div>
+                        <div class="note" style="margin-top: 12px;">
+                            <i class="fas fa-sliders"></i>
+                            <span>Lo normativo —CUIL, convenio, categoría, obra social, cargas patronales, códigos de ARCA y la exportación— vive plegado detrás de <b>"Liquidación laboral y herramientas avanzadas"</b>: no es lo de todos los meses.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -595,7 +949,7 @@
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN Y SCROLL MÓVIL -->
     <script>
         const pageId = 'staff'; // Identificador único
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -618,7 +972,7 @@
             currentSlideNum.innerText = currentIndex + 1;
             
             // Guardar estado
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             // Al cambiar de slide en mobile, sube el scroll arriba
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
@@ -630,8 +984,8 @@
                 updateSlides();
             } else {
                 // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
-                localStorage.removeItem('slide_' + pageId);
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -650,7 +1004,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -662,16 +1016,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -679,6 +1033,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();

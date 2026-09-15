@@ -96,76 +96,132 @@
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
         /* =========================================
-           SLIDE 2: KPI GRID (EMBUDO FINANCIERO)
+           SLIDE 2: LA BARRA DE KPIs ELEGIBLES
            ========================================= */
-        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; }
-        .kpi-card { background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-glass); padding: 20px; border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: 0.3s; display: flex; flex-direction: column;}
-        .kpi-card:hover { transform: translateY(-5px); }
-        .kpi-card small { display: block; color: var(--text-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; z-index: 2; position: relative;}
-        .kpi-card h4 { margin: 0; font-size: 28px; font-weight: 900; color: white; position: relative; z-index: 2; display: flex; align-items: baseline; gap: 8px;}
-        .kpi-card h4 span { font-size: 12px; font-weight: 700; opacity: 0.8;}
-        
-        /* 🔴 NUEVO: Explicación didáctica del KPI */
-        .kpi-explanation { font-size: 12px; color: #cbd5e1; margin-top: 12px; margin-bottom: 0; line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; flex-grow: 1; position: relative; z-index: 2;}
+        .auditor-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 22px; width: 100%; align-items: start;}
+        .kpi-sidebar { background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-glass); border-radius: 16px; padding: 15px 16px;}
+        .audit-search { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,0.35); border: 1px solid var(--border-glass); color: #64748b; font-size: 12px; margin-bottom: 15px;}
+        .metric-section-title { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin: 14px 0 9px;}
+        .metric-section-title:first-of-type { margin-top: 0;}
+        .kpi-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;}
 
-        .icon-bg { position: absolute; right: -15px; bottom: -20px; font-size: 90px; opacity: 0.05; transform: rotate(-15deg); z-index: 1; transition: 0.3s;}
-        .kpi-card:hover .icon-bg { opacity: 0.1; transform: rotate(-5deg) scale(1.1);}
+        .kpi-card { background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-glass); padding: 13px 14px; border-radius: 13px; position: relative; overflow: hidden; display: flex; flex-direction: column; min-width: 0;}
+        .kpi-card small { display: block; color: var(--text-muted); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; position: relative; z-index: 2;}
+        .kpi-card h4 { margin: 0; font-size: 19px; font-weight: 900; color: white; position: relative; z-index: 2; display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap;}
+        .kpi-card h4 span.kpi-badge { font-size: 10px; font-weight: 800; opacity: 0.85; background: rgba(255,255,255,0.08); border-radius: 6px; padding: 2px 6px;}
+        .kpi-card.is-active { border-color: rgba(59, 130, 246, 0.55); box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.25);}
+        .icon-bg { position: absolute; right: -12px; bottom: -16px; font-size: 66px; opacity: 0.06; transform: rotate(-15deg); z-index: 1;}
+        .ordering-controls { position: absolute; top: 7px; right: 8px; display: flex; gap: 4px; z-index: 3;}
+        .ordering-controls span { width: 18px; height: 18px; border-radius: 5px; background: rgba(0,0,0,0.4); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 8px;}
+        .kpi-add-card { border: 1px dashed rgba(255,255,255,0.18); border-radius: 13px; padding: 13px 14px; background: rgba(255,255,255,0.02); display: flex; flex-direction: column; gap: 4px; min-width: 0;}
+        .kpi-add-card i { font-size: 15px; color: var(--text-muted);}
+        .kpi-add-card strong { color: #cbd5e1; font-size: 12px;}
+        .kpi-add-card span { color: #64748b; font-size: 10px;}
 
-        /* Colores Específicos */
-        .glass-blue { border-top: 4px solid var(--kpi-blue); } .glass-blue .icon-bg { color: var(--kpi-blue); }
-        .glass-red { border-top: 4px solid var(--kpi-red); } .glass-red h4, .glass-red .icon-bg { color: var(--kpi-red); }
-        .glass-slate { border-top: 4px solid var(--text-muted); }
-        .glass-indigo { border-top: 4px solid var(--kpi-indigo); } .glass-indigo h4, .glass-indigo .icon-bg { color: var(--kpi-indigo); }
-        .glass-purple { border-top: 4px solid var(--kpi-purple); }
-        .glass-emerald { border-top: 4px solid var(--kpi-green); background: rgba(16, 185, 129, 0.05); } .glass-emerald h4, .glass-emerald .icon-bg { color: var(--kpi-green); }
-        .glass-orange { border-top: 4px solid var(--kpi-orange); } .glass-orange h4 { color: var(--kpi-orange); }
-        .glass-cyan { border-top: 4px solid var(--kpi-cyan); }
-        .glass-pink { border-top: 4px solid var(--kpi-pink); }
+        .glass-blue { border-top: 3px solid var(--kpi-blue); } .glass-blue .icon-bg { color: var(--kpi-blue); }
+        .glass-red { border-top: 3px solid var(--kpi-red); } .glass-red h4, .glass-red .icon-bg { color: var(--kpi-red); }
+        .glass-slate { border-top: 3px solid var(--text-muted); }
+        .glass-indigo { border-top: 3px solid var(--kpi-indigo); } .glass-indigo .icon-bg { color: var(--kpi-indigo); }
+        .glass-purple { border-top: 3px solid var(--kpi-purple); } .glass-purple .icon-bg { color: var(--kpi-purple); }
+        .glass-emerald { border-top: 3px solid var(--kpi-green); background: rgba(16, 185, 129, 0.05); } .glass-emerald h4, .glass-emerald .icon-bg { color: var(--kpi-green); }
+        .glass-orange { border-top: 3px solid var(--kpi-orange); } .glass-orange h4 { color: var(--kpi-orange); } .glass-orange .icon-bg { color: var(--kpi-orange); }
+        .glass-cyan { border-top: 3px solid var(--kpi-cyan); } .glass-cyan .icon-bg { color: var(--kpi-cyan); }
+        .glass-pink { border-top: 3px solid var(--kpi-pink); } .glass-pink .icon-bg { color: var(--kpi-pink); }
+
+        .detail-panel { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px 20px;}
+        .detail-head { border-bottom: 1px solid var(--border-glass); padding-bottom: 14px; margin-bottom: 16px;}
+        .detail-head h4 { margin: 0; color: white; font-size: 19px; font-weight: 800; letter-spacing: 0; text-transform: none;}
+        .detail-head p { margin: 7px 0 0; font-size: 13px; color: var(--text-muted); line-height: 1.5;}
+        .detail-link { display: inline-block; margin-top: 9px; color: #a5b4fc; font-size: 13px; font-weight: 700;}
+
+        .audit-list { display: flex; flex-direction: column; gap: 10px; }
+        .audit-item { position: relative; background: rgba(255,255,255,0.02); border-radius: 11px; padding: 13px 15px; display: flex; justify-content: space-between; align-items: center; gap: 12px; overflow: hidden; border: 1px solid var(--border-glass);}
+        .progress-fill { position: absolute; left: 0; top: 0; bottom: 0; opacity: 0.14; border-radius: 0 10px 10px 0; z-index: 1;}
+        .item-info { position: relative; z-index: 2; display: flex; align-items: center; gap: 12px; min-width: 0;}
+        .reason-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;}
+        .item-info h5 { margin: 0; font-size: 14px; font-weight: 700; color: white;}
+        .item-info small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .item-amount { position: relative; z-index: 2; text-align: right; font-weight: 900; color: white; font-size: 15px; white-space: nowrap;}
+        .item-amount small { display: block; font-size: 11px; color: var(--text-muted); font-weight: 700; margin-top: 2px;}
 
         /* =========================================
-           SLIDE 3: RENDIMIENTO GRANULAR (TABS)
+           SLIDE 3: LO QUE CADA NÚMERO NO ES
            ========================================= */
-        .audit-table-panel { background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.5);}
-        .responsive-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-glass); padding-bottom: 20px;}
-        .panel-title { font-size: 22px; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px; margin: 0;}
-        
-        .tab-switcher { display: flex; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 10px; border: 1px solid var(--border-glass); gap: 5px;}
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; padding: 10px 16px; font-size: 14px; font-weight: 700; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .tab-btn:hover:not(.active) { color: white; }
-        .tab-btn.active { background: var(--bg-panel); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
-        .audit-list { display: flex; flex-direction: column; gap: 15px; }
-        .audit-item { position: relative; background: rgba(255,255,255,0.02); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; overflow: hidden; border: 1px solid var(--border-glass); transition: 0.2s; }
-        .audit-item:hover { background: rgba(255,255,255,0.04); }
-        .progress-bar-bg { position: absolute; inset: 0; background: transparent; z-index: 1; }
-        .progress-fill { height: 100%; opacity: 0.15; border-radius: 0 10px 10px 0; transition: width 1s ease-out;}
-        .item-info { position: relative; z-index: 2; display: flex; align-items: center; gap: 15px; }
-        .reason-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
-        .item-info h4 { margin: 0; font-size: 18px; font-weight: 700; color: white; display: flex; align-items: center;}
-        .item-amount { position: relative; z-index: 2; text-align: right; font-weight: 900; color: white; font-size: 20px; display: flex; flex-direction: column; gap: 2px; }
-        .item-amount small { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .chain-list { display: flex; flex-direction: column; gap: 12px; width: 100%;}
+        .chain-item { display: grid; grid-template-columns: minmax(0, 200px) minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 15px 18px; border-radius: 13px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-left-width: 4px; border-left-style: solid;}
+        .chain-item strong { color: white; font-size: 16px; font-weight: 800;}
+        .chain-item .chain-not { color: var(--text-muted); font-size: 13px; line-height: 1.5;}
+        .chain-item .chain-not b { color: #fca5a5; font-weight: 800;}
+        .chain-value { color: white; font-size: 19px; font-weight: 900; white-space: nowrap;}
+        .chain-item.is-blue { border-left-color: var(--kpi-blue);}
+        .chain-item.is-red { border-left-color: var(--kpi-red);}
+        .chain-item.is-slate { border-left-color: var(--text-muted);}
+        .chain-item.is-cyan { border-left-color: var(--kpi-cyan);}
+        .chain-item.is-emerald { border-left-color: var(--kpi-green);} .chain-item.is-emerald .chain-value { color: #6ee7b7;}
+        .chain-item.is-pink { border-left-color: var(--kpi-pink);}
+        .chain-aside { display: flex; align-items: flex-start; gap: 11px; margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); color: #fcd34d; font-size: 14px; line-height: 1.55; text-align: left;}
+        .chain-aside i { margin-top: 3px;}
 
         /* =========================================
-           SLIDE 4: COMISIONES E INVERSIONES (ALERTAS)
+           SLIDE 4: LOS DOS COSTOS
            ========================================= */
-        .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; width: 100%;}
-        
-        .alert-box { display: flex; gap: 20px; padding: 20px; border-radius: 12px; font-size: 16px; line-height: 1.5; margin-bottom: 20px; align-items: flex-start;}
-        .alert-box i { font-size: 28px; margin-top: 2px; }
-        .alert-box strong { display: block; margin-bottom: 5px; font-weight: 800; font-size: 18px;}
+        .cost-comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%;}
+        .cost-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px 22px;}
+        .cost-card.replacement { border-color: rgba(99, 102, 241, 0.35);}
+        .cost-card h4 { margin: 0 0 9px; color: white; font-size: 16px; font-weight: 800; letter-spacing: 0; text-transform: none;}
+        .cost-card > strong { display: block; font-size: 30px; font-weight: 900; color: white; margin-bottom: 9px;}
+        .cost-card > p { margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5;}
+        .basis-note { display: flex; align-items: flex-start; gap: 9px; margin-top: 11px; padding: 10px 12px; border-radius: 9px; background: rgba(245, 158, 11, 0.08); border: 1px dashed rgba(245, 158, 11, 0.3); color: #fcd34d; font-size: 12px; line-height: 1.45;}
+        .margin-value { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 15px; padding-top: 14px; border-top: 1px solid var(--border-glass);}
+        .margin-value span { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted);}
+        .margin-value b { color: #6ee7b7; font-size: 21px; font-weight: 900;}
+        .margin-value small { color: var(--text-muted); font-size: 12px; font-weight: 700;}
+
+        /* =========================================
+           SLIDE 5: RESULTADO NETO REGISTRADO
+           ========================================= */
+        .result-panel { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; width: 100%;}
+        .result-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; padding: 15px 18px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-glass);}
+        .result-head h4 { margin: 0; color: white; font-size: 16px; font-weight: 800; letter-spacing: 0; text-transform: none;}
+        .status-chip { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; white-space: nowrap;}
+        .status-chip.pending { background: rgba(245, 158, 11, 0.15); color: var(--kpi-orange); border: 1px solid rgba(245, 158, 11, 0.3);}
+        .result-body { padding: 16px 18px;}
+        .vat-note { font-size: 12px; color: var(--text-muted); margin: 0 0 14px; line-height: 1.5;}
+        .expense-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; color: #cbd5e1;}
+        .expense-row b { color: white; font-weight: 800;}
+        .expense-row.total { border-bottom: none; border-top: 1px solid var(--border-glass); margin-top: 7px; padding-top: 13px; font-size: 15px;}
+        .expense-row.total b { font-size: 19px; color: #6ee7b7;}
+        .issues-box { margin-top: 15px; padding: 14px 16px; border-radius: 12px; background: rgba(239, 68, 68, 0.07); border: 1px solid rgba(239, 68, 68, 0.28);}
+        .issues-box summary { color: #fca5a5; font-size: 13px; font-weight: 800; margin-bottom: 10px;}
+        .issues-box p { margin: 0 0 8px; font-size: 12px; color: #fca5a5; line-height: 1.5; text-align: left;}
+        .issues-box p small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .issues-box p:last-child { margin-bottom: 0;}
+
+        /* =========================================
+           SLIDE 6: DESCUENTOS, QUIÉN Y A QUIÉN
+           ========================================= */
+        .manual-discount-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; width: 100%;}
+        .manual-discount-column { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 18px;}
+        .manual-column-header { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-glass);}
+        .manual-column-header small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted);}
+        .manual-column-header strong { display: block; color: white; font-size: 16px; font-weight: 800; margin-top: 4px;}
+        .manual-group-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 11px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); margin-bottom: 9px;}
+        .manual-group-row.is-active { border-color: rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.1);}
+        .manual-group-row strong { display: block; color: white; font-size: 14px;}
+        .manual-group-row small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .manual-group-row b { color: #fca5a5; font-weight: 900; font-size: 15px; white-space: nowrap;}
+
+        .alert-box { display: flex; gap: 14px; padding: 15px 17px; border-radius: 12px; font-size: 14px; line-height: 1.5; align-items: flex-start;}
+        .alert-box i { font-size: 20px; margin-top: 2px; }
+        .alert-box strong { display: block; margin-bottom: 4px; font-weight: 800; font-size: 15px;}
+        .alert-box p { margin: 0; font-size: 13px; line-height: 1.5; text-align: left;}
         .box-red { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; }
         .box-red i { color: var(--kpi-red); }
         .box-emerald { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
         .box-emerald i { color: var(--kpi-green); }
 
-        .fees-list { display: flex; flex-direction: column; gap: 15px;}
-        .fee-item { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;}
-        .fee-item h4 { color: white; font-size: 16px; margin: 0 0 5px 0;}
-        .fee-item p { color: var(--text-muted); font-size: 12px; margin: 0; line-height: 1.3;}
-        .fee-val { font-size: 20px; font-weight: 900;}
-
         /* =========================================
-           SLIDE 5: NAVEGACIÓN
+           SLIDE 7: NAVEGACIÓN
            ========================================= */
         .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
@@ -188,10 +244,16 @@
             .grid-split { grid-template-columns: 1fr; gap: 40px; }
             .text-block { order: 1; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; margin-bottom: 30px;}
             .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; } h2 { font-size: 32px; } h3 { font-size: 20px; } p { font-size: 16px; }
-            .kpi-grid { grid-template-columns: 1fr; }
-            .analysis-grid { grid-template-columns: 1fr; }
+            .auditor-layout, .cost-comparison, .manual-discount-columns { grid-template-columns: 1fr; }
+            .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .chain-item { grid-template-columns: 1fr; gap: 8px; }
+            .chain-value { font-size: 17px; }
+            .result-head, .expense-row { flex-wrap: wrap; }
             .quick-actions-grid { flex-direction: column !important; align-items: center; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto;}
             .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 15px 20px; text-align: left;}
             .qa-icon { width: 50px; height: 50px; font-size: 20px; }
@@ -206,8 +268,10 @@
             .fee-item { flex-direction: column; text-align: center; gap: 10px;}
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
@@ -215,96 +279,139 @@
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
+    <!-- SLIDE 1: INTRODUCCIÓN -->
     <div class="slide active">
         <div class="glow-emerald"></div>
         <div class="slide-content-wide grid-split">
             <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-green);">La Verdad Desnuda</h3>
-                <h1>Auditoría <br><span style="color: white;">Financiera</span></h1>
-                <p>El mayor error de los comerciantes es confundir "Ventas" con "Ganancias". Vender un millón de pesos sirve de poco si la rentabilidad real se la comen los descuentos reales, los costos, las comisiones o las inversiones.</p>
-                <p>Este módulo es una radiografía forense de tu rentabilidad histórica. Separa descuentos reales de precios por volumen, descuenta mercadería, fees e inversiones, y te muestra el <strong>ROI</strong> sobre ventas reales cobradas.</p>
+                <h3 style="color: var(--kpi-green);">Números con Apellido</h3>
+                <h1>Auditoría de <br><span style="color: white;">Rentabilidad</span></h1>
+                <p>El mayor error del comerciante es confundir "ventas" con "ganancia". Pero el error del software es contestarlo con un número redondo que no aclara de qué está hablando.</p>
+                <p>Acá cada métrica dice qué mide <strong>y qué no</strong>. Ventas netas no es lo cobrado. Margen bruto no es resultado. Y si hay comprobantes sin conciliar, el resultado no se publica: se muestra el pendiente.</p>
             </div>
-            
+
             <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-search-dollar" style="font-size: 80px; color: var(--kpi-green); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-boxes text-muted mr-2"></i> Costo Mercadería</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-percentage text-muted mr-2"></i> Comisiones MP</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-cut text-muted mr-2"></i> Descuentos Reales</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-rocket text-muted mr-2"></i> CapEx (Inversiones)</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-sliders text-muted mr-2"></i> KPIs Elegibles</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-scale-balanced text-muted mr-2"></i> Costo Histórico vs Reposición</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-scissors text-muted mr-2"></i> Recortes por Cajero</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-link-slash text-muted mr-2"></i> Pendientes de Conciliación</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- SLIDE 2: LA BARRA DE KPIs -->
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 30px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-blue);">El Embudo de Rentabilidad</h3>
-                <h2>Del Potencial al Bolsillo</h2>
-                <p>Monitoreá cómo la facturación bruta se va desgastando por las distintas capas operativas del negocio, hasta llegar a la métrica que realmente importa: el resultado neto auditado.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">Elegís Qué Mirar</h3>
+                <h2>El Panel de Métricas</h2>
+                <p>Trece métricas repartidas en cuatro secciones —Ventas, Rentabilidad, Inventario actual y Operación—. <strong>No están todas puestas</strong>: se agregan, se sacan y se reordenan, y lo que elijas queda para el negocio. Tocar una abre su desglose a la derecha.</p>
             </div>
-            
-            <div class="visual-block" style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
-                
-                <div class="kpi-grid">
-                    <div class="kpi-card glass-blue">
-                        <small>1. VENTA POTENCIAL</small>
-                        <h4>$ 1.250.000</h4>
-                        <p class="kpi-explanation">Lo que hubieses facturado si cobrabas todo al precio de lista pleno</p>
-                        <i class="fas fa-file-invoice-dollar icon-bg"></i>
-                    </div>
-                    
-                    <div class="kpi-card glass-red">
-                        <small>2. DESCUENTOS OTORGADOS</small>
-                        <h4>$ 150.000 <span>(12%)</span></h4>
-                        <p class="kpi-explanation">El dinero sacrificado en rebajas, VIP o ajustes de cajero. Las escalas por volumen se analizan aparte.</p>
-                        <i class="fas fa-tags icon-bg"></i>
+
+            <div class="visual-block auditor-layout">
+
+                <div class="kpi-sidebar">
+                    <div class="audit-search"><i class="fas fa-search"></i> Buscar canal, empleado, promo...</div>
+
+                    <span class="metric-section-title">Ventas</span>
+                    <div class="kpi-row">
+                        <div class="kpi-card glass-blue">
+                            <small>Bruto</small>
+                            <h4>$ 1.250.000</h4>
+                            <i class="fas fa-file-invoice-dollar icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-red">
+                            <small>Descuentos</small>
+                            <h4>$ 150.000 <span class="kpi-badge">12%</span></h4>
+                            <i class="fas fa-scissors icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-blue">
+                            <small>Escalas</small>
+                            <h4>$ 62.000</h4>
+                            <i class="fas fa-layer-group icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-slate is-active">
+                            <div class="ordering-controls"><span><i class="fas fa-chevron-up"></i></span><span><i class="fas fa-chevron-down"></i></span><span><i class="fas fa-times"></i></span></div>
+                            <small>Ventas netas</small>
+                            <h4>$ 1.100.000</h4>
+                            <i class="fas fa-money-bill-wave icon-bg"></i>
+                        </div>
                     </div>
 
-                    <div class="kpi-card glass-slate">
-                        <small>3. INGRESO REAL COBRADO</small>
-                        <h4>$ 1.100.000</h4>
-                        <p class="kpi-explanation">El volumen de dinero real que entró a tu negocio (Venta Potencial menos los descuentos).</p>
-                        <i class="fas fa-cash-register icon-bg"></i>
+                    <span class="metric-section-title">Rentabilidad</span>
+                    <div class="kpi-row">
+                        <div class="kpi-card glass-cyan">
+                            <small>Costo de ventas</small>
+                            <h4>$ 450.000</h4>
+                            <i class="fas fa-box icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-emerald">
+                            <small>Margen bruto</small>
+                            <h4>$ 650.000</h4>
+                            <i class="fas fa-piggy-bank icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-orange">
+                            <small>Comisiones</small>
+                            <h4>$ 35.000</h4>
+                            <i class="fas fa-percent icon-bg"></i>
+                        </div>
+                        <div class="kpi-add-card">
+                            <i class="fas fa-balance-scale"></i>
+                            <strong>Resultado neto registrado</strong>
+                            <span>Agregar al resumen</span>
+                        </div>
                     </div>
 
-                    <div class="kpi-card glass-indigo">
-                        <small>4. COSTO MERCADERÍA (COGS)</small>
-                        <h4>$ 450.000</h4>
-                        <p class="kpi-explanation">El costo de reposición. Lo que te costó a vos fabricar o comprarle a tus proveedores los productos vendidos.</p>
-                        <i class="fas fa-boxes icon-bg"></i>
+                    <span class="metric-section-title">Operación</span>
+                    <div class="kpi-row">
+                        <div class="kpi-card glass-pink">
+                            <small>Invertido</small>
+                            <h4>$ 50.000</h4>
+                            <i class="fas fa-chart-line icon-bg"></i>
+                        </div>
+                        <div class="kpi-card glass-purple">
+                            <small>Vendedores / canales</small>
+                            <h4>6</h4>
+                            <i class="fas fa-users icon-bg"></i>
+                        </div>
                     </div>
                 </div>
 
-                <div class="kpi-grid">
-                    <div class="kpi-card glass-orange">
-                        <small>5. RETENCIONES (FEES)</small>
-                        <h4>$ 35.000</h4>
-                        <p class="kpi-explanation">El costo invisible por usar la pasarela de Mercado Pago y los costos de mantenimiento de la plataforma.</p>
-                        <i class="fas fa-hand-holding-usd icon-bg"></i>
+                <div class="detail-panel">
+                    <div class="detail-head">
+                        <h4>Ventas netas</h4>
+                        <p>Ventas después de descuentos y redondeos; <strong style="color: #fca5a5;">no equivale a cobros</strong>.</p>
                     </div>
 
-                    <div class="kpi-card glass-cyan">
-                        <small>6. COBRO POR ENVÍOS</small>
-                        <h4>$ 18.500</h4>
-                        <p class="kpi-explanation">Dinero que entró a caja pero se destina directo a logística. Se aísla para no inflar artificialmente las ventas.</p>
-                        <i class="fas fa-motorcycle icon-bg"></i>
-                    </div>
-
-                    <div class="kpi-card glass-pink">
-                        <small>7. INVERTIDO (CAPEX)</small>
-                        <h4>$ 50.000</h4>
-                        <p class="kpi-explanation">Dinero destinado a infraestructura, pauta o equipos. Es dinero que sale del banco, pero capitaliza al negocio.</p>
-                        <i class="fas fa-rocket icon-bg"></i>
-                    </div>
-
-                    <div class="kpi-card glass-emerald">
-                        <small>8. RESULTADO NETO AUDITADO</small>
-                        <h4>$ 565.000 <span style="background: rgba(16, 185, 129, 0.2); padding: 4px 8px; border-radius: 6px;">51% ROI</span></h4>
-                        <p class="kpi-explanation" style="color: white; font-weight: bold;">La verdad desnuda. El resultado que te quedó tras descontar costos, fees e inversiones de las ventas reales cobradas.</p>
-                        <i class="fas fa-chart-line icon-bg"></i>
+                    <div class="audit-list">
+                        <div class="audit-item">
+                            <div class="progress-fill" style="width: 46%; background: var(--kpi-blue);"></div>
+                            <div class="item-info">
+                                <span class="reason-dot" style="background: #22d3ee;"></span>
+                                <div><h5>Mostrador</h5><small>128 ventas</small></div>
+                            </div>
+                            <div class="item-amount">$ 506.000<small>46%</small></div>
+                        </div>
+                        <div class="audit-item">
+                            <div class="progress-fill" style="width: 32%; background: var(--kpi-purple);"></div>
+                            <div class="item-info">
+                                <span class="reason-dot" style="background: #a855f7;"></span>
+                                <div><h5>Tienda online</h5><small>74 ventas</small></div>
+                            </div>
+                            <div class="item-amount">$ 352.000<small>32%</small></div>
+                        </div>
+                        <div class="audit-item">
+                            <div class="progress-fill" style="width: 22%; background: var(--kpi-pink);"></div>
+                            <div class="item-info">
+                                <span class="reason-dot" style="background: #f472b6;"></span>
+                                <div><h5>Turnos y clases</h5><small>61 reservas</small></div>
+                            </div>
+                            <div class="item-amount">$ 242.000<small>22%</small></div>
+                        </div>
                     </div>
                 </div>
 
@@ -312,204 +419,200 @@
         </div>
     </div>
 
+    <!-- SLIDE 3: LO QUE CADA NÚMERO NO ES -->
     <div class="slide">
         <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
-        <div class="slide-content-wide grid-split">
-            <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-red);">Micro-Métricas</h3>
-                <h2>Rendimiento Granular</h2>
-                <p>Analizá de dónde viene el dinero y por dónde se escapa. Usá las pestañas interactivas para desglosar tu operación.</p>
-                <ul style="list-style: none; display: flex; flex-direction: column; gap: 15px; margin-top: 30px;">
-                    <li><i class="fas fa-cut text-red-400 mr-2" style="color: var(--kpi-red);"></i> <strong>Promos y Escalas:</strong> separá qué fue descuento real y qué fue precio por volumen.</li>
-                    <li><i class="fas fa-rocket text-pink-400 mr-2" style="color: var(--kpi-pink);"></i> <strong>Inversiones:</strong> ¿En qué áreas estás inyectando el capital de la sede?</li>
-                    <li><i class="fas fa-users text-purple-400 mr-2" style="color: var(--kpi-purple);"></i> <strong>Equipo y Canales:</strong> ¿Quién y por dónde se factura más?</li>
-                </ul>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-red);">La Letra Chica, Grande</h3>
+                <h2>Qué Mide Cada Número</h2>
+                <p>Un embudo que termina en "ganancia limpia" es cómodo y es mentira. La cadena real se corta en dos lugares distintos, y cada eslabón lleva escrito hasta dónde llega.</p>
             </div>
-            
-            <div class="visual-block audit-table-panel">
-                <div class="responsive-header">
-                    <h3 class="panel-title" id="panel-title-text"><i class="fas fa-cut" style="color: var(--kpi-red);"></i> Desglose de Descuentos</h3>
-                    
-                    <div class="tab-switcher">
-                        <button class="tab-btn active" id="tab-desc" onclick="switchAuditTab('desc')">Promos</button>
-                        <button class="tab-btn" id="tab-escalas" onclick="switchAuditTab('escalas')">Escalas</button>
-                        <button class="tab-btn" id="tab-capex" onclick="switchAuditTab('capex')">Inversión</button>
-                        <button class="tab-btn" id="tab-staff" onclick="switchAuditTab('staff')">Equipo</button>
-                        <button class="tab-btn" id="tab-source" onclick="switchAuditTab('source')">Canales</button>
+
+            <div class="visual-block" style="width: 100%; max-width: 1080px; margin: 0 auto;">
+                <div class="chain-list">
+                    <div class="chain-item is-blue">
+                        <strong>Bruto</strong>
+                        <span class="chain-not">Ventas brutas efectivas, antes de descuentos y escalas.</span>
+                        <span class="chain-value">$ 1.250.000</span>
                     </div>
-                </div>
-                
-                <div class="audit-list" id="view-desc">
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 60%; background: var(--kpi-red);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-red);"></span>
-                            <h4>Ajuste Manual de Cajero <span class="text-xs text-slate-400 ml-2 font-normal">(45 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount text-red-400">$ 90.000 <small>60%</small></div>
+                    <div class="chain-item is-red">
+                        <strong>Descuentos y escalas</strong>
+                        <span class="chain-not">Van separados a propósito: una rebaja es una decisión, un precio por volumen es una política. <b>No son lo mismo.</b></span>
+                        <span class="chain-value">−$ 212.000</span>
                     </div>
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 26%; background: var(--kpi-purple);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-purple);"></span>
-                            <h4>Descuento VIP <span class="text-xs text-slate-400 ml-2 font-normal">(18 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 40.000 <small>26%</small></div>
+                    <div class="chain-item is-slate">
+                        <strong>Ventas netas</strong>
+                        <span class="chain-not">Después de descuentos y redondeos. <b>No equivale a cobros:</b> una venta a cuenta corriente está acá y todavía no entró a la caja.</span>
+                        <span class="chain-value">$ 1.100.000</span>
+                    </div>
+                    <div class="chain-item is-cyan">
+                        <strong>Costo de ventas</strong>
+                        <span class="chain-not">La mercadería que salió. <b>Los faltantes se informan aparte</b>, no se estiman.</span>
+                        <span class="chain-value">−$ 450.000</span>
+                    </div>
+                    <div class="chain-item is-emerald">
+                        <strong>Margen bruto</strong>
+                        <span class="chain-not">Ventas netas menos costo de ventas. <b>Antes de comisiones, otros gastos e impuestos: no es resultado neto contable.</b></span>
+                        <span class="chain-value">$ 650.000</span>
+                    </div>
+                    <div class="chain-item is-pink">
+                        <strong>Invertido</strong>
+                        <span class="chain-not">Se muestra <b>fuera del margen bruto</b>: una inversión no es un costo del período.</span>
+                        <span class="chain-value">$ 50.000</span>
                     </div>
                 </div>
 
-                <div class="audit-list" id="view-escalas" style="display: none;">
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 60%; background: var(--kpi-blue);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-blue);"></span>
-                            <h4>Mayorista Nivel 1 (x10) <span class="text-xs text-slate-400 ml-2 font-normal">(15 ventas)</span></h4>
+                <p class="chain-aside">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <span><strong>Inventario actual va aparte.</strong> Es lo que hay hoy en la estantería al costo de catálogo, <em>independiente del período de ventas</em>. Meterlo en la cadena mezclaría una foto con una película.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: LOS DOS COSTOS -->
+    <div class="slide">
+        <div class="glow-blue" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-indigo); text-align: left;">Dos Preguntas, Dos Costos</h3>
+                <h2 style="text-align: left;">Histórico y Reposición</h2>
+                <p style="text-align: left;">"¿Cuánto gané?" tiene dos respuestas válidas y hay que elegir cuál se está preguntando.</p>
+                <p style="text-align: left;">El <strong>costo registrado al vender</strong> es el que quedó guardado en cada venta: no cambia aunque el catálogo suba. Es lo que pasó.</p>
+                <p style="text-align: left;">El <strong>costo actual de reposición</strong> son las mismas unidades al precio de hoy. Contesta si el negocio sigue en pie si tuviera que volver a comprarlas. Con inflación, la diferencia entre los dos márgenes es la noticia.</p>
+                <p style="text-align: left;">Y cuando falta el dato, lo dice en vez de rellenar: cuántas líneas sin costo, cuántas en cero.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="cost-comparison" style="grid-template-columns: 1fr;">
+                    <div class="cost-card">
+                        <h4>Costo registrado al vender</h4>
+                        <strong>$ 450.000</strong>
+                        <p>Valor guardado en cada venta. No cambia con el catálogo actual.</p>
+                        <div class="basis-note">
+                            <i class="fas fa-circle-info"></i>
+                            <span>3 líneas sin costo histórico. Subtotal conocido: $ 441.200.</span>
                         </div>
-                        <div class="item-amount text-blue-400">$ 45.000 <small>60%</small></div>
+                        <div class="margin-value"><span>Margen con costo histórico</span><b>$ 650.000</b><small>59,1%</small></div>
                     </div>
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 40%; background: var(--kpi-cyan);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-cyan);"></span>
-                            <h4>Distribuidor (x50) <span class="text-xs text-slate-400 ml-2 font-normal">(2 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 30.000 <small>40%</small></div>
+
+                    <div class="cost-card replacement">
+                        <h4>Costo actual de reposición</h4>
+                        <strong>$ 528.000</strong>
+                        <p>Las mismas unidades vendidas, al costo actual de catálogo de la sede.</p>
+                        <div class="margin-value"><span>Margen de reposición</span><b>$ 572.000</b><small>52,0%</small></div>
                     </div>
                 </div>
-
-                <div class="audit-list" id="view-capex" style="display: none;">
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 55%; background: var(--kpi-pink);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-pink);"></span>
-                            <h4>Marketing y Pauta <span class="text-xs text-slate-400 ml-2 font-normal">(Meta Ads)</span></h4>
-                        </div>
-                        <div class="item-amount text-pink-400">$ 27.500 <small>55%</small></div>
-                    </div>
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 45%; background: var(--kpi-orange);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-orange);"></span>
-                            <h4>Infraestructura <span class="text-xs text-slate-400 ml-2 font-normal">(Mostrador)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 22.500 <small>45%</small></div>
-                    </div>
-                </div>
-
-                <div class="audit-list" id="view-staff" style="display: none;">
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 75%; background: var(--kpi-purple);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-purple);"></span>
-                            <h4>Martín Domínguez (POS) <span class="text-xs text-slate-400 ml-2 font-normal">(120 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 825.000 <small>75%</small></div>
-                    </div>
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 25%; background: var(--kpi-orange);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-orange);"></span>
-                            <h4>Ana Ruiz (Turnos) <span class="text-xs text-slate-400 ml-2 font-normal">(25 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 275.000 <small>25%</small></div>
-                    </div>
-                </div>
-
-                <div class="audit-list" id="view-source" style="display: none;">
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 80%; background: var(--kpi-green);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-green);"></span>
-                            <h4>Mostrador Físico <span class="text-xs text-slate-400 ml-2 font-normal">(110 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 880.000 <small>80%</small></div>
-                    </div>
-                    <div class="audit-item">
-                        <div class="progress-bar-bg"><div class="progress-fill" style="width: 20%; background: var(--kpi-blue);"></div></div>
-                        <div class="item-info">
-                            <span class="reason-dot" style="background: var(--kpi-blue);"></span>
-                            <h4>Tienda Online / WhatsApp <span class="text-xs text-slate-400 ml-2 font-normal">(35 ventas)</span></h4>
-                        </div>
-                        <div class="item-amount">$ 220.000 <small>20%</small></div>
-                    </div>
-                </div>
-
             </div>
 
         </div>
     </div>
 
+    <!-- SLIDE 5: RESULTADO NETO REGISTRADO -->
     <div class="slide">
-        <div class="glow-orange" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="glow-emerald" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            
-            <div class="text-block" style="text-align: center; margin-bottom: 40px;">
-                <h3 style="color: var(--kpi-orange);">Auditoría Activa</h3>
-                <h2>Prevención de Fugas y Comisiones</h2>
-                <p style="max-width: 900px; margin: 0 auto;">El sistema no solo reporta; audita. Calcula el costo oculto de tu operación para que sepas exactamente dónde estás parado financiera y logísticamente.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-green);">Cuando el Total No se Puede Publicar</h3>
+                <h2>Resultado Neto Registrado</h2>
+                <p>Este es el número más parecido a "la ganancia", y por eso es el más cuidadoso: sale de comprobantes sin IVA, notas de crédito, costo de ventas y gastos <strong>reconocidos</strong>. Si hay operaciones sin conciliar, el panel lo dice y las lista.</p>
             </div>
 
-            <div class="visual-block analysis-grid">
-                
-                <div class="glass-panel" style="display: flex; flex-direction: column;">
-                    <div style="margin-bottom: 20px; font-weight: 800; font-size: 20px; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;">
-                        <i class="fas fa-briefcase text-green-400" style="color: var(--kpi-green);"></i> Análisis Neto Auditado
+            <div class="visual-block" style="width: 100%; max-width: 980px; margin: 0 auto;">
+                <div class="result-panel">
+                    <div class="result-head">
+                        <h4>Resultado neto registrado</h4>
+                        <span class="status-chip pending">Pendiente</span>
                     </div>
-                    
+
+                    <div class="result-body">
+                        <p class="vat-note">IVA de ventas: $ 231.000 · IVA de notas de crédito: $ 12.400. <strong>Se excluyen del resultado.</strong></p>
+
+                        <h5 style="color: white; font-size: 14px; font-weight: 800; margin: 0 0 10px;">Gastos reconocidos por rubro</h5>
+                        <div class="expense-row"><span>Marketing y publicidad</span><b>$ 84.000</b></div>
+                        <div class="expense-row"><span>Infraestructura / Local</span><b>$ 199.000</b></div>
+                        <div class="expense-row"><span>Equipamiento</span><b>$ 25.500</b></div>
+                        <div class="expense-row total"><span>Total registrado</span><b>$ 308.500</b></div>
+
+                        <div class="issues-box">
+                            <div class="issues-box-summary" style="color: #fca5a5; font-size: 13px; font-weight: 800; margin-bottom: 10px;">3 pendientes de conciliación</div>
+                            <p>Venta con comprobante sin asentar. <small>Referencia: #1093</small></p>
+                            <p>Gasto reconocido sin pago imputado. <small>Referencia: A-0001-00012345</small></p>
+                            <p>Nota de crédito sin documento asociado. <small>Referencia: NC-0044</small></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; font-size: 14px; color: var(--text-muted); margin: 18px auto 0; max-width: 900px;">
+                    Y cuando no hay gastos cargados tampoco inventa: dice <strong>"sin gastos reconocidos en este período"</strong> y aclara que eso no confirma que no los haya.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: DESCUENTOS, QUIÉN Y A QUIÉN -->
+    <div class="slide">
+        <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-red);">El Descuento Tiene Autor</h3>
+                <h2>Recortes de Precio</h2>
+                <p>Un ajuste manual de cajero no es una promoción: es alguien bajando un precio en el mostrador. Por eso el desglose de descuentos se abre en dos columnas — <strong>a qué clientes</strong> se les recortó y <strong>qué cajeros</strong> lo hicieron.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%; max-width: 1050px; margin: 0 auto;">
+                <div class="manual-discount-columns">
+                    <div class="manual-discount-column">
+                        <div class="manual-column-header">
+                            <small>Clientes</small>
+                            <strong>Con recortes de precio</strong>
+                        </div>
+                        <div class="manual-group-row is-active">
+                            <span><strong>Estudio Lares</strong><small>14 recortes · 9 ventas</small></span>
+                            <b>-$ 42.800</b>
+                        </div>
+                        <div class="manual-group-row">
+                            <span><strong>Marta Gómez</strong><small>6 recortes · 6 ventas</small></span>
+                            <b>-$ 11.200</b>
+                        </div>
+                        <div class="manual-group-row">
+                            <span><strong>Cliente de salón</strong><small>4 recortes · 4 ventas</small></span>
+                            <b>-$ 5.400</b>
+                        </div>
+                    </div>
+
+                    <div class="manual-discount-column">
+                        <div class="manual-column-header">
+                            <small>Cajeros</small>
+                            <strong>Aplicaron recortes</strong>
+                        </div>
+                        <div class="manual-group-row">
+                            <span><strong>Ana Gómez</strong><small>18 recortes · 15 ventas</small></span>
+                            <b>-$ 47.100</b>
+                        </div>
+                        <div class="manual-group-row">
+                            <span><strong>Diego Ruiz</strong><small>6 recortes · 4 ventas</small></span>
+                            <b>-$ 12.300</b>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 18px;">
                     <div class="alert-box box-red">
                         <i class="fas fa-exclamation-triangle"></i>
                         <div>
-                            <strong>Alerta de Ajustes:</strong>
-                            <p>La pérdida por ajustes manuales de cajero supera el 20% del total de descuentos. Sugerimos auditar los tickets de caja de la jornada.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="alert-box box-emerald">
-                        <i class="fas fa-check-circle"></i>
-                        <div>
-                            <strong>Resultado Neto Auditado:</strong>
-                            <p>Partiendo de un ingreso en caja de $1.100.000, tras reponer el <b>costo de la mercadería ($450.000)</b>, pagar <b>comisiones ($35.000)</b>, e <b>invertir en marketing ($50.000)</b>, la ganancia limpia en el bolsillo es de $565.000.</p>
+                            <strong>Alerta de ajustes:</strong>
+                            <p>La pérdida por ajustes manuales de cajero es inusualmente alta. El aviso aparece solo cuando se pasa del umbral: no es un cartel permanente.</p>
                         </div>
                     </div>
                 </div>
-
-                <div class="glass-panel">
-                    <div style="margin-bottom: 20px; font-weight: 800; font-size: 20px; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;">
-                        <i class="fas fa-percentage text-orange-400" style="color: var(--kpi-orange);"></i> Desglose de Retenciones Externas
-                    </div>
-
-                    <div class="fees-list">
-                        <div class="fee-item">
-                            <div style="flex: 1;">
-                                <h4>Pasarela de Pagos (MercadoPago)</h4>
-                                <p>Costo financiero por procesamiento y acreditación bancaria. Afecta únicamente al flujo de dinero procesado vía Web/QR.</p>
-                            </div>
-                            <div class="fee-val" style="color: var(--kpi-orange);">- $ 20.000</div>
-                        </div>
-
-                        <div class="fee-item">
-                            <div style="flex: 1;">
-                                <h4>SaaS & E-Commerce (Plataforma)</h4>
-                                <p>Costo operativo por mantenimiento de infraestructura en la nube, catálogos online y automatización de turnos.</p>
-                            </div>
-                            <div class="fee-val" style="color: var(--kpi-purple);">- $ 15.000</div>
-                        </div>
-
-                        <div class="fee-item" style="opacity: 0.5;">
-                            <div style="flex: 1;">
-                                <h4>Regalías (Franquicia Matriz)</h4>
-                                <p>Fee comercial o porcentaje enviado a la Corporación Padre por derechos de marca. (0% Configurado actualmente)</p>
-                            </div>
-                            <div class="fee-val" style="color: var(--text-muted);">$ 0</div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
-
         </div>
     </div>
 
+    <!-- SLIDE 7: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-blue"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -526,12 +629,12 @@
                     <div class="qa-text" style="color: white;">Ir al Índice<br>(Mapa General)</div>
                 </a>
 
-                <a href="presentacionCaja.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                <a href="Caja.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-wallet"></i></div>
                     <div class="qa-text" style="color: white;">Ir a Flujo<br>de Caja</div>
                 </a>
                 
-                <a href="presentacionInversiones.html" class="qa-btn pink" style="border-color: var(--kpi-pink);">
+                <a href="Inversiones.html" class="qa-btn pink" style="border-color: var(--kpi-pink);">
                     <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-rocket"></i></div>
                     <div class="qa-text" style="color: white;">Ir a<br>Inversiones</div>
                 </a>
@@ -542,7 +645,7 @@
 
     <script>
         const pageId = 'finanzas';
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -564,7 +667,7 @@
             });
             currentSlideNum.innerText = currentIndex + 1;
 
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
         }
@@ -574,7 +677,7 @@
                 currentIndex++;
                 updateSlides();
             } else {
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -593,7 +696,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -605,16 +708,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -622,6 +725,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();
@@ -636,39 +740,6 @@
         window.addEventListener('blur', () => {
             pressedKeys.clear();
         });
-
-        // Función para cambiar de pestaña en la Slide 3
-        function switchAuditTab(mode) {
-            const tabs = ['desc', 'escalas', 'staff', 'source', 'capex'];
-            
-            // Actualizar botones
-            tabs.forEach(t => {
-                const btn = document.getElementById('tab-' + t);
-                const view = document.getElementById('view-' + t);
-                
-                if (t === mode) {
-                    btn.classList.add('active');
-                    view.style.display = 'flex';
-                } else {
-                    btn.classList.remove('active');
-                    view.style.display = 'none';
-                }
-            });
-
-            // Actualizar título y color
-            const title = document.getElementById('panel-title-text');
-            if (mode === 'desc') {
-                title.innerHTML = '<i class="fas fa-cut" style="color: var(--kpi-red);"></i> Desglose de Descuentos';
-            } else if (mode === 'escalas') {
-                title.innerHTML = '<i class="fas fa-layer-group" style="color: var(--kpi-blue);"></i> Precios por Volumen';
-            } else if (mode === 'staff') {
-                title.innerHTML = '<i class="fas fa-users" style="color: var(--kpi-purple);"></i> Rendimiento del Equipo';
-            } else if (mode === 'source') {
-                title.innerHTML = '<i class="fas fa-satellite-dish" style="color: var(--kpi-green);"></i> Origen de Ventas';
-            } else if (mode === 'capex') {
-                title.innerHTML = '<i class="fas fa-rocket" style="color: var(--kpi-pink);"></i> Capital Inyectado (CapEx)';
-            }
-        }
 
         updateSlides();
     </script>

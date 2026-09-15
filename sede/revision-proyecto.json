@@ -1,0 +1,402 @@
+{
+  "reviewed_at": "2026-09-15",
+  "project_commit": "076db513af19eae529749687014e2febd4e0ce07",
+  "hashed_from": "working_tree",
+  "modules": [
+    {
+      "file": "BranchDashboard.html",
+      "id": "dashboard",
+      "name": "Inicio de la sede",
+      "target": "dashboard",
+      "sources": [
+        "frontend/src/app/components/layouts/TopBar.vue",
+        "frontend/src/modules/core/ui/constants/workspaceMenu.js",
+        "frontend/src/modules/features/overview/composables/useWorkspaceLayoutEditor.js",
+        "frontend/src/modules/workspaces/branch/views/Home.vue"
+      ]
+    },
+    {
+      "file": "POS.html",
+      "id": "pos",
+      "name": "Punto de Venta",
+      "target": "col-sales",
+      "sources": [
+        "frontend/src/modules/features/pos/components/QuotePickerDrawer.vue",
+        "frontend/src/modules/features/pos/composables/usePosCheckout.js",
+        "frontend/src/modules/features/pos/composables/usePosDuplicateGuard.js",
+        "frontend/src/modules/features/pos/composables/usePosHotkeys.js",
+        "frontend/src/modules/workspaces/branch/views/POS.vue"
+      ]
+    },
+    {
+      "file": "Catalogo.html",
+      "id": "catalogo",
+      "name": "Ajustar Catálogo",
+      "target": "col-sales",
+      "sources": [
+        "frontend/src/modules/features/catalog/composables/useCatalogFileImport.js",
+        "frontend/src/modules/features/catalog/composables/useCatalogFiles.js",
+        "frontend/src/modules/features/catalog/composables/useCatalogInheritance.js",
+        "frontend/src/modules/features/catalog/views/Staging.vue"
+      ]
+    },
+    {
+      "file": "Tienda.html",
+      "id": "tienda",
+      "name": "Tienda en Línea",
+      "target": "col-sales",
+      "sources": [
+        "docs/marca-y-sedes-en-un-dominio.md",
+        "frontend/src/apps/companymarket/components/store-front/CheckoutModal.vue",
+        "frontend/src/modules/workspaces/branch/views/Storefront.vue",
+        "frontend/src/shared/storefront/storefrontDesigns.js"
+      ]
+    },
+    {
+      "file": "Clientes.html",
+      "id": "clientes",
+      "name": "Clientes",
+      "target": "col-crm",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Customers.vue"
+      ]
+    },
+    {
+      "file": "Agenda.html",
+      "id": "agenda",
+      "name": "Turnos",
+      "target": "col-crm",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/components/booking/AppointmentModal.vue",
+        "frontend/src/modules/workspaces/branch/views/Bookings.vue",
+        "frontend/src/modules/workspaces/branch/views/BookingsQueueScreen.vue"
+      ]
+    },
+    {
+      "file": "Promociones.html",
+      "id": "promociones",
+      "name": "Promos y Combos",
+      "target": "col-crm",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/ComboBuilderModal.vue",
+        "frontend/src/modules/features/pos/composables/usePosComboBuilder.js",
+        "frontend/src/modules/workspaces/branch/views/Promotions.vue"
+      ]
+    },
+    {
+      "file": "Inventario.html",
+      "id": "inventario",
+      "name": "Inventario",
+      "target": "col-ops",
+      "sources": [
+        "frontend/src/modules/features/inventory/components/AdjustmentDrawer.vue",
+        "frontend/src/modules/features/inventory/components/InventoryStandardTable.vue",
+        "frontend/src/modules/workspaces/branch/views/InventoryRouter.vue",
+        "frontend/src/modules/workspaces/branch/views/QuickRestockMobile.vue"
+      ]
+    },
+    {
+      "file": "Operaciones.html",
+      "id": "operaciones",
+      "name": "Pedidos",
+      "target": "col-ops",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Logistics.vue",
+        "frontend/src/modules/workspaces/branch/views/Operations.vue",
+        "frontend/src/modules/workspaces/branch/views/OperationsQueueScreen.vue"
+      ]
+    },
+    {
+      "file": "Proveedores.html",
+      "id": "proveedores",
+      "name": "Proveedores",
+      "target": "col-ops",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Suppliers.vue"
+      ]
+    },
+    {
+      "file": "rondas.html",
+      "id": "rondas",
+      "name": "Despachos",
+      "target": "col-ops",
+      "sources": [
+        "frontend/src/modules/features/logistics/components/DispatchComposer.vue",
+        "frontend/src/modules/features/logistics/components/DispatchRoundsPanel.vue",
+        "frontend/src/modules/features/logistics/components/DispatchRouteExecution.vue",
+        "frontend/src/modules/workspaces/branch/views/Logistics.vue"
+      ]
+    },
+    {
+      "file": "Caja.html",
+      "id": "caja",
+      "name": "Finanzas",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/features/finance/composables/useFinanceDashboardTabs.js",
+        "frontend/src/modules/workspaces/branch/components/finances/TreasuryAccountsPanel.vue",
+        "frontend/src/modules/workspaces/branch/views/FinanceDashboard.vue"
+      ]
+    },
+    {
+      "file": "Auditoria.html",
+      "id": "auditoria",
+      "name": "Auditoría de rentabilidad",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/features/finance/composables/useSalesAuditorMetrics.js",
+        "frontend/src/modules/features/finance/constants/salesAuditorKpis.js",
+        "frontend/src/modules/workspaces/branch/views/Auditor.vue"
+      ]
+    },
+    {
+      "file": "Inversiones.html",
+      "id": "inversiones",
+      "name": "Gastos e Inversiones",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Investments.vue",
+        "frontend/src/modules/workspaces/brand/views/Campaigns.vue"
+      ]
+    },
+    {
+      "file": "Facturacion.html",
+      "id": "facturacion",
+      "name": "Facturación",
+      "target": "col-finance",
+      "sources": [
+        "docs/identidad-fiscal-marca-y-sucursal.md",
+        "frontend/src/modules/workspaces/branch/views/SalesHistory.vue",
+        "frontend/src/modules/workspaces/branch/views/TaxBooks.vue"
+      ]
+    },
+    {
+      "file": "Encargados.html",
+      "id": "encargados",
+      "name": "Equipo y Roles",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Staff.vue"
+      ]
+    },
+    {
+      "file": "Ajustes.html",
+      "id": "ajustes",
+      "name": "Ajustes",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/features/settings/components/BranchClosurePanel.vue",
+        "frontend/src/modules/features/settings/components/BranchDataImportPanel.vue",
+        "frontend/src/modules/features/settings/constants/branchSettingsCatalog.js",
+        "frontend/src/modules/workspaces/branch/views/Settings.vue"
+      ]
+    },
+    {
+      "file": "Servicios.html",
+      "id": "servicios",
+      "name": "Servicios",
+      "target": "col-crm",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Services.vue"
+      ]
+    },
+    {
+      "file": "Alquileres.html",
+      "id": "alquileres",
+      "name": "Alquileres",
+      "target": "col-sales",
+      "sources": [
+        "companymanager/modules/rentals/api/router.py",
+        "companymanager/modules/rentals/application/cobros.py",
+        "companymanager/modules/rentals/application/senas.py",
+        "companymanager/modules/rentals/infrastructure/models.py",
+        "frontend/src/modules/workspaces/branch/components/rentals/AssetsColumn.vue",
+        "frontend/src/modules/workspaces/branch/components/rentals/ContractsColumn.vue",
+        "frontend/src/modules/workspaces/branch/components/rentals/NewContractColumn.vue",
+        "frontend/src/modules/workspaces/branch/composables/useRentalAssetForm.js",
+        "frontend/src/modules/workspaces/branch/composables/useRentalContractForm.js",
+        "frontend/src/modules/workspaces/branch/composables/useRentalListings.js",
+        "frontend/src/modules/workspaces/branch/composables/useRentalMoney.js",
+        "frontend/src/modules/workspaces/branch/utils/rentalAssets.js",
+        "frontend/src/modules/workspaces/branch/utils/rentalContracts.js",
+        "frontend/src/modules/workspaces/branch/views/Rentals.vue"
+      ]
+    },
+    {
+      "file": "Campanas.html",
+      "id": "campanas",
+      "name": "Campañas",
+      "target": "col-crm",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/Campaigns.vue",
+        "frontend/src/modules/workspaces/brand/views/Campaigns.vue"
+      ]
+    },
+    {
+      "file": "Contestadora.html",
+      "id": "contestadora",
+      "name": "Contestadora",
+      "target": "col-crm",
+      "sources": [
+        "companymanager/interfaces/bot/api/router.py",
+        "companymanager/interfaces/bot/manager.py",
+        "companymanager/modules/marketing/campaigns/domain/rules.py",
+        "frontend/src/modules/core/ui/constants/workspaceMenu.js",
+        "frontend/src/modules/features/settings/components/ManualBotEditor.vue",
+        "frontend/src/modules/workspaces/branch/views/AutoResponses.vue",
+        "frontend/src/modules/workspaces/brand/components/campaigns/AutoResponderPanel.vue",
+        "frontend/src/modules/workspaces/brand/views/Campaigns.vue"
+      ]
+    },
+    {
+      "file": "Impuestos.html",
+      "id": "impuestos",
+      "name": "Impuestos",
+      "target": "col-finance",
+      "sources": [
+        "frontend/src/modules/workspaces/branch/views/TaxBooks.vue"
+      ]
+    },
+    {
+      "file": "Fabricacion.html",
+      "id": "fabricacion",
+      "name": "Fabricación",
+      "target": "col-ops",
+      "sources": [
+        "companymanager/modules/core/production/application/contacts.py",
+        "companymanager/modules/core/production/application/formulas.py",
+        "companymanager/modules/core/production/application/overview.py",
+        "companymanager/modules/core/production/application/runs.py",
+        "companymanager/modules/core/production/application/settings.py",
+        "companymanager/modules/core/production/application/transfers.py",
+        "companymanager/modules/core/production/domain/rules.py",
+        "companymanager/modules/core/production/infrastructure/models.py",
+        "companymanager/modules/identity/organizations/domain/node_types.py",
+        "frontend/src/domain/productionRoles.js",
+        "frontend/src/modules/core/ui/constants/workspaceMenu.js",
+        "frontend/src/modules/features/settings/components/ManualPlantEditor.vue",
+        "frontend/src/modules/workspaces/factory/views/Production.vue"
+      ]
+    },
+    {
+      "file": "Actividad.html",
+      "id": "actividad",
+      "name": "Actividad",
+      "target": "col-ops",
+      "sources": [
+        "companymanager/modules/system/dashboard/domain/activity_grouping.py",
+        "companymanager/modules/system/dashboard/infrastructure/store_sqlmodel.py",
+        "frontend/src/modules/features/overview/components/ActivityGroupPanel.vue",
+        "frontend/src/modules/features/overview/components/RecentActivityTable.vue",
+        "frontend/src/modules/features/overview/utils/activityNavigation.js",
+        "frontend/src/modules/features/overview/utils/activityPresentation.js",
+        "frontend/src/modules/workspaces/branch/views/Activity.vue"
+      ]
+    },
+    {
+      "file": "Presupuestos.html",
+      "id": "presupuestos",
+      "name": "Presupuestos",
+      "target": "col-sales",
+      "sources": [
+        "frontend/src/modules/features/pos/components/QuotePickerDrawer.vue",
+        "frontend/src/modules/workspaces/branch/views/SalesQuotes.vue"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "companymanager/interfaces/bot/api/router.py": "59183a9d6e3845c293b47b8a82e4f6670c4e368f057697dab83018c0c3b13aa9",
+    "companymanager/interfaces/bot/manager.py": "a4a2c38fbf151d36799f66047bcc8def4e83b9a29a0ef3b7aaa974f4cd4547fc",
+    "companymanager/modules/core/production/application/contacts.py": "d9aca084bf7d5516590093f621c6ffd4e42fa7de1bb640c5a2a6b0fbd6adf786",
+    "companymanager/modules/core/production/application/formulas.py": "27dfb638ec79f579beeeb92eebfc5bd4b040ff409fe8498069b934824ba84f95",
+    "companymanager/modules/core/production/application/overview.py": "409cfe2087c4a81670eb49099fdc21c5f8e964a875d2d93205f85f9e96652bb8",
+    "companymanager/modules/core/production/application/runs.py": "efd95f282892559e1dff490675e1034ba83f08439d650ab19f4c29d2a7f2709c",
+    "companymanager/modules/core/production/application/settings.py": "a7e4e3e390005b9472a0b9ddf26a47a97296098ece9d985d8f96eb503d01cf7a",
+    "companymanager/modules/core/production/application/transfers.py": "a1a839b3386bf999bc072fb6d7b55b54771b59f502a333d69149b4b9af7538f4",
+    "companymanager/modules/core/production/domain/rules.py": "bd16f7a5013f0be3f18b29e374294cc7c690035e093b9db6064ed18f3e7d2ff9",
+    "companymanager/modules/core/production/infrastructure/models.py": "1c68c1b4dc3397054b8fb9d46693444922d636591c9fb65e7db32a8bf561a4ba",
+    "companymanager/modules/identity/organizations/domain/node_types.py": "2a0a0259c9176b9b981d4a1dbc1f1ccdf8b68122f249bb1c4f0fca3f201a1aa7",
+    "companymanager/modules/marketing/campaigns/domain/rules.py": "9e4a8ffffbdfa1c9096efeec496cee8a941b802c716bef326bfe8e5edcf36029",
+    "companymanager/modules/rentals/api/router.py": "20a256347cc0fb361b8ed6a0fede032d56c8c326b0146db3ff32f38b1b7322f7",
+    "companymanager/modules/rentals/application/cobros.py": "4b0c4875ef9192d9381e95c9d069a5d2a20225a0c858bfc013fe9a1e72dc6acf",
+    "companymanager/modules/rentals/application/senas.py": "5ac92fa891e21c528d4770a29257619a7997f0112347254b9b24ae5f4891c5ce",
+    "companymanager/modules/rentals/infrastructure/models.py": "4ae1fe93d9ae44d2ffe30c0b1dca08ca834aad75d1adc67246497eacd690bb93",
+    "companymanager/modules/system/dashboard/domain/activity_grouping.py": "7c3c5b2271cd01425ef7b09534d460c0ad0e2dbcc22cea12f53a40efd3300a33",
+    "companymanager/modules/system/dashboard/infrastructure/store_sqlmodel.py": "d4325dd8890bfcc38dfe3c2c0b10237f3610c6cdd80f5800ba0d6b91f6bf6a56",
+    "docs/identidad-fiscal-marca-y-sucursal.md": "863b772113c9386968da41bad2e5952a30b529c896689a93a54d96e2b14e4753",
+    "docs/marca-y-sedes-en-un-dominio.md": "118512b783657814db60a083b9c86e3b87ef9918f7992b31cbbc843e7873398e",
+    "frontend/src/app/components/layouts/TopBar.vue": "113ad2c39f9b77476517fc58e9632d4ea9f3fac718c4f8820523551fd0e44f7d",
+    "frontend/src/apps/companymarket/components/store-front/CheckoutModal.vue": "dc9ec2c2c773015ce58f5653adf20343a70cdd7920ced85be797e8b5e1ce6119",
+    "frontend/src/apps/companymarket/components/store-front/ComboBuilderModal.vue": "5dcb0cb67f62e65bab5240382db17d4f12e78c2c5420917dd9222b8df2946f2e",
+    "frontend/src/domain/productionRoles.js": "7693ac9ce8d216f8e39dd92d8c8acda7dc41d83092594a256f4144a8d4f1c390",
+    "frontend/src/modules/core/ui/constants/workspaceMenu.js": "af12c5e3d71367678c5525d19c939ba66d0fe62447ea4f807b2f52aa6e50ed2a",
+    "frontend/src/modules/features/catalog/composables/useCatalogFileImport.js": "fdc26d544cd0d6cf7f0133f325c5bfde13f01bda24503ba76f4d68344f870724",
+    "frontend/src/modules/features/catalog/composables/useCatalogFiles.js": "3abff5066fb9e8a39881214c48ab1f587da93409d686b7b3cb151c106b38cc6c",
+    "frontend/src/modules/features/catalog/composables/useCatalogInheritance.js": "3a82cbaf08cdf76073e9352da571285f73a3450bacd6fbae23b946a2779704f9",
+    "frontend/src/modules/features/catalog/views/Staging.vue": "e1d4fe9b871b9a5c91818783c815e69106c89ce1161faf9cd19faf960e006885",
+    "frontend/src/modules/features/finance/composables/useFinanceDashboardTabs.js": "6ec9c2dd437ca727252ae51ff115401d291e14c871401c0cc767e769d1124108",
+    "frontend/src/modules/features/finance/composables/useSalesAuditorMetrics.js": "812639f3759e0db1846226f12b626b268c5784e51bc893c7e28caf3ca60908b9",
+    "frontend/src/modules/features/finance/constants/salesAuditorKpis.js": "85369c29256b1321baf3f85b8a907a4be4ca52eb79ee00c5e6ffcdd0c03edae0",
+    "frontend/src/modules/features/inventory/components/AdjustmentDrawer.vue": "9be7fd31da8f4d8c0794adff7d4e4673fdbd9046fccdf9509b4e04e7766c0074",
+    "frontend/src/modules/features/inventory/components/InventoryStandardTable.vue": "9fe56cca73345097f99c25c9973aa2254dc33c15e42b93403a907792a0251fcb",
+    "frontend/src/modules/features/logistics/components/DispatchComposer.vue": "65856b7e4979417bafce176d980e0b69dce1f70f685953a12cfed09fa0fb9435",
+    "frontend/src/modules/features/logistics/components/DispatchRoundsPanel.vue": "6feb855392202cc04152a478ebde2d9af61253260a79a0a2bcc9001b220bbe6c",
+    "frontend/src/modules/features/logistics/components/DispatchRouteExecution.vue": "51202c67a532c18efeb0f0a3c276c3a8d96152643bf9f8f7ff85afe01b72e17c",
+    "frontend/src/modules/features/overview/components/ActivityGroupPanel.vue": "470fe986857ffea6cc3087b67323c22ae31bf1450a2a5c72d997a91f01f84f3e",
+    "frontend/src/modules/features/overview/components/RecentActivityTable.vue": "47f466af15ab34fbf28a7489cb6a4435a168bdfb3decd847baa80f259042ed2d",
+    "frontend/src/modules/features/overview/composables/useWorkspaceLayoutEditor.js": "ab115be886c7205eeacb7ac2201b029ef4456d0db61e75cd178dd2739951dbd7",
+    "frontend/src/modules/features/overview/utils/activityNavigation.js": "16cd257ee03fc807e70d48b261694e8e79bfbca5e2b7b20c237584d8c4295129",
+    "frontend/src/modules/features/overview/utils/activityPresentation.js": "24ebb8e8c6a154d23afbb16410a13300cca34bcce5928890dc115aea8b355e09",
+    "frontend/src/modules/features/pos/components/QuotePickerDrawer.vue": "adfd387bd4134837f1cd5e354bdf8df84ef543bf36c5bbcb2033c5a6871c0695",
+    "frontend/src/modules/features/pos/composables/usePosCheckout.js": "3d79b303bc8b20f51bc81f4217f8f9d77e875bfa96d76e07823eebd5e00d7a29",
+    "frontend/src/modules/features/pos/composables/usePosComboBuilder.js": "4a28735657807dafc893dba3d00cda11b4eaefada36280d617cf55fe57ca8f6d",
+    "frontend/src/modules/features/pos/composables/usePosDuplicateGuard.js": "b1463a62cf334983d1f53c7d7790a943fabe8c4781add4afb94e686c9c40310c",
+    "frontend/src/modules/features/pos/composables/usePosHotkeys.js": "f848b4629750d19c98ec2ce2cd9e1eb3bf032e32f4f1960320614b1fa9f6ba67",
+    "frontend/src/modules/features/settings/components/BranchClosurePanel.vue": "e4fc2f84692d273263a99f122ab0fd47fc50599c7b17dd0adf258c928a46c839",
+    "frontend/src/modules/features/settings/components/BranchDataImportPanel.vue": "b3c5217b011f59174e85ea3d7c2b0864518a8c58c659721e6fd68376688758c5",
+    "frontend/src/modules/features/settings/components/ManualBotEditor.vue": "9352d7786a759892f5e43befde6c34131b66da3e41dd67c2e5b075772603b568",
+    "frontend/src/modules/features/settings/components/ManualPlantEditor.vue": "7acaf2651386bc37740dcd30710120ba56ed38b4130d417f60c7cf2edf5b438f",
+    "frontend/src/modules/features/settings/constants/branchSettingsCatalog.js": "6134887da0759839536fa3e327067602bf317809fe7aa307c7bc47835df1fe5c",
+    "frontend/src/modules/workspaces/branch/components/booking/AppointmentModal.vue": "4757316a72ed89ba3074b75f12189065e2ecdbe11a379b977822c5d58a988845",
+    "frontend/src/modules/workspaces/branch/components/finances/TreasuryAccountsPanel.vue": "bb0b648e9630e2e5c0ccea7867326d559f90fe8a713a8adbaa16cf91998a09d7",
+    "frontend/src/modules/workspaces/branch/components/rentals/AssetsColumn.vue": "3ac9bebdd98bd6aff41a027bbea373969a9f3466235d895286cfac851742824e",
+    "frontend/src/modules/workspaces/branch/components/rentals/ContractsColumn.vue": "b35e59ba744c7982dcd08992694a18e191a9a2f4d93c7f87026153790311de0b",
+    "frontend/src/modules/workspaces/branch/components/rentals/NewContractColumn.vue": "9cee81207394e4e8f71d26b59d01049205c0eeedf9c3a251a4a46f323db8ad2b",
+    "frontend/src/modules/workspaces/branch/composables/useRentalAssetForm.js": "68f5daf5e8bc0543eff058c0af840e95c1bc54327fb9104272cb19f7627bd5e5",
+    "frontend/src/modules/workspaces/branch/composables/useRentalContractForm.js": "00d67d6e238e0cffa3ca754c855aeed53c58d90275ac182bea812a7f61bcb0d0",
+    "frontend/src/modules/workspaces/branch/composables/useRentalListings.js": "caf54833fd0f1746c7577905b724c21de14144aa522e64bd4e0adf53ae0ad8d1",
+    "frontend/src/modules/workspaces/branch/composables/useRentalMoney.js": "0e50789b20c179b163da2e351500abc5d72fb4be9e6eb52fcaa16e4d902aaf0c",
+    "frontend/src/modules/workspaces/branch/utils/rentalAssets.js": "0a0c603e3febf7787c65d5b5cf68c94058b662e92a1e8a30492ab4cd90b627d1",
+    "frontend/src/modules/workspaces/branch/utils/rentalContracts.js": "aec1b5a1adab3cb4b28e3988ccca02de5b6cd4de58ea1f23264c65a3d6f6bbc7",
+    "frontend/src/modules/workspaces/branch/views/Activity.vue": "83eadae42d84a9f78acfdbf03fe324520fef784c85c96dddbc93641165cebac4",
+    "frontend/src/modules/workspaces/branch/views/Auditor.vue": "2fb15b46f4387a014d78378f5d5dfb0c437cfb3f8bbd079ab555508a2246cc2a",
+    "frontend/src/modules/workspaces/branch/views/AutoResponses.vue": "05440f772f3f83f0951073c12d186ac42771c87c3d0ecbe907afab436590d63d",
+    "frontend/src/modules/workspaces/branch/views/Bookings.vue": "51fa8704a4af45d00b521180596923bcabdcaf6c1c21a953565d9542a210d246",
+    "frontend/src/modules/workspaces/branch/views/BookingsQueueScreen.vue": "208be758176c9c9d54f0cc8c7cd2b226c0df53540fa1ddf2f6dd4691ef4b3df7",
+    "frontend/src/modules/workspaces/branch/views/Campaigns.vue": "8b54c1dd3c432c86776040ec71300e9308de8cf37f70ae58503bde9f1ccf2721",
+    "frontend/src/modules/workspaces/branch/views/Customers.vue": "d0c4a3709158be89c867bdd6a2a03116b2c154f4d3ebd8b95e288e004c17689a",
+    "frontend/src/modules/workspaces/branch/views/FinanceDashboard.vue": "457ef28ce04b80da8572a39839295af4ca28d3dd402505b2f9626e9782fb1e70",
+    "frontend/src/modules/workspaces/branch/views/Home.vue": "4fbf6f74bc538a7bee6f5fec8d51f6218df6b2dcefdd23fdd6c18dfe2bb5ce61",
+    "frontend/src/modules/workspaces/branch/views/InventoryRouter.vue": "491d57d3625b98cb788c5e223b0276d21b5cdc49e58e60c32ce4bfadd53780d6",
+    "frontend/src/modules/workspaces/branch/views/Investments.vue": "d74476fab6043367735b6de12efcda0b3fd5eaff2095dd1119952356520805ed",
+    "frontend/src/modules/workspaces/branch/views/Logistics.vue": "f4fad531c24482d63ffd8afffbc2bc7e926780edebc8f485d74f50e00211784a",
+    "frontend/src/modules/workspaces/branch/views/Operations.vue": "631a1364665024ebb46d12af8022bcdac9a94b0ead6b8c2b577eab95dc96abb4",
+    "frontend/src/modules/workspaces/branch/views/OperationsQueueScreen.vue": "23df23cebaa5439b00104c20d8c266def19a02da924cd4ea356b05d9a520bf61",
+    "frontend/src/modules/workspaces/branch/views/POS.vue": "7a1a6c546c09ca70ebca1c3c6a2cc8bfcca30489cd13d033f29bc5b346fb9056",
+    "frontend/src/modules/workspaces/branch/views/Promotions.vue": "71f405f6222a33a5be88aae2bc482404d7e013967ac938824fc92dfd8bfbb944",
+    "frontend/src/modules/workspaces/branch/views/QuickRestockMobile.vue": "02c4806cc6819477d6e10fdde5730e23114c4297bcf1c8205c86e9af2cbcac67",
+    "frontend/src/modules/workspaces/branch/views/Rentals.vue": "cbcbc6b2d6f5fb93c418aa3be2a5f183c0e910601001cad32bf2c2df38a3a425",
+    "frontend/src/modules/workspaces/branch/views/SalesHistory.vue": "8ba77365ead6001fbd3a14e4876e7f182b55d0218b6379af7ea98dc27cda7c12",
+    "frontend/src/modules/workspaces/branch/views/SalesQuotes.vue": "306fd3963a857eda69bf5e5bc09dc167a77fb2dfb435f931e3431ce152240ef8",
+    "frontend/src/modules/workspaces/branch/views/Services.vue": "1d0d5df521920c4311202b54453225b212755030b6d623a31b1842544a42e139",
+    "frontend/src/modules/workspaces/branch/views/Settings.vue": "5f519c1023e6017dee106100d53e9226d58f64d3b92bb81d3222ad2e1b013973",
+    "frontend/src/modules/workspaces/branch/views/Staff.vue": "e0e1fe22712ea8e9f7df137f450e3d5c4971a098d0e9211e14cd7bfdcf71aade",
+    "frontend/src/modules/workspaces/branch/views/Storefront.vue": "8c05dbe209d536b74a0389fc9274eaa07a846cee24a076b3c8bcfd36860b6664",
+    "frontend/src/modules/workspaces/branch/views/Suppliers.vue": "2547381446af4dd03ee0ec43c6c5abfa754aef0af85c9665313bac37d7784118",
+    "frontend/src/modules/workspaces/branch/views/TaxBooks.vue": "182258044ee4a44db4ea70f92e235d77411d247b0f8b48ee5ad24565e94be2ed",
+    "frontend/src/modules/workspaces/brand/components/campaigns/AutoResponderPanel.vue": "943fe6eb61b98f219170a5f60f162018ed2c0e69861c830685e22dbc008022e8",
+    "frontend/src/modules/workspaces/brand/views/Campaigns.vue": "977f241d6d0729894a08e96189ad6537d4ae8ec3542d98af8f722ebe6d17883f",
+    "frontend/src/modules/workspaces/factory/views/Production.vue": "51f4a2db6a81141232117588aee9d1bf47d7a89ddf53e454dc34d3742bea4ee9",
+    "frontend/src/shared/storefront/storefrontDesigns.js": "5b8d8d8a26fd5d0254268ef4fcd8979ad272712144f657a1618bc32b11ba6e2b"
+  }
+}

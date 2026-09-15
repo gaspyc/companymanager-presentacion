@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Motor de Promociones - Pitch</title>
+    <title>Promos y Combos - Pitch</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -94,47 +94,149 @@
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); }
 
         /* =========================================
-           SLIDE 2: COMBOS MOCKUP
+           SLIDE 1: PORTADA
            ========================================= */
-        .combo-card { background: rgba(30, 41, 59, 0.95); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px; border-top: 4px solid var(--kpi-purple); display: flex; flex-direction: column; width: 100%; max-width: 450px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);}
-        .cc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;}
-        .badge-active { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: flex; align-items: center; gap: 5px;}
-        .cc-price { font-size: 28px; font-weight: 900; color: var(--kpi-purple); margin: 0;}
-        .cc-title { font-size: 22px; font-weight: 800; color: white; margin-bottom: 5px;}
-        .cc-sku { font-size: 13px; color: var(--text-muted); font-family: monospace; margin-bottom: 15px;}
-        
-        .cc-rules-box { background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 10px;}
-        .cc-rules-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;}
-        .cc-rule-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 10px;}
-        .cc-rule-item:last-child { border: none; padding-bottom: 0; margin-bottom: 0;}
-        .cr-val { font-size: 15px; color: white; display: flex; align-items: center; gap: 10px;}
-        .cr-qty { font-size: 14px; font-weight: 800; background: var(--bg-base); color: var(--kpi-purple); padding: 4px 10px; border-radius: 6px;}
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(217,70,239,0.07); border: 1px solid rgba(217,70,239,0.22); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #f0abfc; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-purple); }
+        .note b { color: #f5d0fe; }
+        .note.blue { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.2); color: #bfdbfe; }
+        .note.blue i { color: var(--kpi-blue); } .note.blue b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
 
         /* =========================================
-           SLIDE 3: BUILDER MODAL MOCKUP
+           SLIDE 2: EL TABLERO
            ========================================= */
-        .builder-modal { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; width: 100%; max-width: 600px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5);}
-        .bm-header { background: rgba(0,0,0,0.3); padding: 20px; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border-glass);}
-        .bm-body { padding: 25px; display: flex; flex-direction: column; gap: 20px;}
-        .bm-row { display: flex; gap: 15px; }
-        .bm-input-group { flex: 1; display: flex; flex-direction: column; gap: 8px;}
-        .bm-lbl { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;}
-        .bm-input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 12px; border-radius: 8px; color: white; font-size: 15px;}
-        .bm-rules-area { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--border-glass);}
-        .bm-rule-row { display: flex; gap: 10px; align-items: center;}
+        .pt-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+        .pt-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .btn-primary { background: #d946ef; color: white; padding: 0 20px; height: 38px; border-radius: 10px; font-weight: 700; font-size: 14px; box-shadow: 0 4px 15px rgba(217,70,239,0.3); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .filter-group { display: flex; background: rgba(0,0,0,0.35); padding: 2px; border-radius: 8px; border: 1px solid var(--border-glass); height: 38px; }
+        .btn-filter { color: var(--text-muted); padding: 0 16px; border-radius: 6px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; }
+        .btn-filter.active { background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .tabs-container { display: flex; background: rgba(15,23,42,0.8); padding: 5px; border-radius: 12px; border: 1px solid var(--border-glass); }
+        .tab-btn { color: var(--text-muted); padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .tab-btn.active { background: #d946ef; color: white; box-shadow: 0 4px 15px rgba(217,70,239,0.3); }
+
+        .combos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .combo-card { background: rgba(30,41,59,0.95); border: 1px solid var(--border-glass); border-radius: 16px; border-top: 4px solid var(--kpi-purple); padding: 0 18px 18px; display: flex; flex-direction: column; box-shadow: 0 15px 35px rgba(0,0,0,0.45); }
+        .combo-card.is-inactive { opacity: .58; border-top-color: #64748b; }
+        .cc-header { display: flex; justify-content: space-between; align-items: flex-start; margin: 0 -18px 14px; padding: 16px 18px; background: linear-gradient(135deg, rgba(217,70,239,0.14), rgba(59,130,246,0.08)); border-radius: 12px 12px 0 0; }
+        .cc-header.photo { background: linear-gradient(180deg, rgba(15,23,42,0.15), rgba(15,23,42,0.86)), repeating-linear-gradient(135deg, #334155 0 12px, #1e293b 12px 24px); min-height: 92px; align-items: flex-end; }
+        .badge-active { background: rgba(16,185,129,0.16); color: var(--kpi-green); font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .badge-inactive { background: rgba(148,163,184,0.18); color: #cbd5e1; font-size: 10.5px; font-weight: 800; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+        .cc-price { font-size: 22px; font-weight: 900; color: var(--kpi-purple); margin: 0; white-space: nowrap; }
+        .cc-title { font-size: 18px; font-weight: 800; color: white; margin-bottom: 4px; text-align: left; }
+        .cc-sku { font-size: 12px; color: var(--text-muted); font-family: monospace; margin-bottom: 10px; text-align: left; display: flex; align-items: center; gap: 6px; }
+        .cc-desc { font-size: 13px; color: var(--text-muted); line-height: 1.45; margin-bottom: 14px; text-align: left; }
+        .cc-rules-box { background: rgba(15,23,42,0.6); padding: 13px; border-radius: 10px; flex: 1; }
+        .cc-rules-lbl { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 9px; display: block; text-align: left; }
+        .cc-rule-item { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px; margin-bottom: 8px; }
+        .cc-rule-item:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
+        .cr-val { font-size: 13px; color: white; display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .cr-qty { font-size: 12.5px; font-weight: 800; background: var(--bg-base); color: var(--kpi-purple); padding: 3px 9px; border-radius: 6px; flex-shrink: 0; }
+        .cc-actions { display: flex; gap: 7px; justify-content: flex-end; margin-top: 13px; }
+        .btn-icon { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-muted); }
+        .btn-icon.edit { color: #93c5fd; } .btn-icon.del { color: #fca5a5; }
+        .btn-outline-green { border: 1px solid rgba(16,185,129,0.35); color: #6ee7b7; border-radius: 8px; padding: 6px 13px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 7px; }
 
         /* =========================================
-           SLIDE 4: REGLAS AUTOMÁTICAS (EVENTOS)
+           SLIDE 3: ARMAR UN COMBO
            ========================================= */
-        .event-card { background: rgba(30, 41, 59, 0.95); border: 1px solid var(--border-glass); border-radius: 16px; padding: 25px; border-top: 4px solid var(--kpi-blue); display: flex; flex-direction: column; width: 100%; max-width: 500px;}
-        .ec-badge { background: var(--kpi-blue); color: white; font-weight: 900; padding: 6px 15px; border-radius: 8px; font-size: 20px; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);}
-        .ec-details { background: rgba(15, 23, 42, 0.6); padding: 15px; border-radius: 10px; margin-top: 20px; display: flex; flex-direction: column; gap: 12px;}
-        .ec-row { display: flex; justify-content: space-between; align-items: center; font-size: 15px;}
-        .ec-lbl { color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; font-size: 12px;}
-        .ec-val { color: white; font-weight: 700; display: flex; align-items: center; gap: 8px;}
+        .bd-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; }
+        .builder-modal { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .bm-header { background: rgba(0,0,0,0.3); padding: 16px 20px; font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--border-glass); }
+        .bm-body { padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .bm-row { display: flex; gap: 13px; }
+        .bm-input-group { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+        .bm-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; text-align: left; }
+        .bm-input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 10px 12px; border-radius: 8px; color: white; font-size: 14px; text-align: left; }
+        .bm-input.muted { color: var(--text-muted); }
+        .bm-input.locked { color: #64748b; border-style: dashed; }
+        .bm-help { font-size: 11.5px; color: #64748b; text-align: left; }
+        .bm-help.warn { color: #fbbf24; }
+        .bm-rules-area { background: rgba(0,0,0,0.2); padding: 14px; border-radius: 12px; border: 1px solid var(--border-glass); }
+        .bm-rules-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 13.5px; font-weight: 700; }
+        .bm-add { font-size: 12px; font-weight: 800; color: #f0abfc; background: rgba(217,70,239,0.14); border-radius: 7px; padding: 4px 10px; }
+        .bm-rule-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .bm-rule-row:last-child { margin-bottom: 0; }
+        .bm-rule-row .bm-input { padding: 8px 11px; font-size: 12.5px; }
+        .bm-qty { width: 54px; text-align: center; font-weight: 800; flex-shrink: 0; }
+        .bm-type { width: 158px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+        .bd-targets { display: flex; flex-direction: column; gap: 9px; }
+        .bd-target { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .bd-target i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .bd-target strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .bd-target span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
 
         /* =========================================
-           SLIDE 5: NAVEGACIÓN
+           SLIDE 4: CERRADO O ABIERTO
+           ========================================= */
+        .oc-split { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+        .oc-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 22px; display: flex; flex-direction: column; gap: 13px; }
+        .oc-card.closed { border-color: rgba(16,185,129,0.28); }
+        .oc-card.open { border-color: rgba(59,130,246,0.28); }
+        .oc-head { display: flex; align-items: center; gap: 12px; }
+        .oc-ico { width: 42px; height: 42px; border-radius: 12px; background: rgba(0,0,0,0.32); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+        .oc-head h4 { font-size: 19px; font-weight: 800; text-align: left; }
+        .oc-head small { font-size: 11px; font-family: monospace; color: var(--text-muted); }
+        .oc-rules { display: flex; flex-direction: column; gap: 6px; background: rgba(0,0,0,0.28); border-radius: 10px; padding: 12px; }
+        .oc-rule { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 12.5px; color: #cbd5e1; }
+        .oc-rule .q { font-family: monospace; color: var(--text-muted); }
+        .oc-verdict { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; text-align: left; line-height: 1.5; color: var(--text-muted); }
+        .oc-verdict i { margin-top: 3px; }
+        .oc-verdict b { color: var(--text-main); }
+        .stock-calc { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 22px; background: rgba(0,0,0,0.28); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px 20px; }
+        .sc-part { text-align: center; }
+        .sc-part .sc-name { display: block; font-size: 11.5px; color: var(--text-muted); margin-bottom: 4px; }
+        .sc-part .sc-num { font-size: 19px; font-weight: 900; font-family: monospace; }
+        .sc-part .sc-sub { display: block; font-size: 10.5px; color: #64748b; margin-top: 2px; }
+        .sc-part.min .sc-num { color: var(--kpi-orange); }
+        .sc-op { font-size: 14px; color: #475569; }
+        .sc-result { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 10px; padding: 9px 16px; text-align: center; }
+        .sc-result .sc-num { font-size: 22px; font-weight: 900; color: #fcd34d; font-family: monospace; }
+        .sc-result .sc-name { font-size: 11px; color: #fcd34d; opacity: .8; display: block; }
+
+        /* =========================================
+           SLIDE 5: EVENTOS
+           ========================================= */
+        .ev-split { display: grid; grid-template-columns: 420px 1fr; gap: 36px; align-items: start; }
+        .event-card { background: rgba(30,41,59,0.95); border: 1px solid var(--border-glass); border-radius: 16px; padding: 22px; border-top: 4px solid var(--kpi-blue); display: flex; flex-direction: column; }
+        .ec-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+        .ec-badge { background: var(--kpi-blue); color: white; font-weight: 900; padding: 6px 14px; border-radius: 8px; font-size: 19px; box-shadow: 0 4px 15px rgba(59,130,246,0.3); white-space: nowrap; }
+        .ec-name { font-size: 24px; font-weight: 800; color: white; margin: 8px 0 3px; text-align: left; }
+        .ec-desc { font-size: 13.5px; color: var(--text-muted); margin: 0; text-align: left; }
+        .ec-details { background: rgba(15,23,42,0.6); padding: 14px; border-radius: 10px; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .ec-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .ec-lbl { color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; font-size: 11px; }
+        .ec-val { color: white; font-weight: 700; display: flex; align-items: center; gap: 7px; font-size: 13px; }
+        .ec-actions { display: flex; gap: 7px; justify-content: flex-end; margin-top: 14px; }
+        .ev-targets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .ev-target { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; border-radius: 8px; padding: 6px 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: #cbd5e1; }
+        .ev-rules { display: flex; flex-direction: column; gap: 11px; }
+
+        /* =========================================
+           SLIDE 6: PAPELERA
+           ========================================= */
+        .tr-split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+        .reuse-modal { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-width: 460px; }
+        .reuse-hint { font-size: 13.5px; color: var(--text-muted); margin: 0 0 14px; text-align: left; line-height: 1.5; }
+        .reuse-summary { background: rgba(0,0,0,0.28); border-radius: 10px; padding: 13px 15px; display: flex; flex-direction: column; gap: 9px; margin-bottom: 16px; }
+        .reuse-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .reuse-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; color: var(--text-muted); }
+        .reuse-value { font-size: 13.5px; font-weight: 700; color: white; }
+        .tr-steps { display: flex; flex-direction: column; gap: 10px; }
+        .tr-step { display: flex; gap: 13px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 13px 16px; text-align: left; }
+        .tr-num { width: 25px; height: 25px; flex-shrink: 0; border-radius: 8px; background: rgba(217,70,239,0.18); color: #f0abfc; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+        .tr-step strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .tr-step span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
            ========================================= */
         .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
@@ -176,6 +278,9 @@
             /* Textos apilados arriba */
             .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
             .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -183,11 +288,39 @@
             h3 { font-size: 20px; }
             p { font-size: 16px; }
 
-            /* Ajustes Modal Builder Mobile */
+            /* Slide 1 Portada */
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+
+            /* Slide 2 Tablero */
+            .pt-toolbar { flex-direction: column; align-items: stretch; gap: 12px; }
+            .tabs-container { order: -1; }
+            .tab-btn { flex: 1; justify-content: center; }
+            .pt-left { width: 100%; }
+            .pt-left .btn-primary { flex: 1; justify-content: center; }
+            .pt-left .filter-group { flex: 1; }
+            .btn-filter { flex: 1; justify-content: center; }
+            .combos-grid { grid-template-columns: 1fr; gap: 16px; }
+
+            /* Slide 3 Armar un combo */
+            .bd-split { grid-template-columns: 1fr; gap: 28px; }
             .builder-modal { max-width: 100%; }
-            .bm-row { flex-direction: column; gap: 15px; }
-            .bm-rule-row { flex-direction: column; align-items: flex-start;}
-            .bm-input { width: 100% !important; }
+            .bm-row { flex-direction: column; gap: 13px; }
+            .bm-rule-row { flex-direction: column; align-items: stretch; }
+            .bm-type, .bm-qty { width: 100%; }
+
+            /* Slide 4 Cerrado o abierto */
+            .oc-split { grid-template-columns: 1fr; gap: 18px; }
+            .stock-calc { flex-direction: column; gap: 12px; }
+            .sc-op { transform: rotate(90deg); }
+
+            /* Slide 5 Eventos */
+            .ev-split { grid-template-columns: 1fr; gap: 24px; }
+            .event-card { max-width: 100%; }
+
+            /* Slide 6 Papelera */
+            .tr-split { grid-template-columns: 1fr; gap: 26px; }
+            .reuse-modal { max-width: 100%; }
 
             /* Botones apilados verticalmente */
             .quick-actions-grid {
@@ -206,8 +339,10 @@
             .qa-text { text-align: left; font-size: 14px; }
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
@@ -221,165 +356,388 @@
         <div class="glow-purple-1"></div>
         <div class="slide-content-wide grid-split">
             <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-purple);">Estrategia Comercial</h3>
-                <h1>Motor de <br><span style="color: white;">Promociones</span></h1>
-                <p>Dejá de depender de la memoria de tus cajeros para aplicar descuentos o acordarse qué productos entran en el "Combo del Mes".</p>
-                <p>Creamos un motor de reglas que se inyecta directamente en la Caja (POS) y en la Tienda Online. Configuras la promoción una vez, y el sistema hace la matemática por vos al instante, sin margen de error.</p>
+                <h3 style="color: var(--kpi-purple);">Promos y Combos</h3>
+                <h1>Dos solapas <br><span style="color: white;">y una papelera</span></h1>
+                <p>Los <strong>combos</strong> son paquetes con SKU propio que se venden en el mostrador y en la tienda. Los <strong>eventos</strong> son reglas con fecha que tachan precios mientras están vigentes.</p>
+                <p style="font-size: 17px;">Nada se borra del todo: lo que se saca cae en la papelera, y de ahí un combo vuelve como estaba y un evento vuelve con fechas nuevas.</p>
             </div>
-            
-            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <i class="fas fa-tags" style="font-size: 80px; color: var(--kpi-purple); margin-bottom: 30px;"></i>
-                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-box-open text-muted mr-2"></i> Combos Fijos</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-layer-group text-muted mr-2"></i> Combos Dinámicos</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-bolt text-muted mr-2"></i> Hot Sale / CyberMonday</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-clock text-muted mr-2"></i> Reglas por Tiempo</span>
+
+            <div class="visual-block glass-panel" style="position: relative; padding: 34px 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <i class="fas fa-tags" style="font-size: 66px; color: var(--kpi-purple); margin-bottom: 26px;"></i>
+                <div class="hero-chips">
+                    <span class="hero-chip"><i class="fas fa-box-open" style="color:#f0abfc;"></i> Combos cerrados</span>
+                    <span class="hero-chip"><i class="fas fa-shuffle" style="color:#93c5fd;"></i> Combos abiertos</span>
+                    <span class="hero-chip"><i class="fas fa-percent" style="color:#6ee7b7;"></i> Precio fijo o porcentaje</span>
+                    <span class="hero-chip"><i class="fas fa-bolt" style="color:#fcd34d;"></i> Eventos con fecha</span>
+                    <span class="hero-chip"><i class="fas fa-trash-arrow-up" style="color:#cbd5e1;"></i> Papelera y reutilizar</span>
+                </div>
+                <div class="note" style="margin-top: 26px;">
+                    <i class="fas fa-circle-info"></i>
+                    <span>Las dos cosas se aplican solas donde se vende: el POS y la tienda pública leen lo mismo. Acá se configuran; <b>la difusión se maneja en Campañas</b>.</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: COMBOS DINÁMICOS -->
+    <!-- SLIDE 2: EL TABLERO -->
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
-        <div class="slide-content-wide grid-split">
-            
-            <div class="visual-block" style="display: flex; justify-content: center;">
-                <div class="combo-card">
-                    <div class="cc-header">
-                        <span class="badge-active"><i class="fas fa-circle"></i> Activo</span>
-                        <h3 class="cc-price">$ 25.000</h3>
-                    </div>
-                    <h2 class="cc-title" style="text-align: left;">Combo Spa en Casa</h2>
-                    <p class="cc-sku" style="text-align: left;"><i class="fas fa-barcode"></i> COMBO-SPA-01</p>
-                    <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; text-align: left;">Llevate el difusor base y elegí 2 fragancias textiles a tu gusto.</p>
-                    
-                    <div class="cc-rules-box">
-                        <span class="cc-rules-lbl" style="text-align: left;">Reglas del Paquete:</span>
-                        
-                        <div class="cc-rule-item">
-                            <span class="cr-val"><i class="fas fa-barcode" style="color: var(--kpi-orange);"></i> SKU: DIF-BASE-01</span>
-                            <span class="cr-qty">x1</span>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">El tablero</h3>
+                <h2 style="text-align: center;">Una grilla de tarjetas, y un botón que cambia de nombre</h2>
+                <p style="text-align: center; font-size: 18px;">El interruptor <strong>Activos / Papelera</strong> es el mismo para las dos solapas. El botón principal dice "Crear Combo" o "Nueva Regla" según dónde estés parado.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="pt-toolbar">
+                    <div class="pt-left">
+                        <span class="btn-primary"><i class="fas fa-plus"></i> Crear Combo</span>
+                        <div class="filter-group">
+                            <span class="btn-filter active">Activos</span>
+                            <span class="btn-filter">Papelera</span>
                         </div>
-                        
-                        <div class="cc-rule-item">
-                            <span class="cr-val"><i class="fas fa-layer-group" style="color: var(--kpi-blue);"></i> CAT: Textiles Aromáticos</span>
-                            <span class="cr-qty">x2</span>
+                    </div>
+                    <div class="tabs-container">
+                        <span class="tab-btn active"><i class="fas fa-box-open"></i> Combos</span>
+                        <span class="tab-btn"><i class="fas fa-tags"></i> Eventos</span>
+                    </div>
+                </div>
+
+                <div class="combos-grid">
+                    <div class="combo-card">
+                        <div class="cc-header photo">
+                            <span class="badge-active"><i class="fas fa-circle"></i> Activo</span>
+                            <h3 class="cc-price">$ 25.000</h3>
+                        </div>
+                        <h2 class="cc-title">Combo Spa en Casa</h2>
+                        <p class="cc-sku"><i class="fas fa-barcode"></i> COMBO-SPA-01</p>
+                        <p class="cc-desc">Llevate el difusor base y elegí 2 fragancias textiles a tu gusto.</p>
+                        <div class="cc-rules-box">
+                            <span class="cc-rules-lbl">Reglas del Paquete:</span>
+                            <div class="cc-rule-item">
+                                <span class="cr-val"><i class="fas fa-barcode" style="color: var(--kpi-orange);"></i> DIF-BASE-01</span>
+                                <span class="cr-qty">x1</span>
+                            </div>
+                            <div class="cc-rule-item">
+                                <span class="cr-val"><i class="fas fa-layer-group" style="color: var(--kpi-blue);"></i> Textiles Aromáticos</span>
+                                <span class="cr-qty">x2</span>
+                            </div>
+                        </div>
+                        <div class="cc-actions">
+                            <span class="btn-icon edit"><i class="fas fa-pen"></i></span>
+                            <span class="btn-icon del"><i class="fas fa-trash"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="combo-card">
+                        <div class="cc-header">
+                            <span class="badge-active"><i class="fas fa-circle"></i> Activo</span>
+                            <h3 class="cc-price"><i class="fas fa-percentage" style="font-size:14px; opacity:.5;"></i> 20% OFF</h3>
+                        </div>
+                        <h2 class="cc-title">Armá tu set Nike</h2>
+                        <p class="cc-sku"><i class="fas fa-barcode"></i> COMBO-NIKE-SET</p>
+                        <p class="cc-desc">Tres prendas de la marca, el descuento sale sobre lo que elijas.</p>
+                        <div class="cc-rules-box">
+                            <span class="cc-rules-lbl">Reglas del Paquete:</span>
+                            <div class="cc-rule-item">
+                                <span class="cr-val"><i class="fas fa-copyright" style="color:#34d399;"></i> Nike</span>
+                                <span class="cr-qty">x3</span>
+                            </div>
+                        </div>
+                        <div class="cc-actions">
+                            <span class="btn-icon edit"><i class="fas fa-pen"></i></span>
+                            <span class="btn-icon del"><i class="fas fa-trash"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="combo-card is-inactive">
+                        <div class="cc-header">
+                            <span class="badge-inactive"><i class="fas fa-trash-arrow-up"></i> Borrado</span>
+                            <h3 class="cc-price" style="color:#94a3b8;">$ 18.000</h3>
+                        </div>
+                        <h2 class="cc-title">Combo Día del Amigo</h2>
+                        <p class="cc-sku"><i class="fas fa-barcode"></i> COMBO-AMIGO-26</p>
+                        <p class="cc-desc">Sin descripción detallada.</p>
+                        <div class="cc-rules-box">
+                            <span class="cc-rules-lbl">Reglas del Paquete:</span>
+                            <div class="cc-rule-item">
+                                <span class="cr-val"><i class="fas fa-stream" style="color:#c084fc;"></i> Oversize</span>
+                                <span class="cr-qty">x2</span>
+                            </div>
+                        </div>
+                        <div class="cc-actions">
+                            <span class="btn-outline-green"><i class="fas fa-undo"></i> Restaurar</span>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="text-block" style="padding-left: 40px;">
-                <h3 style="color: var(--kpi-blue); text-align: left;">Flexibilidad Extrema</h3>
-                <h2 style="text-align: left;">Combos Dinámicos (Por Categoría)</h2>
-                <p style="text-align: left;">La mayoría de los sistemas te obligan a crear un SKU nuevo por cada combinación posible (Ej: Combo Vainilla, Combo Lavanda, Combo Coco...). Es inmanejable.</p>
-                <p style="text-align: left;">Nuestro motor permite crear <strong>Combos Dinámicos</strong>. Configurás que el combo incluye "1 Difusor Base + 2 productos de la Categoría Textiles". El cliente elige las fragancias, y el sistema ajusta el stock de lo que realmente se llevó, cobrando el precio promocional cerrado.</p>
+                <div class="note" style="margin-top: 18px;">
+                    <i class="fas fa-trash"></i>
+                    <span>Borrar un combo <b>no toca las ventas anteriores</b>: deja de ofrecerse, y queda en la papelera para volver a activarlo tal cual estaba.</span>
+                </div>
             </div>
-
         </div>
     </div>
 
-    <!-- SLIDE 3: BUILDER MODAL -->
+    <!-- SLIDE 3: ARMAR UN COMBO -->
     <div class="slide">
         <div class="glow-purple-2" style="top: auto; bottom: -200px; right: -200px;"></div>
-        <div class="slide-content-wide grid-split">
-            <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-purple); text-align: left;">Interfaz Simple</h3>
-                <h2 style="text-align: left;">Constructor Visual</h2>
-                <p style="text-align: left;">Diseñamos un creador de combos a prueba de errores. Asignás un SKU virtual al paquete (para que puedas venderlo y escanearlo), fijás un precio final o un porcentaje de descuento, y agregás reglas combinando búsquedas de productos exactos o categorías enteras.</p>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Armar un combo</h3>
+                <h2 style="text-align: center;">Cuatro formas de decir qué entra</h2>
             </div>
-            
-            <div class="visual-block" style="display: flex; justify-content: center;">
+
+            <div class="visual-block bd-split">
                 <div class="builder-modal">
-                    <div class="bm-header">
-                        <i class="fas fa-gift" style="color: var(--kpi-purple);"></i> Armar Nuevo Combo
-                    </div>
+                    <div class="bm-header"><i class="fas fa-gift" style="color: var(--kpi-purple);"></i> Armar Nuevo Combo</div>
                     <div class="bm-body">
                         <div class="bm-input-group">
                             <span class="bm-lbl">Nombre de la Promo</span>
-                            <div class="bm-input">Combo Día del Amigo</div>
+                            <div class="bm-input">Combo Día de la Madre</div>
                         </div>
-                        
+
                         <div class="bm-row">
-                            <div class="bm-input-group" style="flex: 2;">
+                            <div class="bm-input-group" style="flex: 1.5;">
                                 <span class="bm-lbl">Tipo de Promoción</span>
-                                <div class="bm-input" style="display: flex; justify-content: space-between;">
-                                    Precio Fijo Final <i class="fas fa-chevron-down text-muted"></i>
-                                </div>
+                                <div class="bm-input" style="display: flex; justify-content: space-between; align-items:center;">Precio Fijo Final <i class="fas fa-chevron-down" style="color: var(--text-muted); font-size:11px;"></i></div>
                             </div>
                             <div class="bm-input-group">
                                 <span class="bm-lbl">Monto Fijo ($)</span>
-                                <div class="bm-input" style="color: var(--kpi-purple); font-weight: bold;">$ 15000</div>
+                                <div class="bm-input" style="color: var(--kpi-purple); font-weight: bold;">15000</div>
                             </div>
+                        </div>
+
+                        <div class="bm-input-group">
+                            <span class="bm-lbl">SKU Virtual (Código Único)</span>
+                            <div class="bm-input">COMBO-MADRE-01</div>
+                            <span class="bm-help">Este será el código base. Si es dinámico, el sistema le agregará las variantes al final.</span>
                         </div>
 
                         <div class="bm-rules-area">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <span style="font-weight: 700; font-size: 14px;"><i class="fas fa-box-open" style="color: var(--kpi-blue);"></i> ¿Qué incluye el paquete?</span>
-                            </div>
-                            
-                            <div class="bm-rule-row" style="margin-bottom: 10px;">
-                                <div class="bm-input" style="width: 160px; font-size: 13px;">Elegir Categoría <i class="fas fa-chevron-down ml-2"></i></div>
-                                <div class="bm-input" style="flex: 1; font-size: 13px; border-left: 3px solid var(--kpi-blue);">Bebidas Nacionales</div>
-                                <div class="bm-input" style="width: 60px; text-align: center; font-weight: bold;">x 2</div>
+                            <div class="bm-rules-head">
+                                <span><i class="fas fa-box-open" style="color: var(--kpi-blue);"></i> ¿Qué incluye el paquete?</span>
+                                <span class="bm-add">+ Agregar Regla</span>
                             </div>
                             <div class="bm-rule-row">
-                                <div class="bm-input" style="width: 160px; font-size: 13px;">Producto Exacto <i class="fas fa-chevron-down ml-2"></i></div>
-                                <div class="bm-input" style="flex: 1; font-size: 13px; color: var(--text-muted);"><i class="fas fa-search mr-2"></i> Buscar producto...</div>
-                                <div class="bm-input" style="width: 60px; text-align: center; font-weight: bold;">x 1</div>
+                                <div class="bm-input bm-type">Elegir de Categoría <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted);"></i></div>
+                                <div class="bm-input" style="flex: 1; border-left: 3px solid var(--kpi-blue);">Bebidas Nacionales</div>
+                                <div class="bm-input bm-qty">2</div>
+                            </div>
+                            <div class="bm-rule-row">
+                                <div class="bm-input bm-type">Producto Específico <i class="fas fa-chevron-down" style="font-size:10px; color:var(--text-muted);"></i></div>
+                                <div class="bm-input muted" style="flex: 1;"><i class="fas fa-search" style="margin-right:6px;"></i> Buscar por nombre o SKU...</div>
+                                <div class="bm-input bm-qty">1</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="bd-targets">
+                        <div class="bd-target"><i class="fas fa-barcode" style="color:#fb923c;"></i><div><strong>Producto específico</strong><span>Un SKU exacto. El buscador muestra el nombre completo con su clasificación, no solo el código.</span></div></div>
+                        <div class="bd-target"><i class="fas fa-layer-group" style="color:#60a5fa;"></i><div><strong>Elegir de categoría</strong><span>Cualquier producto de esa categoría cuenta para la regla.</span></div></div>
+                        <div class="bd-target"><i class="fas fa-copyright" style="color:#34d399;"></i><div><strong>Elegir de marca</strong><span>Todo lo de esa firma entra, sin importar la categoría.</span></div></div>
+                        <div class="bd-target"><i class="fas fa-stream" style="color:#c084fc;"></i><div><strong>Elegir de línea</strong><span>La colección o sub-marca, el nivel más fino de la clasificación.</span></div></div>
+                    </div>
+
+                    <div class="note warn" style="margin-top: 16px;">
+                        <i class="fas fa-lock"></i>
+                        <span><b>El SKU no se cambia después.</b> Es el código con el que el combo se escanea y con el que quedaron registradas las ventas: editarlo rompería el hilo hacia atrás.</span>
+                    </div>
+                    <div class="note blue" style="margin-top: 12px;">
+                        <i class="fas fa-camera"></i>
+                        <span>La foto se sube <b>recién con el combo guardado</b>: antes de existir no hay a qué colgarla. Es la que se ve en la tienda y en la tarjeta del POS.</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 4: REGLAS AUTOMÁTICAS (EVENTOS) -->
+    <!-- SLIDE 4: CERRADO O ABIERTO -->
     <div class="slide">
         <div class="glow-orange" style="top: auto; bottom: -200px; left: -200px;"></div>
-        <div class="slide-content-wide grid-split">
-            
-            <div class="visual-block" style="display: flex; justify-content: center;">
-                <div class="event-card">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange); text-align: center;">Cerrado o abierto</h3>
+                <h2 style="text-align: center;">Lo decide si todas las reglas apuntan a un SKU</h2>
+                <p style="text-align: center; font-size: 18px;">No es una casilla que se marca: sale de las reglas. Alcanza con que una sola sea por categoría, marca o línea para que el combo pase a ser abierto.</p>
+            </div>
+
+            <div class="visual-block oc-split">
+                <div class="oc-card closed">
+                    <div class="oc-head">
+                        <div class="oc-ico" style="color: var(--kpi-green);"><i class="fas fa-box"></i></div>
                         <div>
-                            <span class="badge-active" style="display: inline-flex; margin-bottom: 10px;"><i class="fas fa-broadcast-tower mr-1"></i> Transmitiendo</span>
-                            <h2 style="font-size: 26px; color: white; margin: 0; text-align: left;">Cyber Monday</h2>
-                            <p style="font-size: 14px; color: var(--text-muted); margin: 5px 0 0 0; text-align: left;">Descuento agresivo por 72hs.</p>
+                            <h4>Combo cerrado</h4>
+                            <small>todas las reglas son SKU</small>
+                        </div>
+                    </div>
+                    <div class="oc-rules">
+                        <div class="oc-rule"><span><i class="fas fa-barcode" style="color:#fb923c;"></i> DIF-BASE-01</span><span class="q">x1</span></div>
+                        <div class="oc-rule"><span><i class="fas fa-barcode" style="color:#fb923c;"></i> TEX-LAVANDA</span><span class="q">x2</span></div>
+                    </div>
+                    <div class="oc-verdict"><i class="fas fa-check" style="color: var(--kpi-green);"></i><span>La caja ya sabe qué lleva: <b>no hay nada que elegir</b>, y el combo muestra su stock desde que se abre la pantalla.</span></div>
+                </div>
+
+                <div class="oc-card open">
+                    <div class="oc-head">
+                        <div class="oc-ico" style="color: var(--kpi-blue);"><i class="fas fa-shuffle"></i></div>
+                        <div>
+                            <h4>Combo abierto</h4>
+                            <small>alguna regla es categoría, marca o línea</small>
+                        </div>
+                    </div>
+                    <div class="oc-rules">
+                        <div class="oc-rule"><span><i class="fas fa-barcode" style="color:#fb923c;"></i> DIF-BASE-01</span><span class="q">x1</span></div>
+                        <div class="oc-rule"><span><i class="fas fa-layer-group" style="color:#60a5fa;"></i> Textiles Aromáticos</span><span class="q">x2</span></div>
+                    </div>
+                    <div class="oc-verdict"><i class="fas fa-hand-pointer" style="color: var(--kpi-blue);"></i><span>Pide configuración: <b>su stock recién se sabe cuando el cajero elige qué lleva</b>, así que hasta entonces la tarjeta muestra cero.</span></div>
+                </div>
+            </div>
+
+            <div class="stock-calc">
+                <span style="font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted);">Stock del combo</span>
+                <div class="sc-part"><span class="sc-name">Difusor base</span><span class="sc-num">12 ÷ 1</span><span class="sc-sub">= 12 combos</span></div>
+                <span class="sc-op"><i class="fas fa-grip-lines-vertical"></i></span>
+                <div class="sc-part min"><span class="sc-name">Textiles</span><span class="sc-num">7 ÷ 2</span><span class="sc-sub">= 3 combos</span></div>
+                <span class="sc-op"><i class="fas fa-arrow-right"></i></span>
+                <div class="sc-result"><span class="sc-num">3</span><span class="sc-name">manda la parte más escasa</span></div>
+            </div>
+
+            <div class="note ok" style="margin-top: 16px;">
+                <i class="fas fa-shield-halved"></i>
+                <span>Al cobrar, el servidor revisa la selección: <b>cada producto elegido tiene que encajar en alguna regla</b> y <b>cada regla tiene que llegar a su cantidad</b>. Si no, corta con "Faltan productos para completar el combo" en vez de vender un paquete incompleto al precio del paquete.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: EVENTOS -->
+    <div class="slide">
+        <div class="glow-blue" style="top: -200px; right: -200px; left: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Eventos</h3>
+                <h2 style="text-align: center;">Un descuento con fecha de inicio y de fin</h2>
+            </div>
+
+            <div class="visual-block ev-split">
+                <div class="event-card">
+                    <div class="ec-top">
+                        <div>
+                            <span class="badge-active"><i class="fas fa-tower-broadcast"></i> Activa</span>
+                            <h2 class="ec-name">Cyber Monday</h2>
+                            <p class="ec-desc">Descuento agresivo por 72 hs.</p>
                         </div>
                         <div class="ec-badge">20% OFF</div>
                     </div>
-                    
+
                     <div class="ec-details">
                         <div class="ec-row">
                             <span class="ec-lbl">Aplica a:</span>
-                            <span class="ec-val" style="color: var(--kpi-blue);"><i class="fas fa-layer-group"></i> Categoría: Indumentaria</span>
+                            <span class="ec-val" style="color:#60a5fa;"><i class="fas fa-layer-group"></i> Cat: Indumentaria</span>
                         </div>
                         <div class="ec-row">
-                            <span class="ec-lbl">Vigencia Desde:</span>
-                            <span class="ec-val text-muted">04/11/2026 00:00 hs</span>
+                            <span class="ec-lbl">Desde:</span>
+                            <span class="ec-val">04/11/2026 00:00</span>
                         </div>
                         <div class="ec-row">
-                            <span class="ec-lbl">Vigencia Hasta:</span>
-                            <span class="ec-val text-muted">06/11/2026 23:59 hs</span>
+                            <span class="ec-lbl">Hasta:</span>
+                            <span class="ec-val">06/11/2026 23:59</span>
+                        </div>
+                    </div>
+
+                    <div class="ec-actions">
+                        <span class="btn-icon edit"><i class="fas fa-pen"></i></span>
+                        <span class="btn-icon del"><i class="fas fa-trash"></i></span>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="ev-targets">
+                        <span class="ev-target"><i class="fas fa-store" style="color:#cbd5e1;"></i> Toda la tienda</span>
+                        <span class="ev-target"><i class="fas fa-layer-group" style="color:#60a5fa;"></i> Categoría</span>
+                        <span class="ev-target"><i class="fas fa-copyright" style="color:#34d399;"></i> Marca</span>
+                        <span class="ev-target"><i class="fas fa-stream" style="color:#c084fc;"></i> Línea</span>
+                        <span class="ev-target"><i class="fas fa-barcode" style="color:#fb923c;"></i> Producto específico</span>
+                    </div>
+
+                    <div class="ev-rules">
+                        <div class="note blue">
+                            <i class="fas fa-trophy"></i>
+                            <span>Si dos eventos alcanzan al mismo producto, <b>gana el que deje el precio más bajo</b>. No se suman: el nombre del que ganó es el que aparece al lado del precio tachado.</span>
+                        </div>
+                        <div class="note warn">
+                            <i class="fas fa-handshake"></i>
+                            <span>Un <b>precio negociado</b> no se toca. Tampoco las carpetas, los servicios ni los pases: los eventos alcanzan a productos físicos y digitales.</span>
+                        </div>
+                        <div class="note ok">
+                            <i class="fas fa-layer-group"></i>
+                            <span>El descuento cae sobre <b>todas las escalas</b>, no solo la primera. Cada escala guarda su precio de lista para poder mostrar el tachado.</span>
+                        </div>
+                        <div class="note">
+                            <i class="fas fa-clock"></i>
+                            <span>Vencida la fecha, el evento <b>se cae solo de "Activos"</b> sin que nadie lo apague: la consulta solo trae los que están vigentes ahora.</span>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="text-block" style="padding-left: 40px;">
-                <h3 style="color: var(--kpi-orange); text-align: left;">El Piloto Automático</h3>
-                <h2 style="text-align: left;">Eventos por Tiempo Limitado</h2>
-                <p style="text-align: left;">Programá tus fechas clave (Hot Sale, Navidad, Cyber Monday) con anticipación. Configurá si el descuento aplica a toda la tienda, a una categoría o a un SKU en particular.</p>
-                <p style="text-align: left;">Llegada la fecha, <strong>el sistema tacha los precios automáticamente</strong> en el catálogo online y en la caja del mostrador, y los revierte a la normalidad en el segundo exacto en que termina el evento. Operativa 100% libre de manos.</p>
-            </div>
-
         </div>
     </div>
 
-    <!-- SLIDE 5: NAVEGACIÓN -->
+    <!-- SLIDE 6: PAPELERA -->
+    <div class="slide">
+        <div class="glow-purple-2" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 26px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-purple); text-align: center;">Papelera</h3>
+                <h2 style="text-align: center;">El Cyber Monday del año que viene ya está escrito</h2>
+            </div>
+
+            <div class="visual-block tr-split">
+                <div class="reuse-modal">
+                    <div class="bm-header"><i class="fas fa-magic" style="color: var(--kpi-purple);"></i> Reutilizar Evento</div>
+                    <div class="bm-body">
+                        <p class="reuse-hint">Solo necesitás definir el nuevo rango de fechas. El resto de la configuración se mantiene.</p>
+
+                        <div class="reuse-summary">
+                            <div class="reuse-row"><span class="reuse-label">Evento</span><span class="reuse-value">Cyber Monday</span></div>
+                            <div class="reuse-row"><span class="reuse-label">Descuento</span><span class="reuse-value">20%</span></div>
+                            <div class="reuse-row"><span class="reuse-label">Aplica a</span><span class="reuse-value">Cat: Indumentaria</span></div>
+                        </div>
+
+                        <div class="bm-row">
+                            <div class="bm-input-group">
+                                <span class="bm-lbl">Nueva fecha de inicio</span>
+                                <div class="bm-input">03/11/2027 00:00</div>
+                            </div>
+                            <div class="bm-input-group">
+                                <span class="bm-lbl">Nueva fecha de fin</span>
+                                <div class="bm-input">05/11/2027 23:59</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="tr-steps">
+                        <div class="tr-step"><span class="tr-num">1</span><div><strong>Borrar es mudar, no destruir</strong><span>"¿Mover a la papelera? Dejará de aplicarse en caja y podrás reutilizarla después."</span></div></div>
+                        <div class="tr-step"><span class="tr-num">2</span><div><strong>Un combo vuelve tal cual</strong><span>Restaurar lo reactiva con sus reglas, su precio y su SKU: nada que volver a cargar.</span></div></div>
+                        <div class="tr-step"><span class="tr-num">3</span><div><strong>Un evento vuelve con fechas nuevas</strong><span>Las viejas ya pasaron, así que reactivarlo sin tocarlas lo dejaría vencido el mismo segundo.</span></div></div>
+                        <div class="tr-step"><span class="tr-num">4</span><div><strong>Y las fechas tienen que servir</strong><span>El fin posterior al inicio, y en el futuro. Si no, avisa antes de guardar.</span></div></div>
+                    </div>
+
+                    <div class="note" style="margin-top: 16px;">
+                        <i class="fas fa-box-archive"></i>
+                        <span>Un evento vencido deja de aplicarse y sale de "Activos" por su cuenta. Para tenerlo a mano el año que viene hay que <b>mandarlo a la papelera</b>: ahí es donde vive el botón Reutilizar.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -413,7 +771,7 @@
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
         const pageId = 'promociones';
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -435,7 +793,7 @@
             });
             currentSlideNum.innerText = currentIndex + 1;
             
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
         }
@@ -445,8 +803,8 @@
                 currentIndex++;
                 updateSlides();
             } else {
-                localStorage.removeItem('slide_' + pageId);
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -465,7 +823,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -477,16 +835,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -494,6 +852,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();

@@ -97,38 +97,165 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
         /* =========================================
-           MOCKUP: SUGERENCIAS INTELIGENTES (SLIDE 2)
+           SLIDE 2: SUGERENCIAS
            ========================================= */
-        .top-bar-mock { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px;}
-        .controls-mock { display: flex; align-items: center; gap: 15px; background: rgba(0,0,0,0.3); padding: 8px 20px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05); }
-        .styled-slider { -webkit-appearance: none; width: 120px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; outline: none; }
-        .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--kpi-blue); cursor: pointer; }
-        .math-breakdown { display: flex; gap: 20px; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border-left: 3px solid var(--kpi-blue); align-items: center;}
-        .math-item { display: flex; flex-direction: column; align-items: center;}
-        .math-lbl { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
-        .math-val { font-size: 18px; font-weight: 900; color: white;}
+        .top-bar-mock { display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; border-bottom: 1px solid var(--border-glass); padding-bottom: 14px;}
+        .list-title-group { display: flex; align-items: center; gap: 12px;}
+        .list-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0;}
+        .sw-track { width: 42px; height: 23px; border-radius: 20px; background: var(--kpi-green); position: relative; flex-shrink: 0;}
+        .sw-track::after { content: ''; position: absolute; right: 3px; top: 3px; width: 17px; height: 17px; border-radius: 50%; background: white;}
+        .controls-mock { display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,0.3); padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.05);}
+        .meta-label { font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;}
+        .meta-label span { color: var(--kpi-blue); font-size: 16px;}
+        .styled-slider { -webkit-appearance: none; width: 120px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; outline: none;}
+        .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--kpi-blue); cursor: pointer;}
 
-        /* =========================================
-           MOCKUP: MULTI-CARRITO (SLIDE 3)
-           ========================================= */
-        .provider-group { background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 20px; border-radius: 16px; margin-bottom: 20px;}
-        .group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 15px;}
-        .shop-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid transparent; flex-wrap: wrap; gap: 10px;}
+        .provider-group { background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); padding: 18px; border-radius: 16px; margin-bottom: 16px;}
+        .group-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 10px; margin-bottom: 14px;}
+        .p-name { font-size: 17px; color: white; font-weight: 700; border-bottom: 1px dotted rgba(96, 165, 250, 0.6);}
+        .p-badge { background: rgba(255,255,255,0.1); padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; color: #cbd5e1;}
+        .shop-item { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; background: rgba(0,0,0,0.3); border-radius: 10px; margin-bottom: 8px; border-left: 3px solid transparent; flex-wrap: wrap; gap: 10px;}
         .row-urgent { border-left-color: var(--kpi-orange); }
-        .btn-create-order { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #e2e8f0; padding: 12px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px; justify-content: center; width: 100%; transition: 0.2s; cursor: pointer;}
-        .btn-create-order:hover { background: rgba(59, 130, 246, 0.2); border-color: var(--kpi-blue); color: var(--kpi-blue);}
+        .item-qty-value { color: var(--kpi-blue); font-weight: 800;}
+        .btn-pass-item { width: 30px; height: 30px; border-radius: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--kpi-blue); display: flex; align-items: center; justify-content: center; font-size: 12px;}
+        .group-footer { display: flex; justify-content: space-between; align-items: center; margin: 14px 0; border-top: 1px solid var(--border-glass); padding-top: 13px;}
+        .group-footer-label { font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;}
+        .group-footer-value { font-size: 20px; font-weight: 900; color: white;}
+        .group-actions { display: flex; gap: 10px;}
+        .btn-copy { width: 46px; flex-shrink: 0; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #e2e8f0; border-radius: 10px; display: flex; align-items: center; justify-content: center;}
+        .btn-create-order { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--kpi-blue); padding: 12px 20px; border-radius: 10px; font-weight: 700; display: flex; align-items: center; gap: 10px; justify-content: center; flex: 1;}
+
+        .math-breakdown { display: flex; gap: 16px; margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border-left: 3px solid var(--kpi-blue); align-items: center; flex-wrap: wrap;}
+        .math-item { display: flex; flex-direction: column; align-items: center; gap: 3px;}
+        .math-lbl { font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center;}
+        .math-val { font-size: 18px; font-weight: 900; color: white;}
+        .math-sub { font-size: 10px; color: #64748b;}
+        .math-op { color: rgba(255,255,255,0.25); font-size: 22px;}
 
         /* =========================================
-           MOCKUP: HISTORIAL Y LOTES (SLIDE 4)
+           SLIDE 3: LA ORDEN DE COMPRA
            ========================================= */
-        .history-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 12px; padding: 20px; }
-        .detail-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; min-width: 600px;}
+        .draft-panel { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.5); width: 100%;}
+        .draft-head { display: flex; align-items: center; gap: 10px; padding: 13px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-glass); color: white; font-weight: 800; font-size: 16px;}
+        .draft-tabs { display: flex; gap: 7px; padding: 12px 14px 0; flex-wrap: wrap; align-items: center;}
+        .tab-btn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 9px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-glass); color: var(--text-muted); font-size: 13px; font-weight: 700;}
+        .tab-btn.active { background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.45); color: #93c5fd;}
+        .tab-badge { background: rgba(0,0,0,0.4); border-radius: 20px; padding: 1px 7px; font-size: 11px; font-weight: 900;}
+        .btn-clear { margin-left: auto; width: 30px; height: 30px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; display: flex; align-items: center; justify-content: center; font-size: 12px;}
+
+        .search-row { display: flex; gap: 9px; padding: 13px 14px; align-items: stretch;}
+        .search-input-wrapper { flex: 1; display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: 9px; background: rgba(0,0,0,0.35); border: 1px solid var(--border-glass); color: #64748b; font-size: 13px; min-width: 0;}
+        .search-quantity { margin-left: auto; display: flex; align-items: center; gap: 7px; color: var(--text-muted); font-size: 10px; text-transform: uppercase; font-weight: 800; flex-shrink: 0;}
+        .search-quantity b { color: white; background: rgba(255,255,255,0.07); border-radius: 6px; padding: 3px 9px; font-size: 13px;}
+        .draft-toolbar { display: flex; gap: 7px; flex-shrink: 0;}
+        .tool-btn { width: 38px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 13px;}
+        .tool-btn.filled { background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93c5fd;}
+
+        .draft-row { margin: 0 14px 10px; padding: 12px 14px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);}
+        .draft-row-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 11px;}
+        .draft-item-name { color: white; font-weight: 700; font-size: 14px;}
+        .draft-item-subtotal { color: var(--text-muted); font-size: 12px;}
+        .draft-item-subtotal strong { color: white;}
+        .edit-controls-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px;}
+        .control-group { display: flex; flex-direction: column; gap: 4px; min-width: 0;}
+        .control-group label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;}
+        .mini-input { background: rgba(0,0,0,0.35); border: 1px solid var(--border-glass); border-radius: 7px; padding: 7px 9px; color: white; font-size: 13px; font-weight: 700;}
+        .mini-input.placeholder { color: #64748b; font-weight: 400;}
+        .presentation-hint { margin-top: 9px; font-size: 11px; color: #93c5fd; background: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.25); border-radius: 7px; padding: 7px 10px;}
+
+        .draft-footer { padding: 14px 16px; background: rgba(0,0,0,0.3); border-top: 1px solid var(--border-glass);}
+        .draft-total-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 14px;}
+        .draft-total-label { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
+        .draft-subtotal-value { display: block; color: white; font-size: 18px; font-weight: 800; margin-top: 3px;}
+        .draft-total-value { display: block; color: var(--kpi-green); font-size: 24px; font-weight: 900; margin-top: 3px;}
+        .confirm-actions { display: flex; gap: 10px;}
+        .btn-confirm { flex: 1; padding: 13px; border-radius: 10px; font-weight: 800; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 9px; background: var(--kpi-green); color: white;}
+        .btn-confirm.secondary { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: var(--kpi-orange);}
+
+        /* =========================================
+           SLIDE 4: LA RECEPCIÓN
+           ========================================= */
+        .receive-card { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%;}
+        .receive-head { padding: 16px 18px; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);}
+        .receive-head .eyebrow { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--kpi-blue);}
+        .receive-head h4 { margin: 5px 0 0; color: white; font-size: 19px; font-weight: 800;}
+        .receive-hint { margin: 0; padding: 13px 18px 0; font-size: 13px; color: var(--text-muted); text-align: left;}
+        .lines-scroll { padding: 13px 18px; display: flex; flex-direction: column; gap: 9px;}
+        .line-row { display: flex; align-items: center; gap: 14px; padding: 11px 13px; border-radius: 9px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);}
+        .line-row.short { border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.06);}
+        .line-name { flex: 1; min-width: 0;}
+        .line-name strong { display: block; color: white; font-size: 14px; font-weight: 700;}
+        .line-name small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .line-input { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 11px; text-transform: uppercase; font-weight: 800; flex-shrink: 0;}
+        .line-input b { color: white; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glass); border-radius: 7px; padding: 5px 11px; font-size: 14px;}
+        .line-total { color: #cbd5e1; font-weight: 700; font-size: 13px; min-width: 76px; text-align: right;}
+        .receive-total { display: flex; justify-content: space-between; align-items: center; margin: 0 18px; padding: 12px 14px; border-radius: 10px; background: rgba(0,0,0,0.3); color: var(--text-muted); font-size: 13px; font-weight: 700;}
+        .receive-total strong { color: white; font-size: 19px;}
+        .overpaid-box { margin: 14px 18px 0; padding: 14px; border-radius: 10px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.28);}
+        .overpaid-title { display: block; color: #bfdbfe; font-size: 13px; font-weight: 700; margin-bottom: 11px; line-height: 1.5;}
+        .overpaid-options { display: flex; gap: 10px; flex-wrap: wrap;}
+        .overpaid-options label { flex: 1; min-width: 180px; padding: 11px 13px; border-radius: 9px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass);}
+        .overpaid-options label.active { border-color: rgba(59, 130, 246, 0.55); background: rgba(59, 130, 246, 0.13);}
+        .overpaid-options strong { display: block; color: white; font-size: 13px;}
+        .overpaid-options small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 3px; line-height: 1.4;}
+        .receive-warn { margin: 13px 18px 0; font-size: 12px; color: var(--kpi-orange); text-align: left;}
+        .receive-actions { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; padding: 15px 18px; margin-top: 14px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);}
+        .receive-actions .ghost { padding: 11px 16px; border-radius: 9px; border: 1px solid var(--border-glass); color: var(--text-muted); font-size: 13px; font-weight: 700;}
+        .receive-actions .secondary { padding: 11px 16px; border-radius: 9px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: var(--kpi-orange); font-size: 13px; font-weight: 800;}
+        .receive-actions .primary { padding: 11px 18px; border-radius: 9px; background: var(--kpi-blue); color: white; font-size: 13px; font-weight: 800;}
+
+        /* =========================================
+           SLIDE 5: HISTORIAL DE REMITOS
+           ========================================= */
+        .history-card { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 12px; padding: 18px;}
+        .card-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 13px; border-bottom: 1px solid var(--border-glass);}
+        .supplier-name { font-size: 19px; font-weight: bold; color: white;}
+        .record-date { font-size: 13px; color: var(--text-muted);}
+        .meta-badges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px;}
+        .state-badge, .pay-badge, .invoice-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 800;}
+        .state-badge.partial { background: rgba(245, 158, 11, 0.15); color: var(--kpi-orange); border: 1px solid rgba(245, 158, 11, 0.3);}
+        .state-badge.received { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); border: 1px solid rgba(16, 185, 129, 0.3);}
+        .pay-badge.paid { background: rgba(16, 185, 129, 0.15); color: var(--kpi-green); border: 1px solid rgba(16, 185, 129, 0.3);}
+        .pay-badge.unpaid { background: rgba(148, 163, 184, 0.12); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.25);}
+        .invoice-badge.missing { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);}
+        .invoice-badge.has { background: rgba(59, 130, 246, 0.12); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3);}
+        .receipt-actions { display: flex; gap: 9px; flex-wrap: wrap; margin: 15px 0;}
+        .action-btn { padding: 9px 14px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 7px;}
+        .action-btn.primary { background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93c5fd;}
+        .action-btn.success { background: rgba(16, 185, 129, 0.12); border-color: rgba(16, 185, 129, 0.3); color: #6ee7b7;}
+        .action-btn.danger { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #f87171;}
+        .detail-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 14px; min-width: 600px;}
         .detail-table th { text-align: left; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border-glass); text-transform: uppercase; font-size: 11px; letter-spacing: 1px;}
         .detail-table td { padding: 10px 0; color: white; border-bottom: 1px solid rgba(255,255,255,0.02); vertical-align: middle;}
         .lot-badge { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 4px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; border: 1px solid rgba(168, 85, 247, 0.3);}
 
         /* =========================================
-           SLIDE 5: NAVEGACIÓN
+           SLIDE 6: CONTACTOS
+           ========================================= */
+        .dir-panel { background: rgba(15, 23, 42, 0.85); border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 45px rgba(0,0,0,0.5); width: 100%;}
+        .dir-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 16px; background: rgba(0,0,0,0.3); border-bottom: 1px solid var(--border-glass);}
+        .dir-head h4 { margin: 0; color: white; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 9px;}
+        .dir-actions { display: flex; gap: 8px;}
+        .btn-circle-sm { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative;}
+        .inactive-count { position: absolute; top: -5px; right: -5px; background: var(--kpi-orange); color: #1e293b; border-radius: 20px; font-size: 9px; font-weight: 900; padding: 1px 5px;}
+        .btn-new { padding: 8px 13px; border-radius: 9px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 7px;}
+
+        .dir-list { padding: 13px 14px; display: flex; flex-direction: column; gap: 9px;}
+        .supplier-card-compact { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 13px; border-radius: 11px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass);}
+        .supplier-card-compact.selected { border-color: rgba(59, 130, 246, 0.5); background: rgba(59, 130, 246, 0.1);}
+        .supplier-card-compact.internal { border-left: 3px solid var(--kpi-purple);}
+        .sup-left { display: flex; align-items: center; gap: 12px; min-width: 0;}
+        .sup-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--kpi-blue), var(--kpi-purple)); display: flex; align-items: center; justify-content: center; font-weight: 800; color: white; flex-shrink: 0;}
+        .sup-details h4 { margin: 0; color: white; font-size: 14px; font-weight: 700;}
+        .mini-badges { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; margin-top: 4px; font-size: 11px; color: var(--text-muted);}
+        .internal-badge { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 7px; border-radius: 12px; font-size: 10px; font-weight: 800;}
+        .b2b-badge { color: #67e8f9; font-weight: 800; font-size: 10px;}
+        .sup-actions { display: flex; gap: 7px; flex-shrink: 0;}
+        .btn-circle { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: var(--text-muted); display: flex; align-items: center; justify-content: center; font-size: 11px;}
+        .btn-circle.btn-whatsapp-direct { color: var(--kpi-green); border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1);}
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
            ========================================= */
         .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
@@ -165,6 +292,9 @@
             /* Textos apilados arriba */
             .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
             .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -175,6 +305,24 @@
             /* Fix Slide 2: Math Breakdown */
             .top-bar-mock { flex-direction: column; gap: 15px; align-items: flex-start; }
             .math-breakdown { flex-wrap: wrap; justify-content: center; text-align: center; gap: 15px; }
+
+            /* Los renglones del borrador y la recepcion apilan sus controles */
+            .edit-controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .draft-tabs { justify-content: center; }
+            .search-row { flex-direction: column; }
+            .draft-toolbar { justify-content: center; }
+            .draft-total-row { flex-direction: column; align-items: stretch; gap: 10px; }
+            .draft-total-row > div { text-align: left !important; }
+            .confirm-actions { flex-direction: column; }
+
+            .line-row { flex-wrap: wrap; }
+            .line-total { min-width: 0; }
+            .receive-actions { flex-direction: column-reverse; }
+            .receive-actions > span { text-align: center; }
+
+            .card-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .card-header > div:last-child { text-align: left !important; }
+            .dir-head, .dir-actions { justify-content: center; }
 
             /* Fix Slide 4: Table con Scroll Lateral */
             .history-card { padding: 15px; width: 100%; overflow: hidden;}
@@ -197,8 +345,10 @@
             .qa-text { text-align: left; font-size: 14px; }
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
@@ -212,172 +362,343 @@
         <div class="glow-blue"></div>
         <div class="slide-content-wide grid-split">
             <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-blue); text-align: left;">Supply Chain Simplificado</h3>
-                <h1 style="text-align: left;">Gestión de <br><span style="color: white;">Abastecimiento</span></h1>
-                <p style="text-align: left;">Comprar mercadería no debería basarse en la intuición ni en revisar góndolas a ojo. Convertimos el dolor de cabeza del stock en un proceso matemático automatizado.</p>
-                <p style="text-align: left;">El sistema cruza el inventario actual, las reservas pendientes y la velocidad de ventas histórica para decirte <strong>exactamente qué pedir, a quién y cuándo.</strong></p>
+                <h3 style="color: var(--kpi-blue); text-align: left;">Abastecimiento</h3>
+                <h1 style="text-align: left;">Gestión de <br><span style="color: white;">Proveedores</span></h1>
+                <p style="text-align: left;">Comprar mercadería no debería basarse en la intuición ni en revisar góndolas a ojo. El apartado es un escritorio de tres columnas que acompaña la compra de punta a punta.</p>
+                <p style="text-align: left;">A la izquierda <strong>qué falta</strong>, en el medio <strong>la orden que estás armando</strong> —una por proveedor— y a la derecha <strong>con quién comprás</strong> y todo lo que le compraste antes.</p>
             </div>
-            
-            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                <div style="display: flex; gap: 30px; margin-bottom: 40px; flex-wrap: wrap; justify-content: center;">
-                    <div style="text-align: center;">
-                        <i class="fas fa-database text-muted" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <div style="font-size: 14px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Stock Físico</div>
+
+            <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 18px;">
+                <div style="display: flex; gap: 14px; width: 92%; justify-content: center;">
+                    <div style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 14px; padding: 22px 10px;">
+                        <i class="fas fa-magic" style="font-size: 30px; color: var(--kpi-purple); margin-bottom: 12px;"></i>
+                        <div style="font-size: 13px; font-weight: bold; color: white; text-transform: uppercase;">Sugerencias</div>
                     </div>
-                    <div style="text-align: center; color: var(--kpi-orange);">
-                        <i class="fas fa-plus" style="font-size: 20px; line-height: 40px;"></i>
+                    <div style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 22px 10px;">
+                        <i class="fas fa-clipboard-list" style="font-size: 30px; color: var(--kpi-blue); margin-bottom: 12px;"></i>
+                        <div style="font-size: 13px; font-weight: bold; color: white; text-transform: uppercase;">Orden</div>
                     </div>
-                    <div style="text-align: center;">
-                        <i class="fas fa-shopping-bag text-muted" style="font-size: 40px; margin-bottom: 10px;"></i>
-                        <div style="font-size: 14px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Demanda</div>
+                    <div style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 22px 10px;">
+                        <i class="fas fa-address-book" style="font-size: 30px; color: var(--kpi-green); margin-bottom: 12px;"></i>
+                        <div style="font-size: 13px; font-weight: bold; color: white; text-transform: uppercase;">Contactos</div>
                     </div>
                 </div>
-                
-                <i class="fas fa-arrow-down text-blue-500" style="font-size: 24px; margin-bottom: 20px;"></i>
-                
-                <div style="background: rgba(59, 130, 246, 0.15); border: 1px solid var(--kpi-blue); padding: 20px 40px; border-radius: 16px;">
-                    <i class="fas fa-magic text-blue-400" style="font-size: 40px; margin-bottom: 15px;"></i>
-                    <h2 style="font-size: 28px; margin: 0;">Sugerencias Inteligentes</h2>
+
+                <i class="fas fa-arrow-down" style="font-size: 20px; color: var(--text-muted);"></i>
+
+                <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; width: 92%;">
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 16px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-tag text-muted mr-2"></i> Lote y vencimiento</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 16px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-box-open text-muted mr-2"></i> Recepción parcial</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 9px 16px; border-radius: 20px; font-size: 13px; font-weight: bold;"><i class="fas fa-file-invoice-dollar text-muted mr-2"></i> Factura e IVA compras</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: COMPRAS PREDICTIVAS (SMART SUGGESTIONS) -->
+    <!-- SLIDE 2: SUGERENCIAS -->
     <div class="slide">
         <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
+            <div class="text-block" style="text-align: center; margin-bottom: 26px; max-width: 1050px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-purple);">Optimización de Capital</h3>
-                <h2>Compras Predictivas</h2>
-                <p>No compres "para rellenar". Ajustá el slider de "Meta de Días" y el sistema analizará la velocidad de ventas de los últimos 30 días para proyectar exactamente cuánto necesitas para no quebrar stock en el futuro.</p>
-                <p style="font-size: 16px; color: var(--kpi-purple); font-weight: bold;"><i class="fas fa-project-diagram mr-2"></i> Magia Operativa: Si un cliente reserva un "Combo Armado", el sistema lo desarma y te pide los ingredientes base sueltos automáticamente.</p>
+                <h2>Qué Falta y Cuánto</h2>
+                <p>La sugerencia no es un solo número: son <strong>dos faltantes que se suman</strong>. Lo que ya se le debe a un cliente y no está en la estantería, y lo que va a faltar para cubrir la meta de días que ponés en el slider.</p>
+                <p style="font-size: 16px; color: var(--kpi-purple); font-weight: bold;"><i class="fas fa-toggle-on mr-2"></i> El interruptor apaga la proyección: con las sugerencias en OFF, la lista solo trae lo que falta para las reservas ya tomadas.</p>
             </div>
-            
-            <div class="visual-block glass-panel" style="max-width: 900px; margin: 0 auto; width: 100%;">
+
+            <div class="visual-block glass-panel" style="max-width: 920px; margin: 0 auto; width: 100%;">
                 <div class="top-bar-mock">
-                    <div style="font-size: 18px; font-weight: bold; color: var(--text-main);"><i class="fas fa-magic" style="color: var(--kpi-blue); margin-right: 8px;"></i> Sugerencias Inteligentes</div>
+                    <div class="list-title-group">
+                        <h4 class="list-title">Sugerencias</h4>
+                        <span class="sw-track"></span>
+                    </div>
                     <div class="controls-mock">
-                        <i class="fas fa-chart-line" style="color: var(--kpi-blue); font-size: 18px;"></i>
-                        <div style="width: 1px; height: 20px; background: var(--border-glass);"></div>
-                        <span style="font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Meta: <span style="color: var(--kpi-blue); font-size: 16px;">15 Días</span></span>
+                        <span class="meta-label">Meta: <span>15d</span></span>
                         <input type="range" value="15" min="7" max="60" class="styled-slider">
                     </div>
                 </div>
 
-                <div class="shop-item">
-                    <div>
-                        <strong style="color: white; font-size: 18px; display: block;">Difusor Aromático Vainilla</strong>
-                        <span style="color: var(--text-muted); font-size: 13px;">Proveedor: Esencias SRL</span>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold;">Sugerido</span>
-                        <div style="color: var(--kpi-blue); font-size: 24px; font-weight: 900;">42 Unidades</div>
-                    </div>
-                </div>
-
-                <!-- Breakdown Matemático -->
-                <div class="math-breakdown">
-                    <div class="math-item"><span class="math-lbl">Stock Físico</span><span class="math-val" style="color: var(--text-muted);">8 unid.</span></div>
-                    <div style="color: var(--border-glass); font-size: 24px; line-height: 40px;">-</div>
-                    <div class="math-item"><span class="math-lbl" style="color: var(--kpi-orange);">Reservas Urgentes</span><span class="math-val" style="color: var(--kpi-orange);">12 unid.</span></div>
-                    <div style="color: var(--border-glass); font-size: 24px; line-height: 40px;">+</div>
-                    <div class="math-item"><span class="math-lbl" style="color: var(--kpi-purple);">Proyección (15d)</span><span class="math-val" style="color: var(--kpi-purple);">38 unid.</span></div>
-                    <div style="color: var(--border-glass); font-size: 24px; line-height: 40px;">=</div>
-                    <div class="math-item"><span class="math-lbl" style="color: var(--kpi-blue);">A comprar</span><span class="math-val" style="color: var(--kpi-blue);">42 unid.</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- SLIDE 3: MULTI-CARRITO -->
-    <div class="slide">
-        <div class="glow-orange" style="top: auto; bottom: -200px; left: -200px;"></div>
-        <div class="slide-content-wide grid-split">
-            
-            <div class="text-block">
-                <h3 style="color: var(--kpi-orange);">Logística sin Fricción</h3>
-                <h2>Multi-Carrito Automatizado</h2>
-                <p>Armar listas de compras a mano es un dolor de cabeza. El sistema procesa todas las sugerencias inteligentes y las divide automáticamente en órdenes de compra independientes agrupadas por Proveedor.</p>
-                <p>Con un clic, mandas la orden por WhatsApp, y con otro clic confirmas el ingreso monetario y de stock en tu sistema.</p>
-            </div>
-
-            <div class="visual-block glass-panel" style="padding: 30px;">
-                <div class="provider-group">
+                <div class="provider-group" style="margin-bottom: 0;">
                     <div class="group-header">
-                        <span style="font-size: 20px; color: white;">Aromas S.A.</span>
-                        <span style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold;">3 Items</span>
+                        <span class="p-name">Esencias SRL</span>
+                        <span class="p-badge">2 items</span>
                     </div>
-                    
+
                     <div class="shop-item row-urgent">
                         <div>
-                            <strong style="color: white; font-size: 15px; display: block;">Set Velas Aromáticas</strong>
-                            <span style="color: var(--kpi-orange); font-size: 11px; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Incluye urgencias</span>
+                            <span style="color: white; font-weight: 700;">Difusor Aromático Vainilla</span>
                         </div>
-                        <div style="color: var(--kpi-blue); font-weight: 800;">x 120</div>
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <span style="color: var(--text-muted); font-size: 13px;">Sugerido: <span class="item-qty-value">x42</span></span>
+                            <span class="btn-pass-item"><i class="fas fa-plus"></i></span>
+                        </div>
                     </div>
                     <div class="shop-item">
-                        <div><strong style="color: white; font-size: 15px;">Difusor Lavanda</strong></div>
-                        <div style="color: var(--kpi-blue); font-weight: 800;">x 45</div>
+                        <div>
+                            <span style="color: white; font-weight: 700;">Aceite Esencial Lavanda</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <span style="color: var(--text-muted); font-size: 13px;">Sugerido: <span class="item-qty-value">x18</span></span>
+                            <span class="btn-pass-item"><i class="fas fa-plus"></i></span>
+                        </div>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; border-top: 1px solid var(--border-glass); padding-top: 15px;">
-                        <span style="font-size: 12px; font-weight: bold; color: var(--text-muted); text-transform: uppercase;">Inversión Estimada</span>
-                        <span style="font-size: 22px; font-weight: 900; color: white;">$ 624.500</span>
+                    <div class="group-footer">
+                        <span class="group-footer-label">Inversión Estimada</span>
+                        <span class="group-footer-value">$ 624.500</span>
                     </div>
 
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn-create-order" style="flex: 0 0 auto; width: 50px;"><i class="fas fa-copy"></i></button>
-                        <button class="btn-create-order" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: var(--kpi-blue); flex: 1;">Confirmar Ingreso de Stock <i class="fas fa-check"></i></button>
+                    <div class="group-actions">
+                        <span class="btn-copy"><i class="fas fa-copy"></i></span>
+                        <span class="btn-create-order">Crear Orden <i class="fas fa-arrow-right"></i></span>
                     </div>
                 </div>
+
+                <!-- Cómo sale ese 42 -->
+                <div class="math-breakdown">
+                    <div class="math-item">
+                        <span class="math-lbl" style="color: var(--kpi-orange);">Falta para reservas</span>
+                        <span class="math-val" style="color: var(--kpi-orange);">4</span>
+                        <span class="math-sub">12 pedidas − 8 en stock</span>
+                    </div>
+                    <div class="math-op">+</div>
+                    <div class="math-item">
+                        <span class="math-lbl" style="color: var(--kpi-purple);">Falta para la meta</span>
+                        <span class="math-val" style="color: var(--kpi-purple);">38</span>
+                        <span class="math-sub">76 vendidas en 30d → 38 en 15d</span>
+                    </div>
+                    <div class="math-op">=</div>
+                    <div class="math-item">
+                        <span class="math-lbl" style="color: var(--kpi-blue);">Sugerido</span>
+                        <span class="math-val" style="color: var(--kpi-blue);">42</span>
+                        <span class="math-sub">unidades a comprar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: LA ORDEN DE COMPRA -->
+    <div class="slide">
+        <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1050px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-orange);">Una Orden por Proveedor</h3>
+                <h2>La Orden de Compra</h2>
+                <p>Todo lo que mandás a la orden se separa solo por proveedor, y cada uno es una solapa. La trazabilidad se carga <strong>acá, al armar el pedido</strong>: lote y vencimiento van en el mismo renglón que la cantidad y el costo.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%; max-width: 1000px; margin: 0 auto;">
+                <div class="draft-panel">
+                    <div class="draft-head"><i class="fas fa-clipboard-list"></i> Orden de Compra</div>
+
+                    <div class="draft-tabs">
+                        <span class="tab-btn active">Esencias SRL <span class="tab-badge">2</span></span>
+                        <span class="tab-btn">Aromas S.A. <span class="tab-badge">3</span></span>
+                        <span class="tab-btn">Laboratorios Saphirus <span class="tab-badge">1</span></span>
+                        <span class="btn-clear"><i class="fas fa-trash-alt"></i></span>
+                    </div>
+
+                    <div class="search-row">
+                        <div class="search-input-wrapper">
+                            <i class="fas fa-search"></i>
+                            <span>Agregar a la orden de Esencias SRL...</span>
+                            <span class="search-quantity">Cantidad <b>1</b></span>
+                        </div>
+                        <div class="draft-toolbar">
+                            <span class="tool-btn filled" title="Remito / factura"><i class="fas fa-file-invoice"></i></span>
+                            <span class="tool-btn"><i class="fas fa-copy"></i></span>
+                            <span class="tool-btn"><i class="fas fa-paste"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="draft-row">
+                        <div class="draft-row-header">
+                            <span class="draft-item-name">Difusor Aromático Vainilla</span>
+                            <span class="draft-item-subtotal">Subtotal: <strong>$ 46.620</strong></span>
+                        </div>
+                        <div class="edit-controls-grid">
+                            <div class="control-group"><label>Total (u)</label><div class="mini-input">42</div></div>
+                            <div class="control-group"><label>Costo por u</label><div class="mini-input">1.110,06</div></div>
+                            <div class="control-group"><label>Lote</label><div class="mini-input">LT-A845</div></div>
+                            <div class="control-group"><label>Vence</label><div class="mini-input">10/2027</div></div>
+                        </div>
+                    </div>
+
+                    <div class="draft-row">
+                        <div class="draft-row-header">
+                            <span class="draft-item-name">Aceite Esencial Lavanda</span>
+                            <span class="draft-item-subtotal">Subtotal: <strong>$ 18.000</strong></span>
+                        </div>
+                        <div class="edit-controls-grid">
+                            <div class="control-group"><label>Recipientes</label><div class="mini-input">3</div></div>
+                            <div class="control-group"><label>Tamaño</label><div class="mini-input">5</div></div>
+                            <div class="control-group"><label>Unidad</label><div class="mini-input">L</div></div>
+                            <div class="control-group"><label>Recipiente</label><div class="mini-input">Bidón</div></div>
+                        </div>
+                        <div class="presentation-hint">3 bidones de 5 L · 15 L en total</div>
+                    </div>
+
+                    <div class="draft-footer">
+                        <div class="draft-total-row">
+                            <div>
+                                <span class="draft-total-label">Subtotal Esencias SRL</span>
+                                <span class="draft-subtotal-value">$ 64.620</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <span class="draft-total-label" style="color: #6ee7b7;">Total a invertir (3 órdenes)</span>
+                                <span class="draft-total-value">$ 733.720</span>
+                            </div>
+                        </div>
+
+                        <div class="confirm-actions">
+                            <span class="btn-confirm secondary"><i class="fas fa-clock"></i> A pagar</span>
+                            <span class="btn-confirm"><i class="fas fa-check-double"></i> Pagado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="text-align: center; font-size: 14px; color: var(--text-muted); margin: 20px auto 0; max-width: 880px;">
+                    Los dos botones contestan una sola pregunta: <strong>si el pedido ya se pagó</strong>. Si llegó o no se contesta después, al recibirlo. Mezclarlas dejaba afuera el caso de pagar por adelantado.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: LA RECEPCIÓN -->
+    <div class="slide">
+        <div class="glow-green" style="top: auto; bottom: -200px; left: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="receive-card">
+                    <div class="receive-head">
+                        <span class="eyebrow">Recepción</span>
+                        <h4>¿Qué llegó de este remito?</h4>
+                    </div>
+
+                    <p class="receive-hint">Viene cargado con lo que pediste. Corregí solo los renglones donde el proveedor avisó faltantes.</p>
+
+                    <div class="lines-scroll">
+                        <div class="line-row">
+                            <div class="line-name">
+                                <strong>Difusor Aromático Vainilla</strong>
+                                <small>Pediste 42</small>
+                            </div>
+                            <span class="line-input">Llegó <b>42</b></span>
+                            <span class="line-total">$ 46.620</span>
+                        </div>
+                        <div class="line-row short">
+                            <div class="line-name">
+                                <strong>Aceite Esencial Lavanda</strong>
+                                <small>Pediste 15 · ya entraron 0</small>
+                            </div>
+                            <span class="line-input">Llegó <b>10</b></span>
+                            <span class="line-total">$ 12.000</span>
+                        </div>
+                    </div>
+
+                    <div class="receive-total">
+                        <span>Total de lo que entra</span>
+                        <strong>$ 58.620</strong>
+                    </div>
+
+                    <div class="overpaid-box">
+                        <span class="overpaid-title">Pagaste $ 6.000 de mercadería que no llegó. Si cerrás la compra, ¿qué pasa con esa plata?</span>
+                        <div class="overpaid-options">
+                            <label class="active">
+                                <strong>Queda a favor</strong>
+                                <small>Baja el saldo del proveedor y lo usás en la próxima compra.</small>
+                            </label>
+                            <label>
+                                <strong>Me devolvió la plata</strong>
+                                <small>Vuelve a la caja de la que salió.</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <p class="receive-warn">Falta 1 renglón. Elegí qué pasa con lo que no llegó.</p>
+
+                    <div class="receive-actions">
+                        <span class="ghost">Cancelar</span>
+                        <span class="secondary"><i class="fas fa-truck-loading"></i> Esperar el resto</span>
+                        <span class="primary"><i class="fas fa-check"></i> Cerrar por lo que llegó</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-block" style="padding-left: 40px;">
+                <h3 style="color: var(--kpi-green); text-align: left;">Lo que Bajó del Camión</h3>
+                <h2 style="text-align: left;">Recepción Parcial</h2>
+                <p style="text-align: left;">Confirmar la orden no es lo mismo que recibirla. Cuando llega la mercadería se abre esta ventana, ya cargada con lo que pediste: se corrigen <strong>solo los renglones donde faltó algo</strong>.</p>
+                <p style="text-align: left;">Si falta algo hay dos salidas, y no dan lo mismo: <strong>esperar el resto</strong> deja la compra abierta para anotar el segundo envío, o <strong>cerrarla por lo que llegó</strong> y dar por terminado el pedido.</p>
+                <p style="text-align: left;">Y si habías pagado por adelantado, pregunta qué pasa con la plata de lo que no llegó: <strong>queda a favor</strong> del proveedor para la próxima, o <strong>volvió a la caja</strong> de la que salió. Sin esa pregunta, esa plata se perdía en el aire.</p>
             </div>
 
         </div>
     </div>
 
-    <!-- SLIDE 4: HISTORIAL Y TRAZABILIDAD (LOTES) -->
+    <!-- SLIDE 5: HISTORIAL DE REMITOS -->
     <div class="slide">
         <div class="glow-blue" style="top: auto; bottom: -200px; right: -200px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-blue);">Cumplimiento Normativo</h3>
-                <h2>Historial y Trazabilidad (Lotes)</h2>
-                <p>Confirmar la orden no solo suma unidades al inventario. Registra el remito financiero y habilita la trazabilidad forense del ingreso.</p>
-                <p>Fundamental para rubros de estética o alimentos: registra el <strong>Número de Lote</strong> y la <strong>Fecha de Vencimiento</strong> de la mercadería entrante para activar alertas automáticas futuras.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1050px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">Trazabilidad y Fiscal</h3>
+                <h2>Historial de Remitos</h2>
+                <p>Cada compra lleva <strong>tres estados a la vez</strong> y no significan lo mismo: en qué anda la entrega, en qué anda el pago, y si está la factura del proveedor. Sin esa factura, la compra <strong>no entra al libro de IVA compras</strong>.</p>
             </div>
 
             <div class="visual-block glass-panel" style="max-width: 1100px; margin: 0 auto; width: 100%;">
                 <div class="history-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); padding-bottom: 15px; margin-bottom: 15px;">
+                    <div class="card-header">
                         <div>
-                            <span style="font-size: 20px; font-weight: bold; color: white; display: block;">Laboratorios Saphirus</span>
-                            <span style="font-size: 13px; color: var(--text-muted);">15/04/2026 14:30 hs</span>
+                            <span class="supplier-name">Laboratorios Saphirus</span>
+                            <div class="meta-badges">
+                                <span class="state-badge partial">Entrega parcial</span>
+                                <span class="pay-badge paid">Pagado</span>
+                                <span class="invoice-badge missing">Sin factura</span>
+                            </div>
                         </div>
                         <div style="text-align: right;">
-                            <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block;">Total Abonado (Efectivo)</span>
+                            <span style="font-size: 11px; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block;">Ref: A-0001-00012345</span>
                             <span style="font-size: 24px; font-weight: 900; color: var(--kpi-green);">$ 44.402,66</span>
+                            <span class="record-date" style="display: block; margin-top: 3px;">15/04/2026 14:30</span>
                         </div>
+                    </div>
+
+                    <div class="receipt-actions">
+                        <span class="action-btn primary"><i class="fas fa-box-open"></i> Anotar lo que llegó ahora</span>
+                        <span class="action-btn"><i class="fas fa-file-invoice-dollar"></i> Cargar factura</span>
+                        <span class="action-btn success"><i class="fas fa-dollar-sign"></i> Pagar lo recibido</span>
                     </div>
 
                     <div class="table-responsive custom-scrollbar" style="overflow-x: auto;">
                         <table class="detail-table">
                             <thead>
                                 <tr>
-                                    <th>Producto / SKU</th>
-                                    <th style="text-align: center;">Cant. Ingresada</th>
-                                    <th style="text-align: right;">Costo Unitario</th>
-                                    <th style="text-align: right; color: var(--kpi-purple);"><i class="fas fa-tag"></i> Trazabilidad (Lote/Vto)</th>
+                                    <th>Producto</th>
+                                    <th style="text-align: center;">Cant.</th>
+                                    <th style="text-align: right;">Costo</th>
+                                    <th style="text-align: right; color: var(--kpi-purple);"><i class="fas fa-tag"></i> Lote / Vto</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong style="color: white;">Aceite AMBAR</strong> <br><span style="font-size: 12px; color: var(--text-muted); font-family: monospace;">SKU: ACEITE-AMB</span></td>
+                                    <td><strong style="color: white;">Aceite AMBAR</strong> <br><span style="font-size: 12px; color: var(--text-muted); font-family: monospace;">ACEITE-AMB</span></td>
                                     <td style="text-align: center; color: var(--kpi-blue); font-weight: bold;">+ 40</td>
                                     <td style="text-align: right; color: var(--kpi-green); font-weight: bold;">$ 1.110,06</td>
                                     <td style="text-align: right;">
                                         <div class="lot-badge" style="display: inline-block;">LOTE-A845</div>
                                         <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vence: Oct 2027</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: white;">Esencia Cítrica</strong> <br><span style="font-size: 12px; color: var(--text-muted); font-family: monospace;">ESE-CIT</span></td>
+                                    <td style="text-align: center; color: var(--kpi-orange); font-weight: bold;">+ 10 <span style="font-size: 11px; font-weight: normal;">de 15</span></td>
+                                    <td style="text-align: right; color: var(--kpi-green); font-weight: bold;">$ 1.200,00</td>
+                                    <td style="text-align: right;">
+                                        <div class="lot-badge" style="display: inline-block;">LOTE-C221</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Vence: Mar 2028</div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -388,7 +709,92 @@
         </div>
     </div>
 
-    <!-- SLIDE 5: NAVEGACIÓN -->
+    <!-- SLIDE 6: CONTACTOS -->
+    <div class="slide">
+        <div class="glow-purple" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-purple); text-align: left;">Con Quién Comprás</h3>
+                <h2 style="text-align: left;">La Agenda de Contactos</h2>
+                <p style="text-align: left;">La tercera columna no es solo una lista de teléfonos: es de dónde sale el agrupamiento de las sugerencias. Un producto sin proveedor asignado cae en <strong>"GENERAL (Sin Proveedor)"</strong>, y desde acá se le asignan productos a uno.</p>
+                <p style="text-align: left;">Conviven dos clases de contacto. Los <strong>proveedores</strong> comunes, con su WhatsApp, su Instagram, su web y su margen de descuento. Y los <strong>internos</strong>, en violeta: otras sucursales o la fábrica de la misma marca, cuando el negocio trabaja en red.</p>
+                <p style="text-align: left;">Los que dejás de usar no se borran: van al archivo de desactivados, con su contador.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="dir-panel">
+                    <div class="dir-head">
+                        <h4><i class="fas fa-address-book"></i> Contactos</h4>
+                        <div class="dir-actions">
+                            <span class="btn-circle-sm" title="Asignar productos"><i class="fas fa-boxes-stacked"></i></span>
+                            <span class="btn-circle-sm" title="Desactivados"><i class="fas fa-box-archive"></i><span class="inactive-count">3</span></span>
+                            <span class="btn-new"><i class="fas fa-plus"></i> Nuevo</span>
+                        </div>
+                    </div>
+
+                    <div class="dir-list">
+                        <div class="supplier-card-compact selected">
+                            <div class="sup-left">
+                                <div class="sup-avatar">E</div>
+                                <div class="sup-details">
+                                    <h4>Esencias SRL</h4>
+                                    <div class="mini-badges">
+                                        <span><i class="fab fa-instagram"></i> @esencias.srl</span>
+                                        <span><i class="fas fa-phone"></i></span>
+                                        <span><i class="fas fa-globe"></i></span>
+                                        <span style="color: #6ee7b7; font-weight: 800;"><i class="fas fa-tags"></i> 12% OFF</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sup-actions">
+                                <span class="btn-circle btn-whatsapp-direct"><i class="fab fa-whatsapp"></i></span>
+                                <span class="btn-circle"><i class="fas fa-external-link-alt"></i></span>
+                                <span class="btn-circle"><i class="fas fa-pen"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="supplier-card-compact">
+                            <div class="sup-left">
+                                <div class="sup-avatar">A</div>
+                                <div class="sup-details">
+                                    <h4>Aromas S.A.</h4>
+                                    <div class="mini-badges">
+                                        <span class="b2b-badge"><i class="fas fa-users"></i> Socio B2B</span>
+                                        <span><i class="fas fa-phone"></i></span>
+                                        <span><i class="fas fa-envelope"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sup-actions">
+                                <span class="btn-circle btn-whatsapp-direct"><i class="fab fa-whatsapp"></i></span>
+                                <span class="btn-circle"><i class="fas fa-external-link-alt"></i></span>
+                                <span class="btn-circle"><i class="fas fa-pen"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="supplier-card-compact internal">
+                            <div class="sup-left">
+                                <div class="sup-avatar">D</div>
+                                <div class="sup-details">
+                                    <h4>Depósito Central</h4>
+                                    <div class="mini-badges">
+                                        <span class="internal-badge"><i class="fas fa-diagram-project"></i> Interno</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sup-actions">
+                                <span class="btn-circle"><i class="fas fa-external-link-alt"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-purple"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -405,12 +811,12 @@
                     <div class="qa-text" style="color: white;">Volver al<br>Índice (Mapa)</div>
                 </a>
 
-                <a href="introduccionCatalogo.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
+                <a href="Catalogo.html" class="qa-btn purple" style="border-color: var(--kpi-purple);">
                     <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-sitemap"></i></div>
                     <div class="qa-text" style="color: white;">Volver a<br>Catálogo</div>
                 </a>
                 
-                <a href="presentacionPOS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
+                <a href="POS.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cash-register"></i></div>
                     <div class="qa-text" style="color: white;">Punto de<br>Venta (POS)</div>
                 </a>
@@ -422,7 +828,7 @@
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN -->
     <script>
         const pageId = 'proveedores';
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -445,7 +851,7 @@
             currentSlideNum.innerText = currentIndex + 1;
             
             // Guardar estado
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
         }
@@ -456,8 +862,8 @@
                 updateSlides();
             } else {
                 // REDIRECCIÓN MÁGICA Y RESETEO AL SALIR
-                localStorage.removeItem('slide_' + pageId);
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -476,7 +882,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -488,16 +894,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -505,6 +911,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();

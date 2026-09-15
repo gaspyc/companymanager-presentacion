@@ -92,47 +92,140 @@
         .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
 
         /* =========================================
-           SLIDE 2: FORMULARIO DE INVERSIÓN
+           SLIDE 2: EL TABLERO
            ========================================= */
-        .form-card { width: 100%; max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;}
-        .fc-header { font-size: 20px; font-weight: 800; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;}
-        .fc-group { display: flex; flex-direction: column; gap: 8px;}
-        .fc-lbl { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
-        
-        .fc-input-money { display: flex; align-items: center; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 12px; gap: 15px;}
-        .fc-input-money i { font-size: 20px; color: var(--kpi-green); }
-        .fc-input-money span { font-size: 24px; font-weight: 900; color: white; }
-        
-        .fc-select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 12px; color: white; font-weight: 600; display: flex; justify-content: space-between; align-items: center;}
-        
-        .fc-btn { background: linear-gradient(135deg, #fb7185 0%, #e11d48 100%); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; box-shadow: 0 10px 20px rgba(225, 29, 72, 0.4); margin-top: 10px;}
+        .actions-bar { display: flex; justify-content: flex-end; gap: 11px; margin-bottom: 14px; flex-wrap: wrap;}
+        .btn-secondary { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; font-size: 13px; font-weight: 700;}
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 9px; background: var(--kpi-blue); border: none; color: white; font-size: 13px; font-weight: 800;}
+
+        .kpis-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px;}
+        .kpi-card { padding: 15px 16px; border-radius: 14px; background: var(--bg-panel); border: 1px solid var(--border-glass); min-width: 0;}
+        .kpi-top { display: flex; align-items: center; gap: 9px; margin-bottom: 9px;}
+        .kpi-dot { width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0;}
+        .kpi-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted);}
+        .kpi-value { display: block; font-size: 21px; font-weight: 900; color: white; line-height: 1.15;}
+        .kpi-desc { display: block; font-size: 10px; color: #64748b; margin-top: 5px; line-height: 1.4;}
+        .kpi-desc.up { color: #6ee7b7; font-weight: 700;}
+
+        .charts-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px;}
+        .chart-box { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 18px;}
+        .chart-header-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 14px;}
+        .chart-title { margin: 0; color: white; font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: 0; text-transform: none;}
+        .chart-sub { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px;}
+        .btn-toggle-chart { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; font-size: 11px; font-weight: 700; white-space: nowrap;}
+
+        /* Gráfico de líneas dibujado a mano, sin librería */
+        .line-chart { position: relative; height: 155px; display: flex; align-items: flex-end; gap: 10px; padding: 0 4px;}
+        .line-chart .bar { flex: 1; background: linear-gradient(180deg, rgba(59,130,246,0.55), rgba(59,130,246,0.12)); border-radius: 6px 6px 0 0; border-top: 2px solid var(--kpi-blue); position: relative;}
+        .line-chart .bar small { position: absolute; bottom: -20px; left: 0; right: 0; text-align: center; font-size: 10px; color: #64748b;}
+        .chart-scale { display: flex; justify-content: space-between; margin-top: 26px; font-size: 10px; color: #64748b;}
+
+        .donut-wrap { display: flex; align-items: center; gap: 18px;}
+        .donut { width: 118px; height: 118px; border-radius: 50%; flex-shrink: 0; background: conic-gradient(#3b82f6 0 52%, #a855f7 52% 76%, #06b6d4 76% 90%, #f59e0b 90% 100%); position: relative;}
+        .donut::after { content: ''; position: absolute; inset: 26px; border-radius: 50%; background: #101a2e;}
+        .donut-legend { display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 12px;}
+        .donut-legend div { display: flex; align-items: center; gap: 8px; color: #cbd5e1;}
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0;}
+        .donut-legend b { margin-left: auto; color: white; font-size: 12px;}
 
         /* =========================================
-           SLIDE 3: HISTORIAL DE INVERSIONES
+           SLIDE 3: REGISTRAR INVERSIÓN
            ========================================= */
-        .history-card { width: 100%; display: flex; flex-direction: column; gap: 15px;}
-        .hc-item { display: flex; align-items: center; gap: 20px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);}
-        .hc-icon { width: 50px; height: 50px; border-radius: 12px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 20px;}
-        .hc-info { flex: 1; display: flex; flex-direction: column; gap: 5px;}
-        .hc-info strong { font-size: 18px; color: white;}
-        .hc-meta { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted); font-weight: 600; flex-wrap: wrap;}
-        .hc-badge { background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 11px; text-transform: uppercase;}
-        .hc-amount { font-size: 24px; font-weight: 900; color: var(--kpi-red);}
+        .modal-card { background: #1e293b; border: 1px solid var(--border-glass); border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); width: 100%; max-width: 470px;}
+        .modal-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border-glass); background: rgba(0,0,0,0.2);}
+        .modal-title { margin: 0; color: white; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 9px;}
+        .modal-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 13px;}
+        .form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0;}
+        .form-group label { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px;}
+        .input-cell { background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); padding: 10px 12px; border-radius: 8px; color: white; font-size: 13px; display: flex; justify-content: space-between; align-items: center; gap: 10px;}
+        .input-cell i { color: var(--text-muted); font-size: 11px;}
+        .input-cell.money { padding: 13px 14px;}
+        .input-cell.money span { font-size: 21px; font-weight: 900;}
+        .input-cell.money i.money-icon { color: var(--kpi-green); font-size: 15px;}
+        .input-cell.placeholder { color: #64748b;}
+        .form-two-cols { display: flex; gap: 12px;}
+        .form-two-cols > * { flex: 1; min-width: 0;}
+        .optgroup-hint { display: flex; flex-direction: column; gap: 5px; margin-top: 7px; padding: 10px 12px; border-radius: 9px; background: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.3);}
+        .optgroup-hint span { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: #93c5fd;}
+        .optgroup-hint small { font-size: 11px; color: #bfdbfe;}
+        .modal-footer { padding: 14px 18px; border-top: 1px solid var(--border-glass); background: rgba(0,0,0,0.2); display: flex; gap: 10px; justify-content: flex-end;}
+        .btn-ghost { padding: 11px 18px; border-radius: 9px; border: 1px solid var(--border-glass); color: var(--text-muted); font-weight: 700; font-size: 13px;}
 
         /* =========================================
-           SLIDE 4: IMPACTO EN ROI
+           SLIDE 4: LA TABLA DE MOVIMIENTOS
            ========================================= */
-        .roi-bridge { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 40px;}
-        .roi-node { background: var(--bg-panel); border: 2px solid var(--border-glass); padding: 30px; border-radius: 16px; text-align: center; width: 280px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);}
-        .roi-node.red { border-color: var(--kpi-red); box-shadow: 0 10px 30px rgba(244, 63, 94, 0.2);}
-        .roi-node.green { border-color: var(--kpi-green); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);}
-        
-        .bridge-connection { display: flex; flex-direction: column; align-items: center; gap: 10px;}
-        .bridge-line { width: 100px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; position: relative;}
-        .bridge-packet { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 20px; color: var(--text-muted);}
+        .table-box { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 18px; width: 100%;}
+        .table-responsive { overflow-x: auto;}
+        .styled-table { width: 100%; border-collapse: collapse; min-width: 760px;}
+        .styled-table th { text-align: left; padding: 0 10px 11px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border-glass); white-space: nowrap;}
+        .styled-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; color: #cbd5e1; vertical-align: top;}
+        .styled-table tr.is-voided { opacity: 0.45;}
+        .cell-date { color: #64748b; font-family: monospace; font-size: 11px; white-space: nowrap;}
+        .category-chip { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid; white-space: nowrap;}
+        .desc-main { color: white; font-weight: 700; font-size: 13px;}
+        .row-tag { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800;}
+        .tag-campaign { background: rgba(236, 72, 153, 0.12); color: #f9a8d4; border: 1px solid rgba(236, 72, 153, 0.3);}
+        .tag-imported { background: rgba(59, 130, 246, 0.12); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.3);}
+        .tag-net { background: rgba(245, 158, 11, 0.12); color: var(--kpi-amber); border: 1px solid rgba(245, 158, 11, 0.3);}
+        .tag-voided { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3);}
+        .cell-amount { color: white; font-weight: 800; white-space: nowrap;}
+        .cell-share { color: #60a5fa; font-weight: 800; white-space: nowrap;}
+        .void-btn { width: 28px; height: 28px; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; display: flex; align-items: center; justify-content: center; font-size: 11px;}
+        .pagination-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 13px; font-size: 11px; color: var(--text-muted);}
+        .pagination-buttons { display: flex; gap: 6px;}
+        .page-btn { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); color: #cbd5e1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;}
+        .page-btn.active { background: rgba(59, 130, 246, 0.2); border-color: rgba(59, 130, 246, 0.45); color: #93c5fd;}
 
         /* =========================================
-           SLIDE 5: NAVEGACIÓN
+           SLIDE 5: CAMPAÑAS BANCADAS
+           ========================================= */
+        .insights-box { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 18px; width: 100%;}
+        .campaign-card { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); margin-bottom: 11px;}
+        .campaign-card header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 13px;}
+        .campaign-name strong { display: block; color: white; font-size: 15px;}
+        .campaign-name small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .campaign-status { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; white-space: nowrap;}
+        .campaign-status-active { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3);}
+        .campaign-status-completed { background: rgba(148, 163, 184, 0.12); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.25);}
+        .campaign-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 11px;}
+        .campaign-metrics div { min-width: 0;}
+        .campaign-metrics small { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); margin-bottom: 4px;}
+        .campaign-metrics strong { display: block; font-size: 15px; font-weight: 800; color: white;}
+        .campaign-metrics strong.up { color: #6ee7b7;}
+        .campaign-metrics strong.ratio { color: #60a5fa;}
+        .campaign-footnote { display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 0; padding: 13px 15px; border-radius: 11px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); color: #fcd34d; font-size: 13px; line-height: 1.55; text-align: left;}
+        .campaign-footnote i { margin-top: 3px;}
+        .campaign-empty { padding: 22px 18px; border-radius: 12px; border: 1px dashed var(--border-glass); background: rgba(0,0,0,0.2); text-align: center;}
+        .campaign-empty i { font-size: 26px; color: #475569; display: block; margin-bottom: 10px;}
+        .campaign-empty strong { display: block; color: white; font-size: 14px; margin-bottom: 6px;}
+        .campaign-empty span { display: block; color: var(--text-muted); font-size: 12px; line-height: 1.5;}
+
+        /* =========================================
+           SLIDE 6: PAUTA IMPORTADA
+           ========================================= */
+        .planes-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; width: 100%;}
+        .plane-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 20px 22px;}
+        .plane-card.is-net { border-color: rgba(59, 130, 246, 0.35);}
+        .plane-card.is-settlement { border-color: rgba(245, 158, 11, 0.35);}
+        .plane-head { display: flex; align-items: center; gap: 11px; margin-bottom: 14px;}
+        .plane-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;}
+        .plane-card.is-net .plane-icon { background: rgba(59, 130, 246, 0.15); color: #93c5fd;}
+        .plane-card.is-settlement .plane-icon { background: rgba(245, 158, 11, 0.15); color: var(--kpi-amber);}
+        .plane-head strong { display: block; color: white; font-size: 16px;}
+        .plane-head small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px;}
+        .plane-rows { display: flex; flex-direction: column; gap: 9px;}
+        .plane-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 12px; border-radius: 9px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-glass); font-size: 12px; color: var(--text-muted);}
+        .plane-row b { color: white; font-weight: 800; font-size: 13px; white-space: nowrap;}
+        .plane-figure { margin-top: 13px; padding: 13px 15px; border-radius: 11px; text-align: center;}
+        .plane-card.is-net .plane-figure { background: rgba(59, 130, 246, 0.1);}
+        .plane-card.is-settlement .plane-figure { background: rgba(245, 158, 11, 0.1);}
+        .plane-figure span { display: block; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 4px;}
+        .plane-figure b { font-size: 24px; font-weight: 900; color: white;}
+        .planes-note { display: flex; align-items: flex-start; gap: 11px; margin-top: 18px; padding: 14px 16px; border-radius: 12px; background: rgba(239, 68, 68, 0.07); border: 1px solid rgba(239, 68, 68, 0.28); color: #fca5a5; font-size: 14px; line-height: 1.55; text-align: left;}
+        .planes-note i { margin-top: 3px;}
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
            ========================================= */
         .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;}
         .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none;}
@@ -169,6 +262,9 @@
             /* Textos apilados arriba */
             .text-block { order: 1; margin-bottom: 30px; padding-right: 0 !important; padding-left: 0 !important; text-align: center !important; }
             .visual-block { order: 2; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;}
+            /* Lo que cuelga del slide directamente (notas, franjas, resúmenes) va
+               al final: sin `order` propio queda en 0 y se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
 
             h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
             h1 { font-size: 46px; }
@@ -176,14 +272,22 @@
             h3 { font-size: 20px; }
             p { font-size: 16px; }
 
-            .roi-bridge { flex-direction: column; gap: 10px; width: 100%;}
-            .bridge-line { width: 4px; height: 50px; }
-            .roi-node { width: 100%; max-width: 400px; }
+            /* Tablero: KPI y graficos apilados */
+            .kpis-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .charts-row { grid-template-columns: 1fr; }
+            .actions-bar { justify-content: center; }
+            .donut-wrap { flex-direction: column; text-align: center; }
+            .donut-legend { width: 100%; }
 
-            /* Historial responsive */
-            .hc-item { flex-wrap: wrap; text-align: center; justify-content: center; }
-            .hc-amount { width: 100%; text-align: center; }
-            .hc-meta { justify-content: center; }
+            /* Formulario y tabla */
+            .form-two-cols { flex-direction: column; }
+            .chart-header-row { flex-direction: column; }
+            .pagination-row { justify-content: center; }
+
+            /* Campanas bancadas y los dos planos */
+            .campaign-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .campaign-card header { flex-direction: column; align-items: flex-start; }
+            .planes-grid { grid-template-columns: 1fr; }
 
             .quick-actions-grid {
                 flex-direction: column !important; align-items: center; width: 100%; 
@@ -201,8 +305,10 @@
             .qa-text { text-align: left; font-size: 14px; }
         }
     </style>
+    <link rel="stylesheet" href="actualizacion.css">
 </head>
 <body>
+<a class="sync-home" href="index.html">← Mapa de la sede</a>
 
     <!-- CONTROLES NATIVOS -->
     <div class="presentation-controls">
@@ -218,167 +324,373 @@
             <div class="text-block" style="padding-right: 40px;">
                 <h3 style="color: var(--kpi-red);">Control de Capital</h3>
                 <h1>Inversiones <br><span style="color: white;">y Egresos</span></h1>
-                <p>Medir solo "cuánta plata entra" es el error más común. Para conocer la rentabilidad real (ROI) de tu sede, necesitas registrar cada billete que sale.</p>
-                <p>Este módulo convierte los gastos del día a día (Marketing, Remodelaciones, Sueldos) en <strong>Inversiones Estratégicas (CapEx)</strong>, descontándolas automáticamente de tu ganancia neta global.</p>
+                <p>Medir solo cuánta plata entra es el error más común. Acá se anota cada billete que sale con destino: en qué se fue, con qué medio de pago y —cuando corresponde— <strong>qué campaña estaba bancando</strong>.</p>
+                <p>Ese último dato es el que convierte una lista de gastos en algo que se puede leer: al lado de lo invertido aparece lo que se vendió mientras la campaña estuvo vigente.</p>
             </div>
-            
+
             <div class="visual-block glass-panel" style="position: relative; height: 450px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
                 <i class="fas fa-rocket" style="font-size: 80px; color: var(--kpi-red); margin-bottom: 30px;"></i>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 90%;">
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-bullhorn text-muted mr-2"></i> Pauta Publicitaria</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-store text-muted mr-2"></i> Infraestructura</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-laptop text-muted mr-2"></i> Equipamiento</span>
-                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-search-dollar text-muted mr-2"></i> Trazabilidad</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-bullhorn text-muted mr-2"></i> Campañas Bancadas</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-percentage text-muted mr-2"></i> Peso sobre Ventas</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-rotate text-muted mr-2"></i> Pauta Importada</span>
+                    <span style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold;"><i class="fas fa-ban text-muted mr-2"></i> Anulación con Motivo</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE 2: FORMULARIO FRICCIÓN CERO -->
+    <!-- SLIDE 2: EL TABLERO -->
     <div class="slide">
-        <div class="glow-blue"></div>
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">La Plata que Sale</h3>
+                <h2>El Tablero del Período</h2>
+                <p>Cinco números y dos gráficos. El que más se mira no es el total invertido sino el <strong>peso sobre ventas</strong>: cuánto de lo que se vendió volvió a entrar al negocio. Y el de <strong>campañas bancadas</strong>, que dice cuántas de esas inversiones tienen a quién rendirle cuentas.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="actions-bar">
+                    <div class="btn-secondary"><i class="fas fa-bullhorn" style="color: #f472b6;"></i> Ver Campañas</div>
+                    <div class="btn-primary"><i class="fas fa-plus"></i> Registrar Inversión</div>
+                </div>
+
+                <div class="kpis-grid">
+                    <div class="kpi-card">
+                        <div class="kpi-top"><span class="kpi-dot" style="background: rgba(59,130,246,0.15); color: #93c5fd;"><i class="fas fa-dollar-sign"></i></span><span class="kpi-title">Capital invertido</span></div>
+                        <span class="kpi-value">$ 384.000</span>
+                        <span class="kpi-desc">Incluye pauta importada en neto: sin IVA ni percepciones</span>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top"><span class="kpi-dot" style="background: rgba(34,197,94,0.15); color: #6ee7b7;"><i class="fas fa-chart-line"></i></span><span class="kpi-title">Ventas del período</span></div>
+                        <span class="kpi-value">$ 4.180.000</span>
+                        <span class="kpi-desc up">+$ 620.000 contra el período anterior</span>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top"><span class="kpi-dot" style="background: rgba(168,85,247,0.15); color: #d8b4fe;"><i class="fas fa-percentage"></i></span><span class="kpi-title">Peso sobre ventas</span></div>
+                        <span class="kpi-value">9,2%</span>
+                        <span class="kpi-desc">Cuánto de lo vendido se reinvirtió</span>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top"><span class="kpi-dot" style="background: rgba(6,182,212,0.15); color: #67e8f9;"><i class="fas fa-receipt"></i></span><span class="kpi-title">Registros inversión</span></div>
+                        <span class="kpi-value">14</span>
+                        <span class="kpi-desc">Inversiones en el período</span>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="kpi-top"><span class="kpi-dot" style="background: rgba(245,158,11,0.15); color: #fbbf24;"><i class="fas fa-bullhorn"></i></span><span class="kpi-title">Campañas bancadas</span></div>
+                        <span class="kpi-value">2</span>
+                        <span class="kpi-desc">Campañas con capital asignado</span>
+                    </div>
+                </div>
+
+                <div class="charts-row">
+                    <div class="chart-box">
+                        <div class="chart-header-row">
+                            <div>
+                                <h4 class="chart-title"><i class="fas fa-chart-area" style="color: #93c5fd;"></i> Evolución de Inversiones</h4>
+                                <span class="chart-sub">Monto invertido en el período seleccionado</span>
+                            </div>
+                            <div class="btn-toggle-chart"><i class="fas fa-calendar-alt"></i> Ver por Días</div>
+                        </div>
+                        <div class="line-chart">
+                            <div class="bar" style="height: 38%;"><small>Abr</small></div>
+                            <div class="bar" style="height: 55%;"><small>May</small></div>
+                            <div class="bar" style="height: 32%;"><small>Jun</small></div>
+                            <div class="bar" style="height: 74%;"><small>Jul</small></div>
+                            <div class="bar" style="height: 61%;"><small>Ago</small></div>
+                            <div class="bar" style="height: 100%;"><small>Sep</small></div>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <div class="chart-header-row">
+                            <div>
+                                <h4 class="chart-title"><i class="fas fa-chart-pie" style="color: #d8b4fe;"></i> Distribución por Categoría</h4>
+                                <span class="chart-sub">Participación del capital asignado</span>
+                            </div>
+                        </div>
+                        <div class="donut-wrap">
+                            <div class="donut"></div>
+                            <div class="donut-legend">
+                                <div><span class="legend-dot" style="background: #3b82f6;"></span> Marketing <b>52%</b></div>
+                                <div><span class="legend-dot" style="background: #a855f7;"></span> Infraestructura <b>24%</b></div>
+                                <div><span class="legend-dot" style="background: #06b6d4;"></span> Equipamiento <b>14%</b></div>
+                                <div><span class="legend-dot" style="background: #f59e0b;"></span> Expansión <b>10%</b></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: REGISTRAR INVERSIÓN -->
+    <div class="slide">
+        <div class="glow-red"></div>
         <div class="slide-content-wide grid-split">
-            
-            <div class="visual-block">
-                <div class="glass-panel form-card">
-                    <div class="fc-header"><i class="fas fa-plus-circle text-muted mr-2"></i> Nueva Inversión</div>
-                    
-                    <div class="fc-group">
-                        <span class="fc-lbl">Monto a Invertir ($)</span>
-                        <div class="fc-input-money">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>150.000</span>
+
+            <div class="visual-block" style="display: flex; justify-content: center;">
+                <div class="modal-card">
+                    <div class="modal-header">
+                        <h4 class="modal-title"><i class="fas fa-plus-circle" style="color: #93c5fd;"></i> Registrar Inversión Estratégica</h4>
+                        <i class="fas fa-times" style="color: var(--text-muted); font-size: 14px;"></i>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Monto a Invertir ($)</label>
+                            <div class="input-cell money"><span><i class="fas fa-dollar-sign money-icon"></i> 150.000</span></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Categoría de Inversión</label>
+                            <div class="input-cell">Marketing y Publicidad <i class="fas fa-chevron-down"></i></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nombre / Descripción</label>
+                            <div class="input-cell placeholder">Ej: Pauta en Meta Ads, Mostrador nuevo...</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Campaña Asociada (Opcional)</label>
+                            <div class="input-cell">Semana del cliente <i class="fas fa-chevron-down"></i></div>
+                            <div class="optgroup-hint">
+                                <span>De esta sede</span>
+                                <small>Semana del cliente · Primavera</small>
+                                <span style="margin-top: 5px;">De Aura Lotion</span>
+                                <small>Aniversario de la marca</small>
+                            </div>
+                        </div>
+
+                        <div class="form-two-cols">
+                            <div class="form-group">
+                                <label>Medio de Pago</label>
+                                <div class="input-cell">Transferencia <i class="fas fa-chevron-down"></i></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <div class="input-cell">07/09/2026 <i class="far fa-calendar-alt"></i></div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="fc-group">
-                        <span class="fc-lbl">Categoría</span>
-                        <div class="fc-select">
-                            <span><i class="fas fa-bullhorn" style="color: #f472b6; margin-right: 8px;"></i> Marketing y Publicidad</span>
-                            <i class="fas fa-chevron-down text-muted"></i>
-                        </div>
+                    <div class="modal-footer">
+                        <span class="btn-ghost">Cancelar</span>
+                        <span class="btn-primary"><i class="fas fa-check"></i> Registrar Inversión</span>
                     </div>
-
-                    <div class="fc-group">
-                        <span class="fc-lbl">Descripción / Concepto</span>
-                        <div class="fc-select" style="font-weight: normal; color: var(--text-muted);">
-                            Campaña Meta Ads - Día de la Madre
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 15px;">
-                        <div class="fc-group" style="flex: 1;">
-                            <span class="fc-lbl">Medio de Pago</span>
-                            <div class="fc-select">Transferencia <i class="fas fa-chevron-down text-muted"></i></div>
-                        </div>
-                        <div class="fc-group" style="flex: 1;">
-                            <span class="fc-lbl">Fecha</span>
-                            <div class="fc-select">Hoy <i class="far fa-calendar-alt text-muted"></i></div>
-                        </div>
-                    </div>
-
-                    <button class="fc-btn"><i class="fas fa-check"></i> Registrar Inversión</button>
                 </div>
             </div>
 
             <div class="text-block" style="padding-left: 40px;">
-                <h3 style="color: var(--kpi-blue); text-align: left;">Fricción Cero</h3>
-                <h2 style="text-align: left;">Carga Rápida y Precisa</h2>
-                <p style="text-align: left;">Anotar gastos suele ser la tarea más postergada por los dueños de locales. Diseñamos un formulario intuitivo que auto-formatea los números mientras tipeás y sugiere categorías predefinidas.</p>
-                <p style="text-align: left;">Al categorizar el gasto (Ej: Marketing vs Infraestructura), el sistema luego puede generar reportes para mostrarte dónde estás inyectando más capital mes a mes.</p>
+                <h3 style="color: var(--kpi-red); text-align: left;">El Campo que Importa</h3>
+                <h2 style="text-align: left;">Registrar una Inversión</h2>
+                <p style="text-align: left;">Monto, una de las <strong>seis categorías</strong> —marketing, infraestructura, equipamiento, expansión, capacitación u otra—, descripción, medio de pago y fecha.</p>
+                <p style="text-align: left;">Y el que cambia todo: <strong>campaña asociada</strong>. Es opcional, pero es lo único que después permite poner lo invertido al lado de lo vendido. El desplegable separa las campañas <strong>de esta sede</strong> de las <strong>de la marca</strong>: una sucursal puede estar bancando una acción que se decidió arriba.</p>
+                <p style="text-align: left;">Desde el tablero de Campañas se llega acá con la campaña ya elegida: el botón de la moneda de cada fila abre este formulario apuntado.</p>
             </div>
 
         </div>
     </div>
 
-    <!-- SLIDE 3: HISTORIAL DE INVERSIONES -->
-    <div class="slide">
-        <div class="glow-red"></div>
-        <div class="slide-content-wide grid-split">
-            
-            <div class="text-block" style="padding-right: 40px;">
-                <h3 style="color: var(--kpi-red); text-align: left;">Trazabilidad Continua</h3>
-                <h2 style="text-align: left;">Auditoría de Salidas</h2>
-                <p style="text-align: left;">Todo queda registrado. El historial cronológico te permite auditar rápidamente qué se pagó, qué día y mediante qué método de pago (Efectivo, Tarjeta, Transferencia).</p>
-                <p style="text-align: left;">Las etiquetas visuales (colores e íconos) te ayudan a escanear visualmente el listado para identificar rápidamente si la plata se fue en sueldos, compras de equipamiento o publicidad.</p>
-            </div>
-
-            <div class="visual-block">
-                <div class="glass-panel history-card">
-                    <div class="fc-header" style="margin-bottom: 10px;"><i class="fas fa-history text-muted mr-2"></i> Últimos Movimientos</div>
-                    
-                    <div class="hc-item">
-                        <div class="hc-icon" style="color: #60a5fa;"><i class="fas fa-store"></i></div>
-                        <div class="hc-info">
-                            <strong>Reparación de mostrador principal</strong>
-                            <div class="hc-meta">
-                                <span>25/10/2026</span> • <span>Infraestructura</span> • <span class="hc-badge">TRANSFER</span>
-                            </div>
-                        </div>
-                        <div class="hc-amount">- $85.000</div>
-                    </div>
-
-                    <div class="hc-item">
-                        <div class="hc-icon" style="color: #f472b6;"><i class="fas fa-bullhorn"></i></div>
-                        <div class="hc-info">
-                            <strong>Pauta Instagram Reels</strong>
-                            <div class="hc-meta">
-                                <span>22/10/2026</span> • <span>Marketing</span> • <span class="hc-badge">TARJETA</span>
-                            </div>
-                        </div>
-                        <div class="hc-amount">- $40.000</div>
-                    </div>
-
-                    <div class="hc-item">
-                        <div class="hc-icon" style="color: #c084fc;"><i class="fas fa-laptop"></i></div>
-                        <div class="hc-info">
-                            <strong>Lector de Códigos Laser USB</strong>
-                            <div class="hc-meta">
-                                <span>18/10/2026</span> • <span>Equipamiento</span> • <span class="hc-badge">EFECTIVO</span>
-                            </div>
-                        </div>
-                        <div class="hc-amount">- $25.500</div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- SLIDE 4: IMPACTO EN ROI -->
+    <!-- SLIDE 4: LA TABLA DE MOVIMIENTOS -->
     <div class="slide">
         <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
         <div class="slide-content-wide">
-            <div class="text-block" style="text-align: center; margin-bottom: 40px; max-width: 1000px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-blue);">El Cuadro Completo</h3>
-                <h2>Integración con la Auditoría</h2>
-                <p>Las Inversiones (CapEx) no viven aisladas en esta pantalla. Viajan automáticamente al panel de Auditoría Financiera, donde se restan de tu Facturación Bruta junto con el costo de la mercadería y las comisiones de MercadoPago, calculando tu Ganancia Neta exacta.</p>
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1060px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">Cada Registro con su Contexto</h3>
+                <h2>Movimientos e Inversiones</h2>
+                <p>La columna <strong>Del período</strong> dice qué porcentaje del total invertido se llevó ese renglón, y las etiquetas debajo de la descripción cuentan de dónde salió cada uno. Un registro no se borra: <strong>se anula</strong>, queda tachado y deja de contar.</p>
             </div>
-            
-            <div class="visual-block roi-bridge">
-                <div class="roi-node red">
-                    <i class="fas fa-rocket text-red-400" style="font-size: 40px; color: var(--kpi-red); margin-bottom: 15px;"></i>
-                    <strong style="display: block; color: white; font-size: 20px;">Módulo Inversiones</strong>
-                    <span style="font-size: 24px; color: var(--kpi-red); font-weight: 900; margin-top: 10px; display: block;">-$ 150.000</span>
-                </div>
 
-                <div class="bridge-connection">
-                    <div class="bridge-packet"><i class="fas fa-minus-circle" style="color: var(--kpi-red);"></i></div>
-                    <div class="bridge-line"></div>
-                </div>
+            <div class="visual-block" style="width: 100%; max-width: 1100px; margin: 0 auto;">
+                <div class="table-box">
+                    <div class="chart-header-row">
+                        <div>
+                            <h4 class="chart-title"><i class="fas fa-table" style="color: #6ee7b7;"></i> Movimientos e Inversiones</h4>
+                            <span class="chart-sub">Detalle individual por registro</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-muted);">Página 1 de 3</div>
+                    </div>
 
-                <div class="roi-node green">
-                    <i class="fas fa-search-dollar text-green-400" style="font-size: 40px; color: var(--kpi-green); margin-bottom: 15px;"></i>
-                    <strong style="display: block; color: white; font-size: 20px;">Auditoría Financiera</strong>
-                    <span style="font-size: 24px; color: var(--kpi-green); font-weight: 900; margin-top: 10px; display: block;">Ganancia Neta Real</span>
+                    <div class="table-responsive custom-scrollbar">
+                        <table class="styled-table">
+                            <thead>
+                                <tr><th>Fecha</th><th>Categoría</th><th>Descripción</th><th>Monto Invertido</th><th>Del período</th><th></th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="cell-date">07/09/2026</td>
+                                    <td><span class="category-chip" style="background: #3b82f622; color: #3b82f6; border-color: #3b82f644;">Marketing</span></td>
+                                    <td>
+                                        <div class="desc-main">Meta Ads · Semana del cliente</div>
+                                        <span class="row-tag tag-campaign"><i class="fas fa-bullhorn"></i> Semana del cliente</span>
+                                        <span class="row-tag tag-imported"><i class="fas fa-rotate"></i> Importado de Meta</span>
+                                        <span class="row-tag tag-net"><i class="fas fa-receipt"></i> Neto, sin impuestos</span>
+                                    </td>
+                                    <td class="cell-amount">$ 60.000</td>
+                                    <td class="cell-share">15,6%</td>
+                                    <td style="text-align: right;"><span class="void-btn"><i class="fas fa-ban"></i></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="cell-date">02/09/2026</td>
+                                    <td><span class="category-chip" style="background: #a855f722; color: #a855f7; border-color: #a855f744;">Infraestructura</span></td>
+                                    <td><div class="desc-main">Reparación del mostrador principal</div></td>
+                                    <td class="cell-amount">$ 85.000</td>
+                                    <td class="cell-share">22,1%</td>
+                                    <td style="text-align: right;"><span class="void-btn"><i class="fas fa-ban"></i></span></td>
+                                </tr>
+                                <tr class="is-voided">
+                                    <td class="cell-date">28/08/2026</td>
+                                    <td><span class="category-chip" style="background: #06b6d422; color: #06b6d4; border-color: #06b6d444;">Equipamiento</span></td>
+                                    <td>
+                                        <div class="desc-main">Lector de códigos láser USB</div>
+                                        <span class="row-tag tag-voided"><i class="fas fa-ban"></i> Anulada</span>
+                                    </td>
+                                    <td class="cell-amount">$ 25.500</td>
+                                    <td class="cell-share" style="color: #64748b;">—</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination-row">
+                        <span>Mostrando 3 de 14 registros</span>
+                        <div class="pagination-buttons">
+                            <span class="page-btn"><i class="fas fa-chevron-left"></i></span>
+                            <span class="page-btn active">1</span>
+                            <span class="page-btn">2</span>
+                            <span class="page-btn">3</span>
+                            <span class="page-btn"><i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: CAMPAÑAS BANCADAS -->
+    <div class="slide">
+        <div class="glow-red" style="top: auto; bottom: -200px; right: -200px;"></div>
+        <div class="slide-content-wide grid-split">
+
+            <div class="text-block" style="padding-right: 40px;">
+                <h3 style="color: var(--kpi-red); text-align: left;">Donde se Cruzan los Dos Apartados</h3>
+                <h2 style="text-align: left;">Campañas Bancadas</h2>
+                <p style="text-align: left;">Este panel es la razón por la que el campo de campaña existe. Por cada campaña financiada muestra cuatro números: lo <strong>invertido</strong>, las <strong>ventas mientras estuvo vigente</strong>, la <strong>diferencia</strong> contra el tramo previo de igual largo, y esa diferencia <strong>por peso invertido</strong>.</p>
+                <p style="text-align: left;">Si ninguna inversión del período está vinculada, el panel no se queda vacío en silencio: explica qué falta y ofrece ir a Campañas.</p>
+                <p style="text-align: left;">Y aclara lo que el número no es. Es <strong>venta adicional, no ganancia</strong>: no descuenta el costo de lo vendido. Un 3,1× no significa que ganaste tres veces lo que pusiste.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%;">
+                <div class="insights-box">
+                    <div class="chart-header-row">
+                        <div>
+                            <h4 class="chart-title"><i class="fas fa-bullhorn" style="color: #fbbf24;"></i> Campañas bancadas</h4>
+                            <span class="chart-sub">Lo invertido contra lo que se vendió mientras estuvo vigente</span>
+                        </div>
+                    </div>
+
+                    <div class="campaign-card">
+                        <header>
+                            <div class="campaign-name">
+                                <strong>Semana del cliente</strong>
+                                <small>2 inversiones</small>
+                            </div>
+                            <span class="campaign-status campaign-status-active">Activa</span>
+                        </header>
+                        <div class="campaign-metrics">
+                            <div><small>Invertido</small><strong>$ 60.000</strong></div>
+                            <div><small>Ventas en vigencia</small><strong>$ 1.464.000</strong></div>
+                            <div><small>Diferencia</small><strong class="up">+$ 854.000</strong></div>
+                            <div><small>Por peso invertido</small><strong class="ratio">14,2×</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="campaign-card" style="margin-bottom: 0;">
+                        <header>
+                            <div class="campaign-name">
+                                <strong>Vuelta al local</strong>
+                                <small>1 inversión</small>
+                            </div>
+                            <span class="campaign-status campaign-status-completed">Finalizada</span>
+                        </header>
+                        <div class="campaign-metrics">
+                            <div><small>Invertido</small><strong>$ 24.000</strong></div>
+                            <div><small>Ventas en vigencia</small><strong>$ 902.000</strong></div>
+                            <div><small>Diferencia</small><strong class="up">+$ 74.000</strong></div>
+                            <div><small>Por peso invertido</small><strong class="ratio">3,1×</strong></div>
+                        </div>
+                    </div>
+
+                    <p class="campaign-footnote">
+                        <i class="fas fa-info-circle"></i>
+                        <span>La diferencia compara lo vendido durante la vigencia de la campaña contra el tramo previo de igual largo. Es venta adicional, no ganancia: no descuenta el costo de lo vendido.</span>
+                    </p>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <!-- SLIDE 5: NAVEGACIÓN -->
+    <!-- SLIDE 6: PAUTA IMPORTADA Y SUS IMPUESTOS -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 24px; max-width: 1080px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue);">Dos Planos que No se Suman</h3>
+                <h2>Pauta Importada y su Impuesto</h2>
+                <p>La sincronización de la cuenta publicitaria trae un número por campaña y por día, y lo asienta solo. Pero ese número es el <strong>gasto neto</strong>: lo que se debita de la tarjeta lleva IVA y percepciones encima, y las percepciones no las pone el proveedor —las agrega el emisor de la tarjeta—. Ningún dato de la cuenta publicitaria las conoce.</p>
+            </div>
+
+            <div class="visual-block" style="width: 100%; max-width: 1000px; margin: 0 auto;">
+                <div class="planes-grid">
+
+                    <div class="plane-card is-net">
+                        <div class="plane-head">
+                            <span class="plane-icon"><i class="fas fa-rotate"></i></span>
+                            <div>
+                                <strong>El asiento diario</strong>
+                                <small>Lo trae la API sola, campaña por campaña</small>
+                            </div>
+                        </div>
+                        <div class="plane-rows">
+                            <div class="plane-row"><span>Granularidad</span><b>Campaña × día</b></div>
+                            <div class="plane-row"><span>Qué mide</span><b>Consumo neto</b></div>
+                            <div class="plane-row"><span>Sirve para</span><b>Atribuir a una campaña</b></div>
+                        </div>
+                        <div class="plane-figure"><span>Lo que ves en Inversiones</span><b>$ 100.000</b></div>
+                    </div>
+
+                    <div class="plane-card is-settlement">
+                        <div class="plane-head">
+                            <span class="plane-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+                            <div>
+                                <strong>La liquidación del período</strong>
+                                <small>La carga una persona, a mano</small>
+                            </div>
+                        </div>
+                        <div class="plane-rows">
+                            <div class="plane-row"><span>Granularidad</span><b>Cuenta × período</b></div>
+                            <div class="plane-row"><span>Qué mide</span><b>El cargo facturado</b></div>
+                            <div class="plane-row"><span>Sirve para</span><b>Cuadrar contra el resumen</b></div>
+                        </div>
+                        <div class="plane-figure"><span>Lo que sale de la tarjeta</span><b>$ 121.000</b></div>
+                    </div>
+
+                </div>
+
+                <p class="planes-note">
+                    <i class="fas fa-triangle-exclamation"></i>
+                    <span><strong>Los dos números no se suman.</strong> Un renglón de $100.000 en Inversiones y un débito de $121.000 en la cuenta no se contradicen <em>si el renglón dice que es neto</em> — y se contradicen para siempre si no lo dice. Por eso la etiqueta <strong>"Neto, sin impuestos"</strong> está en la fila y en la bajada del KPI. Los renglones importados tampoco se editan a mano: la próxima sincronización los vuelve a dejar como están en la cuenta.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-red"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -412,7 +724,7 @@
     <!-- SCRIPT DE NAVEGACIÓN FULLSCREEN Y SCROLL MÓVIL -->
     <script>
         const pageId = 'inversiones'; // Identificador único
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
+        let currentIndex = parseInt(localStorage.getItem('slide_20260907_' + pageId)) || 0;
 
         const slides = document.querySelectorAll('.slide');
         const btnPrev = document.getElementById('btnPrev');
@@ -435,7 +747,7 @@
             currentSlideNum.innerText = currentIndex + 1;
             
             // Guardar estado
-            localStorage.setItem('slide_' + pageId, currentIndex);
+            localStorage.setItem('slide_20260907_' + pageId, currentIndex);
 
             // Al cambiar de slide en mobile, sube el scroll arriba
             setTimeout(() => { window.scrollTo(0, 0); document.body.scrollTop = 0; document.documentElement.scrollTop = 0; }, 50);
@@ -447,8 +759,8 @@
                 updateSlides();
             } else {
                 // En la última diapositiva, borrar estado y volver al índice
-                localStorage.removeItem('slide_' + pageId);
-                localStorage.setItem('slide_' + pageId, 0);
+                localStorage.removeItem('slide_20260907_' + pageId);
+                localStorage.setItem('slide_20260907_' + pageId, 0);
                 window.location.href = 'index.html';
             }
         }
@@ -467,7 +779,7 @@
 
         document.addEventListener('keydown', (e) => {
             const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA');
+            const isTyping = activeElement && (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(activeElement.tagName) || activeElement.isContentEditable);
 
             const key = e.key.toLowerCase();
             pressedKeys.add(key);
@@ -479,16 +791,16 @@
             }
 
             if (pressedKeys.has('a') && !isTyping) {
-                if (['p', 'i', 'h', 'v', 'c', 's', 'f'].includes(key)) {
+                if (['p', 'i', 'h', 'v', 'c', 't', 'w'].includes(key)) {
                     e.preventDefault();
                     switch (key) {
                         case 'p': window.location.href = 'POS.html'; break;
                         case 'i': window.location.href = 'Inventario.html'; break;
                         case 'c': window.location.href = 'Catalogo.html'; break;
                         case 'h': window.location.href = 'BranchDashboard.html'; break;
-                        case 'v': window.location.href = 'Caja.html'; break;
-                        case 's': window.location.href = 'Tienda.html'; break;
-                        case 'f': window.location.href = 'Facturacion.html'; break;
+                        case 'v': window.location.href = 'Facturacion.html'; break;
+                        case 't': window.location.href = 'Tienda.html'; break;
+                        case 'w': window.location.href = 'Campanas.html'; break;
                     }
                     return;
                 }
@@ -496,6 +808,7 @@
 
             if (!isTyping) {
                 if (e.key === 'ArrowRight' || e.key === ' ') {
+                    e.preventDefault();
                     nextSlide();
                 } else if (e.key === 'ArrowLeft') {
                     prevSlide();
