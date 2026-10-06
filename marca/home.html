@@ -3,458 +3,744 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Marca — Apartado Estratégico</title>
+    <title>Resumen Global de la marca</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         :root {
             --bg-base: #0f172a;
-            --bg-panel: rgba(15,23,42,0.6);
+            --bg-panel: rgba(15, 23, 42, 0.6);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-glass: rgba(255,255,255,0.05);
-            --kpi-blue: #3b82f6;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
             --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-indigo: #4f46e5;
             --kpi-purple: #a855f7;
             --kpi-orange: #f59e0b;
             --kpi-pink: #ec4899;
-            --kpi-teal: #14b8a6;
             --kpi-red: #ef4444;
-            --kpi-indigo: #4f46e5;
+            --kpi-cyan: #06b6d4;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-base); font-family: 'Urbanist', sans-serif; color: var(--text-main); }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
 
         .slide {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            opacity: 0; pointer-events: none; z-index: 0;
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
             transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding: 40px 80px;
         }
         .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
-        .slide-content-wide { width: 100%; max-width: 1400px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
 
-        .glow-blue   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(59,130,246,0.13) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible, .perf-tab:focus-visible { outline: 3px solid #93c5fd; outline-offset: 4px; }
 
         .presentation-controls {
-            position: fixed; bottom: 30px; right: 40px;
-            display: flex; gap: 15px; z-index: 9999;
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
             background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
             border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
         }
         .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
         .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .ctrl-btn:hover { background: var(--kpi-blue); }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-blue); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
 
         h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
-        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; }
-        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
 
-        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
-        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-        .pill-tag i { margin-right: 8px; }
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 24px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
 
-        /* SLIDE 2 — KPI Grid */
-        .kpi-grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%; }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; width: 100%; margin-top: 30px; }
+        .hero-chip { display: inline-flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; }
+
+        /* =========================================
+           SLIDE 1: PORTADA
+        ========================================= */
+        .cover { max-width: 980px; }
+        .cover h1 span { color: var(--kpi-blue); }
+        .cover p { font-size: 21px; }
+        .split-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 30px; text-align: left; }
+        .split-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px 20px; }
+        .split-card strong { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 6px; }
+        .split-card span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+        /* =========================================
+           KPI CARD — misma anatomía que el componente de la app
+        ========================================= */
+        .date-strip { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 9px 15px; font-size: 13px; color: var(--text-muted); margin-bottom: 16px; width: fit-content; flex-wrap: wrap; }
+        .date-strip b { color: var(--text-main); font-family: monospace; font-weight: 700; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
         .kpi-card {
-            padding: 20px; border-radius: 14px; border: 1px solid;
-            display: flex; flex-direction: column; gap: 10px;
-            transition: 0.2s;
+            position: relative; overflow: hidden;
+            min-height: 132px; padding: 16px 20px;
+            background: var(--bg-panel); border: 1px solid var(--border-glass);
+            border-radius: 16px; text-align: left;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        .kpi-card:hover { transform: translateY(-3px); }
-        .kpi-card.kc-blue   { background: rgba(59,130,246,0.07);  border-color: rgba(59,130,246,0.28); }
-        .kpi-card.kc-green  { background: rgba(16,185,129,0.07);  border-color: rgba(16,185,129,0.28); }
-        .kpi-card.kc-purple { background: rgba(168,85,247,0.07);  border-color: rgba(168,85,247,0.28); }
-        .kpi-card.kc-orange { background: rgba(245,158,11,0.07);  border-color: rgba(245,158,11,0.28); }
-        .kpi-label { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; }
-        .kc-blue   .kpi-label { color: #93c5fd; }
-        .kc-green  .kpi-label { color: #6ee7b7; }
-        .kc-purple .kpi-label { color: #d8b4fe; }
-        .kc-orange .kpi-label { color: #fcd34d; }
-        .kpi-val { font-size: 28px; font-weight: 900; color: white; line-height: 1; }
-        .kpi-trend {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 12px; font-weight: 800; padding: 4px 10px;
-            border-radius: 6px; width: fit-content;
-        }
-        .trend-up   { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-        .trend-down { background: rgba(239,68,68,0.15);  color: #fca5a5; }
-        .trend-flat { background: rgba(255,255,255,0.05); color: var(--text-muted); }
-        .kpi-desc { font-size: 12px; color: var(--text-muted); }
+        .kpi-icon-bg { position: absolute; right: -15px; bottom: -20px; font-size: 6rem; opacity: 0.13; transform: rotate(-15deg); pointer-events: none; }
+        .kpi-content { position: relative; z-index: 2; }
+        .kpi-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .kpi-title { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        .kpi-icon-sm { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .kpi-value { font-size: 1.85rem; font-weight: 700; color: var(--text-main); line-height: 1.2; }
+        .kpi-trend { display: flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 0.75rem; font-weight: 500; }
+        .kpi-trend.up { color: #34d399; }
+        .kpi-trend.down { color: #f87171; }
+        .kpi-description { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
 
-        /* SLIDE 3 — Alertas operativas */
-        .alert-feed { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .alert-row {
-            display: flex; align-items: flex-start; gap: 14px;
-            padding: 14px 16px; border-radius: 12px; border: 1px solid;
-            transition: 0.2s;
-        }
-        .alert-row:hover { transform: translateX(4px); }
-        .alert-row.ar-critical { background: rgba(239,68,68,0.06);   border-color: rgba(239,68,68,0.25); }
-        .alert-row.ar-warning  { background: rgba(245,158,11,0.06);  border-color: rgba(245,158,11,0.25); }
-        .alert-row.ar-info     { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.25); }
-        .alert-row.ar-ok       { background: rgba(16,185,129,0.06);  border-color: rgba(16,185,129,0.25); }
-        .ar-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-        .ar-critical .ar-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
-        .ar-warning  .ar-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
-        .ar-info     .ar-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .ar-ok       .ar-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .ar-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .ar-body p { font-size: 12px; color: var(--text-muted); margin: 0; line-height: 1.4; }
-        .ar-badge {
-            font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px;
-            margin-left: auto; align-self: flex-start; flex-shrink: 0;
-        }
-        .ar-critical .ar-badge { background: rgba(239,68,68,0.15);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-        .ar-warning  .ar-badge { background: rgba(245,158,11,0.15);  color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-        .ar-info     .ar-badge { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-        .ar-ok       .ar-badge { background: rgba(16,185,129,0.15);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        .catalog-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
+        .catalog-row .lbl { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+        .cat-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; border-radius: 9px; padding: 6px 11px; background: rgba(255,255,255,0.04); border: 1px dashed rgba(255,255,255,0.14); color: #cbd5e1; }
+        .two-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
 
-        /* SLIDE 4 — Revenue por sede */
-        .branch-bars { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .branch-bar-row { display: flex; align-items: center; gap: 12px; }
-        .bb-name { font-size: 13px; font-weight: 700; color: white; min-width: 130px; }
-        .bb-track { flex: 1; height: 10px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; }
-        .bb-fill { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
-        .bb-val { font-size: 13px; font-weight: 800; color: white; min-width: 90px; text-align: right; }
-        .bb-trend { font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 5px; flex-shrink: 0; }
-        .bb-up   { color: #6ee7b7; background: rgba(16,185,129,0.12); }
-        .bb-down { color: #fca5a5; background: rgba(239,68,68,0.12); }
+        /* =========================================
+           SLIDE 3: DESGLOSE POR SEDE
+        ========================================= */
+        .perf-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 36px; align-items: center; }
+        .perf-panel { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; }
+        .perf-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+        .perf-tab { font-size: 12px; font-weight: 800; border-radius: 8px; padding: 7px 11px; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid transparent; display: inline-flex; align-items: center; gap: 7px; font-family: inherit; cursor: pointer; }
+        .perf-tab.on { color: #dbeafe; background: rgba(59,130,246,0.14); border-color: rgba(59,130,246,0.35); }
+        .perf-total { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 14px; border-radius: 10px; background: rgba(0,0,0,0.25); margin-bottom: 12px; }
+        .perf-total span { font-size: 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+        .perf-total b { font-size: 22px; }
+        .perf-row { display: grid; grid-template-columns: 26px 110px 1fr 110px; align-items: center; gap: 12px; padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13.5px; }
+        .perf-row:last-child { border-bottom: none; }
+        .perf-rank { font-family: monospace; color: var(--text-muted); font-weight: 700; }
+        .perf-name { font-weight: 700; }
+        .perf-bar { height: 8px; border-radius: 6px; background: rgba(255,255,255,0.06); overflow: hidden; }
+        .perf-bar i { display: block; height: 100%; border-radius: 6px; background: var(--kpi-blue); transition: width .5s ease; }
+        .perf-bar i.neg { background: var(--kpi-red); }
+        .perf-val { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .perf-val.neg { color: #fca5a5; }
 
-        /* SLIDE 5 — Acciones rápidas */
-        .quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; width: 100%; max-width: 960px; margin: 0 auto; }
-        .quick-card {
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            padding: 22px 16px; border-radius: 14px; border: 1px solid var(--border-glass);
-            background: var(--bg-panel); text-decoration: none;
-            transition: all 0.3s; cursor: pointer;
-        }
-        .quick-card:hover { transform: translateY(-5px); background: rgba(30,41,59,0.9); box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        .qc-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(0,0,0,0.3); transition: 0.3s; }
-        .qc-title { font-size: 14px; font-weight: 800; color: white; text-align: center; }
-        .qc-desc  { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4; }
-        .quick-card:hover.qc-blue   { border-color: var(--kpi-blue);   } .qc-blue   .qc-icon { color: #93c5fd; }
-        .quick-card:hover.qc-purple { border-color: var(--kpi-purple); } .qc-purple .qc-icon { color: #d8b4fe; }
-        .quick-card:hover.qc-teal   { border-color: var(--kpi-teal);   } .qc-teal   .qc-icon { color: #5eead4; }
-        .quick-card:hover.qc-pink   { border-color: var(--kpi-pink);   } .qc-pink   .qc-icon { color: #f9a8d4; }
-        .quick-card:hover.qc-indigo { border-color: var(--kpi-indigo); } .qc-indigo .qc-icon { color: #a5b4fc; }
-        .quick-card:hover.qc-orange { border-color: var(--kpi-orange); } .qc-orange .qc-icon { color: #fcd34d; }
+        /* =========================================
+           SLIDE 4: ATENCIÓN INMEDIATA
+        ========================================= */
+        .st-split { display: grid; grid-template-columns: 470px 1fr; gap: 36px; align-items: start; }
+        .status-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; }
+        .card-title { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 800; color: var(--text-muted); padding-bottom: 12px; border-bottom: 1px solid var(--border-glass); margin-bottom: 12px; }
+        .alert-row { display: flex; align-items: flex-start; gap: 12px; border-radius: 10px; padding: 11px 13px; margin-bottom: 7px; background: rgba(0,0,0,0.24); border-left: 3px solid transparent; text-align: left; }
+        .alert-row:last-child { margin-bottom: 0; }
+        .alert-row.p-danger { border-left-color: var(--kpi-red); }
+        .alert-row.p-warning { border-left-color: var(--kpi-orange); }
+        .alert-row i { margin-top: 2px; font-size: 13px; }
+        .alert-row strong { display: block; font-size: 13.5px; }
+        .alert-row span { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+        .alert-row .go { margin-left: auto; color: #475569; font-size: 11px; align-self: center; }
+        .score-table { width: 100%; border-collapse: collapse; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 12px; overflow: hidden; font-size: 13px; }
+        .score-table th { text-align: left; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); padding: 9px 12px; background: rgba(0,0,0,0.3); }
+        .score-table td { padding: 9px 12px; border-top: 1px solid rgba(255,255,255,0.04); }
+        .score-table td:last-child, .score-table th:last-child { text-align: right; font-family: monospace; font-weight: 800; }
+        .score-table tr.listed td:last-child { color: #fcd34d; }
 
-        /* SLIDE 6 — nav */
-        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
-        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        /* =========================================
+           SLIDE 5: ACCIONES RÁPIDAS
+        ========================================= */
+        .qa-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .qa-tile { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 13px 15px; text-align: left; display: flex; flex-direction: column; gap: 5px; }
+        .qa-tile-top { display: flex; align-items: center; gap: 10px; }
+        .qa-ico { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+        .qa-tile h4 { font-size: 14px; font-weight: 800; margin: 0; }
+        .qa-meta { font-size: 11.5px; font-weight: 800; color: #6ee7b7; }
+        .qa-meta.muted { color: var(--text-muted); font-weight: 600; }
+        .qa-meta.warn { color: #fcd34d; }
+        .qa-zone { font-size: 9.5px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; border-radius: 5px; padding: 2px 6px; align-self: flex-start; background: rgba(59,130,246,0.12); color: #93c5fd; }
+        .qa-zone.local { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+        .qa-zone.factory { background: rgba(245,158,11,0.12); color: #fcd34d; }
+        .route-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+        .route-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 13px 15px; text-align: left; }
+        .route-card strong { display: flex; align-items: center; gap: 9px; font-size: 13.5px; margin-bottom: 5px; }
+        .route-card span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 6: A MEDIDA
+        ========================================= */
+        .cfg-split { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+        .edit-demo { background: rgba(15,23,42,0.82); border: 1px solid rgba(168,85,247,0.3); border-radius: 16px; padding: 17px; box-shadow: 0 22px 50px rgba(0,0,0,0.5); }
+        .edit-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .edit-tag { font-size: 10.5px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: #e9d5ff; background: rgba(168,85,247,0.2); border-radius: 7px; padding: 5px 11px; }
+        .edit-count { font-size: 12px; font-weight: 800; color: var(--text-muted); font-family: monospace; }
+        .edit-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .edit-kpi { display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; }
+        .edit-kpi.dragging { border-color: rgba(168,85,247,0.5); background: rgba(168,85,247,0.1); }
+        .edit-kpi.hidden-kpi { border-style: dashed; opacity: .55; }
+        .edit-kpi small { margin-left: auto; font-size: 10.5px; color: #64748b; text-align: right; }
+        .edit-ctrl { margin-left: auto; display: flex; gap: 3px; }
+        .edit-ctrl span { width: 18px; height: 18px; border-radius: 5px; background: rgba(255,255,255,0.07); color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 8px; }
+        .edit-ctrl span.rm { color: #fca5a5; }
+        .edit-sub { font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin: 14px 0 8px; }
+        .sections-demo { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+        .sections-demo .sec { display: flex; align-items: center; gap: 9px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-glass); border-radius: 10px; padding: 10px 12px; font-size: 12.5px; }
+        .sections-demo .sec.wide { grid-column: 1 / -1; display: block; }
+        .timeline { display: flex; align-items: center; gap: 10px; margin-top: 8px; overflow: hidden; }
+        .tl-node { display: flex; align-items: center; gap: 8px; background: rgba(236,72,153,0.08); border: 1px solid rgba(236,72,153,0.2); border-radius: 10px; padding: 7px 10px; flex-shrink: 0; }
+        .tl-node i { color: #f472b6; font-size: 12px; }
+        .tl-node strong { display: block; font-size: 11.5px; }
+        .tl-node span { font-size: 10.5px; color: var(--text-muted); }
+        .tl-arrow { color: #475569; font-size: 10px; flex-shrink: 0; }
+        .cfg-list { display: flex; flex-direction: column; gap: 9px; }
+        .cfg-item { display: flex; gap: 12px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 11px; padding: 12px 15px; text-align: left; }
+        .cfg-item i { width: 18px; text-align: center; margin-top: 2px; font-size: 13px; }
+        .cfg-item strong { display: block; font-size: 13.5px; margin-bottom: 2px; }
+        .cfg-item span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           SLIDE 7: NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
-        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover    .qa-icon { color: var(--kpi-blue); }
-        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover  .qa-icon { color: #d8b4fe; }
-        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover  .qa-icon { color: #a5b4fc; }
-        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover    .qa-icon { color: #f9a8d4; }
-        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover    .qa-icon { color: #22d3ee; }
-        .qa-btn.teal:hover    { border-color: var(--kpi-teal);   } .qa-btn.teal:hover    .qa-icon { color: #5eead4; }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
         @media (max-width: 1024px) {
             html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
             .slide.active { display: flex; justify-content: flex-start; }
-            .slide-content-wide { height: auto; justify-content: flex-start; }
-            .grid-split { grid-template-columns: 1fr; gap: 40px; }
-            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
             .visual-block { order: 2; width: 100%; }
-            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
-            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
-            .kpi-grid-4 { grid-template-columns: 1fr 1fr; }
-            .quick-grid { grid-template-columns: 1fr 1fr; }
-            .nav-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
-            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .qa-icon { flex-shrink: 0; }
-            .qa-text { text-align: left; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .split-row, .two-notes, .perf-split, .st-split, .cfg-split, .route-row { grid-template-columns: 1fr; gap: 16px; }
+            .kpi-grid { grid-template-columns: 1fr 1fr; gap: 11px; }
+            .qa-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .hero-chips { flex-direction: column; align-items: stretch; }
+            .hero-chip { justify-content: center; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .kpi-grid, .qa-grid, .edit-kpis, .sections-demo { grid-template-columns: 1fr; }
+            .perf-row { grid-template-columns: 20px 1fr 96px; }
+            .perf-bar { grid-column: 2 / -1; grid-row: 2; }
+            .score-table th:nth-child(2), .score-table td:nth-child(2) { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn, .perf-bar i { transition: none; }
+            .qa-btn:hover { transform: none; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
 
-<div class="presentation-controls">
-    <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-    <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
-    <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
-</div>
-
-<!-- SLIDE 1 — INTRO -->
-<div class="slide active">
-    <div class="glow-blue"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color: #93c5fd;">Apartado de Marca</h3>
-            <h1>Dashboard<br><span style="color:white;">de Marca</span></h1>
-            <p>El panorama ejecutivo de toda la red. KPIs agregados de ventas, caja y clientes, alertas operativas priorizadas y acciones directas a cada módulo del ecosistema.</p>
-            <p>Una vista, toda la información. Sin tener que entrar a cada sede para saber qué está pasando.</p>
-        </div>
-        <div class="visual-block glass-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;min-height:380px;text-align:center;">
-            <i class="fas fa-crown" style="font-size:72px;color:#93c5fd;"></i>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-                <span class="pill-tag"><i class="fas fa-chart-line" style="color:#93c5fd;"></i> KPIs Agregados</span>
-                <span class="pill-tag"><i class="fas fa-bell" style="color:#fcd34d;"></i> Alertas</span>
-                <span class="pill-tag"><i class="fas fa-store" style="color:#6ee7b7;"></i> Sedes</span>
-                <span class="pill-tag"><i class="fas fa-bolt" style="color:#f9a8d4;"></i> Acciones</span>
-            </div>
-        </div>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 7</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
-</div>
 
-<!-- SLIDE 2 — KPIs AGREGADOS -->
-<div class="slide">
-    <div class="glow-blue"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#93c5fd;">La Foto Financiera</h3>
-            <h2>KPIs Agregados de la Red</h2>
-            <p>Cuatro métricas clave que combinan los resultados de <strong style="color:white;">todas las sedes</strong> en tiempo real. Si algo se mueve en cualquier local, se refleja acá.</p>
-            <p>El trend compara el período actual contra el mes anterior para detectar movimientos rápidamente.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="kpi-grid-4">
-                <div class="kpi-card kc-blue">
-                    <div class="kpi-label">Facturación del Mes</div>
-                    <div class="kpi-val">$4.2M</div>
-                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +12.4%</div>
-                    <div class="kpi-desc">Ventas agregadas de toda la red</div>
-                </div>
-                <div class="kpi-card kc-green">
-                    <div class="kpi-label">Resultado de Red</div>
-                    <div class="kpi-val">$1.1M</div>
-                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +8.1%</div>
-                    <div class="kpi-desc">Caja neta consolidada</div>
-                </div>
-                <div class="kpi-card kc-purple">
-                    <div class="kpi-label">Clientes de la Red</div>
-                    <div class="kpi-val">3.847</div>
-                    <div class="kpi-trend trend-up"><i class="fas fa-arrow-up"></i> +340 este mes</div>
-                    <div class="kpi-desc">Activos en el período</div>
-                </div>
-                <div class="kpi-card kc-orange">
-                    <div class="kpi-label">Empleados Totales</div>
-                    <div class="kpi-val">14</div>
-                    <div class="kpi-trend trend-flat"><i class="fas fa-minus"></i> Estable</div>
-                    <div class="kpi-desc">Personal activo distribuido</div>
-                </div>
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-blue"></div>
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: var(--kpi-blue);">Apartado de Marca</h3>
+                <h1>Resumen <span>Global</span></h1>
+                <p>La primera pantalla de la marca suma lo que reportan todas sus sedes en el período que elijas, y te dice cuáles necesitan que las mires. No hay que entrar sede por sede para saber cómo viene la red.</p>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- SLIDE 3 — ALERTAS -->
-<div class="slide">
-    <div class="glow-orange"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#fcd34d;">Atención Inmediata</h3>
-            <h2>Alertas Operativas Priorizadas</h2>
-            <p>El dashboard no te bombardea con datos: te muestra <strong style="color:white;">lo que requiere acción</strong>. Las alertas se ordenan por severidad y se resuelven directamente desde acá.</p>
-            <p>Desvíos de catálogo, sedes con bajo rendimiento, cuellos de botella en reservas. Todo en una pantalla.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="alert-feed">
-                <div class="alert-row ar-critical">
-                    <div class="ar-icon"><i class="fas fa-boxes-stacked"></i></div>
-                    <div class="ar-body">
-                        <strong>Desfasaje de Catálogo</strong>
-                        <p>Sucursal Norte reporta 4 desvíos comerciales frente al estándar de marca.</p>
+            <div class="visual-block">
+                <div class="split-row">
+                    <div class="split-card">
+                        <strong><i class="fas fa-layer-group" style="color: var(--kpi-blue);"></i> Una suma, no un promedio</strong>
+                        <span>Cada número sale de pedirle a cada sede su resumen del período y sumarlos. La marca no vende: lo que muestra es lo que vendió la red.</span>
                     </div>
-                    <div class="ar-badge">Crítico</div>
-                </div>
-                <div class="alert-row ar-warning">
-                    <div class="ar-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                    <div class="ar-body">
-                        <strong>Intervención Prioritaria</strong>
-                        <p>Sucursal Nueva sin liderazgo asignado. Nadie tiene acceso de administración.</p>
+                    <div class="split-card">
+                        <strong><i class="fas fa-route" style="color: var(--kpi-orange);"></i> Y una puerta a cada sede</strong>
+                        <span>Los avisos y las acciones rápidas llevan directo al local que hace falta mirar, aunque eso signifique salir del espacio de la marca.</span>
                     </div>
-                    <div class="ar-badge">A vigilar</div>
                 </div>
-                <div class="alert-row ar-info">
-                    <div class="ar-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <div class="ar-body">
-                        <strong>Cuello de Botella</strong>
-                        <p>Sucursal Centro acumula 8 reservas estancadas sin resolución.</p>
-                    </div>
-                    <div class="ar-badge">Info</div>
-                </div>
-                <div class="alert-row ar-ok">
-                    <div class="ar-icon"><i class="fas fa-trophy"></i></div>
-                    <div class="ar-body">
-                        <strong>Mejor Referencia</strong>
-                        <p>Sucursal Centro lidera la red con $2.1M en ventas este mes.</p>
-                    </div>
-                    <div class="ar-badge">Destacado</div>
+
+                <div class="hero-chips">
+                    <span class="hero-chip"><i class="fas fa-calendar-days" style="color:#c084fc;"></i> Período a elección</span>
+                    <span class="hero-chip"><i class="fas fa-chart-line" style="color: var(--kpi-blue);"></i> Hasta 4 KPI de 7</span>
+                    <span class="hero-chip"><i class="fas fa-bell" style="color: var(--kpi-red);"></i> Atención inmediata</span>
+                    <span class="hero-chip"><i class="fas fa-bolt" style="color: #fcd34d;"></i> Acciones rápidas</span>
+                    <span class="hero-chip"><i class="fas fa-bullhorn" style="color: var(--kpi-pink);"></i> Campañas</span>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 4 — REVENUE POR SEDE -->
-<div class="slide">
-    <div class="glow-green"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#6ee7b7;">La Comparativa Interna</h3>
-            <h2>Desempeño Sede por Sede</h2>
-            <p>La brecha entre la sede que más factura y la que menos es el indicador más importante de distribución de esfuerzo. El dashboard la muestra al instante.</p>
-            <p>Desde esta vista podés identificar <strong style="color:white;">qué sede necesita refuerzo</strong> y cuál es el modelo a replicar.</p>
-        </div>
-        <div class="visual-block glass-panel" style="width:100%;">
-            <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:18px;">Ventas del mes — Top por sede</div>
-            <div class="branch-bars">
-                <div class="branch-bar-row">
-                    <div class="bb-name">Sucursal Centro</div>
-                    <div class="bb-track"><div class="bb-fill" style="width:100%;background:linear-gradient(90deg,#3b82f6,#6366f1);"></div></div>
-                    <div class="bb-val">$2.1M</div>
-                    <div class="bb-trend bb-up">+18%</div>
+    <!-- SLIDE 2: PERÍODO Y KPI -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">El período manda</h3>
+                <h2>Elegís las fechas una vez, y toda la red se mide en ese tramo</h2>
+                <p>Abre en el mes en curso. Cada tendencia compara contra el tramo anterior <b style="color:#e2e8f0;">del mismo largo</b>: cinco días contra los cinco días previos, no contra un mes entero.</p>
+            </div>
+
+            <div class="visual-block">
+                <div class="date-strip">
+                    <i class="fas fa-calendar-days" style="color:#c084fc;"></i>
+                    <span>Período</span> <b>01/10/2026</b> <span>a</span> <b>05/10/2026</b>
+                    <span style="opacity:.5;">·</span> <span>se compara con 26/09 a 30/09</span>
                 </div>
-                <div class="branch-bar-row">
-                    <div class="bb-name">Sucursal Norte</div>
-                    <div class="bb-track"><div class="bb-fill" style="width:62%;background:linear-gradient(90deg,#a855f7,#ec4899);"></div></div>
-                    <div class="bb-val">$1.3M</div>
-                    <div class="bb-trend bb-up">+5%</div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card">
+                        <i class="fas fa-chart-line kpi-icon-bg" style="color: #3b82f6;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Facturación del período</span>
+                                <div class="kpi-icon-sm" style="background: rgba(59,130,246,0.125); color: #3b82f6;"><i class="fas fa-chart-line"></i></div>
+                            </div>
+                            <div class="kpi-value">$ 4.210.000</div>
+                            <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> <span>9.5% vs período anterior</span></div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <i class="fas fa-wallet kpi-icon-bg" style="color: #10b981;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Resultado de la Red</span>
+                                <div class="kpi-icon-sm" style="background: rgba(16,185,129,0.125); color: #10b981;"><i class="fas fa-wallet"></i></div>
+                            </div>
+                            <div class="kpi-value">$ 975.000</div>
+                            <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> <span>8.3% vs período anterior</span></div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <i class="fas fa-user-group kpi-icon-bg" style="color: #a855f7;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Clientes</span>
+                                <div class="kpi-icon-sm" style="background: rgba(168,85,247,0.125); color: #a855f7;"><i class="fas fa-user-group"></i></div>
+                            </div>
+                            <div class="kpi-value">811</div>
+                            <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> <span>2.7% vs período anterior</span></div>
+                        </div>
+                    </div>
+                    <div class="kpi-card">
+                        <i class="fas fa-id-badge kpi-icon-bg" style="color: #f59e0b;"></i>
+                        <div class="kpi-content">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Empleados Totales</span>
+                                <div class="kpi-icon-sm" style="background: rgba(245,158,11,0.125); color: #f59e0b;"><i class="fas fa-id-badge"></i></div>
+                            </div>
+                            <div class="kpi-value">19</div>
+                            <div class="kpi-description">sin tendencia: es una foto de hoy</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="branch-bar-row">
-                    <div class="bb-name">Sucursal Nueva</div>
-                    <div class="bb-track"><div class="bb-fill" style="width:38%;background:linear-gradient(90deg,#f59e0b,#ef4444);"></div></div>
-                    <div class="bb-val">$0.8M</div>
-                    <div class="bb-trend bb-down">-3%</div>
+
+                <div class="catalog-row">
+                    <span class="lbl">Los otros tres</span>
+                    <span class="cat-chip"><i class="fas fa-store" style="color:#06b6d4;"></i> Sedes Activas · 3 / 3</span>
+                    <span class="cat-chip"><i class="fas fa-clock" style="color:#f97316;"></i> Pedidos Pendientes · 5</span>
+                    <span class="cat-chip"><i class="fas fa-code-branch" style="color:#ef4444;"></i> Desvíos de Catálogo · 4</span>
+                </div>
+
+                <div class="two-notes">
+                    <div class="note">
+                        <i class="fas fa-calculator"></i>
+                        <span>La tendencia de la red <b>no promedia porcentajes</b>: suma lo actual de cada sede, reconstruye lo del tramo anterior de cada una y compara los dos totales. Así una sede chica que duplicó no infla el número de toda la red.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-user-group"></i>
+                        <span><b>Clientes</b> es la suma de los clientes distintos que compraron en cada sede durante el período. Se cuentan por sede, así que mide movimiento, no es un padrón de la red.</span>
+                    </div>
                 </div>
             </div>
-            <div style="margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06);font-size:13px;color:var(--text-muted);line-height:1.5;">
-                <i class="fas fa-scale-unbalanced" style="color:#60a5fa;margin-right:8px;"></i>
-                La brecha entre mejor y peor sede es de <strong style="color:white;">$1.3M</strong>. Conviene reforzar Sucursal Nueva.
+        </div>
+    </section>
+
+    <!-- SLIDE 3: DESGLOSE POR SEDE -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">De dónde sale el número</h3>
+                <h2>Tocar un KPI abre el mismo número, sede por sede</h2>
+            </div>
+
+            <div class="visual-block perf-split">
+                <div class="perf-panel" data-perf>
+                    <div class="perf-tabs" role="group" aria-label="Métrica del desglose">
+                        <button type="button" class="perf-tab on" data-metric="revenue" aria-pressed="true"><i class="fas fa-chart-line"></i> Facturación</button>
+                        <button type="button" class="perf-tab" data-metric="balance" aria-pressed="false"><i class="fas fa-wallet"></i> Resultado de caja</button>
+                        <button type="button" class="perf-tab" data-metric="clients" aria-pressed="false"><i class="fas fa-users"></i> Clientes</button>
+                        <button type="button" class="perf-tab" data-metric="operations" aria-pressed="false"><i class="fas fa-clock"></i> Pedidos pendientes</button>
+                    </div>
+                    <div class="perf-total"><span>Total de la red</span><b data-total>$ 4.210.000</b></div>
+                    <div data-rows></div>
+                </div>
+
+                <div class="stack">
+                    <div class="note">
+                        <i class="fas fa-ranking-star"></i>
+                        <span>Las sedes se ordenan de mayor a menor en la métrica elegida, y la barra es proporcional a la más grande. <b>Probá las solapas:</b> el orden cambia según lo que se mire.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-minus"></i>
+                        <span>Un resultado de caja <b>negativo se dibuja en rojo</b> y con su largo real: la barra mide la magnitud, no la deja en cero.</span>
+                    </div>
+                    <div class="note purple">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>El desglose lee <b>el mismo período</b> que el resumen. Llegar desde un KPI no reinicia las fechas.</span>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 5 — ACCIONES RÁPIDAS -->
-<div class="slide">
-    <div class="glow-purple"></div>
-    <div class="slide-content-wide" style="align-items:center;">
-        <div style="text-align:center;margin-bottom:40px;max-width:800px;margin-left:auto;margin-right:auto;">
-            <h3 style="color:#d8b4fe;">Todo Desde Acá</h3>
-            <h2>Acciones Directas al Ecosistema</h2>
-            <p>El dashboard no es solo lectura. Cada módulo estratégico está a un clic. Sin tener que navegar al menú.</p>
+    <!-- SLIDE 4: ATENCIÓN INMEDIATA -->
+    <section class="slide">
+        <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px; left: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Atención inmediata</h3>
+                <h2>No lista todo lo que pasa: lista lo que no puede esperar</h2>
+            </div>
+
+            <div class="visual-block st-split">
+                <div class="status-card">
+                    <div class="card-title"><i class="fas fa-bell"></i> Atención inmediata</div>
+                    <div class="alert-row p-danger">
+                        <i class="fas fa-rotate-left" style="color:#f87171;"></i>
+                        <div><strong>Respuesta de devolución vencida</strong><span>2 solicitudes sin revisar en 1 sede; 1 superó las 72 h. Mayor demora: Sede Norte.</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-danger">
+                        <i class="fas fa-bell" style="color:#f87171;"></i>
+                        <div><strong>Desvíos de Catálogo</strong><span>Hay 4 solicitudes pendientes o desvíos en los estándares de la red.</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                    <div class="alert-row p-warning">
+                        <i class="fas fa-store" style="color:#fbbf24;"></i>
+                        <div><strong>Sede Sur</strong><span>Cayó 3.2% en ventas frente al período anterior.</span></div>
+                        <i class="fas fa-chevron-right go"></i>
+                    </div>
+                </div>
+
+                <div class="stack">
+                    <div class="note warn">
+                        <i class="fas fa-rotate-left"></i>
+                        <span>Una devolución sin revisar a las <b>24 h</b> ya es demora; a las <b>72 h</b> el aviso pasa a rojo. Lleva al historial de ventas de la sede con más atraso, ya filtrado por devoluciones.</span>
+                    </div>
+                    <table class="score-table">
+                        <thead><tr><th>Sede</th><th>Qué suma</th><th>Puntos</th></tr></thead>
+                        <tbody>
+                            <tr><td>Sede Centro</td><td>nada</td><td>0</td></tr>
+                            <tr><td>Sede Norte</td><td>reservas pendientes</td><td>1</td></tr>
+                            <tr class="listed"><td>Sede Sur</td><td>ventas en baja · caja en baja</td><td>2</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="note">
+                        <i class="fas fa-scale-balanced"></i>
+                        <span>Una sede entra a la lista con <b>2 puntos</b>: estar fuera de línea vale 3, y bajar en ventas, bajar en caja o tener reservas pendientes vale 1 cada uno. Se muestran hasta cuatro, las más comprometidas primero, y el texto nombra la razón más grave.</span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="quick-grid">
-            <a href="brand_Red.html" class="quick-card qc-blue">
-                <div class="qc-icon"><i class="fas fa-network-wired"></i></div>
-                <div class="qc-title">Red</div>
-                <div class="qc-desc">Tabla de mando de todas las sedes</div>
-            </a>
-            <a href="brand_Catalogo.html" class="quick-card qc-teal">
-                <div class="qc-icon"><i class="fas fa-layer-group"></i></div>
-                <div class="qc-title">Catálogo Maestro</div>
-                <div class="qc-desc">Base comercial de la marca</div>
-            </a>
-            <a href="brand_Estandares.html" class="quick-card qc-indigo">
-                <div class="qc-icon"><i class="fas fa-ruler-combined"></i></div>
-                <div class="qc-title">Estándares</div>
-                <div class="qc-desc">Identidad visual de la red</div>
-            </a>
-            <a href="brand_Mensajes.html" class="quick-card qc-pink">
-                <div class="qc-icon"><i class="fas fa-comment-dots"></i></div>
-                <div class="qc-title">Mensajes Clave</div>
-                <div class="qc-desc">AutoResponder y retención</div>
-            </a>
-            <a href="brand_Talento.html" class="quick-card qc-purple">
-                <div class="qc-icon"><i class="fas fa-users"></i></div>
-                <div class="qc-title">Talento</div>
-                <div class="qc-desc">Equipo y transferencias</div>
-            </a>
-            <a href="brand_Settings.html" class="quick-card qc-orange">
-                <div class="qc-icon"><i class="fas fa-gear"></i></div>
-                <div class="qc-title">Ajustes</div>
-                <div class="qc-desc">Perfil global de la marca</div>
-            </a>
+    </section>
+
+    <!-- SLIDE 5: ACCIONES RÁPIDAS -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Acciones rápidas</h3>
+                <h2>Las puertas de la marca, y las de sus sedes</h2>
+                <p>Hay catorce accesos posibles y se muestran hasta ocho. Los de la marca abren acá mismo; los de un local o una fábrica te llevan a ese nodo. Quien no tiene el permiso no ve la puerta.</p>
+            </div>
+
+            <div class="visual-block">
+                <div class="qa-grid">
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(59,130,246,0.15); color:#60a5fa;"><i class="fas fa-network-wired"></i></div><h4>Red</h4></div>
+                        <span class="qa-meta muted">3 nodos</span>
+                        <span class="qa-zone">Marca</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(6,182,212,0.15); color:#22d3ee;"><i class="fas fa-layer-group"></i></div><h4>Catálogo</h4></div>
+                        <span class="qa-meta warn">4 pendientes</span>
+                        <span class="qa-zone">Marca</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(79,70,229,0.15); color:#a5b4fc;"><i class="fas fa-ruler-combined"></i></div><h4>Estándares</h4></div>
+                        <span class="qa-meta muted">Gobierno</span>
+                        <span class="qa-zone">Marca</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(236,72,153,0.15); color:#f472b6;"><i class="fas fa-comment-dots"></i></div><h4>Contestadora</h4></div>
+                        <span class="qa-meta muted">Plantillas</span>
+                        <span class="qa-zone">Marca</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(236,72,153,0.15); color:#f472b6;"><i class="fas fa-bullhorn"></i></div><h4>Campañas</h4></div>
+                        <span class="qa-meta muted">Difusión</span>
+                        <span class="qa-zone">Marca</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(16,185,129,0.15); color:#34d399;"><i class="fas fa-cash-register"></i></div><h4>Punto de venta</h4></div>
+                        <span class="qa-meta">3 opciones</span>
+                        <span class="qa-zone local">Local</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(245,158,11,0.15); color:#fbbf24;"><i class="fas fa-industry"></i></div><h4>Producción</h4></div>
+                        <span class="qa-meta warn">Crear fabrica</span>
+                        <span class="qa-zone factory">Fábrica</span>
+                    </div>
+                    <div class="qa-tile">
+                        <div class="qa-tile-top"><div class="qa-ico" style="background: rgba(20,184,166,0.15); color:#2dd4bf;"><i class="fas fa-truck"></i></div><h4>Despachos</h4></div>
+                        <span class="qa-meta">3 opciones</span>
+                        <span class="qa-zone local">Local</span>
+                    </div>
+                </div>
+
+                <div class="route-row">
+                    <div class="route-card">
+                        <strong><i class="fas fa-arrow-right-from-bracket" style="color:#60a5fa;"></i> Hay un solo nodo</strong>
+                        <span>Avisa que vas a salir de la marca hacia ese nodo. El aviso trae "no volver a mostrar".</span>
+                    </div>
+                    <div class="route-card">
+                        <strong><i class="fas fa-list-ul" style="color:#34d399;"></i> Hay varios</strong>
+                        <span>Pregunta a cuál querés entrar. La pastilla ya lo anticipa: "3 opciones".</span>
+                    </div>
+                    <div class="route-card">
+                        <strong><i class="fas fa-plus" style="color:#fbbf24;"></i> No hay ninguno</strong>
+                        <span>Ofrece crearlo con el nombre de fábrica ("Local" o "Fabrica") y te lleva directo a la pantalla que pediste.</span>
+                    </div>
+                </div>
+
+                <div class="note purple" style="margin-top: 14px;">
+                    <i class="fas fa-industry"></i>
+                    <span>"Fábrica" no es un tipo de sede: es <b>cualquier sede que trabaja con insumos</b>. Una sucursal que también fabrica aparece en las dos listas, la de vender y la de producir.</span>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 6 — NAVEGACIÓN -->
-<div class="slide">
-    <div class="glow-blue" style="left:50%;transform:translateX(-50%);top:-300px;width:800px;height:800px;"></div>
-    <div class="slide-content-wide" style="align-items:center;text-align:center;justify-content:center;">
-        <div class="text-block">
-            <h3 style="color:#93c5fd;">Seguir Explorando</h3>
-            <h2>¿Qué vemos ahora?</h2>
-            <p style="max-width:880px;margin:0 auto;">Ya entendés el panorama ejecutivo de la marca. ¿Continuamos con la tabla de mando de la red o con los estándares de identidad?</p>
+    <!-- SLIDE 6: A MEDIDA -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">A medida</h3>
+                <h2>Cuatro números a la vista, y los bloques en el orden que prefieras</h2>
+            </div>
+
+            <div class="visual-block cfg-split">
+                <div class="edit-demo">
+                    <div class="edit-bar">
+                        <span class="edit-tag"><i class="fas fa-pen"></i> Editando el resumen</span>
+                        <span class="edit-count">KPI 4 / 4</span>
+                    </div>
+                    <div class="edit-kpis">
+                        <div class="edit-kpi"><i class="fas fa-chart-line" style="color:#3b82f6;"></i> Facturación<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi dragging"><i class="fas fa-store" style="color:#06b6d4;"></i> Sedes Activas<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi"><i class="fas fa-wallet" style="color:#10b981;"></i> Resultado<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi"><i class="fas fa-code-branch" style="color:#ef4444;"></i> Desvíos<span class="edit-ctrl"><span><i class="fas fa-chevron-left"></i></span><span><i class="fas fa-chevron-right"></i></span><span class="rm"><i class="fas fa-times"></i></span></span></div>
+                        <div class="edit-kpi hidden-kpi"><i class="fas fa-user-group" style="color:#64748b;"></i> Clientes<small>Oculta uno para reemplazarlo</small></div>
+                        <div class="edit-kpi hidden-kpi"><i class="fas fa-id-badge" style="color:#64748b;"></i> Empleados<small>Oculta uno para reemplazarlo</small></div>
+                    </div>
+
+                    <div class="edit-sub">Bloques</div>
+                    <div class="sections-demo">
+                        <div class="sec"><i class="fas fa-bell" style="color:#f87171;"></i> Atención inmediata</div>
+                        <div class="sec"><i class="fas fa-bolt" style="color:#fcd34d;"></i> Acciones rápidas</div>
+                        <div class="sec wide">
+                            <div><i class="fas fa-bullhorn" style="color:#f472b6;"></i> Línea de tiempo: Campañas</div>
+                            <div class="timeline">
+                                <div class="tl-node"><i class="fas fa-bullhorn"></i><div><strong>Día de la madre</strong><span>12 oct., 10:00</span></div></div>
+                                <i class="fas fa-arrow-right tl-arrow"></i>
+                                <div class="tl-node"><i class="fas fa-bullhorn"></i><div><strong>Vuelven los clásicos</strong><span>20 oct., 09:00</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cfg-list">
+                    <div class="cfg-item"><i class="fas fa-hand-pointer" style="color:#c084fc;"></i><div><strong>Siete KPI disponibles, cuatro a la vista</strong><span>Con los cuatro puestos, los demás esperan en gris: para sumar uno hay que sacar otro. Arranca con Facturación, Resultado, Clientes y Empleados.</span></div></div>
+                    <div class="cfg-item"><i class="fas fa-arrows-up-down-left-right" style="color:#93c5fd;"></i><div><strong>Se ordena arrastrando o con flechas</strong><span>KPI, bloques y acciones rápidas se reordenan igual. Siempre queda al menos uno de cada cosa: no se puede vaciar el resumen.</span></div></div>
+                    <div class="cfg-item"><i class="fas fa-bullhorn" style="color:#f472b6;"></i><div><strong>La línea de tiempo de campañas</strong><span>Muestra hasta cinco campañas de la marca con su fecha de inicio, y "Ver historial completo" abre Campañas. Si comparte fila con un solo bloque se pone a su lado; si no, ocupa todo el ancho.</span></div></div>
+                    <div class="cfg-item"><i class="fas fa-store-slash" style="color:#fbbf24;"></i><div><strong>Sin sedes, no hay resumen que mostrar</strong><span>Una marca recién creada ve "Todavía no hay sedes para dirigir", con el botón para crear la primera, el acceso a Estándares y las acciones rápidas.</span></div></div>
+                </div>
+            </div>
         </div>
-        <div class="visual-block nav-grid">
-            <a href="index.html" class="qa-btn blue" style="border-color:rgba(59,130,246,0.4);">
-                <div class="qa-icon" style="color:#93c5fd;"><i class="fas fa-map"></i></div>
-                <div class="qa-text" style="color:white;">Índice de Marca</div>
-            </a>
-            <a href="brand_Red.html" class="qa-btn blue">
-                <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
-                <div class="qa-text" style="color:white;">Red</div>
-            </a>
-            <a href="brand_Estandares.html" class="qa-btn indigo">
-                <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
-                <div class="qa-text" style="color:white;">Estándares</div>
-            </a>
-            <a href="brand_Mensajes.html" class="qa-btn pink">
-                <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
-                <div class="qa-text" style="color:white;">Mensajes Clave</div>
-            </a>
-            <a href="brand_Catalogo.html" class="qa-btn cyan">
-                <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
-                <div class="qa-text" style="color:white;">Catálogo Maestro</div>
-            </a>
+    </section>
+
+    <!-- SLIDE 7: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Seguir explorando</h3>
+                <h2>Desde el resumen se llega a toda la red</h2>
+                <p>¿Seguimos por la comparación de las sedes o por el catálogo que comparten?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="red.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text">Red</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text">Catálogo<br>Maestro</div>
+                </a>
+            </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<script>
-    const pageId = 'brand_home';
-    let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
-    const slides = document.querySelectorAll('.slide');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btnNext');
-    const currentSlideNum = document.getElementById('currentSlideNum');
-    const totalSlidesDisplay = document.getElementById('totalSlides');
+    <script>
+        // Desglose por sede: los mismos datos ficticios que suman los KPI de la diapositiva 2.
+        (() => {
+            const panel = document.querySelector('[data-perf]');
+            if (!panel) return;
+            const sedes = [
+                { name: 'Sede Centro', revenue: 2140000, balance: 640000, clients: 412, operations: 0 },
+                { name: 'Sede Norte', revenue: 1310000, balance: 380000, clients: 268, operations: 5 },
+                { name: 'Sede Sur', revenue: 760000, balance: -45000, clients: 131, operations: 0 },
+            ];
+            const money = value => (value < 0 ? '-$ ' : '$ ') + Math.abs(value).toLocaleString('es-AR');
+            const format = (metric, value) => (['revenue', 'balance'].includes(metric) ? money(value) : value.toLocaleString('es-AR'));
+            const rows = panel.querySelector('[data-rows]');
+            const total = panel.querySelector('[data-total]');
+            const tabs = [...panel.querySelectorAll('[data-metric]')];
 
-    function updateSlides() {
-        if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
-        slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
-        currentSlideNum.innerText = currentIndex + 1;
-        localStorage.setItem('slide_' + pageId, currentIndex);
-        setTimeout(() => window.scrollTo(0, 0), 50);
-    }
-    function nextSlide() {
-        if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
-        else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
-    }
-    function prevSlide() {
-        if (currentIndex > 0) { currentIndex--; updateSlides(); }
-    }
+            function render(metric) {
+                tabs.forEach(tab => {
+                    const on = tab.dataset.metric === metric;
+                    tab.classList.toggle('on', on);
+                    tab.setAttribute('aria-pressed', String(on));
+                });
+                const ranked = [...sedes].sort((a, b) => b[metric] - a[metric] || a.name.localeCompare(b.name));
+                const max = Math.max(1, ...sedes.map(sede => Math.abs(sede[metric])));
+                total.textContent = format(metric, sedes.reduce((sum, sede) => sum + sede[metric], 0));
+                rows.innerHTML = ranked.map((sede, index) => {
+                    const neg = sede[metric] < 0 ? 'neg' : '';
+                    return `<div class="perf-row">
+                        <span class="perf-rank">${index + 1}</span>
+                        <span class="perf-name">${sede.name}</span>
+                        <span class="perf-bar"><i class="${neg}" style="width:${Math.abs(sede[metric]) / max * 100}%"></i></span>
+                        <span class="perf-val ${neg}">${format(metric, sede[metric])}</span>
+                    </div>`;
+                }).join('');
+            }
 
-    btnNext.addEventListener('click', nextSlide);
-    btnPrev.addEventListener('click', prevSlide);
+            tabs.forEach(tab => tab.addEventListener('click', () => render(tab.dataset.metric)));
+            render('revenue');
+        })();
 
-    document.addEventListener('keydown', (e) => {
-        const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
-        if (!isTyping) {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
-        }
-    });
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_home';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
 
-    updateSlides();
-</script>
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
 </body>
-</html> 
+</html>

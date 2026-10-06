@@ -3,423 +3,596 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Maestro — Apartado de Marca</title>
+    <title>Catálogo Maestro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         :root {
             --bg-base: #0f172a;
-            --bg-panel: rgba(15,23,42,0.6);
+            --bg-panel: rgba(15, 23, 42, 0.6);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-glass: rgba(255,255,255,0.05);
-            --kpi-blue: #3b82f6;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
             --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
             --kpi-purple: #a855f7;
             --kpi-orange: #f59e0b;
             --kpi-pink: #ec4899;
-            --kpi-teal: #14b8a6;
+            --kpi-red: #ef4444;
             --kpi-cyan: #06b6d4;
-            --kpi-indigo: #4f46e5;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-base); font-family: 'Urbanist', sans-serif; color: var(--text-main); }
-        .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.4s ease; background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
         .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
-        .slide-content-wide { width: 100%; max-width: 1400px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
-        .glow-cyan   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .presentation-controls { position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-cyan { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(6,182,212,0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible { outline: 3px solid #67e8f9; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
         .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
         .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .ctrl-btn:hover { background: var(--kpi-cyan); }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-cyan); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
         h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
-        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; }
-        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
-        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
-        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-        .pill-tag i { margin-right: 8px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
 
-        /* SLIDE 2 — Catálogo Oficial */
-        .catalog-list { display: flex; flex-direction: column; gap: 10px; width: 100%; }
-        .catalog-row {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 14px; border-radius: 12px;
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
-            transition: 0.2s;
-        }
-        .catalog-row:hover { background: rgba(255,255,255,0.05); transform: translateX(4px); }
-        .cr-thumb { width: 40px; height: 40px; border-radius: 10px; background: rgba(6,182,212,0.1); border: 1px dashed rgba(6,182,212,0.3); display: flex; align-items: center; justify-content: center; font-size: 16px; color: #22d3ee; flex-shrink: 0; }
-        .cr-info { flex: 1; }
-        .cr-info strong { font-size: 14px; font-weight: 800; color: white; display: block; }
-        .cr-info small { font-size: 11px; color: var(--text-muted); }
-        .cr-coverage { display: flex; gap: 6px; align-items: center; }
-        .cov-dot { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 8px; }
-        .cov-ok      { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-        .cov-missing { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
-        .toggle-mini { width: 30px; height: 17px; border-radius: 10px; background: rgba(16,185,129,0.4); position: relative; flex-shrink: 0; }
-        .toggle-mini.off { background: rgba(255,255,255,0.1); }
-        .toggle-mini::after { content: ''; position: absolute; width: 13px; height: 13px; background: white; border-radius: 50%; top: 2px; left: 15px; transition: 0.2s; }
-        .toggle-mini.off::after { left: 2px; }
-        .type-badge { font-size: 10px; font-weight: 900; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tb-physical { background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); }
-        .tb-service  { background: rgba(245,158,11,0.1);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
-        .tb-digital  { background: rgba(139,92,246,0.1);  color: #a78bfa; border: 1px solid rgba(139,92,246,0.2); }
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 22px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
 
-        /* SLIDE 3 — Radar de sedes */
-        .radar-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-        .radar-card { padding: 16px; border-radius: 14px; border: 1px solid; display: flex; flex-direction: column; gap: 10px; transition: 0.2s; }
-        .radar-card:hover { transform: translateY(-2px); }
-        .rc-candidate { background: rgba(245,158,11,0.06);  border-color: rgba(245,158,11,0.25); }
-        .rc-local     { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
-        .rc-candidate .rc-badge { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-        .rc-local     .rc-badge { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-        .rc-name { font-size: 14px; font-weight: 800; color: white; }
-        .rc-detail { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
-        .rc-badge { font-size: 10px; font-weight: 900; padding: 3px 9px; border-radius: 5px; width: fit-content; }
-        .rc-btn { background: rgba(245,158,11,0.12); color: #fbbf24; border: 1px solid rgba(245,158,11,0.25); border-radius: 8px; padding: 6px 12px; font-size: 11px; font-weight: 900; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; width: fit-content; }
-        .rc-btn:hover { background: rgba(245,158,11,0.25); }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
 
-        /* SLIDE 4 — Cobertura */
-        .coverage-grid { display: flex; flex-direction: column; gap: 14px; width: 100%; }
-        .cov-product-row { padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); }
-        .cov-product-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .cov-product-name { font-size: 14px; font-weight: 800; color: white; }
-        .cov-progress-bar { height: 8px; background: rgba(255,255,255,0.08); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
-        .cov-progress-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
-        .cov-fill-full { background: linear-gradient(90deg,#10b981,#06b6d4); }
-        .cov-fill-partial { background: linear-gradient(90deg,#f59e0b,#ef4444); }
-        .cov-status-text { font-size: 11px; color: var(--text-muted); }
+        /* =========================================
+           SLIDE 1: PORTADA
+        ========================================= */
+        .cover h1 span { color: #22d3ee; }
+        .cover p { font-size: 21px; }
+        .hub { display: grid; grid-template-columns: 1fr auto 1fr; gap: 22px; align-items: center; max-width: 1060px; margin: 0 auto; }
+        .hub-master { background: linear-gradient(135deg, rgba(6,182,212,0.16), rgba(15,23,42,0.85)); border: 1px solid rgba(6,182,212,0.4); border-radius: 18px; padding: 20px 22px; text-align: left; }
+        .hub-master strong { display: flex; align-items: center; gap: 10px; font-size: 18px; margin-bottom: 8px; }
+        .hub-master span { font-size: 14px; color: #a5f3fc; line-height: 1.5; }
+        .hub-arrow { color: #22d3ee; font-size: 22px; text-align: center; }
+        .hub-sedes { display: flex; flex-direction: column; gap: 8px; }
+        .hub-sede { display: flex; align-items: center; gap: 10px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 12px; padding: 10px 14px; font-size: 13.5px; text-align: left; }
+        .hub-sede i { color: #94a3b8; }
+        .hub-sede small { margin-left: auto; font-size: 11.5px; color: var(--text-muted); }
 
-        /* SLIDE 5 — Oficializar */
-        .officialize-flow { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .of-step { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .of-step:last-child { border-bottom: none; }
-        .of-num { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; border: 2px solid; flex-shrink: 0; }
-        .of-step:nth-child(1) .of-num { border-color: #22d3ee; color: #22d3ee; background: rgba(6,182,212,0.1); }
-        .of-step:nth-child(2) .of-num { border-color: #fcd34d; color: #fcd34d; background: rgba(245,158,11,0.1); }
-        .of-step:nth-child(3) .of-num { border-color: #6ee7b7; color: #6ee7b7; background: rgba(16,185,129,0.1); }
-        .of-step:nth-child(4) .of-num { border-color: #d8b4fe; color: #d8b4fe; background: rgba(168,85,247,0.1); }
-        .of-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .of-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.45; }
+        /* =========================================
+           SLIDE 2: CAPAS (maqueta interactiva)
+        ========================================= */
+        .layers { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .layer { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; text-align: left; }
+        .layer.brand { border-top: 3px solid var(--kpi-cyan); }
+        .layer.sede { border-top: 3px solid var(--kpi-purple); }
+        .layer h4 { font-size: 17px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+        .layer > small { display: block; font-size: 12.5px; color: var(--text-muted); margin-bottom: 12px; }
+        .layer ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .layer li { display: flex; gap: 10px; font-size: 13.5px; color: #cbd5e1; line-height: 1.45; }
+        .layer li i { width: 16px; text-align: center; margin-top: 3px; font-size: 12px; }
+        .layer.brand li i { color: #22d3ee; }
+        .layer.sede li i { color: #c4b5fd; }
+        .layer li b { color: var(--text-main); }
 
-        /* NAV */
-        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
-        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .switch-split { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.05fr); gap: 18px; align-items: center; }
+        .cat-panel { background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; overflow: hidden; text-align: left; }
+        .brand-panel { border-color: rgba(6,182,212,0.45); box-shadow: 0 0 30px rgba(6,182,212,0.12); }
+        .cat-head { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 800; padding: 8px 12px; background: rgba(0,0,0,0.3); }
+        .cat-head small { margin-left: auto; font-size: 11.5px; font-weight: 700; color: var(--text-muted); }
+        .cat-arrow { color: #22d3ee; font-size: 20px; }
+        .sede-panels { display: flex; flex-direction: column; gap: 8px; }
+        .cat-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; font-size: 13px; }
+        .cat-row.inactive > :not(.switch):not(.status-badge) { opacity: 0.55; }
+        .cat-row.inactive .status-badge:not(.tone-pending) { opacity: 0.55; }
+        .status-badge { font-size: 10.5px; font-weight: 800; border-radius: 6px; padding: 3px 7px; white-space: nowrap; }
+        .status-badge.tone-ok { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+        .status-badge.tone-pending { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .switch { position: relative; display: inline-block; flex: 0 0 auto; width: 34px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; inset: 0; border: 1px solid rgba(255,255,255,0.1); border-radius: 34px; background-color: rgba(255,255,255,0.08); cursor: pointer; transition: 0.3s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; border-radius: 50%; background-color: white; transition: 0.3s; }
+        input:checked + .slider { background-color: #10b981; border-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(14px); }
+        .activation-pending input:checked + .slider { background-color: #f59e0b; border-color: #f59e0b; }
+        .switch input:focus-visible + .slider { outline: 3px solid #67e8f9; outline-offset: 3px; }
+        .thumb { width: 30px; height: 30px; border-radius: 7px; background: linear-gradient(135deg, #f5d0a9, #c08457); display: grid; place-items: center; color: #451a03; font-size: 12px; flex-shrink: 0; }
+        .cat-name { font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cat-price { font-weight: 800; font-variant-numeric: tabular-nums; }
+        .switch-notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+
+        /* =========================================
+           SLIDE 3: SOLICITUDES
+        ========================================= */
+        .req-flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; }
+        .req-step { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px; text-align: left; height: 100%; }
+        .req-step .who { font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+        .req-step strong { display: block; font-size: 15.5px; margin: 6px 0; }
+        .req-step span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .req-arrow { color: #475569; font-size: 18px; }
+        .mini-row { display: flex; align-items: center; gap: 9px; margin-top: 10px; padding: 8px 10px; border-radius: 9px; background: rgba(0,0,0,0.3); font-size: 12.5px; }
+        .pill { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: .5px; border-radius: 5px; padding: 3px 7px; }
+        .pill.pending { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .mini-actions { margin-left: auto; display: flex; gap: 5px; }
+        .mini-actions span { font-size: 11px; font-weight: 800; border-radius: 6px; padding: 4px 8px; }
+        .mini-actions .ok { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+        .mini-actions .no { background: rgba(239,68,68,0.13); color: #fca5a5; }
+        .three-notes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+
+        /* =========================================
+           SLIDE 4: LA MISMA TABLA
+        ========================================= */
+        .tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .tool { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px; text-align: left; }
+        .tool strong { display: flex; align-items: center; gap: 9px; font-size: 15px; margin-bottom: 6px; }
+        .tool span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .tool .where { display: inline-block; margin-top: 8px; font-size: 10.5px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: #67e8f9; }
+
+        /* =========================================
+           SLIDE 5: PASO AL CATÁLOGO ÚNICO
+        ========================================= */
+        .mig { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+        .mig-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px 18px; text-align: left; display: flex; gap: 14px; }
+        .mig-card > i { font-size: 18px; margin-top: 2px; width: 22px; text-align: center; }
+        .mig-card strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .mig-card span { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
-        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover    .qa-icon { color: var(--kpi-blue); }
-        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover  .qa-icon { color: #d8b4fe; }
-        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover  .qa-icon { color: #a5b4fc; }
-        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover    .qa-icon { color: #f9a8d4; }
-        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover    .qa-icon { color: #22d3ee; }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
         @media (max-width: 1024px) {
             html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
             .slide.active { display: flex; justify-content: flex-start; }
-            .grid-split { grid-template-columns: 1fr; gap: 40px; }
-            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
             .visual-block { order: 2; width: 100%; }
-            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
-            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
-            .radar-cards { grid-template-columns: 1fr; }
-            .nav-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
-            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .qa-icon { flex-shrink: 0; } .qa-text { text-align: left; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .hub, .layers, .switch-split, .switch-notes, .three-notes, .tools, .mig { grid-template-columns: 1fr; gap: 14px; }
+            .hub-arrow, .cat-arrow { transform: rotate(90deg); text-align: center; }
+            .req-flow { grid-template-columns: 1fr; }
+            .req-arrow { transform: rotate(90deg); text-align: center; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
 
-<div class="presentation-controls">
-    <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-    <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
-    <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
-</div>
-
-<!-- SLIDE 1 — INTRO -->
-<div class="slide active">
-    <div class="glow-cyan"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#22d3ee;">Apartado de Marca</h3>
-            <h1>Catálogo<br><span style="color:white;">Maestro</span></h1>
-            <p>El catálogo que heredan todas las sedes. La marca define qué existe, qué está activo y cómo se distribuye en la red. Las sedes no crean desde cero: parten de esta base comercial.</p>
-            <p>Dos capas: el catálogo oficial y el radar de lo que las sedes crean localmente.</p>
-        </div>
-        <div class="visual-block glass-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;min-height:380px;text-align:center;">
-            <i class="fas fa-layer-group" style="font-size:72px;color:#22d3ee;"></i>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-                <span class="pill-tag"><i class="fas fa-crown" style="color:#22d3ee;"></i> Catálogo oficial</span>
-                <span class="pill-tag"><i class="fas fa-radar" style="color:#d8b4fe;"></i> Radar de sedes</span>
-                <span class="pill-tag"><i class="fas fa-sitemap" style="color:#6ee7b7;"></i> Cobertura</span>
-                <span class="pill-tag"><i class="fas fa-star" style="color:#fcd34d;"></i> Oficializar</span>
-            </div>
-        </div>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 7</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
-</div>
 
-<!-- SLIDE 2 — CATÁLOGO OFICIAL -->
-<div class="slide">
-    <div class="glow-blue"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#22d3ee;">La Base Comercial</h3>
-            <h2>El Catálogo que Heredan Todas</h2>
-            <p>La marca define los productos y servicios oficiales. Cada uno tiene un estado global: activo o inactivo en toda la red. Un toggle en la marca <strong style="color:white;">apaga el producto en todas las sedes</strong> de inmediato.</p>
-            <p>Físicos, servicios y digitales, organizados por categoría y con visibilidad de cobertura por sede.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="catalog-list">
-                <div class="catalog-row">
-                    <div class="cr-thumb"><i class="fas fa-box"></i></div>
-                    <div class="cr-info">
-                        <strong>Zapatilla Runner Pro</strong>
-                        <small>Calzado deportivo · SKU: ZRP-001</small>
-                    </div>
-                    <span class="type-badge tb-physical">Físico</span>
-                    <div class="cr-coverage">
-                        <div class="cov-dot cov-ok" title="Sucursal Centro"><i class="fas fa-check"></i></div>
-                        <div class="cov-dot cov-ok" title="Sucursal Norte"><i class="fas fa-check"></i></div>
-                        <div class="cov-dot cov-missing" title="Sucursal Nueva"><i class="fas fa-xmark"></i></div>
-                    </div>
-                    <div class="toggle-mini"></div>
-                </div>
-                <div class="catalog-row">
-                    <div class="cr-thumb"><i class="fas fa-calendar-check"></i></div>
-                    <div class="cr-info">
-                        <strong>Asesoría Nutricional</strong>
-                        <small>Salud · SKU: ANUT-001</small>
-                    </div>
-                    <span class="type-badge tb-service">Servicio</span>
-                    <div class="cr-coverage">
-                        <div class="cov-dot cov-ok" title="Sucursal Centro"><i class="fas fa-check"></i></div>
-                        <div class="cov-dot cov-missing" title="Sucursal Norte"><i class="fas fa-xmark"></i></div>
-                        <div class="cov-dot cov-missing" title="Sucursal Nueva"><i class="fas fa-xmark"></i></div>
-                    </div>
-                    <div class="toggle-mini"></div>
-                </div>
-                <div class="catalog-row">
-                    <div class="cr-thumb"><i class="fas fa-file-video"></i></div>
-                    <div class="cr-info">
-                        <strong>Plan Entrenamiento Online</strong>
-                        <small>Digital · SKU: PEO-001</small>
-                    </div>
-                    <span class="type-badge tb-digital">Digital</span>
-                    <div class="cr-coverage">
-                        <div class="cov-dot cov-ok" title="Sucursal Centro"><i class="fas fa-check"></i></div>
-                        <div class="cov-dot cov-ok" title="Sucursal Norte"><i class="fas fa-check"></i></div>
-                        <div class="cov-dot cov-ok" title="Sucursal Nueva"><i class="fas fa-check"></i></div>
-                    </div>
-                    <div class="toggle-mini"></div>
-                </div>
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-cyan"></div>
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #22d3ee;">Apartado de Marca</h3>
+                <h1>Catálogo <span>Maestro</span></h1>
+                <p>Toda la red vende un solo catálogo, y es este. La marca escribe la ficha de cada producto una vez y todas sus sedes la venden; cada sede pone encima lo que es solo suyo, sin copiar el producto.</p>
             </div>
-            <div style="margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.5;">
-                <i class="fas fa-info-circle" style="color:#22d3ee;margin-right:6px;"></i>
-                Los puntos de colores indican si cada sede tiene el producto adoptado y listo para vender.
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- SLIDE 3 — RADAR DE SEDES -->
-<div class="slide">
-    <div class="glow-purple"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#d8b4fe;">La Segunda Pestaña</h3>
-            <h2>Radar de lo que Crean las Sedes</h2>
-            <p>Además del catálogo oficial, las sedes crean productos propios. El radar detecta <strong style="color:white;">cuándo el mismo producto aparece en múltiples sedes</strong> sin estar en el maestro: eso es una oportunidad de oficializar.</p>
-            <p>El producto candidato no se pierde. El sistema lo encontró solo, sin que nadie lo reportara.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="radar-cards">
-                <div class="radar-card rc-candidate">
-                    <div class="rc-badge">Candidato a oficial</div>
-                    <div class="rc-name">Proteína Whey 1kg</div>
-                    <div class="rc-detail">Se repite en 2 sedes. Ya hay coincidencia real entre locales. Conviene revisar si pasa al maestro.</div>
-                    <button class="rc-btn"><i class="fas fa-star"></i> Oficializar</button>
+            <div class="visual-block hub">
+                <div class="hub-master">
+                    <strong><i class="fas fa-layer-group"></i> El catálogo de la marca</strong>
+                    <span>Fichas, fotos, clasificación, carpetas y variantes, y la escala de precios con la que arranca cada producto.</span>
                 </div>
-                <div class="radar-card rc-candidate">
-                    <div class="rc-badge">Candidato a oficial</div>
-                    <div class="rc-name">Cinta Kinesiológica</div>
-                    <div class="rc-detail">3 sedes la venden por separado. Alta probabilidad de ser un producto de demanda real.</div>
-                    <button class="rc-btn"><i class="fas fa-star"></i> Oficializar</button>
-                </div>
-                <div class="radar-card rc-local">
-                    <div class="rc-badge">Producto local</div>
-                    <div class="rc-name">Guantes de Cuero</div>
-                    <div class="rc-detail">Por ahora es un desvío aislado de Sucursal Norte. No hay coincidencia con otras sedes.</div>
-                </div>
-                <div class="radar-card rc-local">
-                    <div class="rc-badge">Producto local</div>
-                    <div class="rc-name">Pack Recuperación</div>
-                    <div class="rc-detail">Creado por Sucursal Centro. Sin correlato en otros locales.</div>
+                <div class="hub-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="hub-sedes">
+                    <div class="hub-sede"><i class="fas fa-store"></i> Sede Centro <small>su precio y su stock</small></div>
+                    <div class="hub-sede"><i class="fas fa-store"></i> Sede Norte <small>su stock y sus proveedores</small></div>
+                    <div class="hub-sede"><i class="fas fa-industry"></i> Planta Sur <small>además, sus insumos</small></div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 4 — COBERTURA -->
-<div class="slide">
-    <div class="glow-orange"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#fcd34d;">Panel Lateral Derecho</h3>
-            <h2>Cobertura de Adopción</h2>
-            <p>¿Qué parte de la red adoptó cada producto oficial? El panel lateral muestra los productos con <strong style="color:white;">cobertura incompleta</strong>: existen en el maestro pero no en todas las sedes.</p>
-            <p>Una cobertura incompleta no es una falla, es una oportunidad comercial que el sistema hace visible antes de que se pierda.</p>
-        </div>
-        <div class="visual-block glass-panel" style="width:100%;">
-            <div style="font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:18px;">Revisión de cobertura oficial</div>
-            <div class="coverage-grid">
-                <div class="cov-product-row">
-                    <div class="cov-product-header">
-                        <div class="cov-product-name">Asesoría Nutricional</div>
-                        <span style="font-size:12px;font-weight:900;color:#fcd34d;">1 de 3 sedes</span>
-                    </div>
-                    <div class="cov-progress-bar"><div class="cov-progress-fill cov-fill-partial" style="width:33%;"></div></div>
-                    <div class="cov-status-text">Existe en el maestro pero hoy solo una sede aparece adoptándolo.</div>
+    <!-- SLIDE 2: EL INTERRUPTOR DE ACTIVO -->
+    <section class="slide">
+        <div class="glow-cyan" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #22d3ee;">El interruptor de activo</h3>
+                <h2>Es el mismo interruptor, pero en la marca alcanza a toda la red</h2>
+                <p>En la tabla de la marca y en la de cada sede se ve igual. Lo que cambia es hasta dónde llega. Probalo: apagá la vela en la marca y después intentá prenderla desde una sede.</p>
+            </div>
+
+            <div class="visual-block switch-split" data-switch-demo>
+                <div class="cat-panel brand-panel">
+                    <div class="cat-head"><i class="fas fa-layer-group" style="color:#22d3ee;"></i> Catálogo Maestro <small>la marca</small></div>
+                    <div data-brand-row></div>
                 </div>
-                <div class="cov-product-row">
-                    <div class="cov-product-header">
-                        <div class="cov-product-name">Zapatilla Runner Pro</div>
-                        <span style="font-size:12px;font-weight:900;color:#fcd34d;">2 de 3 sedes</span>
-                    </div>
-                    <div class="cov-progress-bar"><div class="cov-progress-fill cov-fill-partial" style="width:66%;"></div></div>
-                    <div class="cov-status-text">Todavía no aparece adoptado por todas las sedes visibles.</div>
+                <div class="cat-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="sede-panels" data-sede-rows></div>
+            </div>
+
+            <div class="switch-notes">
+                <div class="note">
+                    <i class="fas fa-crown"></i>
+                    <span><b>Apagado en la marca, se apaga en todas las sedes</b>, aunque cada una lo tenga prendido. Cuando la marca lo vuelve a prender, cada sede recupera el estado que tenía.</span>
                 </div>
-                <div class="cov-product-row">
-                    <div class="cov-product-header">
-                        <div class="cov-product-name">Plan Entrenamiento Online</div>
-                        <span style="font-size:12px;font-weight:900;color:#6ee7b7;">3 de 3 sedes</span>
-                    </div>
-                    <div class="cov-progress-bar"><div class="cov-progress-fill cov-fill-full" style="width:100%;"></div></div>
-                    <div class="cov-status-text">Ya aparece adoptado por toda la red visible.</div>
+                <div class="note purple">
+                    <i class="fas fa-store"></i>
+                    <span><b>Apagado en una sede, se apaga solo ahí.</b> Si tiene edición directa, el interruptor de la sede también mueve el de la marca.</span>
+                </div>
+                <div class="note warn">
+                    <i class="fas fa-hourglass-half"></i>
+                    <span>Si la marca lo apagó, la sede no puede prenderlo por su cuenta: queda <b>"Reactivación solicitada"</b> en ámbar, y tocarlo de nuevo la retira. Si la marca la aprueba, el producto se prende en la marca, o sea <b>en toda la red</b>.</span>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 5 — OFICIALIZAR -->
-<div class="slide">
-    <div class="glow-cyan"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#22d3ee;">El Flujo de Gobierno</h3>
-            <h2>De Producto Local a Oficial</h2>
-            <p>Cuando el radar detecta un candidato, la marca puede <strong style="color:white;">oficializarlo con un solo clic</strong>. El producto pasa del radar al catálogo maestro y queda disponible para toda la red.</p>
-            <p>El proceso preserva el historial: se sabe de qué sede vino, cuándo se detectó y quién lo aprobó.</p>
+    <!-- SLIDE 3: QUÉ ES DE QUIÉN -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">Qué es de quién</h3>
+                <h2>La ficha es de la marca; el precio, el costo y el stock, de cada sede</h2>
+                <p>La sede no copia el producto: se apoya encima del de la marca y guarda solo lo suyo.</p>
+            </div>
+
+            <div class="visual-block layers">
+                <div class="layer brand">
+                    <h4><i class="fas fa-crown" style="color:#22d3ee;"></i> De la marca</h4>
+                    <small>Se escribe acá y lo ve toda la red.</small>
+                    <ul>
+                        <li><i class="fas fa-id-card"></i><span>La ficha: nombre, SKU, código de barras, descripción y clasificación.</span></li>
+                        <li><i class="fas fa-images"></i><span>Las fotos, las carpetas y las variantes.</span></li>
+                        <li><i class="fas fa-tags"></i><span>La escala de precios <b>de partida</b>, la que rige en toda sede que no cargó la suya.</span></li>
+                        <li><i class="fas fa-power-off"></i><span>Si el producto está activo <b>para toda la red</b>.</span></li>
+                    </ul>
+                </div>
+                <div class="layer sede">
+                    <h4><i class="fas fa-store" style="color:#c4b5fd;"></i> De cada sede</h4>
+                    <small>Sin pedir permiso: nadie más lo mira.</small>
+                    <ul>
+                        <li><i class="fas fa-toggle-on"></i><span>Si lo vende o no en su local.</span></li>
+                        <li><i class="fas fa-tag"></i><span>Su propia escala: si carga una, <b>reemplaza entera</b> la de la marca, también los precios por cantidad.</span></li>
+                        <li><i class="fas fa-truck-field"></i><span>Su costo y sus proveedores.</span></li>
+                        <li><i class="fas fa-boxes-stacked"></i><span>Su stock y sus insumos.</span></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="visual-block glass-panel" style="width:100%;">
-            <div class="officialize-flow">
-                <div class="of-step">
-                    <div class="of-num">1</div>
-                    <div class="of-body">
-                        <strong>El radar detecta el candidato</strong>
-                        <p>El sistema identifica automáticamente productos que se repiten en 2 o más sedes sin estar en el maestro.</p>
+    </section>
+
+    <!-- SLIDE 3: SOLICITUDES -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Cuando una sede quiere cambiar algo</h3>
+                <h2>Edita en su tabla, y la marca decide si queda</h2>
+                <p>Su precio, su costo y si lo vende no piden permiso: son de la sede. Lo que ve toda la red depende del permiso que le dio la marca en Red. Sin acceso no puede ni proponerlo, y con edición directa el cambio es inmediato. Con aprobación, que es el de fábrica, pasa esto:</p>
+            </div>
+
+            <div class="visual-block">
+                <div class="req-flow">
+                    <div class="req-step">
+                        <span class="who" style="color:#c4b5fd;">La sede</span>
+                        <strong>Toca algo que ve toda la red</strong>
+                        <span>Le cambia el nombre, la foto o la clasificación a la vela, o sube un producto nuevo, desde su Ajustar Catálogo.</span>
+                        <div class="mini-row"><i class="fas fa-fire-flame-curved" style="color:#fbbf24;"></i> Vela de soja 200 g <span class="pill pending">En revisión</span></div>
+                    </div>
+                    <div class="req-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="req-step">
+                        <span class="who" style="color:#fcd34d;">Mientras tanto</span>
+                        <strong>El producto no cambia</strong>
+                        <span>Queda una solicitud pendiente. La sede la ve en su tabla con el filtro "En Revisión"; el resto de la red sigue viendo la ficha de siempre.</span>
+                    </div>
+                    <div class="req-arrow"><i class="fas fa-arrow-right"></i></div>
+                    <div class="req-step">
+                        <span class="who" style="color:#22d3ee;">La marca</span>
+                        <strong>Aprueba o rechaza</strong>
+                        <span>Las solicitudes pendientes se revisan en Estándares. Al aprobar, se escriben tal como las mandó la sede.</span>
+                        <div class="mini-row">Sede Norte · Vela de soja <span class="mini-actions"><span class="ok">Aprobar</span><span class="no">Rechazar</span></span></div>
                     </div>
                 </div>
-                <div class="of-step">
-                    <div class="of-num">2</div>
-                    <div class="of-body">
-                        <strong>La marca lo revisa en el panel</strong>
-                        <p>Se muestra el nombre, categoría, tipo y desde qué sedes se origina. Toda la información necesaria para decidir.</p>
+
+                <div class="three-notes">
+                    <div class="note warn">
+                        <i class="fas fa-rotate"></i>
+                        <span>Dos ediciones seguidas al mismo producto son <b>una propuesta que se corrige</b>, no dos solicitudes para aprobar.</span>
                     </div>
-                </div>
-                <div class="of-step">
-                    <div class="of-num">3</div>
-                    <div class="of-body">
-                        <strong>Clic en "Oficializar"</strong>
-                        <p>El producto pasa al catálogo oficial con el SKU y categoría del original. Las sedes que ya lo tenían quedan adoptadas automáticamente.</p>
+                    <div class="note">
+                        <i class="fas fa-power-off"></i>
+                        <span>Con <b>edición directa</b> la sede edita el original: sus precios y apagar un producto también se escriben en la marca. Sin ese permiso, prender algo que la marca apagó queda como solicitud.</span>
                     </div>
-                </div>
-                <div class="of-step">
-                    <div class="of-num">4</div>
-                    <div class="of-body">
-                        <strong>Queda disponible para toda la red</strong>
-                        <p>Las sedes restantes pueden adoptarlo desde su catálogo local. El control de cobertura empieza desde ese momento.</p>
+                    <div class="note purple">
+                        <i class="fas fa-bell"></i>
+                        <span>Las solicitudes pendientes se cuentan en el Resumen Global como <b>desvíos de catálogo</b>, para que no queden olvidadas.</span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 6 — NAV -->
-<div class="slide">
-    <div class="glow-cyan" style="left:50%;transform:translateX(-50%);top:-300px;width:800px;height:800px;"></div>
-    <div class="slide-content-wide" style="align-items:center;text-align:center;justify-content:center;">
-        <div class="text-block">
-            <h3 style="color:#22d3ee;">Seguir Explorando</h3>
-            <h2>¿Qué vemos ahora?</h2>
-            <p style="max-width:880px;margin:0 auto;">Ya entendés cómo la marca define y controla su catálogo maestro. ¿Continuamos con la red de sedes o con los estándares de identidad?</p>
-        </div>
-        <div class="visual-block nav-grid">
-            <a href="index.html" class="qa-btn cyan" style="border-color:rgba(6,182,212,0.4);">
-                <div class="qa-icon" style="color:#22d3ee;"><i class="fas fa-map"></i></div>
-                <div class="qa-text" style="color:white;">Índice de Marca</div>
-            </a>
-            <a href="brand_Red.html" class="qa-btn blue">
-                <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
-                <div class="qa-text" style="color:white;">Red</div>
-            </a>
-            <a href="brand_Estandares.html" class="qa-btn indigo">
-                <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
-                <div class="qa-text" style="color:white;">Estándares</div>
-            </a>
-            <a href="brand_Talento.html" class="qa-btn purple">
-                <div class="qa-icon"><i class="fas fa-users"></i></div>
-                <div class="qa-text" style="color:white;">Talento</div>
-            </a>
-            <a href="brand_Mensajes.html" class="qa-btn pink">
-                <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
-                <div class="qa-text" style="color:white;">Mensajes</div>
-            </a>
-        </div>
-    </div>
-</div>
+    <!-- SLIDE 4: LA MISMA TABLA -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">La misma tabla, del lado del dueño</h3>
+                <h2>Se edita con las mismas herramientas que una sede</h2>
+                <p>El Catálogo Maestro es la pantalla de Ajustar Catálogo abierta sobre el original. Lo que una sede propone, la marca lo escribe directo.</p>
+            </div>
 
-<script>
-    const pageId = 'brand_catalogo';
-    let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
-    const slides = document.querySelectorAll('.slide');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btnNext');
-    const currentSlideNum = document.getElementById('currentSlideNum');
-    const totalSlidesDisplay = document.getElementById('totalSlides');
-    function updateSlides() {
-        if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
-        slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
-        currentSlideNum.innerText = currentIndex + 1;
-        localStorage.setItem('slide_' + pageId, currentIndex);
-        setTimeout(() => window.scrollTo(0, 0), 50);
-    }
-    function nextSlide() {
-        if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
-        else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
-    }
-    function prevSlide() { if (currentIndex > 0) { currentIndex--; updateSlides(); } }
-    btnNext.addEventListener('click', nextSlide);
-    btnPrev.addEventListener('click', prevSlide);
-    document.addEventListener('keydown', (e) => {
-        const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
-        if (!isTyping) {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
-        }
-    });
-    updateSlides();
-</script>
+            <div class="visual-block tools">
+                <div class="tool">
+                    <strong><i class="fas fa-table-columns" style="color:#60a5fa;"></i> Dos temáticas</strong>
+                    <span>La tabla clásica, con precios y costos en columnas, o la de solapas. Se elige desde el lápiz de la barra superior.</span>
+                </div>
+                <div class="tool">
+                    <strong><i class="fas fa-sitemap" style="color:#22d3ee;"></i> La clasificación en el nombre</strong>
+                    <span>Tipo, marca, línea y carpeta viajan dentro del nombre del producto y se filtran desde la barra, sin columnas de más.</span>
+                </div>
+                <div class="tool">
+                    <strong><i class="fas fa-clone" style="color:#c4b5fd;"></i> Precios en cadena</strong>
+                    <span>Los precios o el costo de un producto se aplican de una vez a todos los que comparten su categoría, su tipo, su marca o su línea.</span>
+                </div>
+                <div class="tool">
+                    <strong><i class="fas fa-barcode" style="color:#fbbf24;"></i> Importar desde el padrón</strong>
+                    <span>Se cargan los productos de una marca comercial con sus códigos de barras, sin tipearlos.</span>
+                </div>
+                <div class="tool">
+                    <strong><i class="fas fa-images" style="color:#f472b6;"></i> Fotos de la galería</strong>
+                    <span>La foto de un producto se toca y se cambia. Las fotos que la marca sube quedan en su galería para toda la red.</span>
+                    <span class="where">Ver Mi Galería</span>
+                </div>
+                <div class="tool">
+                    <strong><i class="fas fa-file-pen" style="color:#34d399;"></i> Guardar o descartar</strong>
+                    <span>Los cambios quedan marcados en la fila hasta guardarlos, y se pueden tirar sin tocar el resto de la tabla.</span>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 16px;">
+                <i class="fas fa-arrow-right"></i>
+                <span>La tabla en detalle —temáticas, los seis niveles de clasificación y la ficha larga del producto— está en la presentación de <b>Ajustar Catálogo</b> de la sede.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: EL PASO AL CATÁLOGO ÚNICO -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Si una sede ya tenía productos propios</h3>
+                <h2>Pasan a la marca sin perder nada</h2>
+                <p>Antes una sede podía llevar su propio catálogo. Ahora todas comparten el de la marca, y lo que cada una había cargado se sumó a él.</p>
+            </div>
+
+            <div class="visual-block mig">
+                <div class="mig-card">
+                    <i class="fas fa-arrow-right-to-bracket" style="color:#34d399;"></i>
+                    <div><strong>Los productos que vende pasan a la marca</strong><span>Con el mismo producto de siempre: su stock, sus ventas y su historial siguen apuntando a él.</span></div>
+                </div>
+                <div class="mig-card">
+                    <i class="fas fa-tag" style="color:#22d3ee;"></i>
+                    <div><strong>Su precio se queda en la sede</strong><span>Y también se ofrece como precio de partida de la marca, para que las otras sedes no reciban una ficha sin precio.</span></div>
+                </div>
+                <div class="mig-card">
+                    <i class="fas fa-code-merge" style="color:#fbbf24;"></i>
+                    <div><strong>Si la marca ya tenía ese SKU, no se fusiona</strong><span>La ficha local queda como estaba, con su stock y sus ventas. No se mezclan inventarios por coincidir un código.</span></div>
+                </div>
+                <div class="mig-card">
+                    <i class="fas fa-flask" style="color:#c4b5fd;"></i>
+                    <div><strong>Los insumos siguen siendo de la sede</strong><span>Materia prima, empaque e intermedios no se venden: siguen siendo de quien los consume.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #22d3ee;">Seguir explorando</h3>
+                <h2>Del catálogo a cómo se ve la red</h2>
+                <p>¿Seguimos por los estándares de identidad, donde también se aprueban las solicitudes, o por quién decide qué puede editar cada sede?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="estandares.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="qa-text">Estándares</div>
+                </a>
+                <a href="red.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text">Red</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // El interruptor de activo, como en la tabla de la app: la sede vende si
+        // está prendido en la marca y en la sede. Con la marca apagada, la sede
+        // (con permiso de aprobación) no lo prende: deja pedida la reactivación.
+        (() => {
+            const root = document.querySelector('[data-switch-demo]');
+            if (!root) return;
+            const brand = { active: true };
+            const SEDES = [
+                { name: 'Sede Centro', price: '$ 12.900', active: true, pending: false },
+                { name: 'Sede Norte', price: '$ 12.000', active: true, pending: false },
+                { name: 'Sede Sur', price: '$ 12.000', active: false, pending: false },
+            ];
+            const row = ({ on, pending, price, key }) => `
+                <div class="cat-row ${on ? '' : 'inactive'}">
+                    <span class="status-badge ${pending ? 'tone-pending' : 'tone-ok'}">${pending ? 'Reactivación solicitada' : 'OK'}</span>
+                    <label class="switch ${pending ? 'activation-pending' : ''}" title="${pending ? 'Reactivación solicitada a la marca. Tocar para retirar la solicitud.' : 'Activar/Desactivar producto'}">
+                        <input type="checkbox" data-key="${key}" ${on || pending ? 'checked' : ''}><span class="slider"></span>
+                    </label>
+                    <span class="thumb"><i class="fas fa-fire-flame-curved"></i></span>
+                    <span class="cat-name">Vela de soja 200 g</span>
+                    <span class="cat-price">${price}</span>
+                </div>`;
+
+            function render() {
+                root.querySelector('[data-brand-row]').innerHTML = row({ on: brand.active, pending: false, price: '$ 12.000', key: 'brand' });
+                root.querySelector('[data-sede-rows]').innerHTML = SEDES.map((s, i) => `
+                    <div class="cat-panel">
+                        <div class="cat-head"><i class="fas fa-store" style="color:#c4b5fd;"></i> Ajustar Catálogo <small>${s.name}</small></div>
+                        ${row({ on: brand.active && s.active, pending: s.pending, price: s.price, key: String(i) })}
+                    </div>`).join('');
+            }
+            root.addEventListener('change', e => {
+                const key = e.target.dataset.key;
+                if (key === undefined) return;
+                if (key === 'brand') {
+                    brand.active = !brand.active;
+                    if (brand.active) SEDES.forEach(s => { s.pending = false; });
+                } else {
+                    const s = SEDES[Number(key)];
+                    if (s.pending) s.pending = false;
+                    else if (!brand.active) s.pending = true;
+                    else s.active = !s.active;
+                }
+                render();
+            });
+            render();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_catalogo';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
 </body>
 </html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Galería</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --text-secondary: #a3b1c6;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --surface-panel-strong: rgba(20, 30, 50, 0.92);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+            --kpi-cyan: #06b6d4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-cyan { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(6,182,212,0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible, .demo select:focus-visible, .demo [role="button"]:focus-visible { outline: 3px solid #67e8f9; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-cyan); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 18px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        /* =========================================
+           PORTADA
+        ========================================= */
+        .cover h1 span { color: #22d3ee; }
+        .cover p { font-size: 21px; }
+        .three-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .trait { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px 20px; text-align: left; }
+        .trait strong { display: flex; align-items: center; gap: 10px; font-size: 16.5px; margin-bottom: 6px; }
+        .trait span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+        /* =========================================
+           GALERÍA — calcada de brand/views/Gallery.vue
+        ========================================= */
+        .glass { background: var(--surface-panel-strong); border: 1px solid rgba(148,163,184,0.12); border-radius: 16px; }
+        .gallery-split { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 14px; align-items: start; text-align: left; }
+        .header-row { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 10px; margin-bottom: 10px; }
+        .toolbar { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .search { height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); font-size: .76rem; }
+        .search i { font-size: .7rem; }
+        .scope-tabs { display: flex; flex-wrap: wrap; gap: 5px; }
+        .scope-tabs button { padding: 5px 9px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--text-muted); font: 800 .72rem Urbanist, sans-serif; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+        .scope-tabs button span { font-size: .64rem; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 1px 6px; }
+        .scope-tabs button.active { color: #a5f3fc; background: rgba(6,182,212,0.12); border-color: rgba(6,182,212,0.3); }
+        .limit { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+        .limit-track { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+        .limit-track span { display: block; height: 100%; background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+        .limit strong { font-size: .8rem; }
+        .limit small { font-size: .7rem; color: var(--text-muted); }
+        .measure { align-self: flex-start; font: 800 .68rem Urbanist, sans-serif; color: #a5f3fc; background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.3); border-radius: 7px; padding: 3px 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+        .tile { position: relative; aspect-ratio: 1; border-radius: 12px; overflow: hidden; cursor: pointer; border: 2px solid transparent; display: grid; place-items: center; font-size: 26px; }
+        .tile.selected { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34,211,238,0.25); }
+        .tile.assigning { border-color: rgba(52,211,153,0.6); }
+        .tile .check { position: absolute; top: 6px; left: 6px; width: 20px; height: 20px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.6); background: rgba(0,0,0,0.35); display: grid; place-items: center; font-size: 9px; color: transparent; }
+        .tile .countdown { position: absolute; bottom: 6px; left: 6px; right: 6px; font-size: 9.5px; font-weight: 800; background: rgba(0,0,0,0.65); color: #fcd34d; border-radius: 6px; padding: 2px 5px; text-align: center; }
+        .tile .assign-label { position: absolute; bottom: 6px; left: 6px; right: 6px; font-size: 10px; font-weight: 800; background: rgba(16,185,129,0.85); color: white; border-radius: 6px; padding: 3px 5px; text-align: center; }
+        .drawer { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+        .drawer-head { display: flex; justify-content: space-between; gap: 8px; }
+        .drawer-head span { font-size: .64rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: #67e8f9; }
+        .drawer-head h4 { font-size: 1rem; font-weight: 800; margin: 2px 0; }
+        .drawer-head p { font-size: .74rem; margin: 0; }
+        .drawer-close { color: var(--text-muted); font-size: .8rem; }
+        .preview { height: 110px; border-radius: 12px; position: relative; display: grid; place-items: center; font-size: 40px; }
+        .hover-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 5px; }
+        .hover-actions span { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; background: rgba(0,0,0,0.6); color: #cbd5e1; font-size: 11px; }
+        .hover-actions span.danger { color: #f87171; }
+        .drawer label { font-size: .72rem; font-weight: 800; color: var(--text-soft); }
+        .drawer select { width: 100%; margin-top: 5px; background: rgba(0,0,0,0.35); color: var(--text-main); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 7px 9px; font: 700 .76rem Urbanist, sans-serif; }
+        .scope-hint { display: block; font-size: .7rem; color: var(--text-muted); margin-top: 5px; line-height: 1.45; }
+        .drawer h5 { font-size: .74rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 5px; }
+        .usage-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 8px; background: rgba(255,255,255,0.03); font-size: .72rem; color: var(--text-soft); margin-bottom: 4px; }
+        .usage-actions { display: flex; gap: 4px; color: #cbd5e1; font-size: .7rem; }
+        .usage-actions .danger { color: #f87171; }
+        .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: .7rem; }
+        .facts dt { color: var(--text-muted); font-weight: 800; }
+        .facts dd { color: var(--text-soft); margin: 0; }
+
+        /* =========================================
+           ALCANCE
+        ========================================= */
+        .scopes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .scope-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; text-align: left; border-top: 3px solid transparent; }
+        .scope-card strong { display: flex; align-items: center; gap: 9px; font-size: 17px; margin-bottom: 4px; }
+        .scope-card .opt { font-size: 11px; font-weight: 800; color: var(--text-muted); font-family: monospace; }
+        .scope-card p { font-size: 13.5px; margin: 8px 0 0; line-height: 1.5; }
+        .bulk { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+        .bulk-panel { padding: 14px; text-align: left; }
+        .bulk-panel .drawer-head span { color: #67e8f9; }
+        .bulk-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+        .bulk-actions span { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); font-size: .72rem; font-weight: 800; color: var(--text-soft); }
+        .bulk-actions span.danger { color: #f87171; }
+
+        /* =========================================
+           LO QUE FALTA
+        ========================================= */
+        .missing-split { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 14px; align-items: start; text-align: left; }
+        .missing-panel { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .missing-panel header { display: flex; align-items: center; gap: 8px; font-size: .76rem; font-weight: 900; color: var(--text-soft); }
+        .missing-panel header b { margin-left: auto; font-size: .7rem; background: rgba(255,255,255,0.08); border-radius: 999px; padding: 1px 7px; }
+        .missing-list { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+        .missing-list button { text-align: left; padding: 5px 9px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.03); color: var(--text-main); font: inherit; cursor: pointer; }
+        .missing-list button.active { border-color: rgba(52,211,153,0.5); background: rgba(16,185,129,0.1); }
+        .missing-list button span { display: flex; gap: 6px; align-items: center; font-size: .78rem; font-weight: 700; }
+        .missing-list button small { display: block; font-size: .66rem; color: var(--text-muted); margin-top: 2px; }
+        .has-suggestion { color: #fbbf24; font-size: .7rem; }
+        .suggested { margin-top: 6px; padding: 9px; border-radius: 10px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); }
+        .suggested p { font-size: .72rem; font-weight: 800; color: #fcd34d; margin: 0 0 6px; }
+        .suggested figure { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+        .suggested .ph { width: 44px; height: 44px; border-radius: 8px; display: grid; place-items: center; }
+        .suggested figcaption strong { display: block; font-size: .72rem; }
+        .suggested figcaption small { font-size: .64rem; color: var(--text-muted); }
+        .suggested button { font: 800 .7rem Urbanist, sans-serif; color: #0f172a; background: #fbbf24; border: 0; border-radius: 7px; padding: 5px 8px; cursor: pointer; }
+        .suggested-note { display: block; font-size: .64rem; color: var(--text-muted); margin-top: 6px; }
+        .assign-log { min-height: 18px; font-size: .74rem; color: #a7f3d0; margin-top: 8px; }
+
+        /* =========================================
+           PAPELERA
+        ========================================= */
+        .life { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .life-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px; text-align: left; }
+        .life-card b { font: 800 11px monospace; color: var(--text-muted); }
+        .life-card strong { display: flex; align-items: center; gap: 8px; font-size: 14.5px; margin: 5px 0; }
+        .life-card span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .life-arrow { display: none; }
+        .two-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .three-row, .gallery-split, .header-row, .scopes, .bulk, .missing-split, .two-notes { grid-template-columns: 1fr; gap: 14px; }
+            .life { grid-template-columns: 1fr 1fr; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .life, .bulk-actions { grid-template-columns: 1fr; }
+            .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-cyan"></div>
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #22d3ee;">Apartado de Marca</h3>
+                <h1>Mi <span>Galería</span></h1>
+                <p>Todas las fotos de la marca y de sus sedes en un solo lugar: dónde se usa cada una, quién más puede reutilizarla y qué producto, banner o servicio sigue sin foto.</p>
+            </div>
+
+            <div class="visual-block three-row">
+                <div class="trait">
+                    <strong><i class="fas fa-link" style="color:#22d3ee;"></i> Con sus usos</strong>
+                    <span>Cada foto dice en cuántos lugares aparece —logo, banner, producto, combo— y de qué sede es cada uno.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-globe" style="color:#a78bfa;"></i> Con su alcance</strong>
+                    <span>Privada, compartida con la marca y sus locales, o pública para que el padrón la proponga.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-image" style="color:#fbbf24;"></i> Con lo que falta</strong>
+                    <span>La lista de lo que no tiene foto, para asignarle una de la galería con dos toques.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: LA GRILLA Y EL DETALLE -->
+    <section class="slide">
+        <div class="glow-cyan" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #22d3ee;">La grilla</h3>
+                <h2>Una foto se toca y cuenta dónde está</h2>
+                <p>Probalo: filtrá por alcance, tocá una foto y cambiale el uso permitido.</p>
+            </div>
+
+            <div class="visual-block demo" data-gallery>
+                <div class="header-row">
+                    <div class="glass toolbar">
+                        <div class="search"><i class="fas fa-search"></i> Buscar por producto, archivo, SKU o sede</div>
+                        <div class="scope-tabs" data-scopes></div>
+                    </div>
+                    <div class="glass limit">
+                        <div class="limit-track"><span style="width: 18.4%;"></span></div>
+                        <strong>184/1000 imagenes</strong>
+                        <small>61 MB / 500 MB - 6 sin medir</small>
+                        <span class="measure"><i class="fas fa-ruler-combined"></i> medir 6</span>
+                    </div>
+                </div>
+                <div class="gallery-split">
+                    <div class="grid" data-grid></div>
+                    <aside class="glass drawer" data-drawer></aside>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: EL ALCANCE -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #a78bfa;">Uso permitido</h3>
+                <h2>Tres alcances, y uno solo sale de tu red</h2>
+            </div>
+
+            <div class="visual-block">
+                <div class="scopes">
+                    <div class="scope-card" style="border-top-color:#94a3b8;">
+                        <strong><i class="fas fa-lock" style="color:#94a3b8;"></i> Privada</strong>
+                        <span class="opt">Privada</span>
+                        <p>La usa quien la subió, donde la subió. Es como nace una foto que nadie clasificó.</p>
+                    </div>
+                    <div class="scope-card" style="border-top-color:#22d3ee;">
+                        <strong><i class="fas fa-store" style="color:#22d3ee;"></i> Compartida</strong>
+                        <span class="opt">Compartida con tu marca y locales</span>
+                        <p>Queda dentro de la marca y sus locales. No aparece en el padrón ni la ve otro negocio.</p>
+                    </div>
+                    <div class="scope-card" style="border-top-color:#a78bfa;">
+                        <strong><i class="fas fa-globe" style="color:#a78bfa;"></i> Pública</strong>
+                        <span class="opt">Pública · disponible para el padrón</span>
+                        <p>Otros negocios pueden reutilizarla. Si está en un producto con código de barras, el padrón puede proponerla a quien cargue ese código.</p>
+                    </div>
+                </div>
+
+                <div class="bulk">
+                    <div class="glass bulk-panel">
+                        <div class="drawer-head"><div><span>Seleccion multiple</span><h4>12 imagenes</h4><p>Aplica cambios a todas las fotos seleccionadas.</p></div><i class="fas fa-xmark drawer-close"></i></div>
+                        <div class="bulk-actions">
+                            <span><i class="fas fa-store"></i> Compartidas</span>
+                            <span><i class="fas fa-globe"></i> Públicas · padrón</span>
+                            <span><i class="fas fa-lock"></i> Privadas</span>
+                            <span class="danger"><i class="fas fa-trash"></i> Eliminar</span>
+                        </div>
+                    </div>
+                    <div class="stack">
+                        <div class="note">
+                            <i class="fas fa-check-double"></i>
+                            <span>La casilla de cada foto, o "Seleccionar todas las fotos visibles", arma una <b>selección múltiple</b>: el alcance se cambia para todas juntas.</span>
+                        </div>
+                        <div class="note warn">
+                            <i class="fas fa-triangle-exclamation"></i>
+                            <span>Hacerlas <b>públicas</b> pide confirmación, porque salen de la red. Si alguna no se pudo cambiar, queda seleccionada para reintentar.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: LO QUE FALTA -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Lo que falta</h3>
+                <h2>Elegís qué está sin foto, y después la foto que le va</h2>
+                <p>Probalo: elegí un ítem de la derecha y tocá una foto. El apretón de manos marca una foto que compartió un socio.</p>
+            </div>
+
+            <div class="visual-block missing-split demo" data-missing>
+                <div>
+                    <div data-mgrid></div>
+                    <div class="assign-log" data-log></div>
+                </div>
+                <aside class="glass missing-panel" data-mlist></aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: REEMPLAZAR, ELIMINAR Y LA PAPELERA -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Reemplazar y borrar</h3>
+                <h2>Una foto se cambia en todos lados de una vez</h2>
+            </div>
+
+            <div class="visual-block">
+                <div class="life">
+                    <div class="life-card"><b>1</b><strong><i class="fas fa-image" style="color:#22d3ee;"></i> Reemplazar</strong><span>Sube otra foto en lugar de esta, en todos sus usos a la vez, o solo en uno desde su fila de "Usos".</span></div>
+                    <div class="life-card"><b>2</b><strong><i class="fas fa-trash" style="color:#f87171;"></i> Eliminar</strong><span>Saca la foto de todos los lugares donde se usa, en cualquier sede de la red, y la manda a la papelera.</span></div>
+                    <div class="life-card"><b>3</b><strong><i class="fas fa-rotate-left" style="color:#34d399;"></i> Restaurar</strong><span>Desde la papelera, la devuelve a los mismos lugares de donde se sacó.</span></div>
+                    <div class="life-card"><b>4</b><strong><i class="fas fa-fire" style="color:#fbbf24;"></i> Definitivo</strong><span>La borra para siempre. Si nadie lo hace, a los 7 días se borra sola, salvo que haya vuelto a usarse.</span></div>
+                </div>
+
+                <div class="two-notes">
+                    <div class="note warn">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>En la papelera cada foto muestra <b>cuántos días le quedan</b>. La papelera es, en realidad, lo que no se usa en ningún lado: una foto que quedó sin usos también aparece ahí.</span>
+                    </div>
+                    <div class="note">
+                        <i class="fas fa-database"></i>
+                        <span>La marca tiene un tope de <b>1000 imágenes y 500 MB</b>, y la barra mide lo que más se acerque al límite. Las fotos viejas que no tienen su tamaño anotado se cuentan como "sin medir", y "medir" las pesa de a tandas.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #22d3ee;">Seguir explorando</h3>
+                <h2>De las fotos a los productos que las llevan</h2>
+                <p>¿Seguimos por el catálogo de la marca o por los estándares de identidad?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text">Catálogo<br>Maestro</div>
+                </a>
+                <a href="estandares.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="qa-text">Estándares</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Fotos ficticias: un degradé con un ícono hace de imagen.
+        const PHOTOS = [
+            { id: 1, name: 'vela-soja-200.jpg', bg: 'linear-gradient(135deg,#f5d0a9,#c08457)', icon: 'fa-fire-flame-curved', fg: '#451a03', scope: 'brand', usages: ['Producto - Vela de soja 200 g - Sede Centro', 'Producto - Vela de soja 200 g - Sede Norte'] },
+            { id: 2, name: 'logo-aurora.png', bg: 'linear-gradient(135deg,#fde68a,#f59e0b)', icon: 'fa-sun', fg: '#78350f', scope: 'brand', usages: ['Logo - Aurora Velas', 'Logo - Sede Centro', 'Logo - Sede Norte'] },
+            { id: 3, name: 'difusor-bambu.jpg', bg: 'linear-gradient(135deg,#d9f99d,#65a30d)', icon: 'fa-leaf', fg: '#1a2e05', scope: 'public', usages: ['Producto - Difusor bambú 120 ml - Aurora Velas'] },
+            { id: 4, name: 'banner-otono.jpg', bg: 'linear-gradient(135deg,#7c2d12,#f59e0b)', icon: 'fa-image', fg: '#fff7ed', scope: 'brand', usages: ['Banner - Aurora Velas'] },
+            { id: 5, name: 'combo-regalo.jpg', bg: 'linear-gradient(135deg,#fbcfe8,#db2777)', icon: 'fa-gift', fg: '#500724', scope: 'private', usages: ['Combo - Caja regalo - Sede Sur'] },
+            { id: 6, name: 'aceite-lavanda.jpg', bg: 'linear-gradient(135deg,#ddd6fe,#7c3aed)', icon: 'fa-droplet', fg: '#2e1065', scope: 'public', usages: ['Producto - Aceite esencial lavanda - Aurora Velas'] },
+            { id: 7, name: 'vidriera-vieja.jpg', bg: 'linear-gradient(135deg,#cbd5e1,#475569)', icon: 'fa-store', fg: '#0f172a', scope: 'private', usages: [], trashDays: 4 },
+            { id: 8, name: 'promo-invierno.jpg', bg: 'linear-gradient(135deg,#bae6fd,#0284c7)', icon: 'fa-snowflake', fg: '#082f49', scope: 'brand', usages: [], trashDays: 1 },
+        ];
+        const SCOPE_LABEL = { brand: 'Compartida', private: 'Privada', public: 'Pública' };
+        const tileHTML = (p, extra = '') => `<div class="tile ${extra}" role="button" tabindex="0" data-photo="${p.id}" title="${p.name}" style="background:${p.bg};color:${p.fg};">
+            <span class="check"><i class="fas fa-check"></i></span><i class="fas ${p.icon}"></i>
+            ${!p.usages.length ? `<span class="countdown">${p.trashDays === 1 ? '1 dia' : `${p.trashDays} dias`} restantes</span>` : ''}
+            ${extra.includes('assigning') ? '<span class="assign-label"><i class="fas fa-link"></i> Asignar</span>' : ''}
+        </div>`;
+
+        // Diapositiva 2: grilla, filtros y detalle.
+        (() => {
+            const root = document.querySelector('[data-gallery]');
+            if (!root) return;
+            let filter = 'all';
+            let selectedId = 2;
+            const inFilter = p => filter === 'all' || (filter === 'trash' ? !p.usages.length : p.scope === filter);
+            function draw() {
+                const count = k => k === 'all' ? PHOTOS.length : k === 'trash' ? PHOTOS.filter(p => !p.usages.length).length : PHOTOS.filter(p => p.scope === k).length;
+                root.querySelector('[data-scopes]').innerHTML = [['all', 'Todas'], ['brand', 'Compartidas'], ['public', 'Públicas'], ['private', 'Privadas'], ['trash', 'Papelera']]
+                    .map(([k, l]) => `<button type="button" class="${filter === k ? 'active' : ''}" data-scope="${k}" aria-pressed="${filter === k}">${l} <span>${count(k)}</span></button>`).join('');
+                const visible = PHOTOS.filter(inFilter);
+                root.querySelector('[data-grid]').innerHTML = visible.length ? visible.map(p => tileHTML(p, p.id === selectedId ? 'selected' : '')).join('') : '<p style="font-size:.85rem;">No hay imagenes para este filtro.</p>';
+                const p = PHOTOS.find(x => x.id === selectedId);
+                const hint = p.scope === 'public' ? 'Otros negocios pueden reutilizarla. Si está en un producto con código de barras, el padrón puede proponerla.'
+                    : p.scope === 'brand' ? 'Compartida dentro de tu marca y sus locales; no aparece en el padrón.' : '';
+                const trash = !p.usages.length;
+                root.querySelector('[data-drawer]').innerHTML = `
+                    <div class="drawer-head"><div><span>${SCOPE_LABEL[p.scope]}</span><h4>${p.name}</h4><p>${!p.usages.length ? 'Sin uso activo detectado' : p.usages.length === 1 ? 'Usada en 1 lugar' : `Usada en ${p.usages.length} lugares`}</p></div><i class="fas fa-xmark drawer-close"></i></div>
+                    <div class="preview" style="background:${p.bg};color:${p.fg};"><i class="fas ${p.icon}"></i>
+                        <span class="hover-actions"><span title="Reemplazar imagen en todos sus usos"><i class="fas fa-image"></i></span>${trash ? '<span title="Restaurar imagen" style="color:#34d399;"><i class="fas fa-rotate-left"></i></span><span class="danger" title="Borrar definitivamente"><i class="fas fa-fire"></i></span>' : '<span class="danger" title="Eliminar imagen"><i class="fas fa-trash"></i></span>'}</span></div>
+                    <div><label for="scope-select">Uso permitido</label>
+                        <select id="scope-select" data-scope-select>
+                            <option value="brand" ${p.scope === 'brand' ? 'selected' : ''}>Compartida con tu marca y locales</option>
+                            <option value="public" ${p.scope === 'public' ? 'selected' : ''}>Pública · disponible para el padrón</option>
+                            <option value="private" ${p.scope === 'private' ? 'selected' : ''}>Privada</option>
+                        </select>
+                        ${hint ? `<small class="scope-hint">${hint}</small>` : ''}</div>
+                    <div><h5>Usos</h5>${p.usages.length ? p.usages.map(u => `<div class="usage-row"><span>${u}</span><span class="usage-actions"><i class="fas fa-image" title="Reemplazar este uso"></i><i class="fas fa-trash danger" title="Eliminar este uso"></i></span></div>`).join('') : '<p style="font-size:.74rem;margin:0;">No hay usos activos detectados.</p>'}</div>`;
+            }
+            root.addEventListener('click', e => {
+                const s = e.target.closest('[data-scope]');
+                const t = e.target.closest('[data-photo]');
+                if (s) { filter = s.dataset.scope; draw(); }
+                if (t) { selectedId = Number(t.dataset.photo); draw(); }
+            });
+            root.addEventListener('keydown', e => {
+                const t = e.target.closest('[data-photo]');
+                if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); selectedId = Number(t.dataset.photo); draw(); }
+            });
+            root.addEventListener('change', e => {
+                if (!e.target.matches('[data-scope-select]')) return;
+                PHOTOS.find(x => x.id === selectedId).scope = e.target.value;
+                draw();
+            });
+            draw();
+        })();
+
+        // Diapositiva 4: lo que falta y la asignación.
+        (() => {
+            const root = document.querySelector('[data-missing]');
+            if (!root) return;
+            const MISSING = [
+                { key: 'p1', section: 'Productos', icon: 'fas fa-box', title: 'Vela de soja 400 g', sub: 'Aurora Velas - VELA-SOJA-400' },
+                { key: 'p2', section: 'Productos', icon: 'fas fa-box', title: 'Jabón de avena', sub: 'Aurora Velas - JAB-AVENA', suggestion: { name: 'Jabón de avena 100 g', from: 'Distribuidora Sur', exact: true } },
+                { key: 'b1', section: 'Banners', icon: 'fas fa-image', title: 'Sede Sur', sub: '' },
+                { key: 's1', section: 'Servicios', icon: 'fas fa-calendar-check', title: 'Taller de velas', sub: 'Sede Centro' },
+            ];
+            const pool = PHOTOS.filter(p => p.usages.length).slice(0, 6);
+            let selectedKey = '';
+            let log = '';
+            function draw() {
+                const assigning = Boolean(selectedKey);
+                root.querySelector('[data-mgrid]').innerHTML = `<div class="grid">${pool.map(p => tileHTML(p, assigning ? 'assigning' : '')).join('')}</div>`;
+                const sections = [...new Set(MISSING.map(m => m.section))];
+                root.querySelector('[data-mlist]').innerHTML = MISSING.length ? sections.map(sec => {
+                    const items = MISSING.filter(m => m.section === sec);
+                    return `<section><header><i class="${items[0].icon}"></i><span>${sec}</span><b>${items.length}</b></header><div class="missing-list">${items.map(m => `
+                        <button type="button" class="${selectedKey === m.key ? 'active' : ''}" data-mkey="${m.key}" aria-pressed="${selectedKey === m.key}">
+                            <span>${m.title}${m.suggestion ? ' <i class="fas fa-handshake has-suggestion" title="Un socio B2B compartio una foto para este producto"></i>' : ''}</span>
+                            <small>${m.sub || 'Sede Sur'}</small>
+                        </button>
+                        ${selectedKey === m.key && m.suggestion ? `<div class="suggested"><p>Fotos que compartieron tus socios</p>
+                            <figure><span class="ph" style="background:linear-gradient(135deg,#fef3c7,#d6d3d1);color:#57534e;"><i class="fas fa-soap"></i></span>
+                            <figcaption><strong>${m.suggestion.name}</strong><small>${m.suggestion.from}</small></figcaption>
+                            <button type="button" data-use="${m.key}">Usar esta</button></figure>
+                            <small class="suggested-note">Se copia a tu galeria: si el socio la borra, la tuya sigue.</small></div>` : ''}`).join('')}</div></section>`;
+                }).join('') : '<p style="font-size:.85rem;margin:0;">Todo tiene foto.</p>';
+                root.querySelector('[data-log]').textContent = log || (assigning ? 'Ahora tocá la foto que le querés asignar.' : '');
+            }
+            root.addEventListener('click', e => {
+                const m = e.target.closest('[data-mkey]');
+                const t = e.target.closest('[data-photo]');
+                const use = e.target.closest('[data-use]');
+                if (use) {
+                    const item = MISSING.find(x => x.key === use.dataset.use);
+                    MISSING.splice(MISSING.indexOf(item), 1);
+                    selectedKey = ''; log = `"${item.title}" ya tiene la foto del socio, copiada a tu galería.`;
+                } else if (m) {
+                    selectedKey = selectedKey === m.dataset.mkey ? '' : m.dataset.mkey; log = '';
+                } else if (t && selectedKey) {
+                    const item = MISSING.find(x => x.key === selectedKey);
+                    const photo = pool.find(p => p.id === Number(t.dataset.photo));
+                    MISSING.splice(MISSING.indexOf(item), 1);
+                    selectedKey = ''; log = `"${item.title}" ahora usa ${photo.name}, que suma un uso más.`;
+                }
+                draw();
+            });
+            draw();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_galeria';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable],[role="button"]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
+</body>
+</html>

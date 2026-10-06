@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfiles de Sede</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+            --kpi-cyan: #06b6d4;
+            --violet: #8b5cf6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible, .demo input:focus-visible { outline: 3px solid #c4b5fd; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover:not(:disabled) { background: var(--violet); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 24px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 13px 16px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        /* =========================================
+           SLIDE 1: PORTADA
+        ========================================= */
+        .cover h1 span { color: #a78bfa; }
+        .cover p { font-size: 21px; }
+        .three-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; }
+        .trait { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px 20px; text-align: left; }
+        .trait .num { font: 800 12px monospace; color: #a78bfa; letter-spacing: 1px; }
+        .trait strong { display: flex; align-items: center; gap: 10px; font-size: 17px; margin: 8px 0 6px; }
+        .trait span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        .trait code { font-size: 11.5px; color: #c4b5fd; background: rgba(139,92,246,0.12); border-radius: 5px; padding: 1px 6px; }
+
+        /* =========================================
+           SLIDE 2: EL EDITOR (maqueta interactiva)
+        ========================================= */
+        .demo { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: 16px; align-items: start; text-align: left; }
+        .demo-panel { background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 13px; }
+        .demo-list { display: flex; flex-direction: column; gap: 6px; }
+        .p-row { display: flex; align-items: center; gap: 11px; width: 100%; padding: 9px 11px; border-radius: 10px; border: 1px solid transparent; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+        .p-row:hover { background: rgba(255,255,255,0.04); }
+        .p-row.active { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.4); }
+        .p-row.fixed { cursor: default; opacity: .8; }
+        .p-row.fixed:hover { background: transparent; }
+        .p-ico { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: rgba(6,182,212,0.14); color: #22d3ee; flex-shrink: 0; font-size: 14px; }
+        .p-ico.custom { background: rgba(139,92,246,0.16); color: #c4b5fd; }
+        .p-copy { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+        .p-copy strong { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-copy strong.empty { color: #64748b; font-style: italic; }
+        .p-copy small { font-size: 11.5px; color: var(--text-muted); }
+        .p-lock { color: #475569; font-size: 11px; }
+        .p-add { border: 1px dashed rgba(255,255,255,0.15); border-radius: 10px; padding: 9px; background: transparent; color: #cbd5e1; font: 700 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .p-add:hover { border-color: rgba(139,92,246,0.5); color: #e9d5ff; }
+        .starters { margin-top: 6px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+        .starters span { width: 100%; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+        .starter { display: inline-flex; align-items: center; gap: 6px; font: 700 12px Urbanist, sans-serif; border-radius: 8px; padding: 6px 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #cbd5e1; cursor: pointer; }
+        .starter:hover { border-color: rgba(139,92,246,0.45); color: #ede9fe; }
+
+        .ed-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+        .f-label { display: block; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+        .f-input { width: 100%; font: 600 14px Urbanist, sans-serif; color: var(--text-main); background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.12); border-radius: 9px; padding: 9px 11px; }
+        .f-input.missing { border-color: rgba(248,113,113,0.55); }
+        .f-hint { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+        .f-hint b { color: #e9d5ff; }
+        .icons { display: flex; flex-wrap: wrap; gap: 5px; }
+        .icon-opt { width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.25); color: #94a3b8; cursor: pointer; font-size: 13px; }
+        .icon-opt.on { border-color: rgba(139,92,246,0.6); background: rgba(139,92,246,0.18); color: #ede9fe; }
+        .toggle { display: flex; gap: 11px; align-items: flex-start; margin: 12px 0; padding: 10px 12px; border-radius: 10px; background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.18); cursor: pointer; }
+        .toggle input { margin-top: 3px; accent-color: #f59e0b; width: 16px; height: 16px; flex-shrink: 0; }
+        .toggle strong { display: block; font-size: 13px; }
+        .toggle small { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+        .mods-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+        .mods-head small { font-size: 11.5px; color: var(--text-muted); }
+        .mods { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+        .mod { display: flex; align-items: center; gap: 7px; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.07); background: rgba(0,0,0,0.22); color: #64748b; font: 700 11.5px Urbanist, sans-serif; cursor: pointer; text-align: left; min-width: 0; }
+        .mod span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mod .ck { font-size: 9px; opacity: .7; }
+        .mod.on { color: #e9d5ff; border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.12); }
+        .mod.locked { cursor: default; opacity: .75; }
+
+        /* =========================================
+           SLIDE 3: PUNTOS DE PARTIDA
+        ========================================= */
+        .starter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .st-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; text-align: left; display: flex; flex-direction: column; gap: 10px; }
+        .st-head { display: flex; align-items: center; gap: 12px; }
+        .st-head .p-ico { width: 42px; height: 42px; font-size: 18px; }
+        .st-head strong { display: block; font-size: 18px; }
+        .st-head small { font-size: 12px; color: var(--text-muted); }
+        .st-card p { font-size: 13.5px; margin: 0; line-height: 1.5; }
+        .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+        .chips span { font-size: 11px; font-weight: 700; border-radius: 6px; padding: 4px 8px; background: rgba(139,92,246,0.1); color: #ddd6fe; }
+        .chips span.supply { background: rgba(245,158,11,0.14); color: #fde68a; }
+
+        /* =========================================
+           SLIDE 4: CÓMO LLEGA A LA SEDE
+        ========================================= */
+        .flow-split { display: grid; grid-template-columns: 400px 1fr; gap: 32px; align-items: start; }
+        .lobby-modal { background: rgba(2,6,23,0.92); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; box-shadow: 0 26px 60px rgba(0,0,0,0.5); text-align: left; }
+        .lm-kicker { font-size: 10.5px; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; color: #a78bfa; }
+        .lm-title { font-size: 18px; font-weight: 800; margin: 3px 0 12px; }
+        .lm-opt { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 11px; border: 1px solid rgba(255,255,255,0.07); background: rgba(255,255,255,0.03); margin-bottom: 7px; }
+        .lm-opt.sel { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); }
+        .lm-opt.design { border-style: dashed; }
+        .lm-opt strong { display: block; font-size: 13.5px; }
+        .lm-opt small { font-size: 11.5px; color: var(--text-muted); }
+        .lm-opt .arrow { margin-left: auto; color: #a78bfa; font-size: 12px; }
+        .lm-btn { margin-top: 6px; text-align: center; font-size: 13px; font-weight: 800; border-radius: 10px; padding: 10px; background: #7c3aed; color: white; }
+        .calc { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px 18px; text-align: left; }
+        .calc-title { font-size: 13px; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; display: flex; gap: 9px; align-items: center; }
+        .calc-row { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05); font-size: 13px; align-items: start; }
+        .calc-row:first-of-type { border-top: none; }
+        .calc-row > span:first-child { font-family: monospace; font-size: 12px; color: #c4b5fd; padding-top: 3px; }
+        .calc-row .chips span.off { background: rgba(248,113,113,0.1); color: #fca5a5; text-decoration: line-through; }
+
+        /* =========================================
+           SLIDE 5: LO QUE NO HACE
+        ========================================= */
+        .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .rule { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 16px 18px; text-align: left; display: flex; gap: 14px; }
+        .rule > i { font-size: 18px; margin-top: 2px; width: 22px; text-align: center; }
+        .rule strong { display: block; font-size: 15.5px; margin-bottom: 5px; }
+        .rule span { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+        /* =========================================
+           SLIDE 6: NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .three-row, .starter-grid, .flow-split, .rules, .demo { grid-template-columns: 1fr; gap: 14px; }
+            .mods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .ed-row { grid-template-columns: 1fr; }
+            .calc-row { grid-template-columns: 1fr; gap: 6px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-purple"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #a78bfa;">Apartado de Marca</h3>
+                <h1>Perfiles de <span>Sede</span></h1>
+                <p>Todas tus sedes son sedes. Lo que hace que una sea un depósito, otra un taller y otra un showroom no es un tipo fijo de la aplicación: es con qué nombre y con qué apartados arranca. La marca arma esas combinaciones una vez, y cada sede nueva las elige al nacer.</p>
+            </div>
+
+            <div class="visual-block three-row">
+                <div class="trait">
+                    <span class="num">01</span>
+                    <strong><i class="fas fa-tag" style="color:#a78bfa;"></i> Un nombre</strong>
+                    <span>Es como se llama la sede en la red y en el alta: "Crear Depósito". Hasta 40 caracteres, y un perfil sin nombre no se guarda.</span>
+                </div>
+                <div class="trait">
+                    <span class="num">02</span>
+                    <strong><i class="fas fa-bars-staggered" style="color:#22d3ee;"></i> Una barra</strong>
+                    <span>Qué apartados trae marcados de los 19 que existen. Inicio está siempre: es la puerta de la sede y no se puede sacar.</span>
+                </div>
+                <div class="trait">
+                    <span class="num">03</span>
+                    <strong><i class="fas fa-flask" style="color:#fbbf24;"></i> Si trabaja con insumos</strong>
+                    <span>Una sola casilla que decide si la sede fabrica con las recetas de la marca. Lo demás se deduce de ahí.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: EL EDITOR -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #a78bfa;">El editor</h3>
+                <h2>A la izquierda los perfiles, a la derecha el que estás armando</h2>
+                <p>Probalo: elegí un punto de partida, cambiale el nombre y marcá o desmarcá apartados.</p>
+            </div>
+
+            <div class="visual-block demo" data-editor>
+                <aside class="demo-panel demo-list" aria-label="Perfiles">
+                    <div class="p-row fixed" title="Viene con la aplicación y no se edita">
+                        <span class="p-ico"><i class="fas fa-store"></i></span>
+                        <span class="p-copy"><strong>Sucursal</strong><small>De fábrica · 17 apartados</small></span>
+                        <i class="fas fa-lock p-lock"></i>
+                    </div>
+                    <div data-profile-list></div>
+                    <button type="button" class="p-add" data-add><i class="fas fa-plus"></i> Nuevo perfil</button>
+                    <div class="starters">
+                        <span>Empezar desde</span>
+                        <button type="button" class="starter" data-starter="0"><i class="fas fa-warehouse"></i> Depósito</button>
+                        <button type="button" class="starter" data-starter="1"><i class="fas fa-industry"></i> Fábrica</button>
+                        <button type="button" class="starter" data-starter="2"><i class="fas fa-gem"></i> Showroom</button>
+                    </div>
+                </aside>
+
+                <section class="demo-panel" aria-label="Perfil elegido">
+                    <div class="ed-row">
+                        <label>
+                            <span class="f-label">Nombre</span>
+                            <input class="f-input" data-name type="text" maxlength="40" placeholder="Ej: Depósito" autocomplete="off">
+                            <small class="f-hint">Así se llama en el alta: <b data-create>"Crear …"</b></small>
+                        </label>
+                        <div>
+                            <span class="f-label">Ícono</span>
+                            <div class="icons" data-icons></div>
+                        </div>
+                    </div>
+
+                    <label class="toggle">
+                        <input type="checkbox" data-produces>
+                        <span><strong>Trabaja con insumos</strong><small>Fabrica con las recetas de la marca, y su catálogo y su inventario abren en Insumos.</small></span>
+                    </label>
+
+                    <div class="mods-head">
+                        <span class="f-label" style="margin:0;">Apartados · <span data-count>1</span></span>
+                        <small>Lo que no marques no aparece en la barra.</small>
+                    </div>
+                    <div class="mods" data-mods></div>
+                </section>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: PUNTOS DE PARTIDA -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Empezar desde</h3>
+                <h2>Tres borradores para no arrancar de una hoja en blanco</h2>
+                <p>No son perfiles: al tocarlos se copian, y desde ahí la copia es de la marca. Se le cambia el nombre, el ícono o los apartados sin afectar a nadie más.</p>
+            </div>
+
+            <div class="visual-block starter-grid">
+                <div class="st-card">
+                    <div class="st-head"><span class="p-ico custom"><i class="fas fa-warehouse"></i></span><div><strong>Depósito</strong><small>6 apartados</small></div></div>
+                    <p>Guarda, prepara y despacha. No tiene caja ni tienda: no le vende al público.</p>
+                    <div class="chips"><span>Inicio</span><span>Ajustar Catálogo</span><span>Inventario</span><span>Pedidos</span><span>Despachos</span><span>Proveedores</span></div>
+                </div>
+                <div class="st-card">
+                    <div class="st-head"><span class="p-ico custom"><i class="fas fa-industry"></i></span><div><strong>Fábrica</strong><small>5 apartados · fabrica</small></div></div>
+                    <p>Lo mismo con lo que arrancaba una planta cuando era un tipo propio, sin una entrada de más ni de menos.</p>
+                    <div class="chips"><span>Inicio</span><span>Producción</span><span>Ajustar Catálogo</span><span>Inventario</span><span>Proveedores</span><span class="supply"><i class="fas fa-flask"></i> trabaja con insumos</span></div>
+                </div>
+                <div class="st-card">
+                    <div class="st-head"><span class="p-ico custom"><i class="fas fa-gem"></i></span><div><strong>Showroom</strong><small>7 apartados</small></div></div>
+                    <p>Muestra y vende con turno, sin tienda en línea ni despachos propios.</p>
+                    <div class="chips"><span>Inicio</span><span>Punto de Venta</span><span>Turnos</span><span>Ajustar Catálogo</span><span>Inventario</span><span>Pedidos</span><span>Promos y Combos</span></div>
+                </div>
+            </div>
+
+            <div class="note purple" style="margin-top: 18px;">
+                <i class="fas fa-store"></i>
+                <span><b>Sucursal</b> aparece primera en la lista con un candado: viene con la aplicación, trae los 17 apartados de una sucursal y no se edita. Los perfiles de la marca se suman al lado.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: CÓMO LLEGA A LA SEDE -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">Al crear una sede</h3>
+                <h2>El perfil aparece en el alta, y deja la barra escrita</h2>
+            </div>
+
+            <div class="visual-block flow-split">
+                <div class="lobby-modal">
+                    <div class="lm-kicker">Nuevo nodo</div>
+                    <div class="lm-title">¿Qué nodo querés crear?</div>
+                    <div class="lm-opt"><span class="p-ico"><i class="fas fa-store"></i></span><div><strong>Sucursal</strong><small>Venta, caja y operación diaria.</small></div></div>
+                    <div class="lm-opt sel"><span class="p-ico custom"><i class="fas fa-gem"></i></span><div><strong>Showroom</strong><small>Punto de Venta, Turnos, Ajustar Catálogo y 3 más.</small></div></div>
+                    <div class="lm-opt"><span class="p-ico custom"><i class="fas fa-warehouse"></i></span><div><strong>Depósito</strong><small>Ajustar Catálogo, Inventario, Pedidos y 2 más.</small></div></div>
+                    <div class="lm-opt design"><span class="p-ico custom"><i class="fas fa-pen-ruler"></i></span><div><strong>Otro tipo de negocio</strong><small>Un depósito, un taller, un showroom: armalo con su nombre y sus apartados.</small></div><i class="fas fa-arrow-right arrow"></i></div>
+                    <div class="lm-btn">Crear Showroom</div>
+                </div>
+
+                <div class="stack">
+                    <div class="calc">
+                        <div class="calc-title"><i class="fas fa-gears" style="color:#a78bfa;"></i> Lo que queda escrito en la sede nueva</div>
+                        <div class="calc-row"><span>nombre</span><div class="chips"><span>Showroom</span></div></div>
+                        <div class="calc-row"><span>arranca como</span><div class="chips"><span>Sucursal</span></div></div>
+                        <div class="calc-row"><span>se esconden</span><div class="chips"><span class="off">Servicios</span><span class="off">Alquileres</span><span class="off">Despachos</span><span class="off">Proveedores</span><span class="off">Tienda en Línea</span><span class="off">Campañas</span><span class="off">Contestadora</span><span class="off">Facturación</span><span class="off">Gastos e Inversiones</span><span class="off">Impuestos</span></div></div>
+                        <div class="calc-row"><span>se suman</span><div class="chips"><span style="background:rgba(255,255,255,0.05);color:#94a3b8;">nada: todo lo que pide ya lo trae una sucursal</span></div></div>
+                    </div>
+                    <div class="note">
+                        <i class="fas fa-code-compare"></i>
+                        <span>El perfil no inventa un formato: se traduce a <b>lo que se esconde y lo que se suma</b> sobre la barra de partida, el mismo par que la sede edita después desde su propia barra. Si escribirlo fallara, la sede igual se crea y arranca con la barra completa de partida.</span>
+                    </div>
+                    <div class="note ok">
+                        <i class="fas fa-pen-ruler"></i>
+                        <span>"Otro tipo de negocio" lleva a esta pantalla con <b>un perfil en blanco ya abierto</b>. Al guardarlo aparece "Volver a crear la sede", y el perfil nuevo ya está en la lista del alta.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: LO QUE NO HACE -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Los límites</h3>
+                <h2>Un perfil es un punto de partida, no una regla</h2>
+            </div>
+
+            <div class="visual-block rules">
+                <div class="rule">
+                    <i class="fas fa-clock-rotate-left" style="color:#a78bfa;"></i>
+                    <div><strong>Se aplica una vez, al crear</strong><span>Editar un perfil no toca a las sedes que ya nacieron con él. Si lo hiciera, cambiar un rótulo le reacomodaría la barra a sedes que ya la tienen a su gusto.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-trash-can" style="color:#f87171;"></i>
+                    <div><strong>Quitarlo no borra nada</strong><span>Las sedes que se crearon con ese perfil no cambian: solo deja de ofrecerse al crear una nueva. La confirmación lo dice antes de quitarlo.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-user-shield" style="color:#60a5fa;"></i>
+                    <div><strong>No da permisos a personas</strong><span>Un perfil sin Punto de Venta esconde la entrada, pero no le saca ni le da caja a nadie: eso lo decide el puesto de cada uno en Talento.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-plus" style="color:#34d399;"></i>
+                    <div><strong>La sede puede sumar después</strong><span>Lo que el perfil no trajo no está prohibido: la sede lo agrega desde su propia barra cuando lo necesite.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-flask" style="color:#fbbf24;"></i>
+                    <div><strong>Fabricar no es tener otro catálogo</strong><span>Una sede que trabaja con insumos abre su catálogo y su inventario en Insumos y fabrica con las recetas de la marca, pero vende lo mismo que el resto: el catálogo es uno solo para toda la red.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-crown" style="color:#22d3ee;"></i>
+                    <div><strong>Es de la marca</strong><span>Los perfiles se guardan en la marca y solo aparecen al crear una sede dentro de ella. Abrir un negocio nuevo, sin marca, sigue arrancando como local.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #a78bfa;">Seguir explorando</h3>
+                <h2>Las sedes ya tienen forma; falta quién las atiende</h2>
+                <p>¿Seguimos por el equipo de cada sede o por la tabla que las compara?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="talento.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-users"></i></div>
+                    <div class="qa-text">Talento</div>
+                </a>
+                <a href="red.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text">Red</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Maqueta del editor: misma lista de apartados, íconos y puntos de partida que la app.
+        (() => {
+            const root = document.querySelector('[data-editor]');
+            if (!root) return;
+            const MODULES = [
+                ['home', 'Inicio', 'fa-house'], ['pos', 'Punto de Venta', 'fa-cash-register'],
+                ['bookings', 'Turnos', 'fa-calendar-check'], ['services', 'Servicios', 'fa-concierge-bell'],
+                ['production', 'Producción', 'fa-industry'], ['catalog', 'Ajustar Catálogo', 'fa-sitemap'],
+                ['inventory', 'Inventario', 'fa-boxes-stacked'], ['rentals', 'Alquileres', 'fa-key'],
+                ['projects', 'Proyectos / Obras', 'fa-hard-hat'], ['ops', 'Pedidos', 'fa-clipboard-list'],
+                ['logistics', 'Despachos', 'fa-truck'], ['suppliers', 'Proveedores', 'fa-handshake'],
+                ['promotions', 'Promos y Combos', 'fa-tags'], ['store', 'Tienda en Línea', 'fa-store'],
+                ['marketing', 'Campañas', 'fa-bullhorn'], ['auto-responses', 'Contestadora', 'fa-comment-dots'],
+                ['billing', 'Facturación', 'fa-file-invoice'], ['investments', 'Gastos e Inversiones', 'fa-coins'],
+                ['taxes', 'Impuestos', 'fa-receipt'],
+            ];
+            const ICONS = ['fa-warehouse', 'fa-industry', 'fa-shop', 'fa-store', 'fa-truck-fast', 'fa-screwdriver-wrench', 'fa-mug-hot', 'fa-gem', 'fa-building', 'fa-seedling'];
+            const STARTERS = [
+                { name: 'Depósito', icon: 'fa-warehouse', produces: false, modules: ['home', 'catalog', 'inventory', 'ops', 'logistics', 'suppliers'] },
+                { name: 'Fábrica', icon: 'fa-industry', produces: true, modules: ['home', 'production', 'catalog', 'inventory', 'suppliers'] },
+                { name: 'Showroom', icon: 'fa-gem', produces: false, modules: ['home', 'pos', 'bookings', 'catalog', 'inventory', 'ops', 'promotions'] },
+            ];
+            const escape = text => text.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+            let seq = 0;
+            const create = base => ({ id: ++seq, name: base.name || '', icon: base.icon || ICONS[0], produces: Boolean(base.produces), modules: [...(base.modules || ['home'])] });
+            const profiles = [create(STARTERS[0]), create({ ...STARTERS[2], name: 'Taller de joyas', icon: 'fa-screwdriver-wrench', produces: true, modules: ['home', 'pos', 'production', 'catalog', 'inventory', 'suppliers'] })];
+            let selectedId = profiles[1].id;
+
+            const list = root.querySelector('[data-profile-list]');
+            const nameInput = root.querySelector('[data-name]');
+            const createLabel = root.querySelector('[data-create]');
+            const iconsBox = root.querySelector('[data-icons]');
+            const produces = root.querySelector('[data-produces]');
+            const modsBox = root.querySelector('[data-mods]');
+            const count = root.querySelector('[data-count]');
+            const selected = () => profiles.find(p => p.id === selectedId);
+
+            function renderList() {
+                list.innerHTML = profiles.map(p => `
+                    <button type="button" class="p-row ${p.id === selectedId ? 'active' : ''}" data-id="${p.id}">
+                        <span class="p-ico custom"><i class="fas ${p.icon}"></i></span>
+                        <span class="p-copy"><strong class="${p.name.trim() ? '' : 'empty'}">${escape(p.name.trim() || 'Sin nombre')}</strong>
+                        <small>${p.modules.length} apartados${p.produces ? ' · fabrica' : ''}</small></span>
+                    </button>`).join('');
+            }
+            function renderEditor() {
+                const p = selected();
+                nameInput.value = p.name;
+                nameInput.classList.toggle('missing', !p.name.trim());
+                createLabel.textContent = `"Crear ${p.name.trim() || '…'}"`;
+                produces.checked = p.produces;
+                iconsBox.innerHTML = ICONS.map(icon => `<button type="button" class="icon-opt ${p.icon === icon ? 'on' : ''}" data-icon="${icon}" aria-label="${icon}" aria-pressed="${p.icon === icon}"><i class="fas ${icon}"></i></button>`).join('');
+                modsBox.innerHTML = MODULES.map(([id, label, icon]) => {
+                    const on = p.modules.includes(id);
+                    const locked = id === 'home';
+                    return `<button type="button" class="mod ${on ? 'on' : ''} ${locked ? 'locked' : ''}" data-mod="${id}" aria-pressed="${on}" ${locked ? 'disabled' : ''}>
+                        <i class="fas ${icon}"></i><span>${label}</span><i class="fas ck ${on ? 'fa-check' : 'fa-plus'}"></i></button>`;
+                }).join('');
+                count.textContent = p.modules.length;
+            }
+            const render = () => { renderList(); renderEditor(); };
+
+            list.addEventListener('click', e => { const row = e.target.closest('[data-id]'); if (row) { selectedId = Number(row.dataset.id); render(); } });
+            root.querySelector('[data-add]').addEventListener('click', () => { const p = create({}); profiles.push(p); selectedId = p.id; render(); nameInput.focus(); });
+            root.querySelectorAll('[data-starter]').forEach(btn => btn.addEventListener('click', () => {
+                const p = create(STARTERS[Number(btn.dataset.starter)]); profiles.push(p); selectedId = p.id; render();
+            }));
+            nameInput.addEventListener('input', () => {
+                const p = selected(); p.name = nameInput.value;
+                nameInput.classList.toggle('missing', !p.name.trim());
+                createLabel.textContent = `"Crear ${p.name.trim() || '…'}"`;
+                renderList();
+            });
+            produces.addEventListener('change', () => { selected().produces = produces.checked; renderList(); });
+            iconsBox.addEventListener('click', e => { const b = e.target.closest('[data-icon]'); if (b) { selected().icon = b.dataset.icon; render(); } });
+            modsBox.addEventListener('click', e => {
+                const b = e.target.closest('[data-mod]');
+                if (!b || b.dataset.mod === 'home') return;
+                const p = selected();
+                p.modules = p.modules.includes(b.dataset.mod) ? p.modules.filter(id => id !== b.dataset.mod) : [...p.modules, b.dataset.mod];
+                render();
+            });
+            render();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_perfiles';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
+</body>
+</html>

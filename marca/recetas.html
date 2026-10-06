@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetas de la marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --border-soft: rgba(255, 255, 255, 0.08);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+            --kpi-cyan: #06b6d4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.12) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-cyan { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(6,182,212,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible, .demo input:focus-visible, .demo select:focus-visible { outline: 3px solid #fcd34d; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-orange); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 20px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        /* =========================================
+           PORTADA
+        ========================================= */
+        .cover h1 span { color: #fbbf24; }
+        .cover p { font-size: 21px; }
+        .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 14px; align-items: center; max-width: 1100px; margin: 0 auto; }
+        .flow-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 16px 18px; text-align: left; height: 100%; }
+        .flow-card.brand { border-color: rgba(245,158,11,0.4); background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(15,23,42,0.8)); }
+        .flow-card strong { display: flex; gap: 10px; align-items: center; font-size: 16px; margin-bottom: 6px; }
+        .flow-card span { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+        .flow-arrow { color: #475569; font-size: 18px; }
+
+        /* =========================================
+           RECETAS Y EDITOR — calcados de factory/views/Production.vue
+        ========================================= */
+        .editor-split { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 18px; align-items: start; text-align: left; }
+        .panel { background: rgba(15,23,42,0.85); border: 1px solid var(--border-soft); border-radius: 16px; overflow: hidden; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--border-soft); }
+        .recipes-title { display: flex; align-items: center; gap: 9px; font-size: .98rem; font-weight: 800; color: var(--text-main); text-transform: none; letter-spacing: 0; margin: 0; }
+        .recipes-title-icon { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: rgba(245,158,11,0.14); color: #fbbf24; font-size: .8rem; }
+        .recipes-count { font-size: .72rem; background: rgba(255,255,255,0.08); color: var(--text-muted); border-radius: 999px; padding: 1px 8px; }
+        .btn-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.05); color: var(--text-soft); font: 800 .76rem Urbanist, sans-serif; }
+        .list-container { padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+        .recipe-card { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft); width: 100%; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+        .recipe-card.active { border-color: rgba(245,158,11,0.5); background: rgba(245,158,11,0.08); }
+        .recipe-card strong { font-size: .85rem; }
+        .recipe-edit { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--text-muted); background: rgba(255,255,255,0.05); font-size: .72rem; }
+
+        .drawer { background: #111a2e; border: 1px solid var(--border-soft); border-radius: 16px; overflow: hidden; box-shadow: -10px 0 40px rgba(0,0,0,0.4); }
+        .drawer-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 12px 14px; border-bottom: 1px solid var(--border-soft); }
+        .drawer-header small { font-size: .66rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+        .drawer-header h4 { font-size: 1rem; font-weight: 800; }
+        .drawer-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+        .drawer-body h5 { font-size: 1.05rem; font-weight: 800; }
+        .consumption-box { background: rgba(0,0,0,0.25); border: 1px solid var(--border-soft); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+        .batch-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: .8rem; font-weight: 800; color: var(--text-soft); }
+        .batch-qty { display: inline-flex; align-items: center; gap: 6px; }
+        .field { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 6px 8px; color: var(--text-main); font: 700 .8rem Urbanist, sans-serif; }
+        .qty { width: 72px; text-align: right; }
+        .comp-row { display: grid; grid-template-columns: minmax(0, 1fr) 72px 34px 28px; gap: 6px; align-items: center; }
+        .comp-name { font-size: .8rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .unit-badge { font-size: .7rem; font-weight: 800; color: var(--text-muted); text-align: center; }
+        .remove { width: 28px; height: 28px; border-radius: 7px; border: 0; background: rgba(239,68,68,0.1); color: #f87171; cursor: pointer; font-size: .7rem; }
+        .recipe-add { width: 100%; }
+        .drawer-footer { display: flex; justify-content: space-between; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--border-soft); }
+        .btn-primary { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 9px; border: 0; background: #f59e0b; color: #1c1917; font: 900 .8rem Urbanist, sans-serif; cursor: pointer; }
+        .btn-primary:disabled { opacity: .45; cursor: not-allowed; }
+        .save-log { min-height: 18px; font-size: .74rem; color: #a7f3d0; }
+        .save-log.warn { color: #fcd34d; }
+
+        /* =========================================
+           NUEVA RECETA
+        ========================================= */
+        .new-split { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 22px; align-items: start; text-align: left; }
+        .search { height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-radius: 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); font-size: .76rem; }
+        .type-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(255,255,255,0.04); font-size: .8rem; }
+        .type-toggle span { margin-left: auto; font-size: .7rem; color: var(--text-muted); }
+        .type-products { display: flex; flex-direction: column; gap: 5px; padding-left: 18px; margin-top: 5px; }
+        .type-products span { padding: 7px 10px; border-radius: 9px; border: 1px solid var(--border-soft); background: rgba(255,255,255,0.03); font-size: .78rem; font-weight: 700; }
+        .select-mock { border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; background: rgba(0,0,0,0.35); overflow: hidden; font-size: .78rem; }
+        .select-mock div { padding: 6px 10px; }
+        .select-mock .group { font-weight: 900; font-size: .68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; padding-top: 8px; }
+        .select-mock .new { color: #fcd34d; font-weight: 800; background: rgba(245,158,11,0.08); }
+        .select-mock .muted { color: #64748b; }
+
+        /* =========================================
+           EN CADA SEDE
+        ========================================= */
+        .sedes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .sede-card { background: rgba(15,23,42,0.85); border: 1px solid var(--border-soft); border-radius: 14px; padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+        .sede-card .who { font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); }
+        .sede-recipe { padding: 10px 11px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft); }
+        .sede-recipe .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .sede-recipe strong { font-size: .84rem; }
+        .source-pill { font-size: .62rem; font-weight: 900; border-radius: 999px; padding: 2px 8px; background: rgba(245,158,11,0.14); color: #fcd34d; }
+        .source-pill.is-own { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+        .metrics { display: flex; gap: 14px; margin-top: 8px; }
+        .metrics span { display: flex; flex-direction: column; font-size: .8rem; }
+        .metrics small { font-size: .62rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase; }
+        .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+        .chips span { font-size: .66rem; font-weight: 700; border-radius: 6px; padding: 2px 7px; background: rgba(255,255,255,0.06); color: var(--text-soft); }
+        .chips span.danger { background: rgba(239,68,68,0.13); color: #fca5a5; }
+        .sede-hint { font-size: .74rem; line-height: 1.45; padding: 8px 10px; border-radius: 9px; background: rgba(59,130,246,0.07); color: #bfdbfe; }
+        .sede-hint .link-btn { color: #fcd34d; font-weight: 800; }
+
+        /* =========================================
+           LÍMITES
+        ========================================= */
+        .rules-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .rule { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 15px 17px; text-align: left; display: flex; gap: 14px; }
+        .rule > i { font-size: 18px; margin-top: 2px; width: 22px; text-align: center; }
+        .rule strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .rule span { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .flow, .editor-split, .new-split, .sedes, .rules-grid { grid-template-columns: 1fr; gap: 14px; }
+            .flow-arrow { transform: rotate(90deg); text-align: center; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-orange"></div>
+        <div class="glow-cyan"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #fbbf24;">Apartado de Marca</h3>
+                <h1><span>Recetas</span> de la marca</h1>
+                <p>La marca escribe una vez qué lleva cada producto y cuánto rinde cada tanda. Cada sede que fabrica usa esa receta y descuenta los insumos de su propio stock.</p>
+            </div>
+
+            <div class="visual-block flow">
+                <div class="flow-card brand">
+                    <strong><i class="fas fa-book-open" style="color:#fbbf24;"></i> La marca escribe</strong>
+                    <span>Los insumos y las recetas. Acá no se fabrica: es la misma pantalla de Producción, sin la mesa ni los despachos.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-industry" style="color:#c4b5fd;"></i> La sede fabrica</strong>
+                    <span>Con la receta de la marca, salvo que tenga una propia, y con los insumos que tiene en su stock.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-boxes-stacked" style="color:#34d399;"></i> Suma stock</strong>
+                    <span>Lo fabricado entra al stock de esa sede, y los insumos de la corrida salen del suyo.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: EL EDITOR -->
+    <section class="slide">
+        <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #fbbf24;">La receta</h3>
+                <h2>Qué consume una corrida, y cuánto sale de ella</h2>
+                <p>Probalo: cambiá lo que rinde la corrida, una cantidad, o sacá y agregá insumos. "Guardar receta" se apaga si algo no cierra.</p>
+            </div>
+
+            <div class="visual-block editor-split demo" data-editor>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h4 class="recipes-title"><span class="recipes-title-icon"><i class="fas fa-book-open"></i></span> Recetas de la marca <span class="recipes-count">3</span></h4>
+                        <span class="btn-secondary"><i class="fas fa-plus"></i> Nueva receta</span>
+                    </div>
+                    <div class="list-container">
+                        <button type="button" class="recipe-card active"><strong>Velas Vela de soja 200 g</strong><span class="recipe-edit"><i class="fas fa-pen"></i></span></button>
+                        <button type="button" class="recipe-card"><strong>Difusores Difusor bambú 120 ml</strong><span class="recipe-edit"><i class="fas fa-pen"></i></span></button>
+                        <button type="button" class="recipe-card"><strong>Bases Cera aromatizada vainilla</strong><span class="recipe-edit"><i class="fas fa-pen"></i></span></button>
+                    </div>
+                </div>
+
+                <aside class="drawer">
+                    <div class="drawer-header"><div><small>Paso 2 de 2 · Receta</small><h4>Definir receta</h4></div><i class="fas fa-times" style="color:var(--text-muted);"></i></div>
+                    <div class="drawer-body">
+                        <h5>Velas Vela de soja 200 g</h5>
+                        <div class="consumption-box">
+                            <label class="batch-header"><span>Insumos por corrida:</span>
+                                <span class="batch-qty"><input class="field qty" type="number" min="0.01" step="0.01" value="12" data-yield aria-label="Cantidad producida por corrida"><span>u</span></span></label>
+                            <div data-rows></div>
+                            <select class="field recipe-add" data-add aria-label="Agregar un insumo"></select>
+                        </div>
+                        <div class="save-log" data-log></div>
+                    </div>
+                    <div class="drawer-footer">
+                        <span class="btn-secondary"><i class="fas fa-arrow-left"></i> Elegir producto</span>
+                        <button type="button" class="btn-primary" data-save><i class="fas fa-floppy-disk"></i> Guardar receta</button>
+                    </div>
+                </aside>
+            </div>
+
+            <div class="note" style="margin-top: 12px;">
+                <i class="fas fa-calculator"></i>
+                <span>Las cantidades son <b>por corrida</b>, no por unidad: 2,4 kg de cera dan 12 velas. Una sede que quiere hacer 30 velas consume dos corridas y media de cada insumo.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: NUEVA RECETA E INSUMOS -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">Nueva receta</h3>
+                <h2>Primero el producto; el insumo que falta se carga en el camino</h2>
+            </div>
+
+            <div class="visual-block new-split">
+                <aside class="drawer">
+                    <div class="drawer-header"><div><small>Paso 1 de 2 · Producto</small><h4>Nueva receta</h4></div><i class="fas fa-times" style="color:var(--text-muted);"></i></div>
+                    <div class="drawer-body">
+                        <div class="search"><i class="fas fa-search"></i> Buscar producto, marca o SKU...</div>
+                        <div>
+                            <div class="type-toggle"><i class="fas fa-chevron-down"></i><strong>Velas</strong><span>2 productos</span></div>
+                            <div class="type-products"><span>Vela de soja 400 g</span><span>Vela en lata</span></div>
+                        </div>
+                        <div class="type-toggle"><i class="fas fa-chevron-right"></i><strong>Jabones</strong><span>3 productos</span></div>
+                    </div>
+                </aside>
+
+                <div class="stack">
+                    <div class="note">
+                        <i class="fas fa-list"></i>
+                        <span>El primer paso lista <b>los productos que todavía no tienen receta</b>, agrupados por tipo y con buscador. Elegir uno abre el paso 2, y "Elegir producto" vuelve atrás.</span>
+                    </div>
+                    <div class="select-mock" aria-hidden="true">
+                        <div class="muted">Agregar un insumo...</div>
+                        <div class="new">+ Cargar un insumo nuevo...</div>
+                        <div class="group">Materia prima</div>
+                        <div>Cera de soja (0 kg)</div>
+                        <div>Esencia vainilla (0 l)</div>
+                        <div class="group">Empaque</div>
+                        <div>Frasco 200 ml (0 u)</div>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-plus"></i>
+                        <span>"+ Cargar un insumo nuevo..." lo crea sin salir de la receta, <b>como materia prima</b>, y lo agrega a la lista. El rol se puede cambiar después en el catálogo.</span>
+                    </div>
+                    <div class="note ok">
+                        <i class="fas fa-share-nodes"></i>
+                        <span>Un insumo de la marca <b>no se vende</b>, ni en la tienda ni en la caja. Las sedes lo ven en su catálogo y llevan su propio stock de él, como de cualquier producto de la marca.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: EN CADA SEDE -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">En cada sede</h3>
+                <h2>La misma receta rinde distinto según el stock de cada una</h2>
+                <p>Así se ve la vela en la Producción de tres sedes. Cada una cuenta cuánto puede fabricar con lo que tiene.</p>
+            </div>
+
+            <div class="visual-block sedes">
+                <div class="sede-card">
+                    <span class="who">Sede Centro</span>
+                    <div class="sede-recipe">
+                        <div class="top"><strong>Vela de soja 200 g</strong><span class="source-pill">De la marca</span></div>
+                        <div class="metrics"><span><small>Para producir</small><b>30 u</b></span></div>
+                        <div class="chips"><span>Cera de soja: 6/0,2 kg</span><span>Frasco 200 ml: 30/1 u</span><span>Mecha: 40/1 u</span></div>
+                    </div>
+                    <p class="sede-hint">Tiene cera para 2,5 corridas y frascos para 2,5: con 12 por corrida, son 30 velas.</p>
+                </div>
+                <div class="sede-card">
+                    <span class="who">Sede Norte</span>
+                    <div class="sede-recipe">
+                        <div class="top"><strong>Vela de soja 200 g</strong><span class="source-pill">De la marca</span></div>
+                        <div class="metrics"><span><small>Para producir</small><b>0 u</b></span></div>
+                        <div class="chips"><span class="danger">Cera de soja: 0/0,2 kg</span><span>Mecha: 15/1 u</span><span>Esencia vainilla: 0,3/0,01 l</span></div>
+                    </div>
+                    <p class="sede-hint">Sin cera no sale ninguna: el insumo más justo marca el tope.</p>
+                </div>
+                <div class="sede-card">
+                    <span class="who">Planta Sur</span>
+                    <div class="sede-recipe">
+                        <div class="top"><strong>Vela de soja 200 g</strong><span class="source-pill is-own">Propia</span></div>
+                        <div class="metrics"><span><small>Para producir</small><b>72 u</b></span></div>
+                        <div class="chips"><span>Frasco 200 ml: 72/1 u</span><span>Cera de soja: 18/0,19 kg</span><span>Mecha: 100/1 u</span></div>
+                    </div>
+                    <p class="sede-hint">Fabrica en tandas de 24 con su propia receta. <span class="link-btn">Volver a la de la marca</span></p>
+                </div>
+            </div>
+
+            <div class="note warn" style="margin-top: 14px;">
+                <i class="fas fa-code-branch"></i>
+                <span>Si una sede edita la receta de la marca, la pantalla avisa: <b>"Es la receta de la marca. Si la guardas aca, esta sede pasa a tener la suya y deja de seguir los cambios de la marca."</b> Desde ahí figura como "Propia", hasta que la descarte.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: LO QUE CONVIENE SABER -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Lo que conviene saber</h3>
+                <h2>La marca define cómo; cada sede, con qué</h2>
+            </div>
+
+            <div class="visual-block rules-grid">
+                <div class="rule">
+                    <i class="fas fa-arrows-rotate" style="color:#fbbf24;"></i>
+                    <div><strong>Un cambio de la marca llega a quien la sigue</strong><span>Las sedes que fabrican con la receta de la marca pasan a usar la versión nueva. Las que tienen una propia no se enteran.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-store" style="color:#c4b5fd;"></i>
+                    <div><strong>Una receta propia es la excepción</strong><span>Sirve para la sede que fabrica distinto. Se descarta con "Volver a la de la marca" y la sede retoma la receta común.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-layer-group" style="color:#22d3ee;"></i>
+                    <div><strong>Un intermedio tiene su receta</strong><span>La cera aromatizada se fabrica con su propia receta y después se consume en la de la vela.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-coins" style="color:#34d399;"></i>
+                    <div><strong>El costo sale del catálogo</strong><span>Lo que cuesta cada insumo en una corrida viene del catálogo. Si la sede tiene su propio costo para ese producto, manda el suyo.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-flask" style="color:#f472b6;"></i>
+                    <div><strong>Fabrica la sede que tiene Producción</strong><span>El apartado viene con el perfil que trabaja con insumos, y cualquier otra sede lo puede sumar desde su barra.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-ban" style="color:#f87171;"></i>
+                    <div><strong>Lo que no se puede guardar</strong><span>Sin insumos o con una cantidad en cero, el botón no se habilita. Un insumo repetido, uno que no existe o una receta que se consume a sí misma los rechaza el sistema, con el motivo escrito.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #fbbf24;">Seguir explorando</h3>
+                <h2>De la receta al catálogo que la vende</h2>
+                <p>¿Seguimos por el catálogo de la marca o por los perfiles que deciden qué sede fabrica?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text">Catálogo<br>Maestro</div>
+                </a>
+                <a href="perfiles.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-shapes"></i></div>
+                    <div class="qa-text">Perfiles<br>de Sede</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // El editor: misma regla de validez que Production.vue (rinde > 0, al menos
+        // un insumo, todas las cantidades > 0) y los mismos grupos del desplegable.
+        (() => {
+            const root = document.querySelector('[data-editor]');
+            if (!root) return;
+            const CATALOG = [
+                { sku: 'CERA', name: 'Cera de soja', unit: 'kg', group: 'Materia prima' },
+                { sku: 'ESENCIA', name: 'Esencia vainilla', unit: 'l', group: 'Materia prima' },
+                { sku: 'MECHA', name: 'Mecha', unit: 'u', group: 'Materia prima' },
+                { sku: 'COLOR', name: 'Colorante ámbar', unit: 'g', group: 'Materia prima' },
+                { sku: 'FRASCO', name: 'Frasco 200 ml', unit: 'u', group: 'Empaque' },
+                { sku: 'TAPA', name: 'Tapa de madera', unit: 'u', group: 'Empaque' },
+                { sku: 'CERA-VAI', name: 'Cera aromatizada vainilla', unit: 'kg', group: 'Intermedios (los fabrica esta planta)' },
+            ];
+            let components = [
+                { sku: 'CERA', quantity: 2.4 },
+                { sku: 'MECHA', quantity: 12 },
+                { sku: 'ESENCIA', quantity: 0.12 },
+                { sku: 'FRASCO', quantity: 12 },
+            ];
+            const byS = sku => CATALOG.find(c => c.sku === sku);
+            const yieldInput = root.querySelector('[data-yield]');
+            const log = root.querySelector('[data-log]');
+            const save = root.querySelector('[data-save]');
+            const valid = () => Number(yieldInput.value) > 0 && components.length > 0 && components.every(c => Number(c.quantity) > 0);
+
+            function drawRows() {
+                root.querySelector('[data-rows]').innerHTML = components.map(c => {
+                    const item = byS(c.sku);
+                    return `<div class="comp-row"><span class="comp-name">${item.name}</span>
+                        <input class="field qty" type="number" min="0.01" step="0.01" value="${c.quantity}" data-qty="${c.sku}" aria-label="Cantidad de ${item.name}">
+                        <span class="unit-badge">${item.unit}</span>
+                        <button type="button" class="remove" data-remove="${c.sku}" title="Sacar ${item.name}"><i class="fas fa-times"></i></button></div>`;
+                }).join('');
+                const used = new Set(components.map(c => c.sku));
+                const groups = [...new Set(CATALOG.map(c => c.group))];
+                root.querySelector('[data-add]').innerHTML = '<option value="" disabled selected>Agregar un insumo...</option><option value="__nuevo__">+ Cargar un insumo nuevo...</option>' +
+                    groups.map(g => {
+                        const items = CATALOG.filter(c => c.group === g && !used.has(c.sku));
+                        return items.length ? `<optgroup label="${g}">${items.map(c => `<option value="${c.sku}">${c.name} (0 ${c.unit})</option>`).join('')}</optgroup>` : '';
+                    }).join('');
+                refresh();
+            }
+            function refresh() {
+                save.disabled = !valid();
+                if (!components.length) { log.className = 'save-log warn'; log.textContent = 'Una receta necesita al menos un insumo.'; }
+                else if (!valid()) { log.className = 'save-log warn'; log.textContent = 'Lo que rinde la corrida y cada cantidad tienen que ser mayores a cero.'; }
+                else if (log.dataset.saved !== '1') { log.className = 'save-log'; log.textContent = ''; }
+            }
+            root.addEventListener('input', e => {
+                log.dataset.saved = '';
+                const q = e.target.closest('[data-qty]');
+                if (q) components.find(c => c.sku === q.dataset.qty).quantity = q.value;
+                refresh();
+            });
+            root.addEventListener('click', e => {
+                const r = e.target.closest('[data-remove]');
+                if (r) { log.dataset.saved = ''; components = components.filter(c => c.sku !== r.dataset.remove); drawRows(); }
+                if (e.target.closest('[data-save]') && valid()) {
+                    log.dataset.saved = '1';
+                    log.className = 'save-log';
+                    log.textContent = 'Receta guardada.';
+                }
+            });
+            root.addEventListener('change', e => {
+                if (!e.target.matches('[data-add]')) return;
+                log.dataset.saved = '';
+                const v = e.target.value;
+                if (v === '__nuevo__') {
+                    log.className = 'save-log';
+                    log.textContent = 'Acá se abriría el panel para cargar el insumo nuevo, que nace como materia prima.';
+                    e.target.value = '';
+                    log.dataset.saved = '1';
+                    return;
+                }
+                if (v) { components.push({ sku: v, quantity: 1 }); drawRows(); }
+            });
+            drawRows();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_recetas';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
+</body>
+</html>

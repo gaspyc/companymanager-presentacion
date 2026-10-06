@@ -3,17 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        (function() {
-            const referrer = document.referrer;
-            if (referrer && (referrer.includes('/ecosystem') || referrer.includes('localhost') || referrer.includes('127.0.0.1') || referrer.includes('duckdns.org'))) {
-                window.location.href = referrer;
-            } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                window.location.href = 'http://localhost:5173/ecosystem';
-            }
-        })();
-    </script>
-    <title>Brand — Apartado Estratégico de Marca</title>
+    <title>Apartado de Marca</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -75,7 +65,7 @@
         .progress-text strong { display: block; font-size: 18px; color: var(--kpi-blue); }
         .progress-text span   { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
         .progress-bar-bg  { width: 200px; height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
-        .progress-bar-fill{ height: 100%; background: var(--kpi-blue); transition: width 1s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 0 10px var(--kpi-blue); }
+        .progress-bar-fill{ height: 100%; width: 0%; background: var(--kpi-blue); transition: width 1s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 0 10px var(--kpi-blue); }
 
         /* =========================================
            WRAPPER
@@ -97,22 +87,16 @@
             border-bottom: 1px solid var(--border-glass);
             padding-bottom: 10px;
         }
-        .center-header { justify-content: center; margin-top: 20px; }
 
         /* =========================================
-           GRIDS
+           GRID
         ========================================= */
         .pillars-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
         }
         .category-column { display: flex; flex-direction: column; gap: 15px; }
-
-        .bottom-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-        }
-        .bottom-grid .module-card { width: calc(33.333% - 14px); }
 
         /* =========================================
            MODULE CARDS
@@ -130,6 +114,7 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
             border-color: rgba(255,255,255,0.15);
         }
+        .module-card:focus-visible { outline: 3px solid var(--kpi-blue); outline-offset: 4px; }
         .module-card.visited { border-left: 4px solid var(--kpi-green); }
         .module-card.visited .status-indicator {
             background: rgba(16,185,129,0.2); border-color: var(--kpi-green);
@@ -152,6 +137,19 @@
             display: flex; align-items: center; justify-content: center;
             color: transparent; font-size: 10px; transition: 0.3s; flex-shrink: 0;
         }
+
+        /* Los apartados que todavia no tienen presentacion: se ven, se sabe que
+           faltan, y no cuentan en el progreso. */
+        .module-card.pending { border-style: dashed; opacity: 0.62; }
+        .module-card.pending:hover { opacity: 0.85; }
+        .module-card.pending .status-indicator { display: none; }
+        .pending-tag {
+            position: absolute; top: 12px; right: 12px;
+            font-size: 9.5px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;
+            color: #fcd34d; background: rgba(245,158,11,0.14);
+            border: 1px solid rgba(245,158,11,0.3); border-radius: 999px; padding: 3px 9px;
+        }
+        .module-card.pending .module-info strong { padding-right: 96px; }
 
         /* HERO card */
         .card-hero {
@@ -180,18 +178,27 @@
         ========================================= */
         @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn     { from { opacity:0; } to { opacity:1; } }
+        @media (prefers-reduced-motion: reduce) {
+            .map-header, .ecosystem-wrapper { animation: none; }
+            .module-card { transition: none; }
+            .module-card:hover { transform: none; }
+        }
 
         /* =========================================
            RESPONSIVE
         ========================================= */
-        @media (max-width: 1200px) { .bottom-grid .module-card { width: calc(50% - 10px); } }
+        @media (max-width: 1200px) { .pillars-row { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .pillars-row { grid-template-columns: 1fr; gap: 40px; }
-            .bottom-grid .module-card { width: 100%; }
             .map-header h1 { font-size: 36px; }
+            .map-header p  { font-size: 16px; }
             .progress-container { flex-direction: column; text-align: center; gap: 10px; }
             .progress-text { text-align: center; }
-            .category-header.center-header { justify-content: flex-start; }
+            .progress-bar-bg { width: 160px; }
+            .card-hero { padding: 20px; }
+            .card-hero .module-icon { width: 54px; height: 54px; font-size: 24px; }
+            .card-hero .module-info strong { font-size: 20px; }
+            .card-hero .module-info span   { font-size: 13px; }
         }
     </style>
 </head>
@@ -200,12 +207,12 @@
     <!-- HEADER -->
     <div class="map-header">
         <h1>Apartado de Marca</h1>
-        <p>El nivel estratégico de la red. Acá se definen los estándares, el catálogo maestro, el equipo y las comunicaciones que heredan todas las sedes. Hacé clic en cada módulo para explorarlo.</p>
+        <p>El nivel que dirige la red: un solo catálogo para todas las sedes, las recetas con las que fabrican, la identidad que heredan y el equipo que las atiende. Hacé clic en cada apartado para abrir su presentación; los marcados <em>en preparación</em> todavía no la tienen.</p>
 
         <div class="progress-container">
             <div class="progress-text">
-                <strong id="progressCount">0 / 6</strong>
-                <span>Módulos Explorados</span>
+                <strong id="progressCount">0 / 0</strong>
+                <span>Apartados explorados</span>
             </div>
             <div class="progress-bar-bg">
                 <div class="progress-bar-fill" id="progressBar"></div>
@@ -218,122 +225,159 @@
         <!-- HERO -->
         <div id="dashboard-container"></div>
 
-        <!-- COLUMNAS: Gestión de Red + Identidad de Marca -->
         <div class="pillars-row">
             <div class="category-column" id="col-red">
                 <div class="category-header">
                     <i class="fas fa-network-wired" style="color: var(--kpi-blue);"></i>
-                    Gestión de Red
+                    La red
+                </div>
+            </div>
+            <div class="category-column" id="col-catalogo">
+                <div class="category-header">
+                    <i class="fas fa-layer-group" style="color: var(--kpi-cyan);"></i>
+                    Catálogo y producción
                 </div>
             </div>
             <div class="category-column" id="col-identidad">
                 <div class="category-header">
                     <i class="fas fa-paint-brush" style="color: var(--kpi-pink);"></i>
-                    Identidad y Comunicación
+                    Identidad y comunicación
                 </div>
             </div>
-        </div>
-
-        <!-- FILA INFERIOR: Operaciones -->
-        <div>
-            <div class="category-header center-header">
-                <i class="fas fa-gears" style="color: var(--kpi-teal);"></i>
-                Configuración Global
-            </div>
-            <div class="bottom-grid" id="col-config"></div>
         </div>
 
     </div>
 
     <button class="btn-reset" onclick="resetProgress()">
-        <i class="fas fa-undo" style="margin-right: 6px;"></i> Reiniciar Progreso
+        <i class="fas fa-undo" style="margin-right: 6px;"></i> Reiniciar progreso
     </button>
 
     <script>
+        // El orden y los nombres siguen a BRAND_MENU_ITEMS (workspaceMenu.js), mas
+        // Ajustes, que en la app es el engranaje "Configuracion" al pie de la barra.
         const modules = [
-            // HERO
             {
                 id: 'home',
-                name: 'Dashboard de Marca',
-                desc: 'El panorama ejecutivo: KPIs agregados de toda la red, alertas operativas y acciones rápidas a cada módulo.',
+                name: 'Resumen Global',
+                desc: 'El panorama de la red en el período que elijas: hasta cuatro KPI a elección, lo que pide atención inmediata y la línea de tiempo de campañas, en bloques que se reordenan.',
                 file: 'home.html',
                 icon: 'fas fa-crown',
                 color: '#3b82f6',
                 target: 'dashboard'
             },
 
-            // Gestión de Red
+            // La red
             {
                 id: 'red',
                 name: 'Red',
-                desc: 'Tabla de mando de todas las sedes. Comparás ventas, estado operativo, desvíos de catálogo y permisos de edición.',
+                desc: 'Las sedes lado a lado en el período: facturación, margen de caja y pendientes, y quién edita el catálogo de la marca — sin acceso, con aprobación o directo.',
                 file: 'red.html',
                 icon: 'fas fa-network-wired',
                 color: '#3b82f6',
                 target: 'col-red'
             },
             {
+                id: 'perfiles',
+                name: 'Perfiles de Sede',
+                desc: 'Depósito, taller o showroom: con qué nombre y qué apartados arranca cada sede nueva. Se aplica una vez, al crearla, y no le da permisos a nadie.',
+                file: 'perfiles.html',
+                icon: 'fas fa-shapes',
+                color: '#3b82f6',
+                target: 'col-red'
+            },
+            {
                 id: 'talento',
                 name: 'Talento',
-                desc: 'Gestión de equipos a nivel red. Transferencias entre sedes, roles, cobertura y tensión operativa por local.',
+                desc: 'El equipo de cada sede, su carga de turnos y las sedes sin líder; el puesto de cada persona y el traslado entre sedes con su motivo.',
                 file: 'talento.html',
                 icon: 'fas fa-users',
                 color: '#a855f7',
                 target: 'col-red'
             },
+
+            // Catálogo y producción
             {
                 id: 'catalogo',
                 name: 'Catálogo Maestro',
-                desc: 'El catálogo que heredan todas las sedes. Radar de adopción, oficialización de productos y desvíos comerciales.',
+                desc: 'Un solo catálogo para toda la red: la marca escribe la ficha, cada sede pone su precio, su costo y su stock, y lo que la sede propone espera aprobación.',
                 file: 'catalogo.html',
                 icon: 'fas fa-layer-group',
                 color: '#06b6d4',
-                target: 'col-red'
+                target: 'col-catalogo'
+            },
+            {
+                id: 'recetas',
+                name: 'Recetas',
+                desc: 'Las recetas y sus insumos los escribe la marca; cada sede fabrica con su propio stock y puede tener una receta propia que gana sobre la de la marca.',
+                file: 'recetas.html',
+                icon: 'fas fa-flask',
+                color: '#06b6d4',
+                target: 'col-catalogo'
+            },
+            {
+                id: 'galeria',
+                name: 'Mi Galería',
+                desc: 'Las fotos de toda la red con su alcance —privada, compartida en la marca o pública para el padrón— y en qué productos se usa cada una.',
+                file: 'galeria.html',
+                icon: 'fas fa-images',
+                color: '#06b6d4',
+                target: 'col-catalogo'
             },
 
-            // Identidad y Comunicación
+            // Identidad y comunicación
             {
                 id: 'estandares',
                 name: 'Estándares',
-                desc: 'Logo, banner y redes sociales como base heredada por la red. Control de alineación visual y desvíos de identidad.',
+                desc: 'Logo, banner y redes de la marca comparados contra cada sede, y la mesa donde se aprueban las propuestas al catálogo y se ve lo que Google Merchant no puede publicar.',
                 file: 'estandares.html',
                 icon: 'fas fa-ruler-combined',
-                color: '#4f46e5',
+                color: '#ec4899',
                 target: 'col-identidad'
             },
             {
-                id: 'mensajes',
-                name: 'Mensajes Clave',
-                desc: 'Respuestas automáticas, tono de marca y campañas definidas una vez para toda la red.',
-                file: 'mensajes.html',
+                id: 'campanas',
+                name: 'Campañas',
+                desc: 'Las campañas de la marca, con alcance en todas sus sedes activas: audiencia, canal de difusión y vigencia. La pauta paga de Meta no vive acá.',
+                file: 'campanas.html',
+                icon: 'fas fa-bullhorn',
+                color: '#ec4899',
+                target: 'col-identidad'
+            },
+            {
+                id: 'contestadora',
+                name: 'Contestadora',
+                desc: 'Las respuestas de respaldo de toda la red: contestan por el WhatsApp de cada sede cuando la sede no tiene una propia, con los datos de esa sede.',
+                file: 'contestadora.html',
                 icon: 'fas fa-comment-dots',
                 color: '#ec4899',
                 target: 'col-identidad'
             },
-
-            // Configuración Global
             {
-                id: 'settings',
+                id: 'ajustes',
                 name: 'Ajustes de Marca',
-                desc: 'Perfil global, slug, dominio personalizado y estado operativo de la marca.',
-                file: 'settings.html',
+                desc: 'El perfil de la marca, las entidades fiscales con las sedes que firman con cada una, las condiciones legales y la página pública.',
+                file: 'ajustes.html',
                 icon: 'fas fa-gear',
                 color: '#14b8a6',
-                target: 'col-config'
+                target: 'col-identidad'
             },
         ];
 
+        const PROGRESS_KEY = 'marca_20261005_visited_';
+        function readProgress(id) { try { return localStorage.getItem(PROGRESS_KEY + id); } catch { return null; } }
+
         function renderModules() {
+            document.querySelectorAll('.module-card').forEach(card => card.remove());
             let visitedCount = 0;
 
             modules.forEach(mod => {
-                const isVisited = localStorage.getItem(`brand_visited_${mod.id}`) === 'true';
+                const isVisited = !mod.pending && readProgress(mod.id) === 'true';
                 if (isVisited) visitedCount++;
 
                 const isHero = mod.target === 'dashboard';
-
                 const cardHTML = `
-                    <a href="${mod.file}" onclick="markVisited('${mod.id}')" class="module-card ${isHero ? 'card-hero' : ''} ${isVisited ? 'visited' : ''}">
+                    <a href="${mod.file}" onclick="markVisited('${mod.id}')" class="module-card ${isHero ? 'card-hero' : ''} ${isVisited ? 'visited' : ''} ${mod.pending ? 'pending' : ''}">
+                        ${mod.pending ? '<span class="pending-tag">En preparación</span>' : ''}
                         <div class="module-icon" style="color: ${mod.color};"><i class="${mod.icon}"></i></div>
                         <div class="module-info">
                             <strong>${mod.name}</strong>
@@ -347,11 +391,8 @@
 
                 if (isHero) {
                     document.getElementById('dashboard-container').innerHTML = cardHTML;
-                } else if (mod.target === 'col-config') {
-                    document.getElementById('col-config').insertAdjacentHTML('beforeend', cardHTML);
                 } else {
-                    const col = document.getElementById(mod.target);
-                    if (col) col.insertAdjacentHTML('beforeend', cardHTML);
+                    document.getElementById(mod.target)?.insertAdjacentHTML('beforeend', cardHTML);
                 }
             });
 
@@ -359,20 +400,24 @@
         }
 
         function markVisited(id) {
-            localStorage.setItem(`brand_visited_${id}`, 'true');
+            if (modules.find(mod => mod.id === id)?.pending) return;
+            try { localStorage.setItem(PROGRESS_KEY + id, 'true'); } catch {}
         }
 
         function updateProgress(count) {
-            const total = modules.length;
+            const total = modules.filter(mod => !mod.pending).length;
             document.getElementById('progressCount').innerText = `${count} / ${total}`;
-            document.getElementById('progressBar').style.width = `${(count / total) * 100}%`;
+            document.getElementById('progressBar').style.width = `${total ? (count / total) * 100 : 0}%`;
         }
 
         function resetProgress() {
-            modules.forEach(mod => localStorage.removeItem(`brand_visited_${mod.id}`));
+            try { modules.forEach(mod => localStorage.removeItem(PROGRESS_KEY + mod.id)); } catch {}
             location.reload();
         }
 
+        // Al volver con el boton atras el navegador restaura la pagina de cache:
+        // sin esto la tarjeta recien visitada no aparece tildada.
+        window.addEventListener('pageshow', renderModules);
         renderModules();
     </script>
 

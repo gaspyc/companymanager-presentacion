@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes de Marca</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: rgba(15, 23, 42, 0.6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --border-glass: rgba(255, 255, 255, 0.05);
+            --border-soft: rgba(255, 255, 255, 0.08);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
+            --kpi-purple: #a855f7;
+            --kpi-orange: #f59e0b;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+            --kpi-cyan: #06b6d4;
+            --kpi-teal: #14b8a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
+        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-teal { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20,184,166,0.13) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.13) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible, .demo input:focus-visible { outline: 3px solid #5eead4; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
+        .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-teal); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
+        h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 20px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
+
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
+
+        /* =========================================
+           PORTADA: las cuatro secciones, como la barra de Configuración
+        ========================================= */
+        .cover h1 span { color: #2dd4bf; }
+        .cover p { font-size: 21px; }
+        .slots { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .slot-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border-soft); border-radius: 12px; padding: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; text-align: left; }
+        .slot-info { display: flex; gap: 12px; align-items: center; }
+        .slot-icon { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; background: rgba(20,184,166,0.14); color: #5eead4; flex-shrink: 0; }
+        .slot-info h4 { font-size: .95rem; font-weight: 800; }
+        .slot-info p { font-size: .76rem; margin: 2px 0 0; line-height: 1.4; }
+        .slot-action { color: #64748b; font-size: .75rem; }
+
+        /* =========================================
+           FORMULARIOS — calcados de los editores de settings
+        ========================================= */
+        .card { background: rgba(15,23,42,0.85); border: 1px solid var(--border-soft); border-radius: 16px; padding: 14px; text-align: left; }
+        .split { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+        .visibility-banner { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; margin-bottom: 12px; }
+        .visibility-banner.is-public { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25); }
+        .visibility-banner.is-unlisted { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); }
+        .icon-box { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: rgba(0,0,0,0.3); }
+        .is-public .icon-box { color: #34d399; } .is-unlisted .icon-box { color: #fbbf24; }
+        .visibility-banner h4 { font-size: .88rem; }
+        .visibility-banner p { font-size: .74rem; margin: 2px 0 0; line-height: 1.4; }
+        .visibility-banner .switch { margin-left: auto; }
+        .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .f { display: flex; flex-direction: column; gap: 4px; }
+        .f.wide { grid-column: 1 / -1; }
+        .f label { font-size: .72rem; font-weight: 800; color: var(--text-soft); }
+        .f small { font-size: .66rem; color: var(--text-muted); line-height: 1.4; }
+        .input { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 7px 9px; font-size: .78rem; color: var(--text-main); min-height: 32px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .input.ph { color: #64748b; }
+        .input.area { white-space: normal; min-height: 48px; line-height: 1.4; }
+        .op-state { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,0.25); border: 1px solid var(--border-soft); }
+        .op-state strong { font-size: .8rem; display: block; }
+        .op-state small { font-size: .7rem; color: #34d399; }
+        .switch { position: relative; width: 40px; height: 22px; border-radius: 999px; background: rgba(255,255,255,0.14); flex-shrink: 0; cursor: pointer; border: 0; }
+        .switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: .2s; }
+        .switch.on { background: #10b981; }
+        .switch.on::after { left: 21px; }
+
+        /* Entidades fiscales */
+        .fiscal { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 12px; align-items: start; }
+        .entity-list { display: flex; flex-direction: column; gap: 6px; }
+        .entity { padding: 9px 11px; border-radius: 10px; border: 1px solid var(--border-soft); background: rgba(255,255,255,0.03); font-size: .8rem; }
+        .entity.active { border-color: rgba(20,184,166,0.5); background: rgba(20,184,166,0.1); }
+        .entity strong { display: block; }
+        .entity small { font-size: .68rem; color: var(--text-muted); }
+        .new-entity { padding: 8px; border-radius: 10px; border: 1px dashed rgba(255,255,255,0.15); text-align: center; font-size: .76rem; font-weight: 800; color: var(--text-soft); }
+        .sub-title { font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin: 10px 0 6px; }
+        .chk-row { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 9px; border: 1px solid var(--border-soft); background: rgba(255,255,255,0.03); font-size: .78rem; margin-bottom: 5px; }
+        .chk-row button { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.35); background: transparent; display: grid; place-items: center; font-size: 9px; color: transparent; cursor: pointer; flex-shrink: 0; }
+        .chk-row button.on { background: #14b8a6; border-color: #14b8a6; color: white; }
+        .chk-row button:disabled { opacity: .35; cursor: not-allowed; }
+        .chk-row small { margin-left: auto; font-size: .68rem; color: var(--text-muted); }
+        .chk-row.blocked { opacity: .6; }
+        .toggle-line { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 9px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-soft); font-size: .76rem; margin-top: 6px; }
+        .toggle-line small { display: block; font-size: .66rem; color: var(--text-muted); }
+
+        /* Condiciones */
+        .policies { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .who-table { width: 100%; border-collapse: collapse; font-size: 12.5px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 12px; overflow: hidden; }
+        .who-table th { text-align: left; font-size: 10.5px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); padding: 8px 10px; background: rgba(0,0,0,0.3); }
+        .who-table td { padding: 8px 10px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-soft); vertical-align: top; }
+        .who-table td:first-child { font-weight: 800; color: var(--text-main); white-space: nowrap; }
+
+        /* Página pública */
+        .page-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 20px; align-items: start; text-align: left; }
+        .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+        .card-heading h4 { font-size: .95rem; }
+        .card-heading p { font-size: .74rem; margin: 3px 0 0; line-height: 1.45; }
+        .notice { margin-top: 10px; display: flex; gap: 8px; align-items: flex-start; font-size: .74rem; color: #fcd34d; background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); border-radius: 9px; padding: 8px 10px; line-height: 1.45; }
+        .portadas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin-top: 8px; }
+        .portada { text-align: left; padding: 8px 9px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.25); color: var(--text-main); font: inherit; cursor: pointer; }
+        .portada strong { display: block; font-size: .76rem; }
+        .portada small { font-size: .64rem; color: var(--text-muted); line-height: 1.35; }
+        .portada.on { border-color: #14b8a6; background: rgba(20,184,166,0.12); }
+        .branch-links { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+        .branch-links div { display: flex; justify-content: space-between; gap: 8px; font-size: .74rem; padding: 6px 9px; border-radius: 8px; background: rgba(255,255,255,0.03); }
+        .branch-links code { color: #5eead4; font-size: .72rem; }
+        .browser { border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; overflow: hidden; background: #0b1220; }
+        .browser-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #1e293b; font-size: .72rem; color: var(--text-muted); }
+        .browser-bar .dots { display: flex; gap: 4px; }
+        .browser-bar .dots span { width: 8px; height: 8px; border-radius: 50%; background: #475569; }
+        .browser-bar .url { flex: 1; background: rgba(0,0,0,0.35); border-radius: 6px; padding: 3px 8px; color: #cbd5e1; }
+        .site { min-height: 250px; }
+        .site-hero { padding: 26px 18px; text-align: center; background: linear-gradient(120deg, #7c2d12, #f59e0b); color: white; }
+        .site-hero h5 { font-size: 1.3rem; font-weight: 900; }
+        .site-hero p { font-size: .76rem; color: #ffedd5; margin: 4px 0 0; }
+        .site-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 120px; }
+        .site-split .txt { padding: 18px; display: flex; flex-direction: column; justify-content: center; }
+        .site-split .txt h5 { font-size: 1.15rem; font-weight: 900; }
+        .site-split .txt p { font-size: .72rem; margin: 4px 0 0; }
+        .site-split .img { background: linear-gradient(120deg, #7c2d12, #f59e0b); }
+        .site-min { padding: 22px 18px; text-align: center; background: #111827; }
+        .site-min .logo { width: 44px; height: 44px; border-radius: 50%; margin: 0 auto 8px; background: #f5d0a9; color: #7c2d12; display: grid; place-items: center; font-size: 10px; font-weight: 900; }
+        .site-min h5 { font-size: 1.1rem; font-weight: 900; }
+        .site-min p { font-size: .72rem; margin: 4px 0 0; }
+        .site-locales { padding: 12px 18px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .site-locales span { font-size: .7rem; font-weight: 800; padding: 5px 9px; border-radius: 999px; border: 1px solid rgba(245,158,11,0.4); color: #fcd34d; }
+        .site-store { padding: 20px 18px; }
+        .site-store .head { display: flex; align-items: center; gap: 8px; font-weight: 900; }
+        .site-store .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+        .site-store .grid span { height: 60px; border-radius: 8px; background: rgba(255,255,255,0.06); }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1024px) {
+            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
+            .slide.active { display: flex; justify-content: flex-start; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
+            .visual-block { order: 2; width: 100%; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .slots { grid-template-columns: 1fr 1fr; }
+            .split, .fiscal, .page-split { grid-template-columns: 1fr; gap: 14px; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .slots, .field-grid, .policies, .portadas { grid-template-columns: 1fr; }
+            .who-table { font-size: 11.5px; }
+            .who-table td:first-child { white-space: normal; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn, .switch::after { transition: none; }
+            .qa-btn:hover { transform: none; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-teal"></div>
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #2dd4bf;">Apartado de Marca</h3>
+                <h1>Ajustes de <span>Marca</span></h1>
+                <p>Lo que la marca declara una vez para toda la red: quién es, con qué contribuyente factura cada sede, bajo qué condiciones vende y cómo se ve su página. Se abre desde el engranaje "Configuración" al pie de la barra.</p>
+            </div>
+
+            <div class="visual-block slots">
+                <div class="slot-card"><div class="slot-info"><span class="slot-icon"><i class="fas fa-building"></i></span><div><h4>Perfil de la Marca</h4><p>Identidad global y estado operativo.</p></div></div><span class="slot-action"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="slot-card"><div class="slot-info"><span class="slot-icon"><i class="fas fa-file-invoice-dollar"></i></span><div><h4>Entidades fiscales</h4><p>Contribuyentes, países, credenciales y sedes asignadas.</p></div></div><span class="slot-action"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="slot-card"><div class="slot-info"><span class="slot-icon"><i class="fas fa-scale-balanced"></i></span><div><h4>Condiciones legales</h4><p>Políticas de la entidad fiscal seleccionada.</p></div></div><span class="slot-action"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="slot-card"><div class="slot-info"><span class="slot-icon"><i class="fas fa-globe"></i></span><div><h4>Página pública</h4><p>La página de la marca y los enlaces de cada local.</p></div></div><span class="slot-action"><i class="fas fa-chevron-right"></i></span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: PERFIL DE LA MARCA -->
+    <section class="slide">
+        <div class="glow-teal" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #2dd4bf;">Perfil de la Marca</h3>
+                <h2>Nombre, dirección, dominio y si se la encuentra</h2>
+                <p>Probalo: apagá la visibilidad pública y mirá qué cambia.</p>
+            </div>
+
+            <div class="visual-block split">
+                <div class="card demo" data-profile>
+                    <div class="visibility-banner" data-vis></div>
+                    <div class="field-grid">
+                        <div class="f"><label>Nombre de la Marca</label><div class="input">Aurora Velas</div></div>
+                        <div class="f"><label>Slug (Identificador de URL)</label><div class="input">aurora-velas</div></div>
+                        <div class="f wide"><label>Dominio Personalizado (Headless Commerce)</label><div class="input">auroravelas.com</div><small>Si configuras un dominio, este local será accesible públicamente desde allí.</small></div>
+                        <div class="f wide"><label>Descripción de la Marca</label><div class="input area">Velas y aromas hechos a mano, con locales en Centro, Norte y Sur.</div><small>Descripción pública que se mostrará en catálogos y buscadores.</small></div>
+                    </div>
+                    <div class="op-state"><div><strong>Estado de Operación Central</strong><small>Marca Activa · Funcionando normalmente</small></div><span class="switch on" aria-hidden="true"></span></div>
+                </div>
+
+                <div class="stack">
+                    <div class="note">
+                        <i class="fas fa-eye-slash"></i>
+                        <span><b>Oculta</b> no es apagada: la marca deja de aparecer en los listados públicos, pero sus sedes siguen operando y se llega a ellas con su enlace directo.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-globe"></i>
+                        <span>Al cambiar el <b>dominio</b>, se guarda y la validación sigue sola: un aviso "Validando dominio..." queda abierto hasta que se confirma o falla, mientras se sigue usando la app.</span>
+                    </div>
+                    <div class="note purple">
+                        <i class="fas fa-magnifying-glass"></i>
+                        <span>La barra de Configuración tiene <b>buscador</b>: filtra las secciones por su nombre y su descripción, como "fiscal", "condiciones" o "página".</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: ENTIDADES FISCALES -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #60a5fa;">Entidades fiscales</h3>
+                <h2>El CUIT es del contribuyente, y cada sede factura con uno</h2>
+                <p>Probalo: asigná y desasigná sedes. La de Montevideo no se puede sumar a una entidad argentina.</p>
+            </div>
+
+            <div class="visual-block fiscal demo" data-fiscal>
+                <div class="entity-list">
+                    <div class="entity active"><strong>Sociedad Argentina</strong><small>AR · ARCA WSFE</small></div>
+                    <div class="entity"><strong>Aurora Uruguay</strong><small>UY · Sin proveedor electrónico</small></div>
+                    <div class="new-entity"><i class="fas fa-plus"></i> Nueva entidad</div>
+                </div>
+                <div class="card">
+                    <div class="field-grid">
+                        <div class="f"><label>Nombre interno</label><div class="input">Sociedad Argentina</div></div>
+                        <div class="f"><label>País fiscal</label><div class="input">Argentina</div></div>
+                        <div class="f"><label>Razón social</label><div class="input">Aurora Velas S.R.L.</div></div>
+                        <div class="f"><label>CUIT</label><div class="input">30-71234567-9</div></div>
+                        <div class="f"><label>Condición tributaria</label><div class="input">Responsable Inscripto</div></div>
+                        <div class="f"><label>Facturación electrónica</label><div class="input">ARCA WSFE · Producción</div></div>
+                    </div>
+                    <div class="toggle-line"><span>Permitir autofacturación<small>Las sedes deciden después si la usan.</small></span><span class="switch on" aria-hidden="true"></span></div>
+                    <div class="sub-title">Sedes que facturan con esta entidad</div>
+                    <div data-branches></div>
+                    <small style="font-size:.68rem;color:var(--text-muted);">Sólo se pueden asignar sedes cuyo país detectado coincida.</small>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 12px;">
+                <i class="fas fa-key"></i>
+                <span><b>Un certificado autoriza todos los puntos de venta asignados a este CUIT.</b> El certificado y la clave se guardan en la entidad y no se muestran: el campo dice "guardado" y se pega uno nuevo sólo para reemplazarlo. La sede completa su punto de venta en sus propios ajustes.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: CONDICIONES LEGALES Y QUIÉN LLENA QUÉ -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">Condiciones legales</h3>
+                <h2>Las políticas también son de la entidad, no de cada local</h2>
+                <p>Condiciones de venta, devoluciones, cancelación y privacidad se escriben por entidad fiscal, y llegan solo a las sedes asignadas a ella.</p>
+            </div>
+
+            <div class="visual-block split">
+                <div class="card">
+                    <div class="sub-title" style="margin-top:0;">Condiciones de Sociedad Argentina</div>
+                    <div class="policies">
+                        <div class="f"><label>Condiciones de venta</label><div class="input area">Los precios incluyen IVA. Los envíos…</div></div>
+                        <div class="f"><label>Política de devoluciones</label><div class="input area">Tenés 10 días corridos desde que recibís…</div></div>
+                        <div class="f"><label>Política de cancelación</label><div class="input area">Podés cancelar sin cargo hasta…</div></div>
+                        <div class="f"><label>Privacidad</label><div class="input area">Usamos tus datos para preparar y entregar…</div></div>
+                        <div class="f"><label>Plazo de conservación</label><div class="input">5 años</div></div>
+                        <div class="f"><label>Registro de base de datos</label><div class="input ph">Número de inscripción</div></div>
+                    </div>
+                </div>
+
+                <table class="who-table">
+                    <thead><tr><th>Dónde</th><th>Qué se declara</th></tr></thead>
+                    <tbody>
+                        <tr><td>Marca · Entidades fiscales</td><td>Contribuyente por país, credenciales, entorno y sedes asignadas.</td></tr>
+                        <tr><td>Marca · Condiciones legales</td><td>Las políticas de cada entidad fiscal.</td></tr>
+                        <tr><td>Sede · Facturación</td><td>Su punto de venta y si usa la autofacturación, con qué medios y hasta qué monto sin DNI.</td></tr>
+                        <tr><td>Sede · Tienda</td><td>Contacto y datos fiscales del local. Las políticas de la marca se ven ahí, pero no se editan.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note warn" style="margin-top: 12px;">
+                <i class="fas fa-user-lock"></i>
+                <span>Entidades fiscales y Condiciones legales las edita <b>el titular o un puesto con permiso legal</b>. Es un permiso aparte del de ajustes: quien maneja la operación de un local no toca el CUIT ni las políticas.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: PÁGINA PÚBLICA -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Página pública</h3>
+                <h2>Una página para la marca, y cada local colgando de su dominio</h2>
+                <p>Probalo: prendé la página de la marca y elegí una portada.</p>
+            </div>
+
+            <div class="visual-block page-split demo" data-page>
+                <div class="card">
+                    <div class="card-heading">
+                        <div><h4>Página de la marca</h4><p>Una página institucional con la historia de la marca y el mapa de locales. No vende: el stock y los precios son de cada sucursal.</p></div>
+                        <button type="button" class="switch" data-page-toggle aria-label="Página de la marca"></button>
+                    </div>
+                    <div data-page-notice></div>
+                    <div data-page-options></div>
+                    <div class="sub-title">Locales y sus enlaces</div>
+                    <div class="branch-links">
+                        <div><span>Sede Centro</span><code>auroravelas.com/centro</code></div>
+                        <div><span>Sede Norte</span><code>auroravelas.com/norte</code></div>
+                        <div><span>Sede Sur</span><code>auroravelas.com/sur</code></div>
+                    </div>
+                </div>
+                <div class="browser">
+                    <div class="browser-bar"><span class="dots"><span></span><span></span><span></span></span><span class="url" data-url>auroravelas.com</span></div>
+                    <div class="site" data-site></div>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 12px;">
+                <i class="fas fa-link"></i>
+                <span>Cada local cuelga del dominio de la marca: <b>un solo sitio concentra las visitas</b> en vez de repartirlas entre dominios que compiten por el mismo nombre. El nombre de cada dirección sale del identificador del local, en sus ajustes.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #2dd4bf;">Seguir explorando</h3>
+                <h2>Ese es todo el apartado de marca</h2>
+                <p>¿Volvemos al mapa o repasamos el resumen que abre la marca?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="home.html" class="qa-btn" style="border-color: var(--kpi-teal);">
+                    <div class="qa-icon" style="color: var(--kpi-teal);"><i class="fas fa-crown"></i></div>
+                    <div class="qa-text">Resumen<br>Global</div>
+                </a>
+                <a href="estandares.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-ruler-combined"></i></div>
+                    <div class="qa-text">Estándares</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Perfil: el banner de visibilidad con los textos de BrandGeneralEditor.
+        (() => {
+            const root = document.querySelector('[data-profile]');
+            if (!root) return;
+            let hidden = false;
+            function draw() {
+                const box = root.querySelector('[data-vis]');
+                box.className = `visibility-banner ${hidden ? 'is-unlisted' : 'is-public'}`;
+                box.innerHTML = `<span class="icon-box"><i class="fas ${hidden ? 'fa-eye-slash' : 'fa-globe'}"></i></span>
+                    <div><h4>${hidden ? 'Marca Oculta en Catálogos Públicos' : 'Marca Visible Públicamente'}</h4>
+                    <p>${hidden ? 'La marca no aparecerá en los listados globales, pero sus sedes con enlace directo seguirán operando.' : 'La marca y sus sedes podrán mostrarse orgánicamente a los clientes en los buscadores.'}</p></div>
+                    <button type="button" class="switch ${hidden ? '' : 'on'}" data-vis-toggle aria-pressed="${!hidden}" aria-label="Visible públicamente"></button>`;
+            }
+            root.addEventListener('click', e => { if (e.target.closest('[data-vis-toggle]')) { hidden = !hidden; draw(); } });
+            draw();
+        })();
+
+        // Entidades fiscales: solo se asigna una sede cuyo país coincide con el de la entidad.
+        (() => {
+            const root = document.querySelector('[data-fiscal]');
+            if (!root) return;
+            const BRANCHES = [
+                { id: 1, name: 'Sede Centro', country: 'AR', on: true },
+                { id: 2, name: 'Sede Norte', country: 'AR', on: true },
+                { id: 3, name: 'Sede Sur', country: 'AR', on: false },
+                { id: 4, name: 'Sede Montevideo', country: 'UY', on: false },
+            ];
+            function draw() {
+                root.querySelector('[data-branches]').innerHTML = BRANCHES.map(b => {
+                    const blocked = b.country !== 'AR';
+                    return `<div class="chk-row ${blocked ? 'blocked' : ''}"><button type="button" class="${b.on ? 'on' : ''}" data-branch="${b.id}" ${blocked ? 'disabled' : ''} aria-pressed="${b.on}" aria-label="${b.name}"><i class="fas fa-check"></i></button>${b.name}<small>${b.country === 'AR' ? 'Argentina' : 'Uruguay · otro país'}</small></div>`;
+                }).join('');
+            }
+            root.addEventListener('click', e => {
+                const b = e.target.closest('[data-branch]');
+                if (!b || b.disabled) return;
+                const br = BRANCHES.find(x => x.id === Number(b.dataset.branch));
+                br.on = !br.on;
+                draw();
+            });
+            draw();
+        })();
+
+        // Página pública: prendida muestra la portada elegida; apagada, el dominio lleva al primer local.
+        (() => {
+            const root = document.querySelector('[data-page]');
+            if (!root) return;
+            const PORTADAS = [
+                { key: 'hero', title: 'Banner completo', desc: 'El banner ocupa el ancho y el nombre va encima, centrado.' },
+                { key: 'split', title: 'Partida', desc: 'El texto de un lado y la imagen del otro.' },
+                { key: 'minimal', title: 'Sobria', desc: 'Sin imagen: logo, nombre y descripción sobre fondo liso.' },
+            ];
+            let enabled = false;
+            let layout = 'hero';
+            const locales = '<div class="site-locales"><span><i class="fas fa-location-dot"></i> Centro</span><span><i class="fas fa-location-dot"></i> Norte</span><span><i class="fas fa-location-dot"></i> Sur</span></div>';
+            function draw() {
+                root.querySelector('[data-page-toggle]').className = `switch ${enabled ? 'on' : ''}`;
+                root.querySelector('[data-page-toggle]').setAttribute('aria-pressed', String(enabled));
+                root.querySelector('[data-page-notice]').innerHTML = enabled ? ''
+                    : '<div class="notice"><i class="fas fa-arrow-turn-down"></i><span>Mientras esté apagada, quien entre al dominio de la marca va directo a <strong>Sede Centro</strong>. El dominio no queda en blanco.</span></div>';
+                root.querySelector('[data-page-options]').innerHTML = enabled
+                    ? `<div class="sub-title">Portada</div><div class="portadas">${PORTADAS.map(p => `<button type="button" class="portada ${p.key === layout ? 'on' : ''}" data-layout="${p.key}" aria-pressed="${p.key === layout}"><strong>${p.title}</strong><small>${p.desc}</small></button>`).join('')}</div>`
+                    : '';
+                root.querySelector('[data-url]').textContent = 'auroravelas.com';
+                let site;
+                if (!enabled) {
+                    site = '<div class="site-store"><div class="head"><i class="fas fa-store" style="color:#fbbf24;"></i> Sede Centro · Tienda</div><div class="grid"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>';
+                } else if (layout === 'hero') {
+                    site = `<div class="site-hero"><h5>Aurora Velas</h5><p>Velas y aromas hechos a mano.</p></div>${locales}`;
+                } else if (layout === 'split') {
+                    site = `<div class="site-split"><div class="txt"><h5>Aurora Velas</h5><p>Velas y aromas hechos a mano.</p></div><div class="img"></div></div>${locales}`;
+                } else {
+                    site = `<div class="site-min"><div class="logo">AURORA</div><h5>Aurora Velas</h5><p>Velas y aromas hechos a mano.</p></div>${locales}`;
+                }
+                root.querySelector('[data-site]').innerHTML = site;
+            }
+            root.addEventListener('click', e => {
+                if (e.target.closest('[data-page-toggle]')) { enabled = !enabled; draw(); }
+                const l = e.target.closest('[data-layout]');
+                if (l) { layout = l.dataset.layout; draw(); }
+            });
+            draw();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_ajustes';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
+</body>
+</html>

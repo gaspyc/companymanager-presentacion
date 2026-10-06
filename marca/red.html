@@ -3,413 +3,670 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red — Apartado de Marca</title>
+    <title>Red de sedes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         :root {
             --bg-base: #0f172a;
-            --bg-panel: rgba(15,23,42,0.6);
+            --bg-panel: rgba(15, 23, 42, 0.6);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border-glass: rgba(255,255,255,0.05);
-            --kpi-blue: #3b82f6;
+            --border-glass: rgba(255, 255, 255, 0.05);
+
             --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
             --kpi-purple: #a855f7;
             --kpi-orange: #f59e0b;
             --kpi-pink: #ec4899;
-            --kpi-teal: #14b8a6;
             --kpi-red: #ef4444;
-            --kpi-indigo: #4f46e5;
             --kpi-cyan: #06b6d4;
         }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; background-color: var(--bg-base); font-family: 'Urbanist', sans-serif; color: var(--text-main); }
-        .slide { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.4s ease; background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
+
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background-color: var(--bg-base);
+            font-family: 'Urbanist', sans-serif;
+            color: var(--text-main);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 80px;
+        }
         .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
-        .slide-content-wide { width: 100%; max-width: 1400px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
-        .glow-blue   { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(59,130,246,0.13) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-teal   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(20,184,166,0.08) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .presentation-controls { position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999; background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center; }
+
+        .slide-content-wide {
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .glow-blue { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible, .demo select:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+
+        .presentation-controls {
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
+        }
         .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
         .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .ctrl-btn:hover { background: var(--kpi-blue); }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-blue); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
+
         h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
-        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; }
-        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
-        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
-        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-        .pill-tag i { margin-right: 8px; }
+        h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
 
-        /* SLIDE 2 — Tabla de Mando */
-        .branch-table { width: 100%; border-collapse: collapse; }
-        .branch-table th { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 900; padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); text-align: left; }
-        .branch-table td { padding: 12px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
-        .branch-table tr:hover td { background: rgba(255,255,255,0.02); }
-        .branch-name { font-weight: 800; color: white; }
-        .status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; }
-        .sc-healthy  { background: rgba(16,185,129,0.12); color: #34d399; }
-        .sc-warning  { background: rgba(245,158,11,0.12); color: #fbbf24; }
-        .sc-critical { background: rgba(239,68,68,0.12);  color: #f87171; }
-        .dev-pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-        .dp-error   { background: rgba(239,68,68,0.1);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
-        .dp-ok      { background: rgba(16,185,129,0.1);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
-        .perm-select { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); color: #cbd5e1; border-radius: 8px; padding: 5px 8px; font-size: 11px; font-weight: 800; outline: none; cursor: pointer; }
-        .perm-select.ps-blocked  { color: #fca5a5; }
-        .perm-select.ps-approval { color: #93c5fd; }
-        .perm-select.ps-direct   { color: #6ee7b7; }
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 22px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
 
-        /* SLIDE 3 — Comparativa 1v1 */
-        .vs-panel { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; align-items: center; width: 100%; }
-        .vs-col { display: flex; flex-direction: column; gap: 12px; }
-        .vs-name { font-size: 18px; font-weight: 900; margin-bottom: 8px; }
-        .vs-metric-row { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); }
-        .vs-metric-row small { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-        .vs-metric-row strong { font-size: 18px; color: white; }
-        .vs-divider { display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 900; color: #475569; }
-        .vs-conclusion { margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
 
-        /* SLIDE 4 — Prioridades */
-        .signal-list { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .signal-item { display: flex; gap: 14px; padding: 16px 18px; border-radius: 14px; border: 1px solid; align-items: flex-start; transition: 0.2s; }
-        .signal-item:hover { transform: translateX(4px); }
-        .si-critical { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2); }
-        .si-warning  { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.22); }
-        .si-info     { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
-        .si-ok       { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.22); }
-        .si-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .si-critical .si-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
-        .si-warning  .si-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
-        .si-info     .si-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .si-ok       .si-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .si-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
-        .si-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
-        .si-action { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 11px; font-weight: 900; color: #60a5fa; background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); padding: 4px 10px; border-radius: 6px; }
+        /* =========================================
+           SLIDE 1: PORTADA
+        ========================================= */
+        .cover h1 span { color: var(--kpi-blue); }
+        .cover p { font-size: 21px; }
+        .four-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        .trait { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 17px 18px; text-align: left; }
+        .trait strong { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 6px; }
+        .trait span { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
 
-        /* SLIDE 5 — Permisos */
-        .perms-explainer { display: flex; flex-direction: column; gap: 12px; width: 100%; }
-        .perm-row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; border-radius: 13px; border: 1px solid; }
-        .perm-row.pr-blocked  { background: rgba(239,68,68,0.06);   border-color: rgba(239,68,68,0.25); }
-        .perm-row.pr-approval { background: rgba(59,130,246,0.06);  border-color: rgba(59,130,246,0.25); }
-        .perm-row.pr-direct   { background: rgba(16,185,129,0.06);  border-color: rgba(16,185,129,0.25); }
-        .perm-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .pr-blocked  .perm-icon { background: rgba(239,68,68,0.15);   color: #fca5a5; }
-        .pr-approval .perm-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .pr-direct   .perm-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .perm-body strong { font-size: 15px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
-        .perm-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.45; }
-        .perm-badge-tag { font-size: 11px; font-weight: 900; padding: 3px 9px; border-radius: 5px; margin-left: auto; align-self: flex-start; flex-shrink: 0; }
-        .pr-blocked  .perm-badge-tag { background: rgba(239,68,68,0.15);   color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-        .pr-approval .perm-badge-tag { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-        .pr-direct   .perm-badge-tag { background: rgba(16,185,129,0.15);  color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+        /* =========================================
+           TABLA DE MANDO
+        ========================================= */
+        .board { background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; text-align: left; }
+        .board-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; }
+        .board-head h4 { font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .board-head h4 .count { font-size: 12px; background: rgba(255,255,255,0.06); color: var(--text-muted); border-radius: 7px; padding: 2px 8px; }
+        .board-head small { display: block; font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .gap-card { display: flex; align-items: center; gap: 12px; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.18); border-radius: 12px; padding: 8px 12px; }
+        .gap-card .ico { width: 34px; height: 34px; border-radius: 10px; background: rgba(59,130,246,0.12); color: #93c5fd; display: grid; place-items: center; }
+        .gap-card strong { display: block; font-size: 12.5px; }
+        .gap-card small { font-size: 11px; color: var(--text-muted); }
+        .gap-card b { font-size: 17px; margin-left: 6px; }
+        .row { display: grid; grid-template-columns: minmax(170px, 1.4fr) 110px 150px 130px minmax(150px, 1.1fr) 190px; gap: 12px; align-items: center; padding: 10px 18px; border-top: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
+        .row.head { border-top: none; font-size: 10.5px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); background: rgba(0,0,0,0.25); padding-top: 9px; padding-bottom: 9px; }
+        .row.sel { background: rgba(59,130,246,0.08); }
+        .row.body { cursor: pointer; }
+        .row.body:hover { background: rgba(255,255,255,0.025); }
+        .row.sel:hover { background: rgba(59,130,246,0.11); }
+        .sede { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+        .check { width: 18px; height: 18px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.25); display: grid; place-items: center; font-size: 9px; color: transparent; flex-shrink: 0; background: transparent; }
+        .row.sel .check { background: var(--kpi-blue); border-color: var(--kpi-blue); color: white; }
+        .open { color: #475569; font-size: 10px; }
+        .chip { display: inline-block; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 4px 10px; }
+        .chip.healthy { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+        .chip.warning { background: rgba(245,158,11,0.15); color: #fcd34d; }
+        .chip.critical { background: rgba(239,68,68,0.15); color: #fca5a5; }
+        .chip.offline { background: rgba(148,163,184,0.14); color: #cbd5e1; }
+        .rev { display: flex; align-items: center; gap: 7px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .trend { font-size: 10.5px; font-weight: 800; border-radius: 5px; padding: 2px 5px; }
+        .trend.up { background: rgba(16,185,129,0.14); color: #6ee7b7; }
+        .trend.down { background: rgba(239,68,68,0.14); color: #fca5a5; }
+        .margin strong { display: block; font-size: 14px; }
+        .margin small { font-size: 11px; color: var(--text-muted); }
+        .m-positive { color: #6ee7b7; } .m-warning { color: #fcd34d; } .m-negative { color: #fca5a5; } .m-neutral { color: var(--text-muted); }
+        .pend { display: flex; flex-wrap: wrap; gap: 5px; }
+        .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 3px 7px; }
+        .badge.error { background: rgba(239,68,68,0.13); color: #fca5a5; }
+        .badge.warning { background: rgba(245,158,11,0.13); color: #fcd34d; }
+        .badge.success { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+        .perm { display: flex; align-items: center; gap: 7px; border-radius: 9px; padding: 4px 6px 4px 9px; border: 1px solid rgba(255,255,255,0.08); }
+        .perm span { font-size: 11px; font-weight: 800; color: var(--text-muted); display: inline-flex; gap: 5px; align-items: center; }
+        .perm select { flex: 1; min-width: 0; font: 700 12px Urbanist, sans-serif; color: var(--text-main); background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 4px 6px; }
+        .perm.blocked { border-color: rgba(239,68,68,0.3); }
+        .perm.approval { border-color: rgba(245,158,11,0.3); }
+        .perm.direct { border-color: rgba(16,185,129,0.3); }
 
-        /* SLIDE 6 — nav */
-        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
-        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        /* =========================================
+           COMPARATIVA
+        ========================================= */
+        .cmp-split { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+        .picker { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+        .pick { display: inline-flex; align-items: center; gap: 8px; font: 700 12.5px Urbanist, sans-serif; border-radius: 9px; padding: 7px 11px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: #cbd5e1; cursor: pointer; }
+        .pick.on { border-color: rgba(59,130,246,0.5); background: rgba(59,130,246,0.14); color: #dbeafe; }
+        .pick .check { width: 15px; height: 15px; }
+        .pick.on .check { background: var(--kpi-blue); border-color: var(--kpi-blue); color: white; }
+        .cmp-box { background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px; text-align: left; }
+        .cmp-box .sub { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; min-height: 18px; }
+        .cmp-scroll { overflow-x: auto; }
+        .cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .cmp-table th, .cmp-table td { padding: 9px 10px; text-align: right; white-space: nowrap; border-top: 1px solid rgba(255,255,255,0.05); }
+        .cmp-table thead th { border-top: none; font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: .6px; }
+        .cmp-table th:first-child { text-align: left; }
+        .cmp-table tbody th { font-weight: 700; color: #cbd5e1; }
+        .cmp-table td.best { color: #6ee7b7; font-weight: 800; }
+        .cmp-table td.best i { font-size: 10px; margin-left: 5px; }
+        .cmp-table th.avg { color: #c4b5fd; }
+        .cmp-empty { font-size: 13px; color: var(--text-muted); padding: 22px 6px; text-align: center; }
+
+        /* =========================================
+           PARA REVISAR
+        ========================================= */
+        .rv-split { display: grid; grid-template-columns: 380px 1fr; gap: 32px; align-items: start; }
+        .signals { background: rgba(15,23,42,0.85); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 14px; text-align: left; }
+        .signals h4 { font-size: 15px; font-weight: 800; }
+        .signals > small { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+        .sig { display: flex; gap: 11px; padding: 11px 12px; border-radius: 11px; background: rgba(0,0,0,0.25); margin-top: 7px; border-left: 3px solid transparent; }
+        .sig .ico { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; font-size: 12px; }
+        .sig strong { display: block; font-size: 13px; }
+        .sig span { display: block; font-size: 12px; color: var(--text-muted); line-height: 1.45; margin: 2px 0 6px; }
+        .sig em { font-style: normal; font-size: 11px; font-weight: 800; color: #93c5fd; }
+        .sig.critical { border-left-color: var(--kpi-red); } .sig.critical .ico { background: rgba(239,68,68,0.14); color: #fca5a5; }
+        .sig.warning { border-left-color: var(--kpi-orange); } .sig.warning .ico { background: rgba(245,158,11,0.14); color: #fcd34d; }
+        .sig.info { border-left-color: var(--kpi-blue); } .sig.info .ico { background: rgba(59,130,246,0.14); color: #93c5fd; }
+        .order { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .ord { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px 14px; text-align: left; }
+        .ord b { font: 800 11px monospace; color: var(--text-muted); }
+        .ord strong { display: flex; align-items: center; gap: 8px; font-size: 13.5px; margin: 4px 0; }
+        .ord span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* =========================================
+           PERMISO DE EDICIÓN
+        ========================================= */
+        .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+        .mode { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px; text-align: left; border-top: 3px solid transparent; }
+        .mode.blocked { border-top-color: var(--kpi-red); }
+        .mode.approval { border-top-color: var(--kpi-orange); }
+        .mode.direct { border-top-color: var(--kpi-green); }
+        .mode strong { display: flex; align-items: center; gap: 9px; font-size: 17px; margin-bottom: 4px; }
+        .mode .tag { font-size: 10.5px; font-weight: 900; letter-spacing: .6px; text-transform: uppercase; color: var(--text-muted); }
+        .mode p { font-size: 13.5px; margin: 10px 0 0; line-height: 1.5; }
+        .mode .res { margin-top: 10px; font-size: 12px; font-family: monospace; color: #cbd5e1; background: rgba(0,0,0,0.3); border-radius: 7px; padding: 7px 9px; }
+        .two-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
-        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover    .qa-icon { color: var(--kpi-blue); }
-        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover  .qa-icon { color: #d8b4fe; }
-        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover  .qa-icon { color: #a5b4fc; }
-        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover    .qa-icon { color: #f9a8d4; }
-        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover    .qa-icon { color: #22d3ee; }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+        @media (max-width: 1200px) {
+            .row { grid-template-columns: minmax(150px, 1.3fr) 100px 140px 120px minmax(120px, 1fr) 170px; gap: 10px; padding-left: 12px; padding-right: 12px; }
+        }
         @media (max-width: 1024px) {
             html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
             .slide.active { display: flex; justify-content: flex-start; }
-            .slide-content-wide { height: auto; justify-content: flex-start; }
-            .grid-split { grid-template-columns: 1fr; gap: 40px; }
-            .text-block { order: 1; text-align: center !important; width: 100%; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
             .visual-block { order: 2; width: 100%; }
-            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
-            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
-            .vs-panel { grid-template-columns: 1fr; }
-            .vs-divider { display: none; }
-            .nav-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
-            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .qa-icon { flex-shrink: 0; } .qa-text { text-align: left; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .four-row { grid-template-columns: 1fr 1fr; }
+            .cmp-split, .rv-split, .modes, .two-notes { grid-template-columns: 1fr; gap: 14px; }
+
+            /* La tabla se vuelve una tarjeta por sede. */
+            .row.head { display: none; }
+            .row { grid-template-columns: 1fr 1fr; gap: 8px 12px; padding: 13px 14px; }
+            .row .sede { grid-column: 1 / -1; }
+            .row .perm-cell, .row .pend { grid-column: 1 / -1; }
+            .row [data-label]::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px; width: 100%; }
+
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .four-row, .order { grid-template-columns: 1fr; }
+            .gap-card { width: 100%; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
 
-<div class="presentation-controls">
-    <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-    <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
-    <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
-</div>
-
-<!-- SLIDE 1 — INTRO -->
-<div class="slide active">
-    <div class="glow-blue"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#93c5fd;">Apartado de Marca</h3>
-            <h1>Red</h1>
-            <p>La tabla de mando de toda la red de sedes. Comparás ventas, estado operativo, desvíos de catálogo y permisos de edición desde un solo panel. La marca tiene visibilidad total sin entrar a cada local.</p>
-            <p>Seleccionás hasta 2 sedes para comparación directa 1 vs 1.</p>
-        </div>
-        <div class="visual-block glass-panel" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;min-height:380px;text-align:center;">
-            <i class="fas fa-network-wired" style="font-size:72px;color:#93c5fd;"></i>
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-                <span class="pill-tag"><i class="fas fa-list" style="color:#93c5fd;"></i> Tabla de Mando</span>
-                <span class="pill-tag"><i class="fas fa-not-equal" style="color:#d8b4fe;"></i> Comparativa 1v1</span>
-                <span class="pill-tag"><i class="fas fa-bullseye" style="color:#fcd34d;"></i> Prioridades</span>
-                <span class="pill-tag"><i class="fas fa-user-shield" style="color:#6ee7b7;"></i> Permisos</span>
-            </div>
-        </div>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
-</div>
 
-<!-- SLIDE 2 — TABLA DE MANDO -->
-<div class="slide">
-    <div class="glow-teal"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#5eead4;">El Centro de Control</h3>
-            <h2>Una Tabla, Toda la Red</h2>
-            <p>Cada fila es una sede. Cada columna responde a una pregunta estratégica: ¿está activa? ¿cuánto vendió? ¿tiene desvíos? ¿con qué permisos opera sobre el catálogo?</p>
-            <p>Las sedes se ordenan por <strong style="color:white;">riesgo operativo</strong> descendente: las que más necesitan atención aparecen primero.</p>
-        </div>
-        <div class="visual-block glass-panel" style="width:100%;overflow-x:auto;">
-            <table class="branch-table">
-                <thead>
-                    <tr>
-                        <th>Sede</th>
-                        <th>Estado</th>
-                        <th>Ventas</th>
-                        <th>Desvíos</th>
-                        <th>Permisos</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><div class="branch-name">Sucursal Nueva</div></td>
-                        <td><span class="status-chip sc-critical"><i class="fas fa-circle" style="font-size:7px;"></i> Crítica</span></td>
-                        <td style="color:white;font-weight:700;">$0.8M</td>
-                        <td><span class="dev-pill dp-error"><i class="fas fa-boxes"></i> 4</span></td>
-                        <td><select class="perm-select ps-approval"><option>Con aprobación</option></select></td>
-                    </tr>
-                    <tr>
-                        <td><div class="branch-name">Sucursal Norte</div></td>
-                        <td><span class="status-chip sc-warning"><i class="fas fa-circle" style="font-size:7px;"></i> A vigilar</span></td>
-                        <td style="color:white;font-weight:700;">$1.3M</td>
-                        <td><span class="dev-pill dp-error"><i class="fas fa-clock"></i> 8</span></td>
-                        <td><select class="perm-select ps-approval"><option>Con aprobación</option></select></td>
-                    </tr>
-                    <tr>
-                        <td><div class="branch-name">Sucursal Centro</div></td>
-                        <td><span class="status-chip sc-healthy"><i class="fas fa-circle" style="font-size:7px;"></i> Estable</span></td>
-                        <td style="color:white;font-weight:700;">$2.1M</td>
-                        <td><span class="dev-pill dp-ok"><i class="fas fa-check"></i> OK</span></td>
-                        <td><select class="perm-select ps-direct"><option>Edición directa</option></select></td>
-                    </tr>
-                </tbody>
-            </table>
-            <div style="margin-top:14px;font-size:12px;color:var(--text-muted);line-height:1.5;">
-                <i class="fas fa-info-circle" style="color:#60a5fa;margin-right:6px;"></i>
-                Seleccioná 2 sedes para activar la comparativa 1v1 en el panel lateral.
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-blue"></div>
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: var(--kpi-blue);">Apartado de Marca</h3>
+                <h1><span>Red</span></h1>
+                <p>Todas las sedes en una sola tabla, medidas en el mismo período: cuánto facturaron, cuánto les quedó, qué tienen trabado y quién puede tocar el catálogo de la marca. La que más preocupa va arriba.</p>
+            </div>
+
+            <div class="visual-block four-row">
+                <div class="trait">
+                    <strong><i class="fas fa-table-list" style="color: var(--kpi-blue);"></i> Tabla de mando</strong>
+                    <span>Estado, facturación, margen de caja y pendientes de cada sede, ordenadas por cuánto preocupan.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-scale-balanced" style="color: #c4b5fd;"></i> Comparativa</strong>
+                    <span>Elegís sedes y se comparan entre sí; una sola se compara contra el promedio de la red.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-list-check" style="color: var(--kpi-orange);"></i> Para revisar</strong>
+                    <span>Hasta tres prioridades, cada una de una sede distinta y con su botón para ir a resolverla.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-user-shield" style="color: var(--kpi-green);"></i> Edición del catálogo</strong>
+                    <span>Sede por sede: sin acceso, con aprobación de la marca o edición directa.</span>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 3 — COMPARATIVA 1v1 -->
-<div class="slide">
-    <div class="glow-blue"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#93c5fd;">La Lupa Estratégica</h3>
-            <h2>Comparativa 1 vs 1</h2>
-            <p>Seleccionás dos sedes en la tabla y el panel lateral muestra la comparación directa: ventas, staff, clientes y la brecha en facturación calculada en tiempo real.</p>
-            <p>La herramienta más rápida para detectar <strong style="color:white;">disparidades operativas</strong> entre locales similares.</p>
-        </div>
-        <div class="visual-block glass-panel" style="width:100%;">
-            <div style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-muted);margin-bottom:14px;">Comparativa activa</div>
-            <div class="vs-panel">
-                <div class="vs-col">
-                    <div class="vs-name" style="color:#60a5fa;">Sucursal Centro</div>
-                    <div class="vs-metric-row"><small>Ventas</small><strong>$2.1M</strong></div>
-                    <div class="vs-metric-row"><small>Staff</small><strong>7</strong></div>
-                    <div class="vs-metric-row"><small>Clientes</small><strong>1.842</strong></div>
-                </div>
-                <div class="vs-divider">VS</div>
-                <div class="vs-col">
-                    <div class="vs-name" style="color:#f472b6;">Sucursal Norte</div>
-                    <div class="vs-metric-row"><small>Ventas</small><strong>$1.3M</strong></div>
-                    <div class="vs-metric-row"><small>Staff</small><strong>3</strong></div>
-                    <div class="vs-metric-row"><small>Clientes</small><strong>1.025</strong></div>
+    <!-- SLIDE 2: TABLA DE MANDO -->
+    <section class="slide">
+        <div class="glow-blue" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-blue);">La tabla de mando</h3>
+                <h2>La sede que más preocupa va primera</h2>
+            </div>
+
+            <div class="visual-block demo">
+                <div class="board">
+                    <div class="board-head">
+                        <div>
+                            <h4>Sedes y permisos <span class="count">5</span></h4>
+                            <small>Del 01/10/2026 al 05/10/2026 · tocá una fila para elegirla y compararla</small>
+                        </div>
+                        <div class="gap-card">
+                            <span class="ico"><i class="fas fa-scale-unbalanced"></i></span>
+                            <span><strong>Brecha de facturación</strong><small>Mejor vs peor sede</small></span>
+                            <b data-gap>$ 2.020.000</b>
+                        </div>
+                    </div>
+                    <div class="row head">
+                        <div>Sede</div><div>Estado</div><div>Facturación</div><div>Margen de caja</div><div>Pendientes</div><div>Configuración</div>
+                    </div>
+                    <div data-board></div>
                 </div>
             </div>
-            <div class="vs-conclusion">
-                La diferencia en facturación es de <strong style="color:white;">$800.000</strong>. La brecha de staff podría explicar parte de la diferencia.
+
+            <div class="note" style="margin-top: 14px;">
+                <i class="fas fa-sort-amount-down"></i>
+                <span>El orden sale de un puntaje: <b>estar fuera de línea suma 3</b>, y bajar en facturación, bajar en caja o tener reservas trabadas hace más de una semana suman 1 cada uno. Con 2 puntos la sede pasa a "A vigilar" y con 3 a "Crítica". A igual puntaje sube la que tiene reservas trabadas, después la de peor caja.</span>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 4 — PRIORIDADES -->
-<div class="slide">
-    <div class="glow-purple"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#d8b4fe;">El Panel Lateral</h3>
-            <h2>Prioridades de la Red</h2>
-            <p>Cuando no hay comparativa activa, el panel lateral muestra las señales más importantes de la red ordenadas por urgencia. No hay que leer toda la tabla: el sistema ya lo hizo.</p>
-            <p>Cada señal tiene una <strong style="color:white;">acción directa</strong> para resolver o investigar desde ahí mismo.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="signal-list">
-                <div class="signal-item si-critical">
-                    <div class="si-icon"><i class="fas fa-boxes-stacked"></i></div>
-                    <div class="si-body">
-                        <strong>Desfasaje de Catálogo</strong>
-                        <p>Sucursal Norte: 4 desvíos comerciales frente al estándar de marca.</p>
-                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver estándares</span>
-                    </div>
+    <!-- SLIDE 3: COMPARATIVA -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Comparativa</h3>
+                <h2>Una sede contra el promedio, o varias entre sí</h2>
+                <p>Probalo: elegí una sola sede y aparece el promedio de la red al lado. Elegí más y el trofeo marca la mejor en cada indicador.</p>
+            </div>
+
+            <div class="visual-block cmp-split">
+                <div class="cmp-box demo">
+                    <div class="picker" data-picker></div>
+                    <div class="sub" data-cmp-sub></div>
+                    <div class="cmp-scroll" data-cmp></div>
                 </div>
-                <div class="signal-item si-warning">
-                    <div class="si-icon"><i class="fas fa-triangle-exclamation"></i></div>
-                    <div class="si-body">
-                        <strong>Intervención Prioritaria</strong>
-                        <p>Sucursal Nueva: sin liderazgo y con ventas -3% este mes.</p>
-                        <span class="si-action"><i class="fas fa-arrow-right"></i> Revisar sede</span>
+
+                <div class="stack">
+                    <div class="note purple">
+                        <i class="fas fa-calculator"></i>
+                        <span>El <b>margen de caja</b> es el resultado neto de caja dividido por lo facturado en el período. Una sede que no facturó no tiene margen: dice "Sin base" en vez de un 0% que no significa nada.</span>
                     </div>
-                </div>
-                <div class="signal-item si-info">
-                    <div class="si-icon"><i class="fas fa-hourglass-half"></i></div>
-                    <div class="si-body">
-                        <strong>Cuello de Botella</strong>
-                        <p>Sucursal Centro: 8 reservas estancadas sin resolución.</p>
-                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver operaciones</span>
+                    <div class="note">
+                        <i class="fas fa-users-line"></i>
+                        <span>El <b>promedio de la red</b> cuenta solo las sedes activas. Por eso Sede Oeste, que está fuera de línea, no lo arrastra hacia abajo.</span>
                     </div>
-                </div>
-                <div class="signal-item si-ok">
-                    <div class="si-icon"><i class="fas fa-trophy"></i></div>
-                    <div class="si-body">
-                        <strong>Mejor Referencia</strong>
-                        <p>Sucursal Centro lidera la red con $2.1M en ventas del mes.</p>
-                        <span class="si-action"><i class="fas fa-arrow-right"></i> Ver finanzas</span>
+                    <div class="note ok">
+                        <i class="fas fa-trophy"></i>
+                        <span>Si dos sedes empatan arriba se marcan las dos, y si todas dan lo mismo no hay trofeo. <b>Personal actual</b> nunca lleva trofeo: tener más gente no es un mejor resultado.</span>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 5 — PERMISOS DE CATÁLOGO -->
-<div class="slide">
-    <div class="glow-green"></div>
-    <div class="slide-content-wide grid-split">
-        <div class="text-block">
-            <h3 style="color:#6ee7b7;">Control de Edición</h3>
-            <h2>Permisos de Catálogo por Sede</h2>
-            <p>Desde la tabla, la marca controla exactamente <strong style="color:white;">cuánta libertad editorial</strong> tiene cada sede sobre el catálogo maestro. Tres modos, tres niveles de autonomía.</p>
-            <p>Se cambia con un select en la misma fila. Sin modales, sin flujos intermedios. El cambio se guarda al instante.</p>
-        </div>
-        <div class="visual-block" style="width:100%;">
-            <div class="perms-explainer">
-                <div class="perm-row pr-blocked">
-                    <div class="perm-icon"><i class="fas fa-ban"></i></div>
-                    <div class="perm-body">
-                        <strong>Sin acceso</strong>
-                        <p>La sede no puede modificar ni proponer cambios en el catálogo. Solo hereda lo oficial.</p>
+    <!-- SLIDE 4: PARA REVISAR -->
+    <section class="slide">
+        <div class="glow-orange" style="top: auto; bottom: -200px; right: -200px; left: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Para revisar</h3>
+                <h2>Tres prioridades, cada una de una sede distinta</h2>
+            </div>
+
+            <div class="visual-block rv-split">
+                <div class="signals">
+                    <h4>Para revisar</h4>
+                    <small>Prioridades de tu red</small>
+                    <div class="sig critical">
+                        <span class="ico"><i class="fas fa-boxes-stacked"></i></span>
+                        <div><strong>Desvíos de catálogo</strong><span>Sede Norte reporta 2 desvíos comerciales frente al estándar.</span><em>Ver estándares</em></div>
                     </div>
-                    <div class="perm-badge-tag">Bloqueado</div>
+                    <div class="sig warning">
+                        <span class="ico"><i class="fas fa-triangle-exclamation"></i></span>
+                        <div><strong>Sede inactiva</strong><span>Sede Oeste: Está inactiva.</span><em>Revisar sede</em></div>
+                    </div>
+                    <div class="sig info">
+                        <span class="ico"><i class="fas fa-hourglass-half"></i></span>
+                        <div><strong>Reservas demoradas</strong><span>Sede Sur acumula 2 reservas estancadas.</span><em>Ver reservas</em></div>
+                    </div>
                 </div>
-                <div class="perm-row pr-approval">
-                    <div class="perm-icon"><i class="fas fa-user-shield"></i></div>
-                    <div class="perm-body">
-                        <strong>Con aprobación</strong>
-                        <p>La sede propone cambios pero la marca los revisa antes de que entren al catálogo activo.</p>
+
+                <div class="stack">
+                    <div class="order">
+                        <div class="ord"><b>1</b><strong><i class="fas fa-boxes-stacked" style="color:#fca5a5;"></i> El mayor desvío de catálogo</strong><span>La sede con más productos propios que otra sede también creó por su cuenta. Lleva a Estándares.</span></div>
+                        <div class="ord"><b>2</b><strong><i class="fas fa-triangle-exclamation" style="color:#fcd34d;"></i> La caída más fuerte</strong><span>Una sede inactiva, o la que más bajó en facturación o en caja. Lleva a esa sede.</span></div>
+                        <div class="ord"><b>3</b><strong><i class="fas fa-hourglass-half" style="color:#93c5fd;"></i> Las reservas trabadas</strong><span>La sede con más reservas sin resolver hace más de una semana. Lleva a sus Pedidos.</span></div>
+                        <div class="ord"><b>+</b><strong><i class="fas fa-trophy" style="color:#6ee7b7;"></i> Si sobra lugar, la mejor</strong><span>La sede que más facturó, con un enlace a sus finanzas en el mismo período.</span></div>
                     </div>
-                    <div class="perm-badge-tag">Revisión</div>
-                </div>
-                <div class="perm-row pr-direct">
-                    <div class="perm-icon"><i class="fas fa-pen-to-square"></i></div>
-                    <div class="perm-body">
-                        <strong>Edición directa</strong>
-                        <p>La sede puede modificar precios, stock y categorías sin aprobación previa. Solo sedes de alta confianza.</p>
+                    <div class="note warn">
+                        <i class="fas fa-fingerprint"></i>
+                        <span>Una sede <b>no ocupa dos lugares</b>: si Sede Sur fuera a la vez la de mayor caída y la de más reservas trabadas, aparecería una sola vez, y el lugar libre sería para la sede que sigue.</span>
                     </div>
-                    <div class="perm-badge-tag">Directo</div>
+                    <div class="note ok">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Si no hay nada que mirar, la tarjeta dice <b>"Red estable"</b> en vez de quedarse vacía.</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 
-<!-- SLIDE 6 — NAV -->
-<div class="slide">
-    <div class="glow-blue" style="left:50%;transform:translateX(-50%);top:-300px;width:800px;height:800px;"></div>
-    <div class="slide-content-wide" style="align-items:center;text-align:center;justify-content:center;">
-        <div class="text-block">
-            <h3 style="color:#93c5fd;">Seguir Explorando</h3>
-            <h2>¿Qué vemos ahora?</h2>
-            <p style="max-width:880px;margin:0 auto;">Ya entendés cómo la marca controla su red de sedes. ¿Continuamos con el talento de red o con los estándares de identidad?</p>
-        </div>
-        <div class="visual-block nav-grid">
-            <a href="index.html" class="qa-btn blue" style="border-color:rgba(59,130,246,0.4);">
-                <div class="qa-icon" style="color:#93c5fd;"><i class="fas fa-map"></i></div>
-                <div class="qa-text" style="color:white;">Índice de Marca</div>
-            </a>
-            <a href="brand_Talento.html" class="qa-btn purple">
-                <div class="qa-icon"><i class="fas fa-users"></i></div>
-                <div class="qa-text" style="color:white;">Talento</div>
-            </a>
-            <a href="brand_Estandares.html" class="qa-btn indigo">
-                <div class="qa-icon"><i class="fas fa-ruler-combined"></i></div>
-                <div class="qa-text" style="color:white;">Estándares</div>
-            </a>
-            <a href="brand_Mensajes.html" class="qa-btn pink">
-                <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
-                <div class="qa-text" style="color:white;">Mensajes</div>
-            </a>
-            <a href="brand_Catalogo.html" class="qa-btn cyan">
-                <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
-                <div class="qa-text" style="color:white;">Catálogo Maestro</div>
-            </a>
-        </div>
-    </div>
-</div>
+    <!-- SLIDE 5: EDICIÓN DEL CATÁLOGO -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Edición del catálogo</h3>
+                <h2>Un solo catálogo para toda la red; la marca decide quién lo toca</h2>
+                <p>Todas las sedes venden el catálogo de la marca. Su precio, su costo y si vende cada producto son de cada sede. Lo que se configura en Red es qué pasa cuando una sede quiere cambiar algo que ve toda la red: el nombre, la clasificación, una foto o una carpeta.</p>
+            </div>
 
-<script>
-    const pageId = 'brand_red';
-    let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
-    const slides = document.querySelectorAll('.slide');
-    const btnPrev = document.getElementById('btnPrev');
-    const btnNext = document.getElementById('btnNext');
-    const currentSlideNum = document.getElementById('currentSlideNum');
-    const totalSlidesDisplay = document.getElementById('totalSlides');
-    function updateSlides() {
-        if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
-        slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
-        currentSlideNum.innerText = currentIndex + 1;
-        localStorage.setItem('slide_' + pageId, currentIndex);
-        setTimeout(() => window.scrollTo(0, 0), 50);
-    }
-    function nextSlide() {
-        if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
-        else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
-    }
-    function prevSlide() { if (currentIndex > 0) { currentIndex--; updateSlides(); } }
-    btnNext.addEventListener('click', nextSlide);
-    btnPrev.addEventListener('click', prevSlide);
-    document.addEventListener('keydown', (e) => {
-        const isTyping = ['INPUT','TEXTAREA'].includes(document.activeElement?.tagName);
-        if (!isTyping) {
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-            else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
-        }
-    });
-    updateSlides();
-</script>
+            <div class="visual-block">
+                <div class="modes">
+                    <div class="mode blocked">
+                        <span class="tag">Bloqueado</span>
+                        <strong><i class="fas fa-lock" style="color:#fca5a5;"></i> Sin acceso</strong>
+                        <p>La sede vende el catálogo como está y no puede ni proponer cambios.</p>
+                        <div class="res">"La marca no habilitó a esta sede para proponer cambios"</div>
+                    </div>
+                    <div class="mode approval">
+                        <span class="tag">Revisión · el de fábrica</span>
+                        <strong><i class="fas fa-user-check" style="color:#fcd34d;"></i> Con aprobación</strong>
+                        <p>La sede edita, pero el producto no cambia: queda una solicitud pendiente para que la marca la apruebe o la rechace.</p>
+                        <div class="res">el cambio espera a la marca</div>
+                    </div>
+                    <div class="mode direct">
+                        <span class="tag">Directo</span>
+                        <strong><i class="fas fa-pen" style="color:#6ee7b7;"></i> Edición directa</strong>
+                        <p>Lo que la sede cambia se escribe sobre el producto de la marca, y lo ve toda la red.</p>
+                        <div class="res">el cambio es inmediato</div>
+                    </div>
+                </div>
+
+                <div class="two-notes">
+                    <div class="note warn">
+                        <i class="fas fa-rotate"></i>
+                        <span>Con aprobación, dos ediciones seguidas al mismo producto son <b>una propuesta que se corrige</b>, no dos para aprobar. Y prender algo que la marca apagó también pasa por ella.</span>
+                    </div>
+                    <div class="note">
+                        <i class="fas fa-arrows-rotate"></i>
+                        <span>El cambio de permiso <b>se guarda al elegirlo</b>, sin botón de guardar. Si el guardado falla, el selector vuelve solo a como estaba.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-purple);">Seguir explorando</h3>
+                <h2>De la tabla a quién atiende cada sede</h2>
+                <p>¿Seguimos por el equipo de la red o por el catálogo que comparten?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="talento.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-users"></i></div>
+                    <div class="qa-text">Talento</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text">Catálogo<br>Maestro</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Datos ficticios. El orden, el estado, el margen, la brecha y el promedio
+        // se calculan con las mismas reglas que la pantalla.
+        (() => {
+            const SEDES = [
+                { id: 1, name: 'Sede Centro', active: true, revenue: 2140000, revTrend: 18.2, balance: 640000, balTrend: 1, stale: 0, deviations: 1, staff: 9, clients: 412, perm: 'direct' },
+                { id: 2, name: 'Sede Norte', active: true, revenue: 1310000, revTrend: 4.8, balance: 380000, balTrend: 1, stale: 0, deviations: 2, staff: 6, clients: 268, perm: 'approval' },
+                { id: 3, name: 'Sede Sur', active: true, revenue: 760000, revTrend: -3.2, balance: -45000, balTrend: -1, stale: 2, deviations: 0, staff: 4, clients: 131, perm: 'approval' },
+                { id: 4, name: 'Sede Plaza', active: true, revenue: 540000, revTrend: -6.1, balance: 38000, balTrend: 1, stale: 1, deviations: 1, staff: 3, clients: 96, perm: 'none' },
+                { id: 5, name: 'Sede Oeste', active: false, revenue: 120000, revTrend: -70, balance: -15000, balTrend: -1, stale: 0, deviations: 0, staff: 0, clients: 22, perm: 'approval' },
+            ];
+            const MODES = [
+                { value: 'none', label: 'Sin acceso', cls: 'blocked' },
+                { value: 'approval', label: 'Con aprobación', cls: 'approval' },
+                { value: 'direct', label: 'Edición directa', cls: 'direct' },
+            ];
+            const money = v => (v < 0 ? '-$ ' : '$ ') + Math.abs(Math.round(v)).toLocaleString('es-AR');
+            const pct = v => v === null ? 'Sin base' : `${v.toLocaleString('es-AR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`;
+            const num = v => v === null ? 'Sin datos' : Math.round(v).toLocaleString('es-AR');
+
+            SEDES.forEach(s => {
+                s.margin = s.revenue > 0 ? s.balance / s.revenue * 100 : null;
+                s.score = (s.active ? 0 : 3) + (s.revTrend < 0 ? 1 : 0) + (s.balTrend < 0 ? 1 : 0) + (s.stale > 0 ? 1 : 0);
+            });
+            const status = s => !s.active ? ['offline', 'Fuera de línea'] : s.score >= 3 ? ['critical', 'Crítica'] : s.score >= 2 ? ['warning', 'A vigilar'] : ['healthy', 'Estable'];
+            const marginClass = v => v === null ? 'neutral' : v < 0 ? 'negative' : v < 10 ? 'warning' : 'positive';
+            const ordered = [...SEDES].sort((a, b) =>
+                b.score - a.score || Number(b.stale > 0) - Number(a.stale > 0) || a.balance - b.balance || a.revTrend - b.revTrend || b.revenue - a.revenue);
+
+            const selected = new Set();
+            const board = document.querySelector('[data-board]');
+            const revenues = SEDES.map(s => s.revenue);
+            document.querySelector('[data-gap]').textContent = money(Math.max(...revenues) - Math.min(...revenues));
+
+            function renderBoard() {
+                board.innerHTML = ordered.map(s => {
+                    const [cls, label] = status(s);
+                    const mode = MODES.find(m => m.value === s.perm);
+                    const pend = [
+                        s.deviations ? `<span class="badge error"><i class="fas fa-boxes"></i> ${s.deviations} catálogo</span>` : '',
+                        s.stale ? `<span class="badge warning"><i class="fas fa-clock"></i> ${s.stale} ${s.stale === 1 ? 'reserva' : 'reservas'}</span>` : '',
+                    ].join('') || '<span class="badge success"><i class="fas fa-check"></i> Al día</span>';
+                    return `<div class="row body ${selected.has(s.id) ? 'sel' : ''}" data-row="${s.id}">
+                        <div class="sede"><span class="check"><i class="fas fa-check"></i></span>${s.name} <i class="fas fa-arrow-up-right-from-square open"></i></div>
+                        <div data-label="Estado"><span class="chip ${cls}">${label}</span></div>
+                        <div data-label="Facturación"><span class="rev">${money(s.revenue)} <span class="trend ${s.revTrend < 0 ? 'down' : 'up'}">${s.revTrend > 0 ? '+' : ''}${s.revTrend.toLocaleString('es-AR')}%</span></span></div>
+                        <div data-label="Margen de caja" class="margin"><strong class="m-${marginClass(s.margin)}">${pct(s.margin)}</strong><small>${money(s.balance)} neto</small></div>
+                        <div data-label="Pendientes" class="pend">${pend}</div>
+                        <div class="perm-cell"><div class="perm ${mode.cls}"><span><i class="fas fa-user-shield"></i> Edición</span>
+                            <select aria-label="Edición del catálogo de ${s.name}" data-perm="${s.id}">${MODES.map(m => `<option value="${m.value}" ${m.value === s.perm ? 'selected' : ''}>${m.label}</option>`).join('')}</select></div></div>
+                    </div>`;
+                }).join('');
+            }
+            board.addEventListener('click', e => {
+                if (e.target.closest('.perm-cell')) return;
+                const row = e.target.closest('[data-row]');
+                if (!row) return;
+                const id = Number(row.dataset.row);
+                selected.has(id) ? selected.delete(id) : selected.add(id);
+                renderAll();
+            });
+            board.addEventListener('change', e => {
+                const sel = e.target.closest('[data-perm]');
+                if (!sel) return;
+                SEDES.find(s => s.id === Number(sel.dataset.perm)).perm = sel.value;
+                renderBoard();
+            });
+
+            // Comparativa
+            const METRICS = [
+                { key: 'revenue', label: 'Facturación', format: money, rank: true },
+                { key: 'margin', label: 'Margen de caja', format: pct, rank: true },
+                { key: 'staff', label: 'Personal actual', format: num, rank: false },
+                { key: 'clients', label: 'Clientes del período', format: num, rank: true },
+            ];
+            const eligible = SEDES.filter(s => s.active);
+            const average = { id: 'avg', name: 'Promedio de la red', isAverage: true };
+            METRICS.forEach(m => {
+                const values = eligible.map(s => s[m.key]).filter(v => v !== null);
+                average[m.key] = values.length ? values.reduce((a, b) => a + b, 0) / values.length : null;
+            });
+            const picker = document.querySelector('[data-picker]');
+            const cmp = document.querySelector('[data-cmp]');
+            const sub = document.querySelector('[data-cmp-sub]');
+
+            function renderCompare() {
+                picker.innerHTML = ordered.map(s => `<button type="button" class="pick ${selected.has(s.id) ? 'on' : ''}" data-pick="${s.id}" aria-pressed="${selected.has(s.id)}"><span class="check"><i class="fas fa-check"></i></span>${s.name}</button>`).join('');
+                const chosen = ordered.filter(s => selected.has(s.id));
+                if (!chosen.length) {
+                    sub.textContent = '';
+                    cmp.innerHTML = '<div class="cmp-empty">Elegí una o más sedes para ver la comparativa.</div>';
+                    return;
+                }
+                const cols = chosen.length === 1 ? [...chosen, average] : chosen;
+                sub.textContent = chosen.length === 1
+                    ? 'Una sede se compara con el promedio de la red; el margen incluye solo sedes con facturación positiva.'
+                    : 'Mejores resultados en verde; los empates se destacan juntos.';
+                const best = (col, m) => {
+                    if (!m.rank || col[m.key] === null) return false;
+                    const values = cols.map(c => c[m.key]).filter(v => v !== null);
+                    const max = Math.max(...values);
+                    return values.length > 1 && max > Math.min(...values) && col[m.key] === max;
+                };
+                cmp.innerHTML = `<table class="cmp-table"><thead><tr><th>Indicador</th>${cols.map(c => `<th class="${c.isAverage ? 'avg' : ''}">${c.name}</th>`).join('')}</tr></thead><tbody>
+                    ${METRICS.map(m => `<tr><th>${m.label}</th>${cols.map(c => `<td class="${best(c, m) ? 'best' : ''}">${m.format(c[m.key])}${best(c, m) ? '<i class="fas fa-trophy" aria-label="Mejor resultado"></i>' : ''}</td>`).join('')}</tr>`).join('')}
+                </tbody></table>`;
+            }
+            picker.addEventListener('click', e => {
+                const b = e.target.closest('[data-pick]');
+                if (!b) return;
+                const id = Number(b.dataset.pick);
+                selected.has(id) ? selected.delete(id) : selected.add(id);
+                renderAll();
+            });
+
+            function renderAll() { renderBoard(); renderCompare(); }
+            selected.add(4);
+            renderAll();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_red';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
+    </script>
 </body>
 </html>

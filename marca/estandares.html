@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estándares — Apartado de Marca</title>
+    <title>Estándares de la marca</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -15,736 +15,711 @@
             --bg-panel: rgba(15, 23, 42, 0.6);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --text-soft: #cbd5e1;
+            --text-secondary: #a3b1c6;
             --border-glass: rgba(255, 255, 255, 0.05);
-            --accent: #4f46e5;
-            --accent-soft: rgba(79, 70, 229, 0.15);
-            --kpi-green:  #10b981;
-            --kpi-blue:   #3b82f6;
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --surface-panel: rgba(15, 23, 42, 0.85);
+            --surface-panel-strong: rgba(20, 30, 50, 0.92);
+
+            --kpi-green: #10b981;
+            --kpi-blue: #3b82f6;
             --kpi-indigo: #4f46e5;
             --kpi-purple: #a855f7;
             --kpi-orange: #f59e0b;
-            --kpi-pink:   #ec4899;
-            --kpi-red:    #ef4444;
+            --kpi-pink: #ec4899;
+            --kpi-red: #ef4444;
+            --kpi-cyan: #06b6d4;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
-            height: 100vh; width: 100vw;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             background-color: var(--bg-base);
             font-family: 'Urbanist', sans-serif;
             color: var(--text-main);
         }
 
-        /* =========================================
-           MOTOR DE SLIDES
-        ========================================= */
         .slide {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            opacity: 0; pointer-events: none; z-index: 0;
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
             transition: opacity 0.4s ease;
             background: radial-gradient(circle at top left, #1e293b 0%, var(--bg-base) 100%);
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             padding: 40px 80px;
         }
         .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
 
         .slide-content-wide {
-            width: 100%; max-width: 1400px;
-            position: relative; z-index: 2;
-            display: flex; flex-direction: column; justify-content: center;
+            width: 100%;
+            max-width: 1400px;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .glow-indigo { position: absolute; width: 45vw; height: 45vw; background: radial-gradient(circle, rgba(79,70,229,0.14) 0%, transparent 70%); top: -12vw; right: -12vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-purple { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(168,85,247,0.10) 0%, transparent 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-blue   { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
-        .glow-green  { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.09) 0%, transparent 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-indigo { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(99,102,241,0.14) 0%, rgba(0,0,0,0) 70%); top: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-pink { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(236,72,153,0.11) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-orange { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, rgba(0,0,0,0) 70%); top: -10vw; left: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+        .glow-green { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, rgba(0,0,0,0) 70%); bottom: -10vw; right: -10vw; border-radius: 50%; z-index: 1; pointer-events: none; }
+
+        .home-link {
+            position: fixed; top: 14px; left: 20px; z-index: 10000;
+            font: 600 13px Urbanist, system-ui, sans-serif; color: #e2e8f0; text-decoration: none;
+            background: #152439; border: 1px solid #34506b; border-radius: 24px; padding: 9px 15px;
+        }
+        .home-link:focus-visible, .ctrl-btn:focus-visible, .qa-btn:focus-visible,
+        .demo button:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
 
         .presentation-controls {
-            position: fixed; bottom: 30px; right: 40px;
-            display: flex; gap: 15px; z-index: 9999;
-            background: rgba(0,0,0,0.5); padding: 10px 20px;
-            border-radius: 50px; border: 1px solid var(--border-glass);
-            backdrop-filter: blur(10px); align-items: center;
+            position: fixed; bottom: 30px; right: 40px; display: flex; gap: 15px; z-index: 9999;
+            background: rgba(0,0,0,0.5); padding: 10px 20px; border-radius: 50px;
+            border: 1px solid var(--border-glass); backdrop-filter: blur(10px); align-items: center;
         }
         .slide-indicator { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 0 10px; font-family: monospace; }
-        .ctrl-btn {
-            background: rgba(255,255,255,0.1); border: none; color: white;
-            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
-            transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px;
-        }
-        .ctrl-btn:hover { background: var(--kpi-indigo); }
+        .ctrl-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .ctrl-btn:hover:not(:disabled) { background: var(--kpi-indigo); }
+        .ctrl-btn:disabled { opacity: .35; cursor: default; }
 
         h1 { font-size: 64px; font-weight: 900; line-height: 1.1; margin-bottom: 20px; letter-spacing: -1px; }
         h2 { font-size: 42px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); }
-        h3 { font-size: 13px; font-weight: 800; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
-        p  { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        h3 { font-size: 24px; font-weight: 700; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; }
+        p { font-size: 20px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
 
-        .grid-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center; }
-        .glass-panel { background: var(--bg-panel); backdrop-filter: blur(12px); border: 1px solid var(--border-glass); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .pill-tag { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; }
-        .pill-tag i { margin-right: 8px; }
+        .text-block { text-align: center; max-width: 1040px; margin: 0 auto 18px; }
+        .text-block p { font-size: 18px; margin-bottom: 0; }
 
-        /* =========================================
-           SLIDE 2 — Las 3 piezas base
-        ========================================= */
-        .three-pieces {
-            display: flex; flex-direction: column; gap: 14px; width: 100%;
-        }
-        .piece-row {
-            display: flex; align-items: flex-start; gap: 16px;
-            padding: 18px 20px; border-radius: 14px; border: 1px solid;
-            transition: 0.2s;
-        }
-        .piece-row:hover { transform: translateX(4px); }
-        .piece-row.p-logo   { background: rgba(79,70,229,0.07); border-color: rgba(79,70,229,0.3); }
-        .piece-row.p-banner { background: rgba(59,130,246,0.07); border-color: rgba(59,130,246,0.3); }
-        .piece-row.p-social { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.3); }
-
-        .piece-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; flex-shrink: 0;
-        }
-        .p-logo   .piece-icon { background: rgba(79,70,229,0.18);  color: #a5b4fc; }
-        .p-banner .piece-icon { background: rgba(59,130,246,0.18); color: #93c5fd; }
-        .p-social .piece-icon { background: rgba(168,85,247,0.18); color: #d8b4fe; }
-
-        .piece-body { flex: 1; }
-        .piece-body strong { font-size: 16px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
-        .piece-body p { font-size: 14px; color: var(--text-muted); margin: 0; line-height: 1.4; }
-
-        .piece-status {
-            display: flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 900; padding: 4px 10px;
-            border-radius: 999px; flex-shrink: 0; align-self: flex-start; margin-top: 2px;
-        }
-        .status-ok     { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-        .status-warn   { background: rgba(245,158,11,0.15); color: #fcd34d; border: 1px solid rgba(245,158,11,0.3); }
-        .status-missing{ background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25);}
-
-        /* contadores de piezas configuradas */
-        .pieces-counter {
-            display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
-        }
-        .pc-bubble {
-            width: 52px; height: 52px; border-radius: 50%;
-            background: rgba(79,70,229,0.15); border: 2px solid rgba(79,70,229,0.4);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: 900; color: #a5b4fc;
-        }
-        .pc-text strong { font-size: 18px; font-weight: 800; color: white; display: block; }
-        .pc-text span   { font-size: 13px; color: var(--text-muted); }
+        .note { display: flex; gap: 11px; align-items: flex-start; background: rgba(59,130,246,0.07); border: 1px solid rgba(59,130,246,0.2); border-radius: 11px; padding: 12px 15px; font-size: 13.5px; color: #bfdbfe; text-align: left; line-height: 1.5; }
+        .note i { margin-top: 3px; color: var(--kpi-blue); }
+        .note b { color: #dbeafe; }
+        .note.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.22); color: #fcd34d; }
+        .note.warn i { color: var(--kpi-orange); } .note.warn b { color: #fde68a; }
+        .note.ok { background: rgba(16,185,129,0.07); border-color: rgba(16,185,129,0.22); color: #a7f3d0; }
+        .note.ok i { color: var(--kpi-green); } .note.ok b { color: #d1fae5; }
+        .note.purple { background: rgba(168,85,247,0.07); border-color: rgba(168,85,247,0.22); color: #e9d5ff; }
+        .note.purple i { color: var(--kpi-purple); } .note.purple b { color: #f3e8ff; }
+        .stack { display: flex; flex-direction: column; gap: 10px; }
 
         /* =========================================
-           SLIDE 3 — Herencia vs Desvío
+           PORTADA
         ========================================= */
-        .inheritance-diagram {
-            display: flex; flex-direction: column; gap: 10px; width: 100%;
-        }
-        .id-brand {
-            display: flex; align-items: center; gap: 14px;
-            padding: 16px 20px; border-radius: 12px;
-            background: rgba(79,70,229,0.1); border: 1px solid rgba(79,70,229,0.35);
-        }
-        .id-brand .idb-icon {
-            width: 44px; height: 44px; border-radius: 11px;
-            background: rgba(79,70,229,0.2); color: #a5b4fc;
-            display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;
-        }
-        .id-brand .idb-label { font-size: 15px; font-weight: 800; color: #c7d2fe; flex: 1; }
-        .id-brand .idb-badge { font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 5px; background: rgba(79,70,229,0.25); color: #a5b4fc; border: 1px solid rgba(79,70,229,0.4); }
-
-        .id-arrow-row {
-            display: flex; gap: 8px; padding-left: 20px;
-        }
-        .id-arrow-line {
-            display: flex; flex-direction: column; align-items: center; gap: 0;
-            padding: 0 10px;
-        }
-        .id-arrow-line .al-vert { width: 2px; height: 20px; background: rgba(255,255,255,0.08); }
-        .id-arrow-line .al-dot  { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.12); }
-
-        .id-branches { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-
-        .id-branch {
-            display: flex; align-items: center; gap: 10px;
-            padding: 12px 16px; border-radius: 10px;
-            border: 1px solid;
-        }
-        .id-branch .ib-icon {
-            width: 34px; height: 34px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; flex-shrink: 0;
-        }
-        .id-branch .ib-name { font-size: 13px; font-weight: 700; color: white; flex: 1; }
-        .id-branch .ib-dots  { display: flex; gap: 6px; }
-
-        .id-branch.b-aligned { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.22); }
-        .id-branch.b-custom  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
-        .id-branch.b-missing { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.22); }
-
-        .b-aligned .ib-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-        .b-custom  .ib-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
-        .b-missing .ib-icon { background: rgba(239,68,68,0.12);  color: #fca5a5; }
-
-        .std-dot {
-            width: 22px; height: 22px; border-radius: 6px;
-            display: flex; align-items: center; justify-content: center; font-size: 9px;
-        }
-        .std-dot.aligned { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-        .std-dot.custom  { background: rgba(59,130,246,0.2);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
-        .std-dot.missing { background: rgba(239,68,68,0.12);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
-
-        .legend-row { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
-        .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--text-muted); }
-        .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+        .cover h1 span { color: #818cf8; }
+        .cover p { font-size: 21px; }
+        .three-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .trait { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 18px 20px; text-align: left; }
+        .trait strong { display: flex; align-items: center; gap: 10px; font-size: 16.5px; margin-bottom: 6px; }
+        .trait span { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
 
         /* =========================================
-           SLIDE 4 — El workbench de comparación
+           MESA — calcada de brand/views/Standards.vue
         ========================================= */
-        .workbench-mock {
-            background: rgba(15,23,42,0.9); border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 16px; overflow: hidden; width: 100%;
-        }
-        .wb-topbar {
-            padding: 12px 18px; background: rgba(0,0,0,0.4);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-        }
-        .wb-title { font-size: 13px; font-weight: 800; color: var(--text-muted); }
-        .wb-filter-tabs { display: flex; gap: 6px; }
-        .wb-tab {
-            padding: 5px 12px; border-radius: 7px;
-            font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.08);
-            background: transparent; color: var(--text-muted); cursor: default;
-        }
-        .wb-tab.active { background: rgba(79,70,229,0.18); color: #c7d2fe; border-color: rgba(79,70,229,0.3); }
+        .workbench { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 16px; align-items: start; text-align: left; }
+        .area-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .area-header h4 { font-size: 1.05rem; font-weight: 800; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: #3b82f6; color: white; border: 0; border-radius: 10px; padding: 9px 14px; font: 800 .8rem Urbanist, sans-serif; cursor: pointer; position: relative; }
+        .btn-primary .dirty { position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: #fbbf24; border: 2px solid #0f172a; }
+        .glass { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 16px; padding: 14px; }
+        .section-title span { display: block; font-size: .66rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--text-secondary); }
+        .section-title h5 { font-size: .95rem; font-weight: 800; margin: 2px 0 10px; display: flex; gap: 8px; align-items: center; }
+        .assets-grid { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; }
+        .asset-block label { display: block; font-size: .72rem; font-weight: 700; color: var(--text-soft); margin-bottom: 5px; }
+        .asset-box { height: 74px; border-radius: 12px; border: 1px solid var(--border-soft); background: rgba(0,0,0,0.3); position: relative; overflow: hidden; display: grid; place-items: center; }
+        .asset-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; }
+        .icon-btn { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; font-size: 9px; background: rgba(0,0,0,0.55); }
+        .icon-btn.blue { color: #60a5fa; } .icon-btn.red { color: #f87171; } .icon-btn.purple { color: #c084fc; }
+        .logo-art { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 12px; letter-spacing: .5px; }
+        .banner-art { width: 100%; height: 100%; display: flex; align-items: flex-end; padding: 8px 10px; font-weight: 900; font-size: 12px; }
+        .social-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .social-grid label { display: block; font-size: .7rem; font-weight: 700; color: var(--text-soft); margin-bottom: 4px; }
+        .form-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 7px 9px; font-size: .74rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 31px; }
+        .form-input.empty { color: #64748b; }
+        .divider { height: 1px; background: var(--border-soft); margin: 12px 0; }
+        .comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .comparison-grid.links { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .comparison-card { border: 1px solid rgba(148,163,184,0.14); background: var(--surface-panel-strong); border-radius: 14px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .comparison-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+        .comparison-head span { display: block; color: var(--text-secondary); font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 900; margin-bottom: 2px; }
+        .comparison-head strong { font-size: .82rem; }
+        .comparison-head i { color: #60a5fa; opacity: .75; font-size: .8rem; }
+        .comparison-value { background: var(--surface-panel); border: 1px solid rgba(148,163,184,0.1); border-radius: 10px; padding: 7px; min-height: 40px; display: grid; place-items: center; }
+        .comparison-value span { color: var(--text-soft); font-size: .7rem; overflow-wrap: anywhere; text-align: center; }
+        .comparison-value .banner-art { height: 52px; border-radius: 8px; }
+        .comparison-value .logo-art { width: 46px; height: 46px; font-size: 10px; }
+        .comparison-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+        .btn-mini { padding: 5px 8px; border-radius: 8px; font: 700 .68rem Urbanist, sans-serif; border: none; cursor: pointer; }
+        .btn-approve { flex: 1; background: rgba(59,130,246,0.2); color: #60a5fa; }
+        .btn-allow { background: rgba(245,158,11,0.16); color: #fbbf24; }
+        .btn-reject { background: rgba(239,68,68,0.2); color: #f87171; }
+        .comparison-success { border-color: rgba(52,211,153,0.28); }
+        .comparison-info { border-color: rgba(96,165,250,0.3); }
+        .comparison-danger { border-color: rgba(248,113,113,0.35); }
+        .comparison-muted { border-color: rgba(148,163,184,0.16); }
+        .toast-line { min-height: 20px; font-size: .74rem; color: #a7f3d0; margin-top: 8px; }
+        .toast-line.info { color: #bfdbfe; } .toast-line.warn { color: #fcd34d; }
 
-        .wb-body { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0; }
-        .wb-col { padding: 18px 16px; }
-        .wb-divider-line { background: rgba(255,255,255,0.05); }
-        .wb-col-label {
-            font-size: 10px; font-weight: 900; text-transform: uppercase;
-            letter-spacing: 1.5px; margin-bottom: 14px;
-        }
-        .wb-col-label.brand-label  { color: #a5b4fc; }
-        .wb-col-label.branch-label { color: #93c5fd; }
-
-        .wb-asset-box {
-            width: 100%; height: 90px; border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px;
-            overflow: hidden; display: flex; align-items: center; justify-content: center;
-        }
-        .wb-asset-box.logo-box { height: 80px; background: rgba(79,70,229,0.07); }
-        .wb-asset-box.banner-box { height: 70px; background: rgba(59,130,246,0.07); }
-        .wb-asset-box.empty-box { background: rgba(255,255,255,0.02); }
-        .wb-asset-box.empty-box i { font-size: 22px; color: #334155; }
-        .fake-logo { font-size: 28px; color: #a5b4fc; font-weight: 900; letter-spacing: -1px; }
-        .fake-banner {
-            width: 100%; height: 100%; 
-            background: linear-gradient(135deg, rgba(79,70,229,0.4) 0%, rgba(59,130,246,0.3) 100%);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 800; color: #c7d2fe;
-        }
-        .fake-banner-custom {
-            background: linear-gradient(135deg, rgba(245,158,11,0.35) 0%, rgba(249,115,22,0.3) 100%);
-            color: #fef3c7;
-        }
-
-        .wb-action-strip {
-            display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap;
-        }
-        .wb-btn {
-            font-size: 11px; font-weight: 800; padding: 5px 10px; border-radius: 7px;
-            border: 1px solid; cursor: default;
-        }
-        .wb-btn.approve { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
-        .wb-btn.allow   { background: rgba(245,158,11,0.12); color: #fcd34d; border-color: rgba(245,158,11,0.3); }
-        .wb-btn.reject  { background: rgba(239,68,68,0.12);  color: #fca5a5; border-color: rgba(239,68,68,0.25); }
-
-        .wb-status-chip {
-            display: inline-flex; align-items: center; gap: 6px;
-            font-size: 11px; font-weight: 900; padding: 4px 9px;
-            border-radius: 999px; margin-bottom: 8px;
-        }
-        .wbs-aligned { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
-        .wbs-custom  { background: rgba(59,130,246,0.15);  color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+        .side { display: flex; flex-direction: column; gap: 12px; }
+        .widget h6 { font-size: .85rem; font-weight: 800; margin: 0 0 10px; display: flex; gap: 8px; align-items: center; color: #93c5fd; }
+        .review-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+        .filter-item { width: 100%; border: 1px solid rgba(148,163,184,0.12); background: var(--surface-panel); color: var(--text-soft); border-radius: 10px; padding: 7px 9px; display: flex; align-items: center; justify-content: space-between; gap: 6px; cursor: pointer; font: 800 .72rem Urbanist, sans-serif; }
+        .filter-item span { display: flex; align-items: center; gap: 6px; }
+        .filter-item strong { color: var(--text-main); font-size: .78rem; }
+        .filter-item.active, .filter-item:hover { background: rgba(59,130,246,0.12); border-color: rgba(96,165,250,0.35); color: #bfdbfe; }
+        .filter-item.static { cursor: default; }
+        .branch-list { display: flex; flex-direction: column; gap: 6px; }
+        .branch-item { padding: 8px 10px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--border-soft); display: flex; justify-content: space-between; align-items: center; cursor: pointer; width: 100%; color: inherit; font: inherit; text-align: left; }
+        .branch-item.active, .branch-item:hover { background: rgba(59,130,246,0.12); border-color: rgba(96,165,250,0.32); }
+        .branch-item strong { font-size: .78rem; display: block; margin-bottom: 1px; }
+        .branch-item span { font-size: .68rem; color: var(--text-secondary); }
+        .dots { display: flex; gap: 5px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; }
+        .bg-success { background: #34d399; } .bg-info { background: #60a5fa; } .bg-danger { background: #f87171; } .bg-muted { background: #94a3b8; }
 
         /* =========================================
-           SLIDE 5 — Señales del radar
+           ESTADOS Y BOTONES
         ========================================= */
-        .radar-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
-        }
-        .radar-card {
-            border-radius: 14px; padding: 18px 18px;
-            display: flex; gap: 14px; border: 1px solid; align-items: flex-start;
-            transition: 0.2s;
-        }
-        .radar-card:hover { transform: translateY(-2px); }
-        .rc-ok      { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.22); }
-        .rc-warn    { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.22); }
-        .rc-danger  { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);  }
-        .rc-info    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.22); }
-
-        .rc-icon {
-            width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; font-size: 16px;
-        }
-        .rc-ok    .rc-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-        .rc-warn  .rc-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
-        .rc-danger .rc-icon{ background: rgba(239,68,68,0.12);  color: #fca5a5; }
-        .rc-info  .rc-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
-
-        .rc-body strong { font-size: 14px; font-weight: 800; color: white; display: block; margin-bottom: 4px; }
-        .rc-body p { font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.4; }
-        .rc-sede-tag {
-            display: inline-block; margin-top: 8px;
-            font-size: 11px; font-weight: 900; padding: 3px 8px;
-            border-radius: 5px; background: rgba(255,255,255,0.05);
-            color: var(--text-muted); border: 1px solid rgba(255,255,255,0.08);
-        }
-
-        .radar-kpis {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px;
-        }
-        .rk-card {
-            padding: 16px 14px; border-radius: 12px;
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-            text-align: center;
-        }
-        .rk-card .rk-val { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
-        .rk-card .rk-lbl { font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .rk-ok     .rk-val { color: #6ee7b7; }
-        .rk-warn   .rk-val { color: #fcd34d; }
-        .rk-danger .rk-val { color: #fca5a5; }
+        .states { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .state-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px; text-align: left; }
+        .state-card .lbl { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+        .state-card span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+        .btn-card { background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 14px; padding: 14px; text-align: left; }
+        .btn-card .btn-mini { display: inline-block; margin-bottom: 8px; font-size: .78rem; padding: 6px 12px; cursor: default; }
+        .btn-card strong { display: block; font-size: 14.5px; margin-bottom: 4px; }
+        .btn-card span { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+        .overall { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 14px; }
+        .ov { background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; padding: 10px 12px; text-align: left; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .ov b { display: block; color: var(--text-main); font-size: 13.5px; margin-bottom: 2px; }
 
         /* =========================================
-           SLIDE 6 — Navegación
+           LISTA DE REVISIÓN (desviaciones y Merchant)
         ========================================= */
-        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 40px; width: 100%; max-width: 880px; margin-left: auto; margin-right: auto; }
-        .qa-btn { width: 200px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
+        .review-split { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 24px; align-items: start; text-align: left; }
+        .review-list { display: flex; flex-direction: column; gap: 9px; }
+        .review-item { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 11px; padding: 12px; border-radius: 14px; background: var(--surface-panel-strong); border: 1px solid rgba(148,163,184,0.12); }
+        .review-icon { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: rgba(96,165,250,0.12); color: #60a5fa; }
+        .review-meta { display: flex; gap: 8px; color: var(--text-secondary); font-size: .64rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 900; margin-bottom: 3px; }
+        .review-copy strong { font-size: .88rem; }
+        .review-copy p { font-size: .78rem; margin: 3px 0 0; line-height: 1.45; }
+        .review-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .review-action-link { margin-top: 8px; border: 1px solid rgba(96,165,250,0.3); background: rgba(59,130,246,0.12); color: #bfdbfe; border-radius: 9px; padding: 6px 9px; display: inline-flex; align-items: center; gap: 7px; font-weight: 800; font-size: .74rem; }
+        .request-image { margin-top: 7px; width: 72px; height: 54px; border-radius: 8px; background: linear-gradient(135deg, #f5d0a9, #c08457); display: grid; place-items: center; color: #451a03; }
+        .review-danger { border-color: rgba(248,113,113,0.35); } .review-danger .review-icon { background: rgba(248,113,113,0.12); color: #f87171; }
+        .review-warning { border-color: rgba(251,191,36,0.3); } .review-warning .review-icon { background: rgba(251,191,36,0.12); color: #fbbf24; }
+        .review-amber { border-color: rgba(245,158,11,0.35); } .review-amber .review-icon { background: rgba(245,158,11,0.12); color: #f59e0b; }
+        .review-info .review-icon { background: rgba(96,165,250,0.12); color: #60a5fa; }
+        .btn-mini.static { cursor: default; }
+
+        /* =========================================
+           NAVEGACIÓN
+        ========================================= */
+        .quick-actions-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 40px auto 0; width: 100%; max-width: 860px; }
+        .qa-btn { width: 250px; background: var(--bg-panel); border: 1px solid var(--border-glass); border-radius: 16px; padding: 30px 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; transition: all 0.3s; cursor: pointer; text-decoration: none; }
         .qa-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .qa-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: rgba(0,0,0,0.3); color: var(--text-main); transition: 0.3s; }
-        .qa-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .qa-btn.indigo:hover  { border-color: var(--kpi-indigo); } .qa-btn.indigo:hover .qa-icon { color: #a5b4fc; }
-        .qa-btn.blue:hover    { border-color: var(--kpi-blue);   } .qa-btn.blue:hover   .qa-icon { color: var(--kpi-blue);   }
-        .qa-btn.pink:hover    { border-color: var(--kpi-pink);   } .qa-btn.pink:hover   .qa-icon { color: var(--kpi-pink);   }
-        .qa-btn.purple:hover  { border-color: var(--kpi-purple); } .qa-btn.purple:hover .qa-icon { color: var(--kpi-purple); }
-        .qa-btn.cyan:hover    { border-color: #06b6d4;           } .qa-btn.cyan:hover   .qa-icon { color: #22d3ee;           }
+        .qa-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: rgba(0,0,0,0.3); }
+        .qa-text { font-size: 16px; font-weight: 700; color: white; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
 
         /* =========================================
            RESPONSIVE
         ========================================= */
         @media (max-width: 1024px) {
             html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; width: 100%; height: auto; min-height: 100vh; padding: 40px 20px 140px; display: none; overflow-y: visible; }
+            .slide { position: relative; inset: auto; width: 100%; min-height: 100vh; padding: 70px 20px 140px; display: none; }
             .slide.active { display: flex; justify-content: flex-start; }
-            .slide-content-wide { height: auto; justify-content: flex-start; }
-            .grid-split { grid-template-columns: 1fr; gap: 40px; }
-            .text-block { order: 1; text-align: center !important; margin-bottom: 30px; width: 100%; }
+            .slide-content-wide { justify-content: flex-start; }
+
+            .text-block { order: 1; margin-bottom: 26px; }
             .visual-block { order: 2; width: 100%; }
-            h1, h2, h3, p { text-align: center !important; margin-left: auto; margin-right: auto; }
-            h1 { font-size: 46px; } h2 { font-size: 32px; } p { font-size: 16px; }
-            .radar-grid { grid-template-columns: 1fr; }
-            .radar-kpis { grid-template-columns: 1fr 1fr 1fr; }
-            .wb-body { grid-template-columns: 1fr; }
-            .wb-divider-line { display: none; }
-            .quick-actions-grid { flex-direction: column !important; align-items: center; max-width: 350px; }
-            .qa-btn { width: 100% !important; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .qa-icon { flex-shrink: 0; }
-            .qa-text { text-align: left; }
+            /* Lo que cuelga del slide sin `order` propio va al final: si no, se sube arriba del título. */
+            .slide-content-wide > *:not(.text-block):not(.visual-block) { order: 3; }
+
+            h1 { font-size: 44px; }
+            h2 { font-size: 30px; }
+            h3 { font-size: 18px; }
+            p, .cover p, .text-block p { font-size: 16px; }
+
+            .three-row, .workbench, .review-split, .buttons { grid-template-columns: 1fr; gap: 14px; }
+            .states, .overall { grid-template-columns: 1fr 1fr; }
+            .comparison-grid.links { grid-template-columns: 1fr 1fr; }
+            .quick-actions-grid { flex-direction: column; align-items: center; max-width: 350px; }
+            .qa-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 15px 20px; }
+            .qa-icon { width: 50px; height: 50px; font-size: 20px; flex-shrink: 0; }
+            .qa-text { text-align: left; font-size: 14px; }
+            .presentation-controls { right: 12px; bottom: 12px; padding: 8px 12px; }
+            .home-link { left: 12px; }
+        }
+        @media (max-width: 600px) {
+            .assets-grid, .social-grid, .comparison-grid, .comparison-grid.links, .states, .overall { grid-template-columns: 1fr; }
+            .area-header { flex-direction: column; align-items: stretch; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .slide, .qa-btn { transition: none; }
+            .qa-btn:hover { transform: none; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la marca</a>
 
     <div class="presentation-controls">
-        <button class="ctrl-btn" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">6</span></span>
-        <button class="ctrl-btn" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- =====================================================
-         SLIDE 1 — INTRO
-    ====================================================== -->
-    <div class="slide active">
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
         <div class="glow-indigo"></div>
-        <div class="slide-content-wide grid-split">
-
-            <div class="text-block">
-                <h3 style="color: #a5b4fc;">Apartado de Marca</h3>
-                <h1>Estándares<br><span style="color: white;">de Marca</span></h1>
-                <p>El nivel estratégico no produce, <strong style="color: white;">define</strong>. Los estándares son las tres piezas de identidad que la marca configura una sola vez y todas las sedes heredan automáticamente.</p>
-                <p>Una sede que hereda es una sede alineada. Una que se desvía aparece en el radar para revisión.</p>
+        <div class="glow-pink"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #818cf8;">Apartado de Marca</h3>
+                <h1><span>Estándares</span></h1>
+                <p>La marca define su logo, su banner y sus redes, y esta pantalla compara contra eso a cada sede. En la misma mesa se revisan las propuestas que las sedes le hacen al catálogo y lo que Google Merchant no puede publicar.</p>
             </div>
 
-            <div class="visual-block glass-panel" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: 380px; text-align: center;">
-                <i class="fas fa-ruler-combined" style="font-size: 72px; color: #a5b4fc;"></i>
-                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                    <span class="pill-tag"><i class="fas fa-image" style="color: #a5b4fc;"></i> Logo oficial</span>
-                    <span class="pill-tag"><i class="fas fa-panorama" style="color: var(--kpi-blue);"></i> Banner de portada</span>
-                    <span class="pill-tag"><i class="fas fa-hashtag" style="color: var(--kpi-purple);"></i> Presencia digital</span>
-                    <span class="pill-tag"><i class="fas fa-check-double" style="color: var(--kpi-green);"></i> Alineación por sede</span>
+            <div class="visual-block three-row">
+                <div class="trait">
+                    <strong><i class="fas fa-paint-brush" style="color:#60a5fa;"></i> La base de la marca</strong>
+                    <span>Logo, banner de portada con su recorte, e Instagram, Facebook, TikTok y sitio web.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fas fa-code-branch" style="color:#f59e0b;"></i> Desviaciones</strong>
+                    <span>Lo que una sede propone cambiar del catálogo, para aprobarlo o rechazarlo acá.</span>
+                </div>
+                <div class="trait">
+                    <strong><i class="fab fa-google" style="color:#34d399;"></i> Merchant</strong>
+                    <span>Los productos que cada sede no puede publicar en Google por falta de foto o de precio.</span>
                 </div>
             </div>
-
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 2 — LAS 3 PIEZAS BASE
-    ====================================================== -->
-    <div class="slide">
-        <div class="glow-purple"></div>
-        <div class="slide-content-wide grid-split">
-
+    <!-- SLIDE 2: LA MESA -->
+    <section class="slide">
+        <div class="glow-indigo" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
             <div class="text-block">
-                <h3 style="color: #a5b4fc;">La Base Que Se Hereda</h3>
-                <h2>Tres Piezas, Una Sola Configuración</h2>
-                <p>La marca no gestiona decenas de ajustes. Son exactamente <strong style="color: white;">tres piezas</strong> de identidad que definen cómo se presenta el negocio en cualquier contexto: digital o físico.</p>
-                <p>Configurás las tres una vez. El sistema hace el resto: controla qué sedes las tienen, cuáles se desviaron y cuáles todavía no las aplicaron.</p>
-
-                <div class="pieces-counter" style="margin-top: 8px;">
-                    <div class="pc-bubble">3</div>
-                    <div class="pc-text">
-                        <strong>Piezas de identidad</strong>
-                        <span>Logo · Banner · Redes — todo desde la marca</span>
-                    </div>
-                </div>
+                <h3 style="color: #60a5fa;">La mesa de comparación</h3>
+                <h2>Arriba la marca, abajo la sede que elegiste</h2>
+                <p>Probalo: elegí una sede a la derecha, cambiá entre Imagen y Redes, y usá los botones de cada tarjeta.</p>
             </div>
 
-            <div class="visual-block" style="width: 100%;">
-                <div class="three-pieces">
-
-                    <div class="piece-row p-logo">
-                        <div class="piece-icon"><i class="fas fa-image"></i></div>
-                        <div class="piece-body">
-                            <strong>Logo oficial</strong>
-                            <p>La imagen principal que identifica la marca. Cada sede debería usarla sin modificaciones.</p>
-                        </div>
-                        <div class="piece-status status-ok"><i class="fas fa-check"></i> Configurado</div>
+            <div class="visual-block workbench demo" data-bench>
+                <main>
+                    <div class="area-header">
+                        <h4 data-title>Imagen - Sede Norte (local)</h4>
+                        <button type="button" class="btn-primary" data-save><i class="fas fa-save"></i> Guardar Cambios</button>
                     </div>
-
-                    <div class="piece-row p-banner">
-                        <div class="piece-icon"><i class="fas fa-panorama"></i></div>
-                        <div class="piece-body">
-                            <strong>Banner de portada</strong>
-                            <p>La imagen principal de los perfiles públicos. Incluye recortes optimizados por dispositivo.</p>
-                        </div>
-                        <div class="piece-status status-ok"><i class="fas fa-check"></i> Configurado</div>
-                    </div>
-
-                    <div class="piece-row p-social">
-                        <div class="piece-icon"><i class="fas fa-hashtag"></i></div>
-                        <div class="piece-body">
-                            <strong>Presencia digital</strong>
-                            <p>Instagram, Facebook, TikTok y sitio web. Los links que todas las sedes deberían compartir.</p>
-                        </div>
-                        <div class="piece-status status-warn"><i class="fas fa-exclamation"></i> Incompleto</div>
-                    </div>
-
-                </div>
+                    <section class="glass">
+                        <div data-brand></div>
+                        <div class="divider"></div>
+                        <div class="section-title"><span data-branch-name>Sede Norte</span><h5><i class="fas fa-list-check" style="color:#94a3b8;"></i> <span data-filter-name>Imagen</span></h5></div>
+                        <div data-compare></div>
+                        <div class="toast-line" data-toast></div>
+                    </section>
+                </main>
+                <aside class="side">
+                    <section class="glass widget">
+                        <h6><i class="fas fa-layer-group"></i> Revisión</h6>
+                        <div class="review-tabs" data-tabs></div>
+                    </section>
+                    <section class="glass widget">
+                        <h6><i class="fas fa-sitemap"></i> Estado de Sedes</h6>
+                        <div class="branch-list" data-branches></div>
+                    </section>
+                </aside>
             </div>
-
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 3 — HERENCIA VS DESVÍO
-    ====================================================== -->
-    <div class="slide">
-        <div class="glow-blue"></div>
-        <div class="slide-content-wide grid-split">
-
-            <div class="text-block">
-                <h3 style="color: var(--kpi-blue);">Cómo Funciona la Propagación</h3>
-                <h2>Hereda, Diverge o Falta</h2>
-                <p>Una vez configurado el estándar en la marca, el sistema compara cada sede contra esa base. El resultado es uno de tres estados: <strong style="color: #6ee7b7;">Hereda</strong> (idéntica a la marca), <strong style="color: #93c5fd;">Propio</strong> (tiene algo diferente) o <strong style="color: #fca5a5;">Falta</strong> (no tiene nada).</p>
-                <p>No hay penalización por tener algo propio. Sí hay visibilidad total sobre quién se salió del estándar y quién todavía no lo aplicó.</p>
-            </div>
-
-            <div class="visual-block" style="width: 100%;">
-                <div class="inheritance-diagram">
-
-                    <div class="id-brand">
-                        <div class="idb-icon"><i class="fas fa-crown"></i></div>
-                        <div class="idb-label">Marca — Estándares definidos</div>
-                        <div class="idb-badge">BASE</div>
-                    </div>
-
-                    <div style="display: flex; gap: 0; padding-left: 22px;">
-                        <div style="width: 2px; background: rgba(255,255,255,0.07); margin: 0 10px;"></div>
-                        <div class="id-branches" style="flex: 1;">
-
-                            <div class="id-branch b-aligned">
-                                <div class="ib-icon"><i class="fas fa-store"></i></div>
-                                <div class="ib-name">Sucursal Centro</div>
-                                <div class="ib-dots">
-                                    <div class="std-dot aligned" title="Logo"><i class="fas fa-check"></i></div>
-                                    <div class="std-dot aligned" title="Banner"><i class="fas fa-check"></i></div>
-                                    <div class="std-dot aligned" title="Redes"><i class="fas fa-check"></i></div>
-                                </div>
-                                <div class="piece-status status-ok" style="margin: 0; font-size: 10px; padding: 3px 8px;">Hereda</div>
-                            </div>
-
-                            <div class="id-branch b-custom">
-                                <div class="ib-icon"><i class="fas fa-store"></i></div>
-                                <div class="ib-name">Sucursal Norte</div>
-                                <div class="ib-dots">
-                                    <div class="std-dot aligned" title="Logo"><i class="fas fa-check"></i></div>
-                                    <div class="std-dot custom" title="Banner propio"><i class="fas fa-pen"></i></div>
-                                    <div class="std-dot aligned" title="Redes"><i class="fas fa-check"></i></div>
-                                </div>
-                                <div class="piece-status" style="margin: 0; font-size: 10px; padding: 3px 8px; background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3);">Propio</div>
-                            </div>
-
-                            <div class="id-branch b-missing">
-                                <div class="ib-icon"><i class="fas fa-store"></i></div>
-                                <div class="ib-name">Sucursal Nueva</div>
-                                <div class="ib-dots">
-                                    <div class="std-dot missing" title="Logo falta"><i class="fas fa-xmark"></i></div>
-                                    <div class="std-dot missing" title="Banner falta"><i class="fas fa-xmark"></i></div>
-                                    <div class="std-dot missing" title="Redes falta"><i class="fas fa-xmark"></i></div>
-                                </div>
-                                <div class="piece-status status-missing" style="margin: 0; font-size: 10px; padding: 3px 8px;">Falta</div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="legend-row" style="margin-top: 14px;">
-                    <div class="legend-item"><div class="legend-dot" style="background: #6ee7b7;"></div> Hereda el estándar</div>
-                    <div class="legend-item"><div class="legend-dot" style="background: #93c5fd;"></div> Valor propio distinto</div>
-                    <div class="legend-item"><div class="legend-dot" style="background: #fca5a5;"></div> No tiene nada</div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- =====================================================
-         SLIDE 4 — EL WORKBENCH DE COMPARACIÓN
-    ====================================================== -->
-    <div class="slide">
-        <div class="glow-indigo"></div>
-        <div class="slide-content-wide grid-split">
-
-            <div class="text-block">
-                <h3 style="color: #a5b4fc;">La Pantalla de Trabajo</h3>
-                <h2>Comparar Marca vs Sede</h2>
-                <p>El workbench muestra en paralelo lo que tiene la marca y lo que tiene la sede seleccionada. Si hay diferencia, aparecen tres acciones: <strong style="color: #93c5fd;">Aplicar a marca</strong> (adoptar lo de la sede), <strong style="color: #fcd34d;">Permitir sede</strong> (aceptar que tenga algo propio) o <strong style="color: #fca5a5;">Descartar</strong> (forzar el estándar).</p>
-                <p>Tres decisiones. Vos elegís cuál aplica a cada caso.</p>
-            </div>
-
-            <div class="visual-block" style="width: 100%;">
-                <div class="workbench-mock">
-                    <div class="wb-topbar">
-                        <div class="wb-title"><i class="fas fa-code-compare" style="margin-right: 8px; color: #a5b4fc;"></i>Imagen — Sucursal Norte (local)</div>
-                        <div class="wb-filter-tabs">
-                            <div class="wb-tab active">Imagen</div>
-                            <div class="wb-tab">Redes</div>
-                            <div class="wb-tab">Desvíos</div>
-                            <div class="wb-tab">Alineadas</div>
-                        </div>
-                    </div>
-                    <div class="wb-body">
-                        <div class="wb-col">
-                            <div class="wb-col-label brand-label">Marca — Estándar activo</div>
-                            <div class="wb-status-chip wbs-aligned"><i class="fas fa-crown"></i> Base oficial</div>
-                            <div class="wb-asset-box logo-box">
-                                <div class="fake-logo">BRAND</div>
-                            </div>
-                            <div class="wb-asset-box banner-box">
-                                <div class="fake-banner">Banner oficial · 1200×400</div>
-                            </div>
-                        </div>
-                        <div class="wb-divider-line"></div>
-                        <div class="wb-col">
-                            <div class="wb-col-label branch-label">Sucursal Norte — Lo que tiene</div>
-                            <div class="wb-status-chip wbs-custom"><i class="fas fa-pen"></i> Banner propio</div>
-                            <div class="wb-asset-box logo-box">
-                                <div class="fake-logo">BRAND</div>
-                            </div>
-                            <div class="wb-asset-box banner-box">
-                                <div class="fake-banner fake-banner-custom">Banner local · temporada</div>
-                            </div>
-                            <div class="wb-action-strip">
-                                <div class="wb-btn approve">Aplicar a marca</div>
-                                <div class="wb-btn allow">Permitir sede</div>
-                                <div class="wb-btn reject">Descartar</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- =====================================================
-         SLIDE 5 — EL RADAR DE SEÑALES
-    ====================================================== -->
-    <div class="slide">
+    <!-- SLIDE 3: ESTADOS Y BOTONES -->
+    <section class="slide">
         <div class="glow-green"></div>
         <div class="slide-content-wide">
-
-            <div class="text-block" style="text-align: center; margin-bottom: 32px; max-width: 900px; margin-left: auto; margin-right: auto;">
-                <h3 style="color: var(--kpi-green);">El Panel de Revisión</h3>
-                <h2>El Radar Ve Todo lo que Falta</h2>
-                <p>Sin tener que revisar sede por sede, el panel de revisión agrupa todas las señales: estándares faltantes, desvíos de identidad y problemas de catálogo que afectan a Google Merchant.</p>
-            </div>
-
-            <div class="visual-block" style="max-width: 1100px; margin: 0 auto; width: 100%;">
-                <div class="radar-kpis">
-                    <div class="rk-card rk-ok">
-                        <div class="rk-val">2</div>
-                        <div class="rk-lbl">Piezas listas</div>
-                    </div>
-                    <div class="rk-card rk-warn">
-                        <div class="rk-val">1</div>
-                        <div class="rk-lbl">Sede con propio</div>
-                    </div>
-                    <div class="rk-card rk-danger">
-                        <div class="rk-val">3</div>
-                        <div class="rk-lbl">Sedes sin aplicar</div>
-                    </div>
-                </div>
-
-                <div class="radar-grid">
-
-                    <div class="radar-card rc-danger">
-                        <div class="rc-icon"><i class="fas fa-image"></i></div>
-                        <div class="rc-body">
-                            <strong>Logo sin aplicar</strong>
-                            <p>La sede todavía no tiene logo alineado con la marca.</p>
-                            <div class="rc-sede-tag">Sucursal Nueva</div>
-                        </div>
-                    </div>
-
-                    <div class="radar-card rc-warn">
-                        <div class="rc-icon"><i class="fas fa-panorama"></i></div>
-                        <div class="rc-body">
-                            <strong>Banner modificado</strong>
-                            <p>La sede usa un banner propio distinto al estándar de marca.</p>
-                            <div class="rc-sede-tag">Sucursal Norte</div>
-                        </div>
-                    </div>
-
-                    <div class="radar-card rc-danger">
-                        <div class="rc-icon"><i class="fab fa-google"></i></div>
-                        <div class="rc-body">
-                            <strong>Productos sin imagen</strong>
-                            <p>3 productos físicos del catálogo compartido no tienen imagen para Google Merchant.</p>
-                            <div class="rc-sede-tag">Sucursal Centro</div>
-                        </div>
-                    </div>
-
-                    <div class="radar-card rc-ok">
-                        <div class="rc-icon"><i class="fas fa-check-double"></i></div>
-                        <div class="rc-body">
-                            <strong>Sucursal Centro alineada</strong>
-                            <p>Aplica los tres estándares activos de la marca. Sin desvíos reportados.</p>
-                            <div class="rc-sede-tag">Sucursal Centro</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- =====================================================
-         SLIDE 6 — NAVEGACIÓN
-    ====================================================== -->
-    <div class="slide">
-        <div class="glow-indigo" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
-        <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
-
             <div class="text-block">
-                <h3 style="color: #a5b4fc;">Seguir Explorando</h3>
-                <h2>¿Qué vemos ahora?</h2>
-                <p style="max-width: 880px; margin: 0 auto;">Ya entendés cómo se definen los estándares, cómo se heredan y cómo se detectan los desvíos. ¿Continuamos con los mensajes que acompañan a esa identidad?</p>
+                <h3 style="color: var(--kpi-green);">Cómo se lee</h3>
+                <h2>Cuatro estados por valor, tres decisiones por tarjeta</h2>
             </div>
 
-            <div class="visual-block quick-actions-grid" style="margin: 40px auto 0 auto;">
+            <div class="visual-block">
+                <div class="states">
+                    <div class="state-card" style="border-color: rgba(52,211,153,0.28);"><span class="lbl" style="color:#34d399;"><span class="dot bg-success"></span> Hereda</span><span>La sede tiene el mismo valor que la marca.</span></div>
+                    <div class="state-card" style="border-color: rgba(96,165,250,0.3);"><span class="lbl" style="color:#60a5fa;"><span class="dot bg-info"></span> Propio</span><span>La sede tiene un valor suyo, distinto del de la marca.</span></div>
+                    <div class="state-card" style="border-color: rgba(248,113,113,0.35);"><span class="lbl" style="color:#f87171;"><span class="dot bg-danger"></span> Falta</span><span>La marca lo tiene definido y la sede no tiene nada cargado.</span></div>
+                    <div class="state-card"><span class="lbl" style="color:#94a3b8;"><span class="dot bg-muted"></span> No aplica</span><span>La marca no definió ese valor, así que no hay contra qué comparar.</span></div>
+                </div>
 
-                <a href="index.html" class="qa-btn indigo" style="border-color: rgba(79,70,229,0.4);">
-                    <div class="qa-icon" style="color: #a5b4fc;"><i class="fas fa-map"></i></div>
-                    <div class="qa-text" style="color: white;">Índice<br>de Marca</div>
-                </a>
+                <div class="buttons">
+                    <div class="btn-card"><span class="btn-mini btn-approve">Aplicar a marca</span><strong>Lo de la sede pasa a ser la base</strong><span>Copia el valor de la sede a la marca. Queda pendiente hasta que se toca "Guardar Cambios", y desde ahí las demás sedes se comparan contra el nuevo valor.</span></div>
+                    <div class="btn-card"><span class="btn-mini btn-allow">Permitir sede</span><strong>La sede se queda con lo suyo</strong><span>No cambia nada: confirma que la sede conserva su valor propio. La tarjeta sigue figurando como "Propio".</span></div>
+                    <div class="btn-card"><span class="btn-mini btn-reject">Descartar</span><strong>La sede vuelve a la base</strong><span>Escribe el valor de la marca en la sede en ese momento, sin esperar al guardado. La tarjeta pasa a "Hereda".</span></div>
+                </div>
 
-                <a href="brand_Mensajes.html" class="qa-btn pink">
-                    <div class="qa-icon"><i class="fas fa-comment-dots"></i></div>
-                    <div class="qa-text" style="color: white;">Mensajes<br>Clave</div>
-                </a>
+                <div class="overall">
+                    <div class="ov"><b>Aplicando la base</b>todo lo que la marca definió, la sede lo tiene igual.</div>
+                    <div class="ov"><b>Identidad propia</b>no le falta nada, pero algo es distinto.</div>
+                    <div class="ov"><b>Pendiente</b>le falta al menos un valor de los que la marca definió.</div>
+                    <div class="ov"><b>Sin base</b>la marca todavía no definió nada.</div>
+                </div>
+            </div>
 
-                <a href="brand_Red.html" class="qa-btn blue">
-                    <div class="qa-icon"><i class="fas fa-network-wired"></i></div>
-                    <div class="qa-text" style="color: white;">Red</div>
-                </a>
-
-                <a href="brand_Catalogo.html" class="qa-btn cyan">
-                    <div class="qa-icon"><i class="fas fa-layer-group"></i></div>
-                    <div class="qa-text" style="color: white;">Catálogo<br>Maestro</div>
-                </a>
-
-                <a href="brand_Talento.html" class="qa-btn purple">
-                    <div class="qa-icon"><i class="fas fa-users"></i></div>
-                    <div class="qa-text" style="color: white;">Talento</div>
-                </a>
-
+            <div class="note warn" style="margin-top: 14px;">
+                <i class="fas fa-circle-info"></i>
+                <span>La comparación es <b>contra lo que está guardado en la sede</b>. Que la marca defina un logo no se lo pone a ninguna sede: para eso está "Descartar", sede por sede y valor por valor.</span>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- SLIDE 4: DESVIACIONES -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Desviaciones</h3>
+                <h2>Lo que las sedes le proponen al catálogo, en un solo lugar</h2>
+                <p>Cuando una sede con permiso "con aprobación" toca un producto, la propuesta llega acá. Aprobarla la escribe en el catálogo de la marca tal como vino.</p>
+            </div>
+
+            <div class="visual-block review-split">
+                <div class="review-list">
+                    <article class="review-item review-amber">
+                        <span class="review-icon"><i class="fas fa-inbox"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Norte</span><span>Desviacion</span></div>
+                            <strong>Propuesta: Vela de soja 200 g</strong>
+                            <p>Sede Norte propone cambiar imagen, nombre.</p>
+                            <div class="request-image"><i class="fas fa-fire-flame-curved"></i></div>
+                            <div class="review-actions"><span class="btn-mini btn-approve static">Aprobar</span><span class="btn-mini btn-reject static">Rechazar</span></div>
+                        </div>
+                    </article>
+                    <article class="review-item review-amber">
+                        <span class="review-icon"><i class="fas fa-inbox"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Sur</span><span>Desviacion</span></div>
+                            <strong>Retomar: Difusor bambú 120 ml</strong>
+                            <p>Sede Sur solicita retomar este producto. Al aprobar, se reactiva en el catálogo de la marca.</p>
+                            <div class="review-actions"><span class="btn-mini btn-approve static">Aprobar</span><span class="btn-mini btn-reject static">Rechazar</span></div>
+                        </div>
+                    </article>
+                    <article class="review-item review-amber">
+                        <span class="review-icon"><i class="fas fa-compress-arrows-alt"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Centro</span><span>Desviacion</span></div>
+                            <strong>Propuesta de unificacion</strong>
+                            <p>Sede Centro solicita unificar VELA-SOJA-200B en VELA-SOJA-200.</p>
+                            <div class="review-actions"><span class="btn-mini btn-approve static">Aprobar</span><span class="btn-mini btn-reject static">Rechazar</span></div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="stack">
+                    <div class="note">
+                        <i class="fas fa-list"></i>
+                        <span>Son <b>tres tipos</b>: una propuesta de cambio (foto, nombre, SKU o precio), un pedido para retomar un producto que la marca apagó, y la unificación de dos productos que son el mismo.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-power-off"></i>
+                        <span>Aprobar un <b>"Retomar"</b> prende el producto en la marca, o sea en toda la red, no solo en la sede que lo pidió.</span>
+                    </div>
+                    <div class="note purple">
+                        <i class="fas fa-bell"></i>
+                        <span>Mientras haya propuestas pendientes, el Resumen Global las cuenta como <b>desvíos de catálogo</b> y su aviso trae hasta esta pantalla.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: MERCHANT -->
+    <section class="slide">
+        <div class="glow-green" style="left: -10vw; right: auto;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #34d399;">Merchant</h3>
+                <h2>Lo que Google no puede publicar, sede por sede</h2>
+                <p>Para cada sede se revisa si su catálogo está listo para Google Merchant. Cada aviso nombra los productos y lleva a donde se arregla.</p>
+            </div>
+
+            <div class="visual-block review-split">
+                <div class="review-list">
+                    <article class="review-item review-danger">
+                        <span class="review-icon"><i class="fas fa-tags"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Norte</span><span>Merchant</span></div>
+                            <strong>Falta precio en 2 producto(s)</strong>
+                            <p>Difusor bambú 120 ml, Set de velas mini.</p>
+                            <span class="review-action-link">Completar precios <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </article>
+                    <article class="review-item review-warning">
+                        <span class="review-icon"><i class="fab fa-google"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Norte</span><span>Merchant</span></div>
+                            <strong>Falta imagen en 5 producto(s)</strong>
+                            <p>Vela de soja 200 g, Vela de soja 400 g, Aceite esencial lavanda y 2 mas.</p>
+                            <span class="review-action-link">Revisar catalogo <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </article>
+                    <article class="review-item review-info">
+                        <span class="review-icon"><i class="fas fa-list-check"></i></span>
+                        <div class="review-copy">
+                            <div class="review-meta"><span>Sede Sur</span><span>Merchant</span></div>
+                            <strong>Revision Merchant</strong>
+                            <p>Sede Sur: Falta telefono de contacto</p>
+                            <span class="review-action-link">Abrir Merchant <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="stack">
+                    <div class="note">
+                        <i class="fas fa-route"></i>
+                        <span>Cada aviso <b>lleva a la sede</b>: los de foto y precio, a su catálogo; los demás —dirección, teléfono, descripción o identidad visual de la tienda—, a la solapa Merchant de sus ajustes.</span>
+                    </div>
+                    <div class="note warn">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Como el catálogo es uno solo, <b>una foto que falta en la marca falta en todas las sedes</b>. El precio puede variar de una sede a otra, porque cada una puede tener su propia escala.</span>
+                    </div>
+                    <div class="note ok">
+                        <i class="fas fa-check-double"></i>
+                        <span>La solapa <b>Alineadas</b> lista las sedes que aplican toda la base de identidad, con un acceso a sus ajustes.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-indigo" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #818cf8;">Seguir explorando</h3>
+                <h2>De cómo se ve la red a lo que vende</h2>
+                <p>¿Seguimos por el catálogo que reciben esas propuestas o por quién decide qué puede editar cada sede?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la marca</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-layer-group"></i></div>
+                    <div class="qa-text">Catálogo<br>Maestro</div>
+                </a>
+                <a href="red.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-network-wired"></i></div>
+                    <div class="qa-text">Red</div>
+                </a>
+            </div>
+        </div>
+    </section>
 
     <script>
-        const pageId = 'brand_estandares';
-        let currentIndex = parseInt(localStorage.getItem('slide_' + pageId)) || 0;
-        const slides = document.querySelectorAll('.slide');
-        const btnPrev = document.getElementById('btnPrev');
-        const btnNext = document.getElementById('btnNext');
-        const currentSlideNum = document.getElementById('currentSlideNum');
-        const totalSlidesDisplay = document.getElementById('totalSlides');
+        // La mesa: mismas reglas que Standards.vue para comparar, contar y decidir.
+        (() => {
+            const root = document.querySelector('[data-bench]');
+            if (!root) return;
+            const $ = s => root.querySelector(s);
+            const SOCIAL_KEYS = ['instagram', 'facebook', 'tiktok', 'website'];
+            const SOCIAL_LABEL = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'Tiktok', website: 'Sitio web' };
+            const SOCIAL_ICON = { instagram: 'fab fa-instagram', facebook: 'fab fa-facebook', tiktok: 'fab fa-tiktok', website: 'fas fa-globe' };
+            // Los "valores" de logo y banner son claves de un dibujo, en lugar de URLs.
+            const ART = {
+                logoBrand: ['#f5d0a9', '#7c2d12', 'AURORA'],
+                logoSur: ['#1e3a8a', '#bfdbfe', 'SUR'],
+                bannerBrand: 'linear-gradient(120deg, #7c2d12, #f59e0b)',
+                bannerNorte: 'linear-gradient(120deg, #14532d, #4ade80)',
+            };
+            const brand = {
+                logo: 'logoBrand', banner: 'bannerBrand',
+                social: { instagram: 'instagram.com/aurora.velas', facebook: 'facebook.com/auroravelas', tiktok: '', website: 'auroravelas.com' },
+            };
+            const branches = [
+                { id: 1, name: 'Sede Centro', logo: 'logoBrand', banner: 'bannerBrand', social: { instagram: 'instagram.com/aurora.velas', facebook: 'facebook.com/auroravelas', tiktok: '', website: 'auroravelas.com' } },
+                { id: 2, name: 'Sede Norte', logo: 'logoBrand', banner: 'bannerNorte', social: { instagram: '', facebook: '', tiktok: '', website: '' } },
+                { id: 3, name: 'Sede Sur', logo: 'logoSur', banner: 'bannerBrand', social: { instagram: 'instagram.com/aurora.sur', facebook: 'facebook.com/auroravelas', tiktok: '', website: 'auroravelas.com' } },
+            ];
+            const DEVIATIONS = 3;
+            const MERCHANT = 3;
+            let filter = 'image';
+            let selectedId = 2;
+            let dirty = false;
+            let toast = { text: '', tone: '' };
 
-        function updateSlides() {
-            if (totalSlidesDisplay) totalSlidesDisplay.innerText = slides.length;
-            slides.forEach((s, i) => s.classList.toggle('active', i === currentIndex));
-            currentSlideNum.innerText = currentIndex + 1;
-            localStorage.setItem('slide_' + pageId, currentIndex);
-            setTimeout(() => window.scrollTo(0, 0), 50);
-        }
-        function nextSlide() {
-            if (currentIndex < slides.length - 1) { currentIndex++; updateSlides(); }
-            else { localStorage.setItem('slide_' + pageId, 0); window.location.href = 'index.html'; }
-        }
-        function prevSlide() {
-            if (currentIndex > 0) { currentIndex--; updateSlides(); }
-        }
+            const LABEL = { aligned: 'Hereda', custom: 'Propio', missing: 'Falta', neutral: 'No aplica', pending: 'Pendiente' };
+            const TONE = { aligned: 'success', custom: 'info', missing: 'danger', neutral: 'muted', pending: 'danger' };
+            const OVERALL = { aligned: 'Aplicando la base', custom: 'Identidad propia', pending: 'Pendiente', neutral: 'Sin base' };
+            const norm = v => String(v || '').trim().replace(/\/+$/, '').toLowerCase();
+            const brandLinks = () => SOCIAL_KEYS.map(k => brand.social[k]).filter(Boolean);
+            const assetStatus = (b, key) => !brand[key] ? 'neutral' : !b[key] ? 'missing' : norm(b[key]) === norm(brand[key]) ? 'aligned' : 'custom';
+            const socialStatus = b => {
+                const bl = brandLinks().map(norm);
+                if (!bl.length) return 'neutral';
+                const own = SOCIAL_KEYS.map(k => b.social[k]).filter(Boolean).map(norm);
+                if (!own.length) return 'missing';
+                return own.length === bl.length && bl.every(l => own.includes(l)) ? 'aligned' : 'custom';
+            };
+            const statusOf = b => {
+                const s = { logo: assetStatus(b, 'logo'), banner: assetStatus(b, 'banner'), socials: socialStatus(b) };
+                const list = Object.values(s).filter(x => x !== 'neutral');
+                s.overall = !list.length ? 'neutral' : list.includes('missing') ? 'pending' : list.every(x => x === 'aligned') ? 'aligned' : 'custom';
+                return s;
+            };
+            const logoArt = key => { const [bg, fg, txt] = ART[key]; return `<span class="logo-art" style="background:${bg};color:${fg};">${txt}</span>`; };
+            const bannerArt = key => `<span class="banner-art" style="background:${ART[key]};">${key === 'bannerBrand' ? 'Velas de autor' : 'Norte · Nuevo local'}</span>`;
 
-        btnNext.addEventListener('click', nextSlide);
-        btnPrev.addEventListener('click', prevSlide);
-
-        const pressedKeys = new Set();
-        document.addEventListener('keydown', (e) => {
-            const isTyping = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
-            pressedKeys.add(e.key.toLowerCase());
-            if (!isTyping) {
-                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
-                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+            function drawBrand() {
+                if (filter === 'image') {
+                    $('[data-brand]').innerHTML = `
+                        <div class="section-title"><span>Marca</span><h5 style="color:#60a5fa;"><i class="fas fa-paint-brush"></i> Identidad visual</h5></div>
+                        <div class="assets-grid">
+                            <div class="asset-block"><label>Logo oficial</label><div class="asset-box">${logoArt(brand.logo)}<span class="asset-actions"><span class="icon-btn blue"><i class="fas fa-pen"></i></span><span class="icon-btn red"><i class="fas fa-trash"></i></span></span></div></div>
+                            <div class="asset-block"><label>Banner de portada</label><div class="asset-box">${bannerArt(brand.banner)}<span class="asset-actions"><span class="icon-btn purple"><i class="fas fa-crop-alt"></i></span><span class="icon-btn blue"><i class="fas fa-image"></i></span><span class="icon-btn red"><i class="fas fa-trash"></i></span></span></div></div>
+                        </div>`;
+                } else {
+                    $('[data-brand]').innerHTML = `
+                        <div class="section-title"><span>Marca</span><h5 style="color:#c084fc;"><i class="fas fa-hashtag"></i> Redes</h5></div>
+                        <div class="social-grid">${SOCIAL_KEYS.map(k => `<div><label><i class="${SOCIAL_ICON[k]}"></i> ${k === 'website' ? 'Sitio Web' : SOCIAL_LABEL[k].replace('Tiktok', 'TikTok')}</label><div class="form-input ${brand.social[k] ? '' : 'empty'}">${brand.social[k] || 'https://…'}</div></div>`).join('')}</div>`;
+                }
             }
-        });
-        document.addEventListener('keyup', (e) => pressedKeys.delete(e.key.toLowerCase()));
-        window.addEventListener('blur', () => pressedKeys.clear());
+            function compareItems(b) {
+                if (filter === 'image') {
+                    const s = statusOf(b);
+                    return [
+                        { key: 'logo', label: 'Logo oficial', status: s.logo, value: b.logo, render: b.logo ? logoArt(b.logo) : '<span>Sin logo</span>', type: 'image' },
+                        { key: 'banner', label: 'Banner de portada', status: s.banner, value: b.banner, render: b.banner ? bannerArt(b.banner) : '<span>Sin banner</span>', type: 'image' },
+                    ];
+                }
+                return SOCIAL_KEYS.map(k => {
+                    const bv = brand.social[k]; const sv = b.social[k];
+                    const status = !bv ? 'neutral' : !sv ? 'missing' : norm(bv) === norm(sv) ? 'aligned' : 'custom';
+                    return { key: k, label: SOCIAL_LABEL[k], status, value: sv, render: `<span>${sv || 'Sin enlace'}</span>`, type: 'link' };
+                });
+            }
+            function draw() {
+                const b = branches.find(x => x.id === selectedId);
+                const filterName = filter === 'image' ? 'Imagen' : 'Redes';
+                $('[data-title]').textContent = `${filterName} - ${b.name} (local)`;
+                $('[data-branch-name]').textContent = b.name;
+                $('[data-filter-name]').textContent = filterName;
+                $('[data-save]').innerHTML = `<i class="fas fa-save"></i> Guardar Cambios${dirty ? '<span class="dirty" title="Hay cambios sin guardar"></span>' : ''}`;
+                drawBrand();
+                const items = compareItems(b);
+                $('[data-compare]').innerHTML = `<div class="comparison-grid ${filter === 'image' ? '' : 'links'}">${items.map(it => `
+                    <article class="comparison-card comparison-${TONE[it.status]}">
+                        <div class="comparison-head"><div><span>${LABEL[it.status]}</span><strong>${it.label}</strong></div><i class="fas ${it.type === 'image' ? 'fa-image' : 'fa-link'}"></i></div>
+                        <div class="comparison-value">${it.render}</div>
+                        <div class="comparison-actions">
+                            <button type="button" class="btn-mini btn-approve" data-act="apply" data-key="${it.key}">Aplicar a marca</button>
+                            <button type="button" class="btn-mini btn-allow" data-act="allow" data-key="${it.key}">Permitir sede</button>
+                            <button type="button" class="btn-mini btn-reject" data-act="discard" data-key="${it.key}">Descartar</button>
+                        </div>
+                    </article>`).join('')}</div>`;
+                const toastEl = $('[data-toast]');
+                toastEl.className = `toast-line ${toast.tone}`;
+                toastEl.textContent = toast.text;
 
-        updateSlides();
+                const decorated = branches.map(x => ({ ...x, s: statusOf(x) }));
+                const countIssues = group => decorated.reduce((n, x) => n + (group === 'image'
+                    ? ['logo', 'banner'].filter(k => ['missing', 'custom'].includes(x.s[k])).length
+                    : (['missing', 'custom'].includes(x.s.socials) ? 1 : 0)), 0);
+                const tabs = [
+                    { key: 'image', label: 'Imagen', icon: 'fas fa-image', count: countIssues('image') },
+                    { key: 'socials', label: 'Redes', icon: 'fas fa-hashtag', count: countIssues('socials') },
+                    { key: 'deviations', label: 'Desviaciones', icon: 'fas fa-code-branch', count: DEVIATIONS, static: true },
+                    { key: 'merchant', label: 'Merchant', icon: 'fab fa-google', count: MERCHANT, static: true },
+                    { key: 'aligned', label: 'Alineadas', icon: 'fas fa-check-double', count: decorated.filter(x => x.s.overall === 'aligned').length, static: true },
+                ];
+                $('[data-tabs]').innerHTML = tabs.map(t => `<button type="button" class="filter-item ${t.key === filter ? 'active' : ''} ${t.static ? 'static' : ''}" ${t.static ? 'title="Se ve en las diapositivas siguientes"' : `data-tab="${t.key}"`} aria-pressed="${t.key === filter}"><span><i class="${t.icon}"></i> ${t.label}</span><strong>${t.count}</strong></button>`).join('');
+                $('[data-branches]').innerHTML = decorated.map(x => `<button type="button" class="branch-item ${x.id === selectedId ? 'active' : ''}" data-branch="${x.id}">
+                    <span><strong>${x.name} (local)</strong><span>${OVERALL[x.s.overall]}</span></span>
+                    <span class="dots"><span class="dot bg-${TONE[x.s.logo]}" title="Logo: ${LABEL[x.s.logo]}"></span><span class="dot bg-${TONE[x.s.banner]}" title="Banner: ${LABEL[x.s.banner]}"></span><span class="dot bg-${TONE[x.s.socials]}" title="Redes: ${LABEL[x.s.socials]}"></span></span>
+                </button>`).join('');
+            }
+            root.addEventListener('click', e => {
+                const tab = e.target.closest('[data-tab]');
+                const br = e.target.closest('[data-branch]');
+                const act = e.target.closest('[data-act]');
+                const save = e.target.closest('[data-save]');
+                if (tab) { filter = tab.dataset.tab; toast = { text: '', tone: '' }; }
+                if (br) { selectedId = Number(br.dataset.branch); toast = { text: '', tone: '' }; }
+                if (save) { dirty = false; toast = { text: 'Estándares guardados correctamente.', tone: '' }; }
+                if (act) {
+                    const b = branches.find(x => x.id === selectedId);
+                    const key = act.dataset.key;
+                    const isSocial = SOCIAL_KEYS.includes(key);
+                    const label = { logo: 'logo oficial', banner: 'banner de portada' }[key] || SOCIAL_LABEL[key].toLowerCase();
+                    const value = isSocial ? b.social[key] : b[key];
+                    if (act.dataset.act === 'apply') {
+                        if (!value) toast = { text: 'La sede no tiene un valor para adoptar.', tone: 'info' };
+                        else {
+                            if (isSocial) brand.social[key] = value; else brand[key] = value;
+                            dirty = true;
+                            toast = { text: 'Copiado a la marca. Guardá cambios para publicarlo.', tone: '' };
+                        }
+                    } else if (act.dataset.act === 'allow') {
+                        toast = { text: `${b.name} conserva su ${label} propio.`, tone: 'info' };
+                    } else {
+                        if (isSocial) b.social[key] = brand.social[key] || ''; else b[key] = brand[key] || '';
+                        toast = { text: 'Cambio descartado en la sede.', tone: '' };
+                    }
+                }
+                if (tab || br || act || save) draw();
+            });
+            draw();
+        })();
+
+        // Navegación entre diapositivas.
+        (() => {
+            const slides = [...document.querySelectorAll('.slide')];
+            const key = 'marca_20261005_slide_estandares';
+            const prev = document.getElementById('btnPrev');
+            const next = document.getElementById('btnNext');
+            const counter = document.getElementById('slideCounter');
+            let index = 0;
+            try { index = Math.max(0, Math.min(slides.length - 1, Number(localStorage.getItem(key)) || 0)); } catch {}
+
+            function render() {
+                slides.forEach((slide, i) => { slide.classList.toggle('active', i === index); slide.inert = i !== index; });
+                prev.disabled = index === 0;
+                next.setAttribute('aria-label', index === slides.length - 1 ? 'Volver al mapa' : 'Diapositiva siguiente');
+                counter.textContent = `${index + 1} / ${slides.length}`;
+                try { localStorage.setItem(key, String(index)); } catch {}
+                window.scrollTo(0, 0);
+            }
+            function move(delta) {
+                if (index + delta >= slides.length) {
+                    try { localStorage.removeItem(key); } catch {}
+                    location.href = 'index.html';
+                    return;
+                }
+                index = Math.max(0, index + delta);
+                render();
+            }
+
+            prev.addEventListener('click', () => move(-1));
+            next.addEventListener('click', () => move(1));
+            document.addEventListener('keydown', event => {
+                if (event.ctrlKey || event.metaKey || event.altKey) return;
+                if (event.target.closest('input,textarea,select,button,a,label,[contenteditable]')) return;
+                if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); move(1); }
+                else if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
+            });
+            render();
+        })();
     </script>
-
 </body>
 </html>
