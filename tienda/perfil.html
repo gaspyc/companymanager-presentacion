@@ -3,622 +3,391 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil del Local — Tienda Online</title>
+    <title>Perfil del Local</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link rel="stylesheet" href="presentacion.css">
     <style>
-        :root {
-            --bg:     #0f172a;
-            --panel:  rgba(15,23,42,0.65);
-            --muted:  #94a3b8;
-            --border: rgba(255,255,255,0.06);
-            --green:  #10b981;
-            --blue:   #3b82f6;
-            --purple: #a855f7;
-            --orange: #f59e0b;
-            --red:    #ef4444;
-            --pink:   #ec4899;
-            --wa:     #25d366;
-        }
+        /* Calcado de StoreProfile.vue */
+        .profile-mock { background: #f8fafc; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,.4); text-align: left; color: #0f172a; }
+        .banner { height: 120px; position: relative; background: linear-gradient(120deg, #78350f, #d97706 55%, #fde68a); }
+        .banner-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+        .banner-btn { width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(15,23,42,.55); color: white; display: grid; place-items: center; font-size: 12px; }
+        .profile-card { margin: -38px 14px 14px; position: relative; background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 14px; }
+        .left { display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
+        .logo { width: 64px; height: 64px; border-radius: 16px; background: #fef3c7; color: #b45309; display: grid; place-items: center; font-weight: 900; font-size: 22px; flex-shrink: 0; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+        .store-title { font-size: 19px; font-weight: 900; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; }
+        .verified { color: #3b82f6; font-size: 15px; }
+        .branch-name { color: #64748b; font-weight: 700; font-size: 16px; }
+        .location-link { font-size: 12.5px; color: #10b981; font-weight: 700; display: inline-flex; gap: 5px; margin: 3px 0; }
+        .store-description { font-size: 12.5px; color: #475569; line-height: 1.45; margin: 0; }
+        .store-description.is-collapsed { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .description-toggle { border: 0; background: none; color: #10b981; font: 800 12px Urbanist, sans-serif; padding: 0; cursor: pointer; }
+        .right { display: flex; flex-direction: column; gap: 8px; }
+        .schedule-wrapper { position: relative; }
+        .schedule-summary { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; background: #f1f5f9; font-size: 12.5px; font-weight: 800; cursor: pointer; border: 0; width: 100%; font-family: inherit; color: #0f172a; }
+        .schedule-summary .chev { margin-left: auto; transition: transform .2s; color: #94a3b8; }
+        .schedule-summary.open .chev { transform: rotate(180deg); }
+        .schedule-dropdown { position: absolute; z-index: 3; left: 0; right: 0; top: calc(100% + 6px); background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 14px 30px rgba(0,0,0,.18); padding: 8px; display: none; }
+        .schedule-dropdown.open { display: block; }
+        .schedule-dropdown-header { font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: #64748b; padding: 2px 6px 6px; }
+        .schedule-row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 6px; border-radius: 6px; }
+        .schedule-row.is-today { background: #ecfdf5; color: #047857; font-weight: 800; }
+        .day-closed { color: #ef4444; font-weight: 700; }
+        .pills { display: flex; gap: 6px; flex-wrap: wrap; }
+        .pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; border: 1px solid #e2e8f0; background: white; color: #334155; }
+        .pill.wa { background: #25D366; color: white; border-color: #25D366; flex: 1; justify-content: center; }
+        .pill.job { color: #7c3aed; border-color: #ddd6fe; background: #f5f3ff; }
+        .social { display: flex; gap: 6px; }
+        .social span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: white; font-size: 13px; }
+        .stars { display: flex; align-items: center; gap: 6px; font-size: 12.5px; }
+        .stars .s { color: #f59e0b; letter-spacing: 1px; }
+        .stars .score { font-weight: 900; }
+        .stars .count { color: #64748b; }
+        .callout { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--text-soft); line-height: 1.45; }
+        .callout b { color: white; }
+        .callout .n { width: 22px; height: 22px; border-radius: 50%; background: #a855f7; color: white; font-weight: 900; font-size: 11px; display: grid; place-items: center; flex-shrink: 0; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+        /* StoreReviewPanel.vue */
+        .viewer { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+        .viewer button { border: 1px solid var(--border-soft); background: var(--bg-panel); color: var(--text-soft); border-radius: 999px; padding: 7px 12px; font: 800 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .viewer button.active { border-color: rgba(245,158,11,.6); background: rgba(245,158,11,.12); color: #fde68a; }
+        .review-panel { background: white; color: #0f172a; border-radius: 16px; padding: 14px; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+        .review-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .review-toggle { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #fde68a; background: #fffbeb; color: #b45309; border-radius: 999px; padding: 6px 11px; font: 800 12px Urbanist, sans-serif; cursor: pointer; }
+        .review-motivo { font-size: 12px; color: #64748b; font-weight: 700; }
+        .sin-resenas { font-size: 12px; color: #64748b; }
+        .review-form { margin-top: 12px; display: flex; flex-direction: column; gap: 9px; }
+        .stars-row { display: flex; gap: 4px; }
+        .star-btn { border: 0; background: none; font-size: 22px; color: #e2e8f0; cursor: pointer; padding: 0 1px; }
+        .star-btn.active { color: #f59e0b; }
+        .review-comment { width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 9px 11px; font: 600 13px Urbanist, sans-serif; resize: none; background: #f8fafc; color: #0f172a; }
+        .review-actions { display: flex; justify-content: flex-end; gap: 8px; }
+        .btn-cancel { border: 1px solid #cbd5e1; background: white; color: #475569; border-radius: 9px; padding: 8px 12px; font: 800 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .btn-save { border: 0; background: #f59e0b; color: #1c1917; border-radius: 9px; padding: 8px 12px; font: 900 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .btn-save:disabled { opacity: .45; cursor: not-allowed; }
 
-        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
-        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
-        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
-
-        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
-        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.10) 0%, transparent 70%); }
-        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%); }
-        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); }
-        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); }
-
-        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
-        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .ctrl:hover { background: var(--green); }
-        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
-
-        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; }
-        h1 { font-size: 56px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
-        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
-        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
-        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
-
-        /* =========================================
-           PERFIL DEMO FIEL AL COMPONENTE
-        ========================================= */
-        .profile-demo { width: 100%; box-shadow: 0 24px 60px rgba(0,0,0,0.5); border-radius: 16px; overflow: hidden; }
-
-        /* Banner */
-        .pd-banner {
-            width: 100%; height: 160px;
-            background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 50%, #1a1f2e 100%);
-            position: relative; overflow: hidden;
-        }
-        .pd-banner-pattern {
-            position: absolute; inset: 0; opacity: 0.15;
-            background: radial-gradient(ellipse at 30% 50%, #3b82f6 0%, transparent 60%),
-                        radial-gradient(ellipse at 80% 20%, #10b981 0%, transparent 50%);
-        }
-        .pd-banner-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.4)); }
-        .pd-banner-label { position: absolute; top: 10px; right: 12px; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.7); font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 999px; backdrop-filter: blur(4px); }
-
-        /* Card */
-        .pd-card { background: white; padding: 20px; position: relative; }
-
-        /* Layout desktop */
-        .pd-layout { display: flex; justify-content: space-between; align-items: stretch; gap: 16px; }
-        .pd-left   { display: flex; align-items: center; gap: 14px; flex: 1; }
-        .pd-logo-wrap { margin-top: -44px; flex-shrink: 0; }
-        .pd-logo { width: 72px; height: 72px; border-radius: 50%; border: 3px solid white; background: linear-gradient(135deg, #10b981, #059669); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .pd-info { padding-top: 4px; }
-        .pd-title { font-size: 20px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; line-height: 1.2; }
-        .pd-branch { font-size: 13px; font-weight: 500; color: #64748b; }
-        .pd-addr   { font-size: 13px; color: #475569; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        .pd-addr i { color: #10b981; font-size: 11px; }
-        .pd-desc   { font-size: 12px; color: #64748b; margin-top: 7px; line-height: 1.5; max-width: 360px; }
-        .pd-desc-more { font-size: 11px; color: #0f766e; font-weight: 700; cursor: pointer; margin-top: 3px; }
-
-        .pd-right  { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 10px; flex-shrink: 0; }
-
-        /* Horarios */
-        .pd-schedule { display: inline-flex; align-items: center; gap: 7px; background: white; padding: 5px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 600; color: #334155; cursor: pointer; position: relative; }
-        .pd-schedule i.clock { color: #3b82f6; font-size: 11px; }
-        .pd-schedule i.caret { color: #94a3b8; font-size: 10px; }
-        .pd-schedule-dropdown { position: absolute; top: calc(100% + 6px); right: 0; background: white; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.2); border: 1px solid #cbd5e1; width: 210px; padding: 10px; z-index: 50; }
-        .psd-header { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 7px; padding-bottom: 7px; border-bottom: 1px solid #f1f5f9; }
-        .psd-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 6px; border-radius: 5px; font-size: 11px; }
-        .psd-row.today { background: #ecfdf5; }
-        .psd-day   { font-weight: 600; color: #64748b; }
-        .psd-row.today .psd-day { color: #059669; }
-        .psd-hours { color: #334155; }
-        .psd-row.today .psd-hours { color: #059669; font-weight: 700; }
-        .psd-closed { color: #94a3b8; font-style: italic; }
-
-        /* Acciones */
-        .pd-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
-        .pd-pills   { display: flex; gap: 8px; align-items: center; }
-        .pd-how-btn { background: #f8fafc; color: #0f172a; border: 1.5px solid #e2e8f0; display: flex; align-items: center; gap: 5px; padding: 0 12px; height: 38px; border-radius: 50px; font-weight: 700; font-size: 12px; cursor: pointer; }
-        .pd-how-btn i { color: #3b82f6; }
-        .pd-job-btn { background: #3b82f6; color: white; border: none; display: flex; align-items: center; gap: 5px; padding: 0 14px; height: 38px; border-radius: 50px; font-weight: 700; font-size: 12px; cursor: pointer; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
-        .pd-wa-btn  { background: #25d366; color: white; border: none; display: flex; align-items: center; gap: 6px; padding: 0 16px; height: 38px; border-radius: 50px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(37,211,102,0.3); }
-        .pd-socials { display: flex; gap: 8px; }
-        .pd-social  { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; color: white; }
-        .ps-ig   { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .ps-fb   { background: #1877f2; }
-        .ps-web  { background: #475569; }
-
-        /* =========================================
-           SLIDE 2 — BANNER Y LOGO
-        ========================================= */
-        .banner-callouts { display: flex; flex-direction: column; gap: 14px; }
-        .bc-card { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
-        .bc-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        .bc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .bc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .bc-crops  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .bc-crops  .bc-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .bc-logo   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .bc-logo   .bc-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .bc-fallback{ background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .bc-fallback .bc-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
-        .bc-negative{ background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .bc-negative .bc-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
-
-        .banner-viz { display: flex; flex-direction: column; gap: 10px; }
-        .bv-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 4px; }
-        .bv-desktop { width: 100%; height: 90px; border-radius: 12px; background: linear-gradient(135deg, #1e3a5f, #0f2744); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
-        .bv-mobile  { width: 50%; height: 60px; border-radius: 10px; background: linear-gradient(135deg, #1e3a5f, #0f2744); position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
-        .bv-crop-indicator { position: absolute; border: 2px dashed rgba(59,130,246,0.6); border-radius: 6px; }
-        .bv-desktop .bv-crop-indicator { inset: 4px; }
-        .bv-mobile  .bv-crop-indicator { top: 4px; bottom: 4px; left: 10%; right: 10%; }
-        .bv-label-badge { position: absolute; bottom: 4px; right: 6px; background: rgba(59,130,246,0.8); color: white; font-size: 9px; font-weight: 900; padding: 2px 6px; border-radius: 4px; }
-
-        .logo-viz { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 4px; }
-        .lv-card { border-radius: 12px; border: 1px solid var(--border); padding: 14px; text-align: center; }
-        .lv-logo { width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 8px; border: 3px solid white; display: flex; align-items: center; justify-content: center; font-weight: 900; color: white; font-size: 18px; }
-        .lv-label { font-size: 10px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
-        .lv-sub   { font-size: 9px; color: rgba(255,255,255,0.3); margin-top: 2px; }
-
-        /* =========================================
-           SLIDE 3 — HORARIOS
-        ========================================= */
-        .schedule-states { display: flex; flex-direction: column; gap: 12px; }
-        .ss-row { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
-        .ss-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
-        .ss-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .ss-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .ss-open   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .ss-open   .ss-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .ss-closed { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   } .ss-closed .ss-icon { background: rgba(239,68,68,0.12);   color: #fca5a5; }
-        .ss-parse  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .ss-parse  .ss-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .ss-click  { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .ss-click  .ss-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
-
-        .schedule-dropdown-demo {
-            background: white; border-radius: 16px; padding: 14px;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.3); width: 100%;
-        }
-        .sdd-pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 12px; cursor: pointer; }
-        .sdd-pill i.clk { color: #3b82f6; }
-        .sdd-pill i.chev { color: #10b981; font-size: 10px; }
-        .sdd-header { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; }
-        .sdd-list { display: flex; flex-direction: column; gap: 3px; }
-        .sdd-row { display: flex; justify-content: space-between; padding: 6px 8px; border-radius: 6px; font-size: 12px; }
-        .sdd-row.is-today { background: #ecfdf5; }
-        .sdd-row.is-today span { color: #059669; font-weight: 700; }
-        .sdd-row span.day    { color: #64748b; font-weight: 600; }
-        .sdd-row span.hours  { color: #334155; }
-        .sdd-row span.closed { color: #94a3b8; font-style: italic; }
-
-        /* =========================================
-           SLIDE 4 — ACCIONES Y DESCRIPCIÓN
-        ========================================= */
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .ag-card { border-radius: 15px; padding: 18px; border: 1px solid; display: flex; gap: 13px; align-items: flex-start; }
-        .ag-icon { width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .ag-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .ag-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .ag-wa     { background: rgba(37,211,102,0.05);  border-color: rgba(37,211,102,0.2);  } .ag-wa     .ag-icon { background: rgba(37,211,102,0.15);  color: #4ade80; }
-        .ag-job    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .ag-job    .ag-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .ag-how    { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .ag-how    .ag-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; }
-        .ag-social { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .ag-social .ag-icon { background: rgba(168,85,247,0.15);  color: #d8b4fe; }
-        .ag-addr   { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .ag-addr   .ag-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-        .ag-desc   { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .ag-desc   .ag-icon { background: rgba(245,158,11,0.15);  color: #fcd34d; }
-
-        /* =========================================
-           NAV
-        ========================================= */
-        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 36px; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
-        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
-        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
-        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
-        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
-        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
-        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+        /* JobApplicationBanner.vue */
+        .job-modal { background: white; color: #0f172a; border-radius: 16px; padding: 14px; box-shadow: 0 18px 40px rgba(0,0,0,.35); display: flex; flex-direction: column; gap: 10px; }
+        .job-modal h4 { font-size: 16px; display: flex; gap: 8px; align-items: center; color: #7c3aed; }
+        .field-label { font-size: 12px; font-weight: 800; color: #334155; display: block; margin-bottom: 4px; }
+        .field-required { color: #ef4444; }
+        .btn-submit { border: 0; background: #7c3aed; color: white; border-radius: 10px; padding: 11px; font: 900 13px Urbanist, sans-serif; }
+        .btn-submit:disabled { opacity: .45; }
 
         @media (max-width: 1024px) {
-            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
-            .slide.active { display: flex; justify-content: flex-start; }
-            .split { grid-template-columns: 1fr; gap: 36px; }
-            .actions-grid { grid-template-columns: 1fr; }
-            .logo-viz { grid-template-columns: 1fr 1fr; }
-            h1 { font-size: 38px; } h2 { font-size: 30px; }
-            .lead { font-size: 16px; }
-            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
-            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+            .profile-card { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
 
-    <div class="controls">
-        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-        <span class="snum"><span id="cur">1</span> / <span id="tot">5</span></span>
-        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- =====================================================
-         SLIDE 1 — INTRO + DEMO FIEL
-    ====================================================== -->
-    <div class="slide active">
-        <div class="g g-green"  style="width:46vw;height:46vw; top:-12vw; right:-8vw;"></div>
-        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-purple"></div>
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #d8b4fe;">Vidriera</h3>
+                <h1>El <span>perfil</span> del local</h1>
+                <p>Es lo primero que ve el cliente, arriba del catálogo y de cada ficha de producto: quién vende, dónde está, cuándo abre y cómo hablarle.</p>
+            </div>
 
-        <div class="inner">
-            <div style="display:grid; grid-template-columns:1fr 1.5fr; gap:52px; align-items:center;">
-                <div>
-                    <div class="eyebrow">
-                        <span class="dot" style="background:var(--green);"></span>
-                        Tienda Online · Módulo
-                    </div>
-                    <h1>El perfil<br>del<br><span style="color:var(--green);">local.</span></h1>
-                    <p class="lead" style="max-width:420px;">La cabecera que aparece en todas las vistas públicas del local. Banner adaptativo, logo superpuesto, horarios expandibles, dirección simplificada, WhatsApp, redes sociales, postulaciones y el tutorial de compra.</p>
-                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-image" style="color:#93c5fd;font-size:11px;"></i> Banner con crops adaptativos</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-clock" style="color:#6ee7b7;font-size:11px;"></i> Horarios con dropdown</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fab fa-whatsapp" style="color:#4ade80;font-size:11px;"></i> Botón WhatsApp directo</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-briefcase" style="color:#fcd34d;font-size:11px;"></i> Portal de empleos integrado</span>
-                    </div>
+            <div class="visual-block flow">
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-id-card" style="color:#d8b4fe;"></i> Quién es</strong>
+                    <span>Banner, logo, nombre de la marca y de la sede, y la tilde de marca verificada.</span>
                 </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-clock" style="color:#fcd34d;"></i> Dónde y cuándo</strong>
+                    <span>La dirección abre el mapa y el horario muestra el de hoy, con la semana completa a un toque.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fab fa-whatsapp" style="color:#4ade80;"></i> Cómo hablarle</strong>
+                    <span>WhatsApp, redes, el tutorial de compra, las estrellas y, si la sede busca gente, la postulación.</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                <!-- Demo fiel -->
-                <div class="profile-demo">
-                    <div class="pd-banner">
-                        <div class="pd-banner-pattern"></div>
-                        <div class="pd-banner-overlay"></div>
-                        <div class="pd-banner-label">banner_url · crop desktop</div>
+    <!-- SLIDE 2: EL PERFIL -->
+    <section class="slide">
+        <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #fcd34d;">El encabezado de la tienda</h3>
+                <h2>Todo lo que el cliente pregunta antes de comprar</h2>
+                <p>Probalo: abrí el horario y la descripción completa.</p>
+            </div>
+
+            <div class="visual-block split demo">
+                <div class="profile-mock">
+                    <div class="banner">
+                        <div class="banner-actions">
+                            <span class="banner-btn" title="Abrir tienda oficial"><i class="fas fa-arrow-up-right-from-square"></i></span>
+                            <span class="banner-btn" title="Editar tienda"><i class="fas fa-cog"></i></span>
+                        </div>
                     </div>
-                    <div class="pd-card">
-                        <div class="pd-layout">
-                            <div class="pd-left">
-                                <div class="pd-logo-wrap">
-                                    <div class="pd-logo">A</div>
-                                </div>
-                                <div class="pd-info">
-                                    <div class="pd-title">
-                                        Aromas del Sur
-                                        <span class="pd-branch">| Sucursal Centro</span>
-                                    </div>
-                                    <div class="pd-addr">
-                                        <i class="fas fa-map-marker-alt"></i>
-                                        Av. Corrientes 1234, CABA
-                                    </div>
-                                    <div class="pd-desc">
-                                        Difusores y aromatizantes artesanales. Envíos a todo el país. Mayorista y minorista.
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="pd-right">
-                                <div class="pd-schedule" style="position:relative;">
-                                    <i class="fas fa-clock clock"></i>
-                                    Hoy: 09:00 - 18:00
-                                    <i class="fas fa-chevron-down caret"></i>
-                                    <div class="pd-schedule-dropdown">
-                                        <div class="psd-header">Horarios de atención</div>
-                                        <div class="psd-list">
-                                            <div class="psd-row today"><span class="psd-day">Lunes</span><span class="psd-hours">09:00 - 18:00</span></div>
-                                            <div class="psd-row"><span class="psd-day">Martes</span><span class="psd-hours">09:00 - 18:00</span></div>
-                                            <div class="psd-row"><span class="psd-day">Miércoles</span><span class="psd-hours">09:00 - 18:00</span></div>
-                                            <div class="psd-row"><span class="psd-day">Jueves</span><span class="psd-hours">09:00 - 18:00</span></div>
-                                            <div class="psd-row"><span class="psd-day">Viernes</span><span class="psd-hours">09:00 - 17:00</span></div>
-                                            <div class="psd-row"><span class="psd-day">Sábado</span><span class="psd-closed">Cerrado</span></div>
-                                            <div class="psd-row"><span class="psd-day">Domingo</span><span class="psd-closed">Cerrado</span></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="pd-actions">
-                                    <div class="pd-pills">
-                                        <button class="pd-how-btn"><i class="fas fa-question-circle"></i> ¿Cómo comprar?</button>
-                                        <button class="pd-job-btn"><i class="fas fa-briefcase"></i> Trabajar Aquí</button>
-                                        <button class="pd-wa-btn"><i class="fab fa-whatsapp text-xl"></i> Contactar</button>
-                                    </div>
-                                    <div class="pd-socials">
-                                        <div class="pd-social ps-ig"><i class="fab fa-instagram"></i></div>
-                                        <div class="pd-social ps-fb"><i class="fab fa-facebook-f"></i></div>
-                                        <div class="pd-social ps-web"><i class="fas fa-globe"></i></div>
-                                    </div>
-                                </div>
+                    <div class="profile-card">
+                        <div class="left">
+                            <div class="logo">LV</div>
+                            <div style="min-width:0;">
+                                <div class="store-title">Lumen Velas <i class="fas fa-circle-check verified" title="Marca verificada"></i><span class="branch-name">| Palermo</span></div>
+                                <span class="location-link"><i class="fas fa-map-marker-alt"></i> Honduras 5100, Palermo</span>
+                                <p class="store-description is-collapsed" data-desc>Velas de soja y difusores hechos a mano en tandas chicas. Cada aroma lo armamos en el taller y lo probamos durante semanas antes de sacarlo. Vendemos por unidad y por caja para tiendas de deco.</p>
+                                <button type="button" class="description-toggle" data-desc-toggle>Ver más</button>
                             </div>
                         </div>
+                        <div class="right">
+                            <div class="schedule-wrapper">
+                                <button type="button" class="schedule-summary" data-sched-toggle aria-expanded="false"><i class="fas fa-clock" style="color:#10b981;"></i> <span data-today></span> <i class="fas fa-chevron-down chev"></i></button>
+                                <div class="schedule-dropdown" data-sched>
+                                    <div class="schedule-dropdown-header">Horarios de atención</div>
+                                    <div data-sched-rows></div>
+                                </div>
+                            </div>
+                            <div class="pills">
+                                <span class="pill"><i class="fas fa-question-circle"></i> ¿Cómo comprar?</span>
+                                <span class="pill job"><i class="fas fa-briefcase"></i> Trabajar Aquí</span>
+                                <span class="pill wa"><i class="fab fa-whatsapp"></i> Contactar</span>
+                            </div>
+                            <div class="social">
+                                <span style="background:linear-gradient(45deg,#f59e0b,#ec4899,#8b5cf6)"><i class="fab fa-instagram"></i></span>
+                                <span style="background:#1877f2"><i class="fab fa-facebook-f"></i></span>
+                                <span style="background:#475569"><i class="fas fa-globe"></i></span>
+                            </div>
+                            <div class="stars"><span class="s"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-stroke"></i></span><span class="score">4.6</span><span class="count">(23 reseñas)</span></div>
+                        </div>
                     </div>
+                </div>
+
+                <div class="stack">
+                    <div class="callout"><span class="n">1</span><span><b>Marca y sede.</b> El nombre de la sede aparece al lado solo si es distinto del de la marca. La tilde azul es la de marca verificada.</span></div>
+                    <div class="callout"><span class="n">2</span><span><b>La dirección abre Google Maps</b>, y en el perfil se ve abreviada: calle, altura y barrio.</span></div>
+                    <div class="callout"><span class="n">3</span><span><b>El horario dice el de hoy</b> ("Hoy: Cerrado" si no abre). Al tocarlo se despliega la semana, con el día de hoy resaltado.</span></div>
+                    <div class="callout"><span class="n">4</span><span><b>"Contactar"</b> abre WhatsApp con el teléfono de la sede. Las redes solo se muestran si son direcciones seguras de Instagram, Facebook o un sitio web.</span></div>
+                    <div class="callout"><span class="n">5</span><span><b>Los dos botones del banner</b> no los ve cualquiera: "Abrir tienda oficial" aparece si la tienda tiene dominio propio, y el engranaje solo para quien puede editar la tienda, que lo lleva a sus ajustes.</span></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 2 — BANNER Y LOGO
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner split">
-            <div>
-                <div class="eyebrow">
-                    <span class="dot" style="background:var(--blue);"></span>
-                    Imágenes
-                </div>
-                <h2>Banner con dos crops.<br>Logo circular<br>superpuesto.</h2>
-                <p class="lead" style="max-width:500px;">El banner no es una sola imagen. El local puede subir una versión de escritorio y una de mobile con sus propios puntos de recorte. <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">buildBannerImageUrl</code> recibe la variante <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">'desktop'</code> o <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">'mobile'</code> según <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">isMobileViewport</code>, que un listener de <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">resize</code> actualiza en vivo.</p>
-
-                <div class="banner-callouts" style="margin-top:22px;">
-                    <div class="bc-card bc-crops">
-                        <div class="bc-icon"><i class="fas fa-crop-alt"></i></div>
-                        <div class="bc-body">
-                            <strong>banner_crops por variante</strong>
-                            <p>El objeto <code style="font-size:11px;">banner_crops</code> tiene claves <code style="font-size:11px;">desktop</code> y <code style="font-size:11px;">mobile</code> con coordenadas de recorte. Si no existe, usa la imagen original.</p>
-                        </div>
-                    </div>
-                    <div class="bc-card bc-negative">
-                        <div class="bc-icon"><i class="fas fa-minus-circle"></i></div>
-                        <div class="bc-body">
-                            <strong>Logo en margen negativo</strong>
-                            <p>El logo tiene <code style="font-size:11px;">margin-top: -44px</code> (desktop) o <code style="font-size:11px;">-45px</code> (mobile) para montarse sobre el borde del banner. El borde blanco de 3px crea la separación visual.</p>
-                        </div>
-                    </div>
-                    <div class="bc-card bc-fallback">
-                        <div class="bc-icon"><i class="fas fa-image"></i></div>
-                        <div class="bc-body">
-                            <strong>Fallbacks en cascada</strong>
-                            <p>Banner: <code style="font-size:11px;">buildBannerImageUrl</code> → <code style="font-size:11px;">banner_url</code> → imagen de Unsplash. Logo: <code style="font-size:11px;">buildPublicImageUrl</code> → ícono <code style="font-size:11px;">fa-user-circle</code>.</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- SLIDE 3: ESTRELLAS -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Reseñas</h3>
+                <h2>Califica quien compró ahí, y calificar de nuevo corrige</h2>
+                <p>Probalo: mirá el panel de estrellas como lo ve cada cliente.</p>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:14px;">
-                <div class="banner-viz">
-                    <div class="bv-label">Banner desktop (1200px)</div>
-                    <div class="bv-desktop">
-                        <div class="bv-crop-indicator"></div>
-                        <div class="bv-label-badge">desktop crop</div>
-                    </div>
-                </div>
-                <div class="banner-viz">
-                    <div class="bv-label">Banner mobile (≤768px)</div>
-                    <div class="bv-mobile">
-                        <div class="bv-crop-indicator"></div>
-                        <div class="bv-label-badge">mobile crop</div>
-                    </div>
-                </div>
+            <div class="visual-block split even demo" data-review>
                 <div>
-                    <div class="bv-label" style="margin-bottom:8px;">Variantes del logo</div>
-                    <div class="logo-viz">
-                        <div class="lv-card">
-                            <div class="lv-logo" style="background:linear-gradient(135deg,#10b981,#059669);">A</div>
-                            <div class="lv-label">Con imagen</div>
-                            <div class="lv-sub">buildPublicImageUrl</div>
-                        </div>
-                        <div class="lv-card">
-                            <div class="lv-logo" style="background:#f1f5f9;color:#94a3b8;font-size:26px;"><i class="fas fa-user-circle"></i></div>
-                            <div class="lv-label">Sin logo</div>
-                            <div class="lv-sub">Fallback icon</div>
-                        </div>
-                        <div class="lv-card">
-                            <div class="lv-logo" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">P</div>
-                            <div class="lv-label">Premium</div>
-                            <div class="lv-sub">Mismo sistema</div>
+                    <div class="viewer" role="radiogroup" aria-label="Quién mira">
+                        <button type="button" class="active" data-who="guest">Sin sesión</button>
+                        <button type="button" data-who="nobuy">Con cuenta, sin compras</button>
+                        <button type="button" data-who="buyer">Compró en la tienda</button>
+                        <button type="button" data-who="rated">Ya calificó</button>
+                    </div>
+                    <div class="review-panel" aria-live="polite">
+                        <div class="review-head" data-head></div>
+                        <div class="review-form" data-form hidden>
+                            <div class="stars-row" role="radiogroup" aria-label="Calificar esta tienda" data-stars></div>
+                            <textarea class="review-comment" rows="3" maxlength="1000" placeholder="Contanos como te fue (opcional)" data-comment></textarea>
+                            <div class="review-actions">
+                                <button type="button" class="btn-cancel" data-cancel>Cancelar</button>
+                                <button type="button" class="btn-save" data-save></button>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="stack">
+                    <div class="note ok"><i class="fas fa-receipt"></i><span>La puerta es <b>haber hecho un pedido en esa tienda</b>, sin importar en qué estado esté: dejar afuera los que no se completaron dejaría afuera justo a quien tiene algo que decir.</span></div>
+                    <div class="note"><i class="fas fa-pen"></i><span>Calificar de nuevo <b>edita</b> la reseña anterior: el botón dice "Actualizar calificacion" para que nadie crea que suma una segunda.</span></div>
+                    <div class="note purple"><i class="fas fa-star-half-stroke"></i><span>Una tienda sin reseñas no muestra cero estrellas: muestra "Todavia nadie califico esta tienda". Cero de cinco se leería como que la calificaron mal. El promedio se redondea al medio punto: un 4,6 se ve como cuatro estrellas y media.</span></div>
+                    <div class="note warn"><i class="fas fa-shop"></i><span>Las mismas estrellas aparecen en la tarjeta de la tienda dentro del shopping.</span></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 3 — HORARIOS
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-green"  style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-orange" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner split">
-            <div>
-                <div class="eyebrow">
-                    <span class="dot" style="background:var(--green);"></span>
-                    El Widget de Horarios
-                </div>
-                <h2>Siempre muestra<br>el estado de hoy.<br>El resto, al expandir.</h2>
-                <p class="lead" style="max-width:500px;">El horario del local llega como JSON o string desde el perfil. El computed <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">scheduleDisplayText</code> busca el día actual con <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">new Date().getDay()</code> y muestra el estado puntual en el badge. Un click expande el dropdown con la semana completa.</p>
-
-                <div class="schedule-states" style="margin-top:22px;">
-                    <div class="ss-row ss-open">
-                        <div class="ss-icon"><i class="fas fa-door-open"></i></div>
-                        <div class="ss-body">
-                            <strong>Hoy abierto</strong>
-                            <p><code style="font-size:11px;">todaySchedule.isOpen = true</code> → muestra "Hoy: 09:00 - 18:00".</p>
-                        </div>
-                    </div>
-                    <div class="ss-row ss-closed">
-                        <div class="ss-icon"><i class="fas fa-door-closed"></i></div>
-                        <div class="ss-body">
-                            <strong>Hoy cerrado</strong>
-                            <p><code style="font-size:11px;">isOpen = false</code> → muestra "Hoy: Cerrado".</p>
-                        </div>
-                    </div>
-                    <div class="ss-row ss-parse">
-                        <div class="ss-icon"><i class="fas fa-code"></i></div>
-                        <div class="ss-body">
-                            <strong>Parsing defensivo</strong>
-                            <p>Si <code style="font-size:11px;">schedule</code> es string, se intenta <code style="font-size:11px;">JSON.parse</code>. Si falla o no es array, se muestra el texto plano sin dropdown.</p>
-                        </div>
-                    </div>
-                    <div class="ss-row ss-click">
-                        <div class="ss-icon"><i class="fas fa-mouse-pointer"></i></div>
-                        <div class="ss-body">
-                            <strong>Cierre al click exterior</strong>
-                            <p><code style="font-size:11px;">closeSchedule</code> se registra en <code style="font-size:11px;">document</code> vía <code style="font-size:11px;">onMounted</code> y se limpia en <code style="font-size:11px;">onUnmounted</code>. Si el click fue dentro del ref del dropdown, no cierra.</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- SLIDE 4: POSTULACIÓN -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">Trabajar aquí</h3>
+                <h2>Si la sede busca gente, la tienda recibe postulaciones</h2>
             </div>
 
-            <div>
-                <div class="schedule-dropdown-demo">
-                    <div class="sdd-pill">
-                        <i class="fas fa-clock clk"></i>
-                        Hoy: 09:00 - 18:00
-                        <i class="fas fa-chevron-up chev"></i>
-                    </div>
-                    <div class="sdd-header">Horarios de atención</div>
-                    <div class="sdd-list">
-                        <div class="sdd-row is-today">
-                            <span class="day">Lunes</span>
-                            <span class="hours">09:00 - 18:00</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Martes</span>
-                            <span class="hours">09:00 - 18:00</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Miércoles</span>
-                            <span class="hours">09:00 - 18:00</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Jueves</span>
-                            <span class="hours">09:00 - 18:00</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Viernes</span>
-                            <span class="hours">09:00 - 17:00</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Sábado</span>
-                            <span class="closed">Cerrado</span>
-                        </div>
-                        <div class="sdd-row">
-                            <span class="day">Domingo</span>
-                            <span class="closed">Cerrado</span>
-                        </div>
-                    </div>
+            <div class="visual-block split wide-right">
+                <div class="job-modal">
+                    <h4><i class="fas fa-briefcase"></i> Postulación</h4>
+                    <div><label class="field-label">¿Qué puesto te interesa?</label><select class="cm-input"><option>Vendedor de mostrador</option><option>Producción</option><option>Repartidor</option></select></div>
+                    <div><label class="field-label">Tu Teléfono (WhatsApp) <span class="field-required">*</span></label><input class="cm-input" placeholder="Ej: 1123456789" value="1155443322"></div>
+                    <div><label class="field-label">Link a tu LinkedIn, CV o Portfolio</label><input class="cm-input" placeholder="https://..."></div>
+                    <button type="button" class="btn-submit">Enviar Postulación</button>
                 </div>
 
-                <div style="margin-top:14px; padding:14px 18px; border-radius:13px; background:rgba(255,255,255,0.02); border:1px solid var(--border); font-size:13px; color:var(--muted); line-height:1.5;">
-                    <i class="fas fa-info-circle" style="color:#93c5fd;margin-right:7px;"></i>
-                    El dropdown usa una transición <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">fade-slide</code> de Vue. El wrapper tiene <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">position: relative</code> y el dropdown es <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">position: absolute</code> con <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 5px;border-radius:4px;">z-index: 50</code>.
+                <div class="stack">
+                    <div class="note purple"><i class="fas fa-toggle-on"></i><span>El botón <b>"Trabajar Aquí"</b> aparece solo mientras la sede tiene prendido que está buscando personal.</span></div>
+                    <div class="note"><i class="fas fa-list"></i><span>Los puestos que se ofrecen son <b>los puestos que la sede tiene cargados</b> en su equipo. Si no cargó ninguno, la opción es "Postulación General".</span></div>
+                    <div class="note ok"><i class="fas fa-user"></i><span>Para postularse hace falta <b>iniciar sesión</b>: sin cuenta, el botón lleva a ingresar y vuelve a la tienda. El teléfono viene completo con el de la cuenta.</span></div>
+                    <div class="note warn"><i class="fas fa-check"></i><span>Al enviarla, el cliente ve "¡Postulación Enviada!" y el dueño la recibe para revisarla. Quien ya forma parte del equipo de esa sede no puede postularse de nuevo.</span></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 4 — ACCIONES Y DESCRIPCIÓN
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner">
-            <div class="eyebrow">
-                <span class="dot" style="background:var(--orange);"></span>
-                Acciones y Contenido
+    <!-- SLIDE 5: LO QUE CONVIENE SABER -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Lo que conviene saber</h3>
+                <h2>El perfil sale de lo que la sede cargó, y se adapta</h2>
             </div>
-            <h2 style="margin-bottom:22px;">Todo lo que el local<br>quiere que el cliente haga.</h2>
 
-            <div class="actions-grid">
-                <div class="ag-card ag-wa">
-                    <div class="ag-icon"><i class="fab fa-whatsapp"></i></div>
-                    <div class="ag-body">
-                        <strong>WhatsApp directo</strong>
-                        <p>Construye <code style="font-size:11px;">https://wa.me/{cleanPhone}</code> limpiando todos los caracteres no numéricos con <code style="font-size:11px;">.replace(/\D/g, '')</code>. Se abre en la app nativa del teléfono.</p>
-                    </div>
+            <div class="visual-block rules-grid">
+                <div class="rule">
+                    <i class="fas fa-image" style="color:#fcd34d;"></i>
+                    <div><strong>Un banner para cada pantalla</strong><span>El banner tiene un recorte para escritorio y otro para celular, así no se corta la parte importante de la foto en ninguna de las dos.</span></div>
                 </div>
-                <div class="ag-card ag-job">
-                    <div class="ag-icon"><i class="fas fa-briefcase"></i></div>
-                    <div class="ag-body">
-                        <strong>Portal de empleos</strong>
-                        <p>El componente <code style="font-size:11px;">JobApplicationBanner</code> solo se muestra si <code style="font-size:11px;">profile.is_hiring = true</code>. Integra el modal de postulación sin código extra en StoreProfile.</p>
-                    </div>
+                <div class="rule">
+                    <i class="fas fa-align-left" style="color:#c4b5fd;"></i>
+                    <div><strong>Las descripciones largas se pliegan</strong><span>Pasados los 140 caracteres la descripción se corta a dos renglones, con "Ver más" para leerla entera.</span></div>
                 </div>
-                <div class="ag-card ag-how">
-                    <div class="ag-icon"><i class="fas fa-question-circle"></i></div>
-                    <div class="ag-body">
-                        <strong>¿Cómo comprar?</strong>
-                        <p>Abre <code style="font-size:11px;">StoreHowToBuyModal</code> con el prop <code style="font-size:11px;">hidePrices</code> calculado desde la config del storefront. StoreProfile lo resuelve en <code style="font-size:11px;">onMounted</code>.</p>
-                    </div>
+                <div class="rule">
+                    <i class="fas fa-question-circle" style="color:#93c5fd;"></i>
+                    <div><strong>"¿Cómo comprar?" es de esta tienda</strong><span>El tutorial muestra los medios de pago y de entrega que esta tienda ofrece, y oculta los precios si la tienda los oculta.</span></div>
                 </div>
-                <div class="ag-card ag-social">
-                    <div class="ag-icon"><i class="fas fa-share-alt"></i></div>
-                    <div class="ag-body">
-                        <strong>Redes sociales</strong>
-                        <p><code style="font-size:11px;">parsedSocialLinks</code> maneja string JSON y objeto nativo. Solo se muestran las redes que tengan valor no vacío.</p>
-                    </div>
+                <div class="rule">
+                    <i class="fas fa-file-lines" style="color:#34d399;"></i>
+                    <div><strong>Va en cada página de la tienda</strong><span>El mismo perfil encabeza el catálogo y la ficha de cada producto, así el cliente nunca pierde de vista a quién le compra.</span></div>
                 </div>
-                <div class="ag-card ag-addr">
-                    <div class="ag-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div class="ag-body">
-                        <strong>Dirección simplificada</strong>
-                        <p><code style="font-size:11px;">simplifiedAddress</code> detecta el formato "número, calle, zona" y lo reorganiza como "calle número, zona". Más legible que la dirección completa de la API.</p>
-                    </div>
-                </div>
-                <div class="ag-card ag-desc">
-                    <div class="ag-icon"><i class="fas fa-align-left"></i></div>
-                    <div class="ag-body">
-                        <strong>Descripción expandible</strong>
-                        <p>Si el texto supera 140 caracteres, se trunca con <code style="font-size:11px;">-webkit-line-clamp: 4</code> y aparece el botón "Ver más/menos". En desktop está siempre expandida.</p>
-                    </div>
-                </div>
+            </div>
+
+            <div class="note warn mt">
+                <i class="fas fa-circle-info"></i>
+                <span>Los botones de contacto ("¿Cómo comprar?", "Contactar", redes y estrellas) aparecen cuando la sede cargó al menos un teléfono, una red o está buscando personal. Una sede sin ninguno de los tres no muestra ese bloque.</span>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 5 — NAV
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-green" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
-        <div class="inner" style="align-items:center; text-align:center;">
-
-            <div class="eyebrow" style="justify-content:center;">
-                <span class="dot" style="background:var(--green);"></span>
-                Seguir Explorando
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">Seguir explorando</h3>
+                <h2>Del perfil a lo que vende</h2>
+                <p>¿Seguimos por el catálogo o por el tutorial de compra?</p>
             </div>
-            <h2>¿Qué vemos ahora?</h2>
-            <p class="lead" style="margin:0 auto; text-align:center; max-width:620px;">Ya conocés el perfil del local de punta a punta. Podés explorar el catálogo que aparece debajo, la página de producto o la vidriera completa.</p>
 
-            <div class="nav-grid">
-                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
-                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
-                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
                 </a>
-                <a href="StoreCatalog.html" class="nav-btn c-green">
-                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
-                    <div class="nav-label">Catálogo<br>Público</div>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-th-large"></i></div>
+                    <div class="qa-text">Catálogo<br>público</div>
                 </a>
-                <a href="StoreProduct.html" class="nav-btn c-blue">
-                    <div class="nav-icon"><i class="fas fa-tag"></i></div>
-                    <div class="nav-label">Página de<br>Producto</div>
-                </a>
-                <a href="StoreHowToBuyModal.html" class="nav-btn c-orange">
-                    <div class="nav-icon"><i class="fas fa-question-circle"></i></div>
-                    <div class="nav-label">Tutorial<br>de Compra</div>
-                </a>
-                <a href="StoreFront.html" class="nav-btn c-pink">
-                    <div class="nav-icon"><i class="fas fa-store"></i></div>
-                    <div class="nav-label">Vidriera<br>Completa</div>
+                <a href="comocomprar.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-question-circle"></i></div>
+                    <div class="qa-text">¿Cómo<br>comprar?</div>
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
-        const PAGE = 'tienda_storeprofile';
-        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
-        const slides = document.querySelectorAll('.slide');
-        const curEl = document.getElementById('cur');
-        const totEl = document.getElementById('tot');
+        // El horario: "Hoy: ..." y el desplegable con el día resaltado (StoreProfile.vue).
+        (() => {
+            const schedule = [
+                { day: 1, name: 'Lunes', open: '10:00', close: '19:00' },
+                { day: 2, name: 'Martes', open: '10:00', close: '19:00' },
+                { day: 3, name: 'Miércoles', open: '10:00', close: '19:00' },
+                { day: 4, name: 'Jueves', open: '10:00', close: '19:00' },
+                { day: 5, name: 'Viernes', open: '10:00', close: '20:00' },
+                { day: 6, name: 'Sábado', open: '11:00', close: '18:00' },
+                { day: 0, name: 'Domingo', closed: true },
+            ];
+            const today = new Date().getDay();
+            const t = schedule.find(d => d.day === today);
+            const todayText = document.querySelector('[data-today]');
+            if (todayText) todayText.textContent = t.closed ? 'Hoy: Cerrado' : `Hoy: ${t.open} - ${t.close}`;
+            const rows = document.querySelector('[data-sched-rows]');
+            if (rows) rows.innerHTML = schedule.map(d => `<div class="schedule-row ${d.day === today ? 'is-today' : ''}"><span>${d.name}</span>${d.closed ? '<span class="day-closed">Cerrado</span>' : `<span>${d.open} - ${d.close}</span>`}</div>`).join('');
+            const toggle = document.querySelector('[data-sched-toggle]');
+            const drop = document.querySelector('[data-sched]');
+            toggle?.addEventListener('click', () => {
+                const open = !drop.classList.contains('open');
+                drop.classList.toggle('open', open);
+                toggle.classList.toggle('open', open);
+                toggle.setAttribute('aria-expanded', String(open));
+            });
+            const desc = document.querySelector('[data-desc]');
+            const descToggle = document.querySelector('[data-desc-toggle]');
+            descToggle?.addEventListener('click', () => {
+                const collapsed = desc.classList.toggle('is-collapsed');
+                descToggle.textContent = collapsed ? 'Ver más' : 'Ver menos';
+            });
+        })();
 
-        function go(n) {
-            cur = Math.max(0, Math.min(slides.length - 1, n));
-            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
-            curEl.innerText = cur + 1;
-            localStorage.setItem('slide_' + PAGE, cur);
-            setTimeout(() => window.scrollTo(0, 0), 40);
-        }
-        function next() {
-            if (cur < slides.length - 1) go(cur + 1);
-            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
-        }
-        function prev() { if (cur > 0) go(cur - 1); }
-
-        document.getElementById('btnNext').addEventListener('click', next);
-        document.getElementById('btnPrev').addEventListener('click', prev);
-        document.addEventListener('keydown', e => {
-            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-        });
-
-        totEl.innerText = slides.length;
-        go(cur);
+        // Las estrellas y el formulario según quién mira (StoreReviewPanel.vue y
+        // los motivos que manda reputation/api/router.py).
+        (() => {
+            const root = document.querySelector('[data-review]');
+            if (!root) return;
+            const STARS = '<span class="stars"><span class="s"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-stroke"></i></span><span class="score">4.6</span><span class="count">(23 reseñas)</span></span>';
+            const viewers = {
+                guest: { can: false, reason: 'Inicia sesion para calificar esta tienda.' },
+                nobuy: { can: false, reason: 'Solo podes calificar tiendas donde ya compraste.' },
+                buyer: { can: true, mine: 0 },
+                rated: { can: true, mine: 4, comment: 'Las velas llegaron perfectas.' },
+            };
+            let who = 'guest', draft = 0, open = false;
+            const head = root.querySelector('[data-head]');
+            const form = root.querySelector('[data-form]');
+            const save = root.querySelector('[data-save]');
+            function render() {
+                const v = viewers[who];
+                let html = STARS;
+                if (v.can) html += `<button type="button" class="review-toggle" data-open><i class="fas fa-star"></i> ${v.mine ? 'Editar mi calificacion' : 'Calificar'}</button>`;
+                else html += `<span class="review-motivo">${v.reason}</span>`;
+                head.innerHTML = html;
+                form.hidden = !(open && v.can);
+                root.querySelector('[data-stars]').innerHTML = [1, 2, 3, 4, 5].map(s => `<button type="button" class="star-btn ${s <= draft ? 'active' : ''}" data-star="${s}" aria-label="${s} estrellas"><i class="fas fa-star"></i></button>`).join('');
+                save.textContent = v.mine ? 'Actualizar calificacion' : 'Guardar calificacion';
+                save.disabled = !draft;
+                root.querySelectorAll('[data-who]').forEach(b => b.classList.toggle('active', b.dataset.who === who));
+            }
+            root.addEventListener('click', e => {
+                const w = e.target.closest('[data-who]');
+                if (w) { who = w.dataset.who; open = false; draft = viewers[who].mine || 0; root.querySelector('[data-comment]').value = viewers[who].comment || ''; render(); return; }
+                if (e.target.closest('[data-open]')) { open = !open; render(); return; }
+                const s = e.target.closest('[data-star]');
+                if (s) { draft = Number(s.dataset.star); render(); return; }
+                if (e.target.closest('[data-cancel]')) { open = false; render(); return; }
+                if (e.target.closest('[data-save]') && draft) { viewers[who] = { ...viewers[who], mine: draft }; who = who === 'buyer' ? 'buyer' : who; open = false; render(); }
+            });
+            render();
+        })();
     </script>
-
+    <script src="presentacion.js"></script>
 </body>
 </html>

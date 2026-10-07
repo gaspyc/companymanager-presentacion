@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cómo Comprar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="presentacion.css">
+    <style>
+        /* Calcado de StoreHowToBuyModal.vue */
+        .tutorial { background: white; color: #0f172a; border-radius: 18px; box-shadow: 0 18px 40px rgba(0,0,0,.4); display: grid; grid-template-columns: 260px minmax(0, 1fr); overflow: hidden; text-align: left; }
+        .tutorial-side { background: #f8fafc; border-right: 1px solid #e2e8f0; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .tutorial-side h4 { font-size: 20px; font-weight: 900; }
+        .tutorial-side .lead { font-size: 12.5px; color: #64748b; margin: 0; }
+        .steps { display: flex; flex-direction: column; gap: 8px; }
+        .step { display: flex; gap: 9px; align-items: flex-start; border: 0; background: none; text-align: left; padding: 6px; border-radius: 10px; cursor: pointer; font-family: inherit; color: #0f172a; }
+        .step.active { background: #ecfdf5; }
+        .step-num { width: 24px; height: 24px; border-radius: 50%; background: #e2e8f0; color: #475569; font-weight: 900; font-size: 12px; display: grid; place-items: center; flex-shrink: 0; }
+        .step.active .step-num { background: #10b981; color: white; }
+        .step h5 { font-size: 13px; font-weight: 900; }
+        .step p { font-size: 11.5px; color: #64748b; margin: 1px 0 0; line-height: 1.4; }
+        .play { border: 1px solid #10b981; background: white; color: #047857; border-radius: 9px; padding: 7px; font: 800 12px Urbanist, sans-serif; cursor: pointer; }
+        .demo-area { padding: 16px; display: flex; flex-direction: column; gap: 10px; justify-content: center; min-height: 330px; background: #f1f5f9; }
+        .fake-hero { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 12px; }
+        .fake-hero .img { border-radius: 10px; background: linear-gradient(135deg, #fde68a, #fbbf24); }
+        .hero-title-fake { font-size: 15px; font-weight: 900; }
+        .hero-price { font-size: 20px; font-weight: 900; color: #10b981; }
+        .tiers { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+        .tiers span { border: 1px solid #d1fae5; background: #ecfdf5; border-radius: 9px; padding: 3px 7px; font-size: 10.5px; font-weight: 800; color: #065f46; }
+        .btn-add { background: #10b981; color: white; border: 0; border-radius: 9px; padding: 8px 12px; font: 800 12.5px Urbanist, sans-serif; display: inline-flex; gap: 6px; align-items: center; }
+        .pressed { animation: press .5s ease; }
+        @keyframes press { 40% { transform: scale(.94); box-shadow: 0 0 0 6px rgba(16,185,129,.25); } }
+        .mini-receipt { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+        .mini-receipt h5 { font-size: 13px; font-weight: 900; }
+        .qty-edit { font-weight: 900; border-bottom: 2px dashed #10b981; padding: 0 3px; }
+        .qty-edit.editing { background: #ecfdf5; }
+        .row { display: flex; justify-content: space-between; }
+        .old { color: #94a3b8; text-decoration: line-through; font-size: 11px; }
+        .finish { display: flex; flex-direction: column; gap: 7px; }
+        .finish .btn-row { flex-wrap: wrap; }
+        .finish label { font-size: 12px; font-weight: 800; display: flex; justify-content: space-between; gap: 8px; }
+        .config { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .config label { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-soft); padding: 8px 10px; border: 1px solid var(--border-soft); border-radius: 10px; background: var(--bg-panel); cursor: pointer; }
+        .config input { accent-color: #10b981; }
+
+        @media (max-width: 1024px) {
+            .tutorial { grid-template-columns: 1fr; }
+            .config { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 4</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-cyan"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #67e8f9;">Infraestructura</h3>
+                <h1>¿Cómo <span>comprar</span>?</h1>
+                <p>Un tutorial animado que se abre desde el botón "¿Cómo comprar?" del perfil del local. Un cursor recorre la compra entera, y el final muestra los botones que esta tienda ofrece de verdad.</p>
+            </div>
+
+            <div class="visual-block flow">
+                <div class="flow-card">
+                    <strong><i class="fas fa-mouse-pointer" style="color:#67e8f9;"></i> Se mira, no se toca</strong>
+                    <span>El cursor agrega, abre el pedido y escribe la cantidad solo.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-tags" style="color:#d8b4fe;"></i> Enseña las escalas</strong>
+                    <span>Llevando más unidades, el precio por cantidad se aplica solo.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-store" style="color:#6ee7b7;"></i> Termina en esta tienda</strong>
+                    <span>Con sus medios de pago y de entrega, y sin precios si la tienda los oculta.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: LOS CUATRO PASOS -->
+    <section class="slide">
+        <div class="glow-cyan" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #67e8f9;">El tutorial</h3>
+                <h2>Cuatro pasos, de agregar a confirmar</h2>
+                <p>Tocá "Reproducir" o cada paso para verlo.</p>
+            </div>
+
+            <div class="visual-block tutorial demo" data-tutorial>
+                <div class="tutorial-side">
+                    <h4>¿Cómo comprar?</h4>
+                    <p class="lead">Llevando más unidades, el precio mayorista se aplica solo.</p>
+                    <div class="steps">
+                        <button type="button" class="step" data-step="0"><span class="step-num">1</span><span><h5>Agregá al carrito</h5><p>Hacé clic en "Agregar" para sumar el producto.</p></span></button>
+                        <button type="button" class="step" data-step="1"><span class="step-num">2</span><span><h5>Tocá "Ver Pedido"</h5><p>El carrito aparece abajo con tus unidades y cuánto falta para la próxima escala.</p></span></button>
+                        <button type="button" class="step" data-step="2"><span class="step-num">3</span><span><h5>Escribí la cantidad</h5><p>En el resumen, tocá el número para cambiarla.</p></span></button>
+                        <button type="button" class="step" data-step="3"><span class="step-num">4</span><span><h5>Elegí cómo recibirlo y confirmá</h5><p>Retiro en el local o envío. Después elegís Mercado Pago, WhatsApp o transferencia.</p></span></button>
+                    </div>
+                    <button type="button" class="play" data-play><i class="fas fa-play"></i> Reproducir</button>
+                </div>
+                <div class="demo-area" data-area aria-live="polite"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: EL FINAL ES DE ESTA TIENDA -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Hecho a la medida de la tienda</h3>
+                <h2>Un tutorial que enseña un botón que no existe es peor que no tenerlo</h2>
+                <p>Probalo: cambiá lo que ofrece la tienda y mirá cómo cambia el último paso.</p>
+            </div>
+
+            <div class="visual-block demo" data-finish>
+                <div class="config">
+                    <label><input type="checkbox" data-c="mp" checked> Mercado Pago</label>
+                    <label><input type="checkbox" data-c="wa" checked> WhatsApp</label>
+                    <label><input type="checkbox" data-c="transfer"> Transferencia</label>
+                    <label><input type="checkbox" data-c="ship" checked> Hace envíos</label>
+                    <label><input type="checkbox" data-c="hide"> Oculta precios</label>
+                </div>
+                <div class="split even mt">
+                    <div class="mini-receipt" data-finish-mock></div>
+                    <div class="stack">
+                        <div class="note ok"><i class="fas fa-list-check"></i><span>El título y el texto del paso 4 se arman con lo que la tienda ofrece. Sin envíos, dice "Confirmá el pedido" y no menciona el envío.</span></div>
+                        <div class="note"><i class="fas fa-link"></i><span>Los medios salen de <b>la misma regla</b> que usa el checkout: una tienda todavía no publicada solo toma pedidos por WhatsApp, y el tutorial también termina ahí.</span></div>
+                        <div class="note purple"><i class="fas fa-eye-slash"></i><span>Con los precios ocultos, las escalas del ejemplo dicen el porcentaje ("32% off") en vez del importe.</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #67e8f9;">Seguir explorando</h3>
+                <h2>Del tutorial a la compra de verdad</h2>
+                <p>¿Vamos al carrito o al checkout?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
+                </a>
+                <a href="carrito.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cart-arrow-down"></i></div>
+                    <div class="qa-text">El<br>carrito</div>
+                </a>
+                <a href="pagos.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-credit-card"></i></div>
+                    <div class="qa-text">Medios<br>de pago</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Los cuatro pasos del tutorial, con el mismo ejemplo que StoreHowToBuyModal.vue
+        // (Difusor Invictus: $ 7.475, escala de 12 a $ 5.070).
+        (() => {
+            const root = document.querySelector('[data-tutorial]');
+            if (!root) return;
+            const fmt = n => '$ ' + n.toLocaleString('es-AR');
+            const area = root.querySelector('[data-area]');
+            let step = 0, timer = null;
+            const hero = pressed => `<div class="fake-hero"><span class="img"></span><div><div class="hero-title-fake">Difusor Invictus</div><div class="hero-price">$ 7.475</div><div class="tiers"><span>Llevando +12 unidades · $ 5.070 c/u</span><span>Llevando +49 unidades · $ 4.875 c/u</span><span>Llevando +121 unidades · $ 4.771 c/u</span></div><button type="button" class="btn-add ${pressed ? 'pressed' : ''}"><i class="fas fa-cart-plus"></i> Agregar</button></div></div>`;
+            const bar = (units, pressed) => `<div class="floating-cart"><button type="button" class="fc-clear"><i class="fas fa-times"></i></button><div class="fc-texts"><div class="fc-head"><span class="fc-units">${units} ${units === 1 ? 'unidad' : 'unidades'}</span><span class="fc-total">${fmt(units * (units >= 12 ? 5070 : 7475))}</span></div><div class="fc-track"><div class="fc-fill ${units >= 12 ? 'done' : ''}" style="width:${Math.min(100, units / 12 * 100)}%"></div></div><div class="fc-caption ${units >= 12 ? 'done' : ''}">${units >= 12 ? '<i class="fas fa-check-circle"></i> Mejor precio alcanzado' : `Faltan ${12 - units} para la próxima escala`}</div></div><button type="button" class="checkout-btn ${pressed ? 'pressed' : ''}">Ver Pedido (${units}) <i class="fas fa-arrow-right"></i></button></div>`;
+            const receipt = (qty, editing) => `<div class="mini-receipt"><h5>Resumen de tu orden</h5><div class="row"><span><span class="qty-edit ${editing ? 'editing' : ''}">${qty}</span> x Difusor Invictus</span><span>${qty >= 12 ? `<span class="old">${fmt(qty * 7475)}</span> ` : ''}<b>${fmt(qty * (qty >= 12 ? 5070 : 7475))}</b></span></div><div class="row" style="font-size:11px;color:#64748b;"><span>Unitario: ${qty >= 12 ? '<span class="old">$ 7.475</span> ' : ''}<b>${qty >= 12 ? '$ 5.070' : '$ 7.475'}</b></span>${qty >= 12 ? '<span class="discount-pill" style="color:#047857;font-weight:800;">Escala de 12</span>' : ''}</div></div>`;
+            const finish = `<div class="mini-receipt finish"><label>Teléfono <span class="requirement-chip">Reserva local · Transferencia</span></label><input class="cm-input" placeholder="Ej: 1122334455"><div class="btn-row"><button type="button" class="btn-mp pressed"><i class="fas fa-credit-card"></i> Mercado Pago</button><button type="button" class="btn-wa">Enviar WhatsApp <i class="fab fa-whatsapp"></i></button><button type="button" class="btn-transfer"><i class="fas fa-qrcode"></i> Transferencia</button></div></div>`;
+            const scenes = [
+                () => hero(true),
+                () => hero(false) + bar(1, true),
+                () => receipt(12, true) + bar(12, false),
+                () => receipt(12, false) + finish,
+            ];
+            function render() {
+                area.innerHTML = scenes[step]();
+                root.querySelectorAll('[data-step]').forEach(b => b.classList.toggle('active', Number(b.dataset.step) === step));
+            }
+            root.addEventListener('click', e => {
+                const s = e.target.closest('[data-step]');
+                if (s) { clearInterval(timer); timer = null; step = Number(s.dataset.step); render(); return; }
+                if (e.target.closest('[data-play]')) {
+                    clearInterval(timer); step = 0; render();
+                    timer = setInterval(() => { if (step >= 3) { clearInterval(timer); timer = null; return; } step += 1; render(); }, 1800);
+                }
+            });
+            render();
+        })();
+
+        // El último paso según lo que ofrece la tienda (resolveStorefrontPaymentMethods,
+        // storefrontHasTransferPayment y storefrontOffersDelivery).
+        (() => {
+            const root = document.querySelector('[data-finish]');
+            if (!root) return;
+            const on = k => root.querySelector(`[data-c="${k}"]`).checked;
+            const joinWithOr = l => l.length <= 1 ? (l[0] || '') : `${l.slice(0, -1).join(', ')} o ${l[l.length - 1]}`;
+            function render() {
+                let actions = [];
+                if (on('mp')) actions.push({ id: 'mp', label: 'Mercado Pago', name: 'Mercado Pago', cls: 'btn-mp', icon: 'fas fa-credit-card' });
+                if (on('wa')) actions.push({ id: 'wa', label: 'Enviar WhatsApp', name: 'WhatsApp', cls: 'btn-wa', icon: 'fab fa-whatsapp' });
+                if (on('transfer')) actions.push({ id: 'tr', label: 'Transferencia', name: 'transferencia', cls: 'btn-transfer', icon: 'fas fa-qrcode' });
+                if (!actions.length) actions = [{ id: 'wa', label: 'Enviar WhatsApp', name: 'WhatsApp', cls: 'btn-wa', icon: 'fab fa-whatsapp' }];
+                const names = actions.map(a => a.name);
+                const title = on('ship') ? 'Elegí cómo recibirlo y confirmá' : 'Confirmá el pedido';
+                const text = `${on('ship') ? 'Retiro en el local o envío. ' : ''}Después ${names.length > 1 ? 'elegís' : 'lo confirmás por'} ${joinWithOr(names)}.`;
+                const tier = on('hide') ? '32% off' : '$ 5.070 c/u';
+                const reasons = ['Reserva local', ...(on('transfer') ? ['Transferencia'] : [])].join(' · ');
+                root.querySelector('[data-finish-mock]').innerHTML = `<div style="display:flex;gap:9px;"><span class="step-num" style="background:#10b981;color:white;">4</span><span><h5>${title}</h5><p style="font-size:11.5px;color:#64748b;margin:0;">${text}</p></span></div><div class="tiers"><span>Llevando +12 unidades · ${tier}</span></div><label style="font-size:12px;font-weight:800;display:flex;justify-content:space-between;">Teléfono <span class="requirement-chip">${reasons}</span></label><div class="btn-row" style="flex-wrap:wrap;">${actions.map(a => `<button type="button" class="${a.cls}"><i class="${a.icon}"></i> ${a.label}</button>`).join('')}</div>`;
+            }
+            root.addEventListener('change', render);
+            render();
+        })();
+    </script>
+    <script src="presentacion.js"></script>
+</body>
+</html>

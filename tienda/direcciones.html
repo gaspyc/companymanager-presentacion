@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puertas de la tienda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="presentacion.css">
+    <style>
+        /* Las rutas públicas — app/router/index.js */
+        .doors { width: 100%; border-collapse: separate; border-spacing: 0 8px; text-align: left; }
+        .doors th { font-size: 11px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); padding: 0 14px; }
+        .doors td { background: var(--bg-panel); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 11px 14px; font-size: 13.5px; color: var(--text-soft); vertical-align: top; line-height: 1.45; }
+        .doors td:first-child { border-left: 1px solid var(--border-soft); border-radius: 12px 0 0 12px; white-space: nowrap; }
+        .doors td:last-child { border-right: 1px solid var(--border-soft); border-radius: 0 12px 12px 0; }
+        .doors code { font: 700 12.5px ui-monospace, monospace; color: #e9d5ff; }
+        .doors b { color: var(--text-main); }
+
+        /* Portada de la marca — BrandPage.vue */
+        .brand-mock { border-radius: 16px; overflow: hidden; background: #0b1120; border: 1px solid var(--border-soft); box-shadow: 0 18px 40px rgba(0,0,0,.4); text-align: left; }
+        .brand-hero { position: relative; padding: 26px 22px; background: linear-gradient(120deg, rgba(16,185,129,.45), rgba(15,23,42,.9)), radial-gradient(circle at 80% 20%, #14532d, #0b1120); text-align: center; }
+        .brand-logo { width: 46px; height: 46px; margin: 0 auto 8px; border-radius: 12px; background: #ecfdf5; color: #047857; display: grid; place-items: center; font-weight: 900; }
+        .brand-hero h4 { font-size: 22px; font-weight: 900; color: white; }
+        .brand-hero p { font-size: 13px; margin: 4px 0 0; color: #cbd5e1; }
+        .brand-body { padding: 14px 16px; }
+        .section-heading { display: flex; align-items: center; gap: 8px; font-weight: 900; font-size: 14px; margin-bottom: 10px; }
+        .section-heading span { font-size: 11px; background: rgba(16,185,129,.18); color: #6ee7b7; padding: 1px 8px; border-radius: 999px; }
+        .branch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .branch-card { background: rgba(255,255,255,.04); border: 1px solid var(--border-soft); border-radius: 12px; padding: 11px; display: flex; flex-direction: column; gap: 6px; }
+        .branch-card h5 { font-size: 14px; display: flex; justify-content: space-between; gap: 6px; }
+        .branch-open { font-size: 10px; color: #6ee7b7; font-weight: 800; }
+        .branch-card p { font-size: 12px; margin: 0; color: var(--text-muted); }
+        .branch-actions { display: flex; gap: 6px; margin-top: 4px; }
+        .branch-primary { flex: 1; text-align: center; font-size: 12px; font-weight: 800; padding: 7px; border-radius: 8px; background: #10b981; color: #062e22; }
+        .branch-secondary { font-size: 12px; font-weight: 800; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border-soft); color: var(--text-soft); }
+
+        /* La canónica — canonical_public_location */
+        .canon { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 20px; text-align: left; align-items: start; }
+        .toggles { display: flex; flex-direction: column; gap: 9px; }
+        .toggle { display: flex; align-items: flex-start; gap: 11px; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--border-soft); background: var(--bg-panel); cursor: pointer; }
+        .toggle input { margin-top: 3px; width: 16px; height: 16px; accent-color: #a855f7; }
+        .toggle strong { display: block; font-size: 14px; }
+        .toggle small { font-size: 12px; color: var(--text-muted); }
+        .ladder { display: flex; flex-direction: column; gap: 8px; }
+        .rung { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--border-soft); background: rgba(255,255,255,.02); opacity: .45; transition: .2s; }
+        .rung.applies { opacity: 1; border-color: rgba(168,85,247,.25); }
+        .rung.wins { opacity: 1; border-color: rgba(16,185,129,.6); background: rgba(16,185,129,.1); }
+        .rung-num { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font-weight: 900; background: rgba(255,255,255,.06); }
+        .rung.wins .rung-num { background: #10b981; color: #062e22; }
+        .rung strong { font-size: 14px; display: block; }
+        .rung code { font: 700 12px ui-monospace, monospace; color: #e9d5ff; word-break: break-all; }
+        .rung-tag { font-size: 10px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: #6ee7b7; }
+
+        @media (max-width: 1024px) {
+            .canon { grid-template-columns: 1fr; }
+            .doors, .doors tbody, .doors tr, .doors td { display: block; width: 100%; }
+            .doors thead { display: none; }
+            .doors tr { margin-bottom: 10px; }
+            .doors td { border: 1px solid var(--border-soft) !important; border-radius: 0 !important; white-space: normal !important; }
+            .doors td:first-child { border-radius: 12px 12px 0 0 !important; }
+            .doors td:last-child { border-radius: 0 0 12px 12px !important; }
+            .branch-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-purple"></div>
+        <div class="glow-cyan"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #d8b4fe;">Direcciones</h3>
+                <h1>Las <span>puertas</span> de una tienda</h1>
+                <p>A la misma tienda se llega desde el shopping, por el enlace que comparte el comercio o por su propio dominio. Cada puerta tiene su motivo, y solo una es la dirección oficial.</p>
+            </div>
+
+            <div class="visual-block flow">
+                <div class="flow-card">
+                    <strong><i class="fas fa-shop" style="color:#6ee7b7;"></i> El shopping</strong>
+                    <span>El que navega entre tiendas. Ve todas con la misma cara y la barra del shopping arriba.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-link" style="color:#d8b4fe;"></i> El enlace propio</strong>
+                    <span>El que llega por Instagram, WhatsApp o un QR. Ve la tienda sola, con su diseño.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-globe" style="color:#93c5fd;"></i> El dominio propio</strong>
+                    <span>La tienda en una dirección del comercio. Si la marca tiene dominio, sus sedes cuelgan de él.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: LAS PUERTAS -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #93c5fd;">Las rutas</h3>
+                <h2>Qué sirve cada dirección</h2>
+            </div>
+
+            <div class="visual-block">
+                <table class="doors">
+                    <thead><tr><th>Dirección</th><th>Para quién</th><th>Qué se ve</th></tr></thead>
+                    <tbody>
+                        <tr><td><code>manageysell.com/store/lumen</code></td><td>Quien navega el shopping</td><td><b>Siempre la Tienda Clásica</b>, con la barra del shopping.</td></tr>
+                        <tr><td><code>manageysell.com/t/lumen</code></td><td>Quien llega por el enlace que compartió el comercio</td><td><b>El diseño asignado</b>, o la clásica si no hay, sin la barra del shopping. Las fichas de producto quedan bajo <code>/t/</code>.</td></tr>
+                        <tr><td><code>lumenvelas.com</code></td><td>La tienda en su dominio</td><td><b>El diseño asignado</b>, o la clásica si no hay, en la raíz del dominio.</td></tr>
+                        <tr><td><code>auralotion.com</code></td><td>El dominio de una marca con sedes</td><td><b>La página de la marca</b>, si la levantó. Si no, redirige a la primera sede: el dominio nunca queda en blanco.</td></tr>
+                        <tr><td><code>auralotion.com/lanus</code></td><td>Una sede bajo el dominio de su marca</td><td><b>La tienda de esa sede.</b> Sin dominio de marca, la misma sede está en <code>/store/auralotion/sede/lanus</code>.</td></tr>
+                        <tr><td><code>manageysell.com/vitrina/1284</code></td><td>La pantalla dentro del local</td><td><b>La vitrina</b>: el catálogo rotando solo, sin controles.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="note purple">
+                <i class="fas fa-shield-halved"></i>
+                <span>Bajo el dominio de una marca, la sede tiene que <b>colgar de esa marca</b>. Adivinar el nombre de la sede de otro comercio y escribirlo en ese dominio no muestra nada.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: LA PÁGINA DE LA MARCA -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">La página de la marca</h3>
+                <h2>La marca no vende: cuenta quién es y dónde están sus locales</h2>
+            </div>
+
+            <div class="visual-block split">
+                <div class="brand-mock">
+                    <div class="brand-hero">
+                        <div class="brand-logo">AL</div>
+                        <h4>Aura Lotion</h4>
+                        <p>Cosmética natural hecha en pequeñas tandas.</p>
+                    </div>
+                    <div class="brand-body">
+                        <div class="section-heading">Nuestros locales <span>2</span></div>
+                        <div class="branch-grid">
+                            <div class="branch-card">
+                                <h5>Lanús <span class="branch-open">Abierto según horario</span></h5>
+                                <p><i class="fas fa-location-dot"></i> Av. Hipólito Yrigoyen 4300</p>
+                                <div class="branch-actions"><span class="branch-primary">Ver la tienda <i class="fas fa-arrow-right"></i></span><span class="branch-secondary">Cómo llegar</span></div>
+                            </div>
+                            <div class="branch-card">
+                                <h5>Palermo <span class="branch-open">Abierto según horario</span></h5>
+                                <p><i class="fas fa-location-dot"></i> Honduras 5100</p>
+                                <div class="branch-actions"><span class="branch-primary">Ver la tienda <i class="fas fa-arrow-right"></i></span><span class="branch-secondary">Cómo llegar</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stack">
+                    <div class="note ok"><i class="fas fa-store"></i><span>El stock y los precios son de cada local. Por eso la portada no tiene carrito: <b>"Ver la tienda"</b> lleva a la tienda de esa sede, y "Cómo llegar" abre el mapa.</span></div>
+                    <div class="note"><i class="fas fa-pen"></i><span>El texto se edita en los Ajustes de la marca: título, bajada, "Sobre nosotros", el nombre de la sección de locales y el color. Lo que no se escribe sale del perfil de la marca, así que prender la página nunca deja una portada vacía.</span></div>
+                    <div class="note purple"><i class="fas fa-table-columns"></i><span>Tres armados de portada: <b>con banner grande</b>, <b>partida</b> o <b>mínima</b>, que es la única sin imagen de fondo.</span></div>
+                    <div class="note warn"><i class="fas fa-toggle-on"></i><span>La página aparece cuando el dueño la prende, no cuando cargó suficiente información. Mientras esté apagada, el dominio de la marca lleva a su primera sede.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: LA DIRECCIÓN OFICIAL -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">La dirección oficial</h3>
+                <h2>Todas las puertas siguen abiertas, pero una sola cuenta para los buscadores</h2>
+                <p>Probalo con la sede Lanús de la marca Aura Lotion: tildá lo que tiene y mirá cuál gana.</p>
+            </div>
+
+            <div class="visual-block canon demo" data-canon>
+                <div class="toggles">
+                    <label class="toggle"><input type="checkbox" data-opt="brandDomain"><span><strong>La marca tiene dominio</strong><small>auralotion.com</small></span></label>
+                    <label class="toggle"><input type="checkbox" data-opt="ownDomain" checked><span><strong>La sede tiene dominio propio</strong><small>auralanus.com.ar</small></span></label>
+                    <label class="toggle"><input type="checkbox" data-opt="design" checked><span><strong>La sede tiene diseño asignado</strong><small>por ejemplo, Neominimalista</small></span></label>
+                </div>
+                <div class="ladder" aria-live="polite">
+                    <div class="rung" data-rung="brandDomain"><span class="rung-num">1</span><div><strong>El dominio de la marca</strong><code>auralotion.com/lanus</code></div><span class="rung-tag"></span></div>
+                    <div class="rung" data-rung="ownDomain"><span class="rung-num">2</span><div><strong>El dominio propio de la tienda</strong><code>auralanus.com.ar/</code></div><span class="rung-tag"></span></div>
+                    <div class="rung" data-rung="design"><span class="rung-num">3</span><div><strong>El enlace propio, si tiene diseño</strong><code>manageysell.com/t/lanus</code></div><span class="rung-tag"></span></div>
+                    <div class="rung" data-rung="platform"><span class="rung-num">4</span><div><strong>La ruta de la plataforma</strong><code>manageysell.com/store/auralotion/sede/lanus</code></div><span class="rung-tag"></span></div>
+                </div>
+            </div>
+
+            <div class="note mt">
+                <i class="fas fa-route"></i>
+                <span>Un dominio viejo de una sede, un QR impreso o un enlace al shopping <b>siguen funcionando</b>: solo declaran como oficial a la dirección que gana, y el mapa del sitio que leen los buscadores publica esa misma.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: LO QUE CONVIENE SABER -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Lo que conviene saber</h3>
+                <h2>El nombre de la tienda en la dirección, y lo que lee Google</h2>
+            </div>
+
+            <div class="visual-block rules-grid">
+                <div class="rule">
+                    <i class="fas fa-i-cursor" style="color:#fcd34d;"></i>
+                    <div><strong>El nombre se limpia al escribirlo</strong><span>En la tarjeta "Tu dominio" el dueño cambia la parte que nombra a la tienda (<code>lumen</code>). Se limpia mientras se escribe y avisa si ya está tomado.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-link-slash" style="color:#f87171;"></i>
+                    <div><strong>Cambiarlo no deja redirección</strong><span>Lo que se compartió con el nombre anterior deja de andar. El campo lo avisa apenas el nombre difiere del guardado.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-ban" style="color:#c4b5fd;"></i>
+                    <div><strong>Hay nombres reservados</strong><span>Los que la plataforma usa como rutas propias (<code>store</code>, <code>t</code>, <code>terminos</code>…). Bajo el dominio de una marca, una ruta fija le ganaría a la sede.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-magnifying-glass-dollar" style="color:#34d399;"></i>
+                    <div><strong>Google lee el precio de hoy</strong><span>La página de una tienda o de un producto se arma en cada visita, con el precio y el stock del momento. Un producto nuevo aparece sin esperar a que se publique una versión de la app.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-heading" style="color:#93c5fd;"></i>
+                    <div><strong>En el enlace propio no se nombra al shopping</strong><span>Ni en el título de la pestaña ni en el ícono: es la tienda presentándose sola, igual que en un dominio propio.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-file-lines" style="color:#22d3ee;"></i>
+                    <div><strong>La ficha tiene una sola dirección oficial</strong><span>Se puede abrir desde <code>/t/</code>, pero la ficha de un producto declara como oficial la de <code>/store/…/product/…</code>, así las dos puertas no compiten.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #d8b4fe;">Seguir explorando</h3>
+                <h2>De la dirección a lo que hay adentro</h2>
+                <p>¿Seguimos por el perfil del local o por la vitrina que se cuelga en la pared?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
+                </a>
+                <a href="perfil.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-store"></i></div>
+                    <div class="qa-text">Perfil<br>del local</div>
+                </a>
+                <a href="vitrina.html" class="qa-btn" style="border-color: var(--kpi-cyan);">
+                    <div class="qa-icon" style="color: var(--kpi-cyan);"><i class="fas fa-tv"></i></div>
+                    <div class="qa-text">La vitrina<br>del local</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // canonical_public_location: dominio de la marca > dominio propio >
+        // enlace propio si tiene diseño > ruta de la plataforma.
+        (() => {
+            const root = document.querySelector('[data-canon]');
+            if (!root) return;
+            const order = ['brandDomain', 'ownDomain', 'design', 'platform'];
+            function render() {
+                const on = { platform: true };
+                root.querySelectorAll('[data-opt]').forEach(i => { on[i.dataset.opt] = i.checked; });
+                const winner = order.find(k => on[k]);
+                order.forEach(k => {
+                    const rung = root.querySelector(`[data-rung="${k}"]`);
+                    rung.classList.toggle('wins', k === winner);
+                    rung.classList.toggle('applies', on[k] && k !== winner);
+                    rung.querySelector('.rung-tag').textContent = k === winner ? 'Oficial' : (on[k] ? 'Sigue abierta' : '');
+                });
+            }
+            root.addEventListener('change', render);
+            render();
+        })();
+    </script>
+    <script src="presentacion.js"></script>
+</body>
+</html>

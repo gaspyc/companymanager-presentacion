@@ -1,0 +1,284 @@
+{
+  "reviewed_at": "2026-10-07",
+  "project_commit": "c0ea43803c5749c08c325cf7cf603d17a94b31e8",
+  "hashed_from": "commit",
+  "modules": [
+    {
+      "file": "index.html",
+      "id": "mapa",
+      "name": "Mapa de la tienda",
+      "sources": [
+        "frontend/src/app/router/index.js"
+      ]
+    },
+    {
+      "file": "storefront.html",
+      "id": "storefront",
+      "name": "Tienda Online",
+      "sources": [
+        "companymanager/modules/sales/checkout/application/service.py",
+        "companymanager/modules/sales/storefront/domain/public_catalog.py",
+        "frontend/src/apps/companymarket/components/store-front/BusinessAgreementGate.vue",
+        "frontend/src/apps/companymarket/composables/useStorefrontStockSync.js",
+        "frontend/src/apps/companymarket/utils/stockShortageReport.js",
+        "frontend/src/apps/companymarket/utils/storefrontCheckout.js",
+        "frontend/src/apps/companymarket/views/StoreFront.vue",
+        "frontend/src/apps/companymarket/views/StoreFrontDesignShell.vue",
+        "frontend/src/shared/plugins/storefront/fashion-storefront/manifest.js",
+        "frontend/src/shared/plugins/storefront/industrial-storefront/manifest.js",
+        "frontend/src/shared/plugins/storefront/premium-storefront/manifest.js",
+        "frontend/src/shared/plugins/storefront/property-storefront/manifest.js",
+        "frontend/src/shared/plugins/storefront/wellness-service-storefront/manifest.js",
+        "frontend/src/shared/plugins/storefront/wholesale-storefront/manifest.js",
+        "frontend/src/shared/storefront/resolveStoreRef.js",
+        "frontend/src/shared/storefront/storefrontDesigns.js"
+      ]
+    },
+    {
+      "file": "direcciones.html",
+      "id": "direcciones",
+      "name": "Las Puertas de la Tienda",
+      "sources": [
+        "companymanager/modules/identity/organizations/application/brand_page.py",
+        "docs/enlace-propio-sin-dominio.md",
+        "docs/html-dinamico-para-buscadores.md",
+        "docs/marca-y-sedes-en-un-dominio.md",
+        "frontend/src/app/router/index.js",
+        "frontend/src/apps/companymarket/views/BrandPage.vue",
+        "frontend/src/apps/companymarket/views/PublicDomainRoot.vue",
+        "frontend/src/shared/storefront/resolveStoreRef.js"
+      ]
+    },
+    {
+      "file": "perfil.html",
+      "id": "perfil",
+      "name": "Perfil del Local",
+      "sources": [
+        "companymanager/modules/identity/reputation/api/router.py",
+        "companymanager/modules/sales/orders/application/user_references.py",
+        "frontend/src/apps/companymarket/components/store-front/JobApplicationBanner.vue",
+        "frontend/src/apps/companymarket/components/store-front/StoreProfile.vue",
+        "frontend/src/apps/companymarket/components/store-front/StoreReviewPanel.vue",
+        "frontend/src/modules/portals/public/components/market/StoreStars.vue"
+      ]
+    },
+    {
+      "file": "catalogo.html",
+      "id": "catalogo",
+      "name": "Catálogo Público",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/StoreCatalog.vue",
+        "frontend/src/apps/companymarket/composables/useCart.js",
+        "frontend/src/apps/companymarket/composables/useStorefrontStockSync.js",
+        "frontend/src/apps/companymarket/utils/minimumPurchase.js",
+        "frontend/src/apps/companymarket/utils/stockShortageReport.js",
+        "frontend/src/shared/storefront/storefrontCatalog.js",
+        "frontend/src/shared/storefront/storefrontPromotedLines.js",
+        "frontend/src/shared/storefront/storefrontTaxonomyOrder.js"
+      ]
+    },
+    {
+      "file": "producto.html",
+      "id": "producto",
+      "name": "Página de Producto",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/HeroVariantPicker.vue",
+        "frontend/src/apps/companymarket/views/StoreProduct.vue",
+        "frontend/src/shared/storefront/garantiaLegal.js"
+      ]
+    },
+    {
+      "file": "vitrina.html",
+      "id": "vitrina",
+      "name": "La Vitrina del Local",
+      "sources": [
+        "companymanager/modules/sales/storefront/domain/showcase.py",
+        "frontend/src/apps/companymarket/views/StoreShowcase.vue",
+        "frontend/src/modules/features/settings/components/ManualShowcaseEditor.vue"
+      ]
+    },
+    {
+      "file": "carrito.html",
+      "id": "carrito",
+      "name": "El Carrito",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/FloatingCart.vue",
+        "frontend/src/apps/companymarket/components/store-front/VariantSelectorModal.vue",
+        "frontend/src/apps/companymarket/composables/useCart.js",
+        "frontend/src/apps/companymarket/utils/minimumPurchase.js",
+        "frontend/src/apps/companymarket/utils/mixAndMatch.js"
+      ]
+    },
+    {
+      "file": "combobuilder.html",
+      "id": "combos",
+      "name": "Armador de Combos",
+      "sources": [
+        "companymanager/modules/sales/checkout/application/service.py",
+        "frontend/src/apps/companymarket/components/store-front/ComboBuilderModal.vue",
+        "frontend/src/apps/companymarket/composables/useCart.js"
+      ]
+    },
+    {
+      "file": "checkout.html",
+      "id": "checkout",
+      "name": "Finalizar Compra",
+      "sources": [
+        "companymanager/modules/sales/checkout/application/service.py",
+        "docs/envios-por-correo-y-cajas.md",
+        "frontend/src/apps/companymarket/components/store-front/CheckoutModal.vue",
+        "frontend/src/apps/companymarket/components/store-front/checkout/CheckoutForm.vue",
+        "frontend/src/apps/companymarket/components/store-front/checkout/CheckoutTicket.vue",
+        "frontend/src/apps/companymarket/composables/useStorefrontCarriers.js",
+        "frontend/src/apps/companymarket/utils/storefrontCheckout.js"
+      ]
+    },
+    {
+      "file": "pagos.html",
+      "id": "pagos",
+      "name": "Medios de Pago",
+      "sources": [
+        "companymanager/modules/sales/orders/application/local_deposit.py",
+        "companymanager/modules/sales/orders/domain/local_deposit.py",
+        "companymanager/modules/sales/orders/domain/transfer_amount.py",
+        "docs/transferencias-confirmacion-automatica.md",
+        "frontend/src/apps/companymarket/components/store-front/StoreCatalog.vue",
+        "frontend/src/apps/companymarket/components/store-front/checkout/CheckoutForm.vue",
+        "frontend/src/apps/companymarket/utils/storefrontCheckout.js"
+      ]
+    },
+    {
+      "file": "appointments.html",
+      "id": "servicios",
+      "name": "Turnos y Servicios",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/StoreAppointments.vue",
+        "frontend/src/apps/companymarket/utils/storefrontProviders.js",
+        "frontend/src/modules/features/catalog/utils/subscriptionWeekdays.js"
+      ]
+    },
+    {
+      "file": "login.html",
+      "id": "auth",
+      "name": "Acceso del Cliente",
+      "sources": [
+        "frontend/src/app/layouts/PublicLayout.vue",
+        "frontend/src/apps/companymarket/components/store-front/StoreLoginModal.vue",
+        "frontend/src/apps/companymarket/components/store-front/StoreRegisterModal.vue",
+        "frontend/src/utils/emailGuards.js"
+      ]
+    },
+    {
+      "file": "ordenes.html",
+      "id": "pedidos",
+      "name": "Mis Compras",
+      "sources": [
+        "companymanager/modules/marketing/campaigns/application/audience.py",
+        "frontend/src/app/layouts/PublicLayout.vue",
+        "frontend/src/apps/companymarket/views/MyOrders.vue"
+      ]
+    },
+    {
+      "file": "agenda.html",
+      "id": "agenda",
+      "name": "Mis Servicios",
+      "sources": [
+        "companymanager/modules/identity/users/api/router.py",
+        "frontend/src/apps/companymarket/views/Agenda.vue"
+      ]
+    },
+    {
+      "file": "politicas.html",
+      "id": "devoluciones",
+      "name": "Devoluciones e Info Legal",
+      "sources": [
+        "frontend/src/app/layouts/PublicLayout.vue",
+        "frontend/src/apps/companymarket/components/returns/ReturnRequestModal.vue",
+        "frontend/src/apps/companymarket/utils/storefrontLegalLabels.js",
+        "frontend/src/apps/companymarket/views/StoreLegalInfo.vue",
+        "frontend/src/apps/companymarket/views/StoreReturnsPolicy.vue"
+      ]
+    },
+    {
+      "file": "comocomprar.html",
+      "id": "tutorial",
+      "name": "¿Cómo Comprar?",
+      "sources": [
+        "frontend/src/apps/companymarket/components/store-front/StoreHowToBuyModal.vue",
+        "frontend/src/apps/companymarket/utils/storefrontCheckout.js"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "companymanager/modules/identity/organizations/application/brand_page.py": "abf431ac278cc209ec6b866628e8db3fe602db27090451a44af75de984dab0ad",
+    "companymanager/modules/identity/reputation/api/router.py": "08825bba4e7a97f6d5268695a4bd3d08e2dc36c85fba40fa54d936a2d8da1609",
+    "companymanager/modules/identity/users/api/router.py": "3475c3eaf4e7025a3a12e8a62db974f803c36ddee935dae22fa6413a0ab62fc7",
+    "companymanager/modules/marketing/campaigns/application/audience.py": "9eb6f5041d2f3e6c992a8edad057e4140f79bb58d7b29ef0095a7482fea2ec4a",
+    "companymanager/modules/sales/checkout/application/service.py": "281c290ea4c2acf1e53ecfadbb0ca3850c357f7daf642cf4c992d035f18f60e9",
+    "companymanager/modules/sales/orders/application/local_deposit.py": "7714c255aac95d974c16ec918381579b06e8887e8e5ae696303fd68df86152aa",
+    "companymanager/modules/sales/orders/application/user_references.py": "7ee6c048092bb9a8dc1b7a13c7fd9983654dd02878a63e612d270c4ddc474c4d",
+    "companymanager/modules/sales/orders/domain/local_deposit.py": "4f472cabfe88ce32c49c8a8034146aca7e93f5ae408303c848585ff06f7811b6",
+    "companymanager/modules/sales/orders/domain/transfer_amount.py": "9c8fd20880a81a8b7367a945d81c72b24fd2b695a6f9b923ea9a8326bf30e8b6",
+    "companymanager/modules/sales/storefront/domain/public_catalog.py": "6f9acb27c6e01ed95f115757cd52d3c798a7ca5d31be6757ca6c6ae14dc5e964",
+    "companymanager/modules/sales/storefront/domain/showcase.py": "91a99ca0b085a75d2d2d196b1ec33139b13e03cb3cc46dd5a151f0dbc886003f",
+    "docs/enlace-propio-sin-dominio.md": "fd024501a0aea56a4bf6ea521c6694022206ad6927fb1178868c33926265be85",
+    "docs/envios-por-correo-y-cajas.md": "bbb641a96000b9e0c02883dc4e754bd3fca4d6ae58c305b7e7cbb90d9d639556",
+    "docs/html-dinamico-para-buscadores.md": "b05bffab86586d995d36b9e49e7ccb73b1ae824a2060c7c776f486206cf6dd75",
+    "docs/marca-y-sedes-en-un-dominio.md": "115d9065639bb5e69380d8a7239482934ff8b97501312c4abf50e8f629ceddf0",
+    "docs/transferencias-confirmacion-automatica.md": "abbb2a0763d911265de372eca91d3ad0d1478a8aa9eb84fad93e4516ceeb5cc7",
+    "frontend/src/app/layouts/PublicLayout.vue": "03fcbd2c3a4d76b20fd74375576042fa0140fb0f2c8115fb42d35c6d8a458447",
+    "frontend/src/app/router/index.js": "a8646ead493486488054e04f49ea62add7e4e8fea0feaa073382a1783201ee7b",
+    "frontend/src/apps/companymarket/components/returns/ReturnRequestModal.vue": "f4aca279e49f042f400f056b1a64605d77634e98db20eb01e1bb013af4992799",
+    "frontend/src/apps/companymarket/components/store-front/BusinessAgreementGate.vue": "2d58ef045fc98a7b1ecb6df95d21439b6bd5b3a72137e865ea26c5fb5ede9799",
+    "frontend/src/apps/companymarket/components/store-front/CheckoutModal.vue": "9902cd09b3a9181db8b1f4073bc3bb9865a0cb109d358bfde7b9815485362613",
+    "frontend/src/apps/companymarket/components/store-front/ComboBuilderModal.vue": "0c73f13e97a8be0d2b784c0087258667bf3de5a25165b24b9ccd1c8c16e0b458",
+    "frontend/src/apps/companymarket/components/store-front/FloatingCart.vue": "70fbbf8c64fce9624039ec11bdc34102586dd6fc8881e5a2c643b67cb218665f",
+    "frontend/src/apps/companymarket/components/store-front/HeroVariantPicker.vue": "9e9c01372a0ba877ea2e938e3838cb3f09e22576cdae639ff96a3b1cf14a2934",
+    "frontend/src/apps/companymarket/components/store-front/JobApplicationBanner.vue": "e895f0a6112fbd40ec3c4ab23bdb56a86e7accade063a974ca6c81c91bab4757",
+    "frontend/src/apps/companymarket/components/store-front/StoreAppointments.vue": "afeff5cab429c9f04bc3c7c4b91dca5d9ecfbef562f8bc4828e15e502c1eb5bb",
+    "frontend/src/apps/companymarket/components/store-front/StoreCatalog.vue": "6e31e0189608d17da080a57773a3811619a408539654755374004af080b83ead",
+    "frontend/src/apps/companymarket/components/store-front/StoreHowToBuyModal.vue": "5511dfbbb4db1767c31f228eb71601a6e0cae684b03591551738341cbc3f2f1f",
+    "frontend/src/apps/companymarket/components/store-front/StoreLoginModal.vue": "82e2350cba327d70f134cff009fb8fb681f5ebef4cb52ea0c5b822db8e4caf49",
+    "frontend/src/apps/companymarket/components/store-front/StoreProfile.vue": "b9dd8103270bcdc4e43fc36e5e9774e509d1f3cd16b1e3820dfa41c8278085ac",
+    "frontend/src/apps/companymarket/components/store-front/StoreRegisterModal.vue": "b85b559eee1a569ad9c11227419a5b78fba34b5983faaceaab4badd94e2e26bb",
+    "frontend/src/apps/companymarket/components/store-front/StoreReviewPanel.vue": "3b9f25193b5a5e04aa167c4f7dbe9e06cf3c505d0262b0d1c4400e94fe0c83f7",
+    "frontend/src/apps/companymarket/components/store-front/VariantSelectorModal.vue": "44955c468d8bba487a61163d96b805b918ea878b07cb72e4ed05e2d0ceac83b4",
+    "frontend/src/apps/companymarket/components/store-front/checkout/CheckoutForm.vue": "5cf5abea05adb602266d445b1fd55ab06448e2614c73f19cb9d2c172aac4273a",
+    "frontend/src/apps/companymarket/components/store-front/checkout/CheckoutTicket.vue": "6dc8be9aab4b1671e624b431bcfd022b3d0da0bf9d59f93f1ecdeb73e0691150",
+    "frontend/src/apps/companymarket/composables/useCart.js": "dd7d646ff667c87c68829a1560906113be630e9b87183d2a3f9b832e865e827a",
+    "frontend/src/apps/companymarket/composables/useStorefrontCarriers.js": "dfa4f1a6aaf2603855fc539993078de67c4307aa84ebde97ed19ea70ff9a8bdb",
+    "frontend/src/apps/companymarket/composables/useStorefrontStockSync.js": "c9505bfaf9ecf5f14f0804c94141c768b48b3d46c989790157067133fa5a9579",
+    "frontend/src/apps/companymarket/utils/minimumPurchase.js": "07eed27b90e9640e2772dbf8c79c356ecac916a714745a519bf6492b5869e8df",
+    "frontend/src/apps/companymarket/utils/mixAndMatch.js": "8736f98406edaf594c2bc9bc37cc8c5eeae873f55a985c579de0dd73b62ab57e",
+    "frontend/src/apps/companymarket/utils/stockShortageReport.js": "dd28968c3e72e33426efe884cc3859a72402ef26af43c5e2ef65c0ec86d52e7d",
+    "frontend/src/apps/companymarket/utils/storefrontCheckout.js": "b2a92ba4de980293f62682e6bdfca076400a090d2268a69a913907edace90c3b",
+    "frontend/src/apps/companymarket/utils/storefrontLegalLabels.js": "d9961597c0eff67c5569cda74bc406f5f793df274be1b863ba6ab6f8e5a31a3c",
+    "frontend/src/apps/companymarket/utils/storefrontProviders.js": "ee5460d949c303c8b5812328c916eba2b590d0e297f5b33e32722ca4b392804c",
+    "frontend/src/apps/companymarket/views/Agenda.vue": "d2027fac62d9608922be6e959cb627c341275956ca2d857c12e378a6a4871792",
+    "frontend/src/apps/companymarket/views/BrandPage.vue": "c96cde090caef6b3e5503b9bd7b5bb9f43769522afbd3ef451603b48a6dd3997",
+    "frontend/src/apps/companymarket/views/MyOrders.vue": "4cbfeb3c4b1fa27481a2d4c096b59f668e4e3ca1c8c77d3967ce9267ded3deec",
+    "frontend/src/apps/companymarket/views/PublicDomainRoot.vue": "f7aae05468379c2cfdd5fa6ca09742818fe3c417f4f48dd363ce5629e53f1162",
+    "frontend/src/apps/companymarket/views/StoreFront.vue": "01047702c2a869de1db11f51336c9ebd1036e9e9d759c1722d95872efacad895",
+    "frontend/src/apps/companymarket/views/StoreFrontDesignShell.vue": "de22b17072ddc67ff084b2b964fc1ebe8d1d38d05580b2bdf323327972143724",
+    "frontend/src/apps/companymarket/views/StoreLegalInfo.vue": "3c7a3418fde9b1f8166a34bdbafac540c5a94008c2947d1f28076e6e7461668a",
+    "frontend/src/apps/companymarket/views/StoreProduct.vue": "9a6a81ce7819870a2defae26cd6a8c12734e2f692a16e987b753c12ea299031d",
+    "frontend/src/apps/companymarket/views/StoreReturnsPolicy.vue": "b0ce1238365bd64fb1d091b421313391bf14e943e68f2e00743197ed21473ab1",
+    "frontend/src/apps/companymarket/views/StoreShowcase.vue": "4825f96690390331c0981fbe602b7cf526a9507d87f5ad504a744309dc388c22",
+    "frontend/src/modules/features/catalog/utils/subscriptionWeekdays.js": "1e7e59118d80db525766ab5d439d3c1a596d5d9eb8c99ceb0c2746da6417fee4",
+    "frontend/src/modules/features/settings/components/ManualShowcaseEditor.vue": "c8077134c08e8c15e36a74cf4e508f01e039c51deed2c539ab98de7a0616a47e",
+    "frontend/src/modules/portals/public/components/market/StoreStars.vue": "5117ed8ac930a138e3a127bc0954254f06a8d415a5f5875a80c8468071b9f911",
+    "frontend/src/shared/plugins/storefront/fashion-storefront/manifest.js": "8f9f881e7162df7c6284f2f2f1511a389388fcb04a2aae42dea38275df198536",
+    "frontend/src/shared/plugins/storefront/industrial-storefront/manifest.js": "d411073421a11865cc66e802d24621b31d334651300c79f5dc25612bf73a6733",
+    "frontend/src/shared/plugins/storefront/premium-storefront/manifest.js": "ccefeeabe228aef73b79a9606362af22ac726e1c9302d30c1ca7d22341bf9104",
+    "frontend/src/shared/plugins/storefront/property-storefront/manifest.js": "0d398bb84d11a18549f0290c4068a0166d18db21a1db99e68bca2913936dafe7",
+    "frontend/src/shared/plugins/storefront/wellness-service-storefront/manifest.js": "a8b1409ca0ca4e3f5216f2b3161f5c08b8ab7f960245c40868f8c54dbcbb5d72",
+    "frontend/src/shared/plugins/storefront/wholesale-storefront/manifest.js": "37abffb2b65ff8b515176c46358cb783ee640183214977f89a2921032cb067c1",
+    "frontend/src/shared/storefront/garantiaLegal.js": "34e07aeb1a8738d5162a22fce9037f3fba67716451eb85a3c4576438dc47d8fc",
+    "frontend/src/shared/storefront/resolveStoreRef.js": "2f4ee17dfdfa9dd860ef106cb29be5a8db07b9814da8382a474c2733b71c42f0",
+    "frontend/src/shared/storefront/storefrontCatalog.js": "f2cfe5bef0b3154c5fcb593fa3d87f1125e55e0d0d9a5759dda89eb0bf9447c7",
+    "frontend/src/shared/storefront/storefrontDesigns.js": "7c9a2cb58ba91a8f58b6bbea72aace11dfa9556656b141f61fdcd3f212618f09",
+    "frontend/src/shared/storefront/storefrontPromotedLines.js": "cd2aa0607f4d2f812a77ccf843693cbbd2a565a6bf4f37833a6036ef638dd6d9",
+    "frontend/src/shared/storefront/storefrontTaxonomyOrder.js": "f835cda0ed7aa5e94368d8d70fcf10e3a40f457ec481a9fa05e5a40f7c44d295",
+    "frontend/src/utils/emailGuards.js": "9e8da33dd0a7a78ceb2ce88536204efd0ab6535ec5e2fd9b323b139f0cc38edd"
+  }
+}

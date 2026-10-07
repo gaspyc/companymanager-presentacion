@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medios de Pago</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="presentacion.css">
+    <style>
+        .pay-demo { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; text-align: left; }
+        .config { display: flex; flex-direction: column; gap: 7px; }
+        .config label, .config .row { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--text-soft); padding: 7px 10px; border: 1px solid var(--border-soft); border-radius: 10px; background: var(--bg-panel); cursor: pointer; }
+        .config input { accent-color: #10b981; width: 15px; height: 15px; }
+        .config select { margin-left: auto; min-width: 0; max-width: 60%; background: #0b1222; color: var(--text-main); border: 1px solid var(--border-soft); border-radius: 7px; padding: 4px 6px; font: 700 12px Urbanist, sans-serif; }
+        .config .group { font-size: 10.5px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); margin-top: 4px; }
+
+        /* Calcado de CheckoutForm.vue (pago) */
+        .form-mock { background: white; color: #0f172a; border-radius: 16px; padding: 14px; box-shadow: 0 18px 40px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 9px; }
+        .cm-input-group label { font-size: 12.5px; font-weight: 800; color: #334155; display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .checkout-legal-consent { display: flex; gap: 8px; align-items: flex-start; font-size: 11.5px; color: #475569; line-height: 1.45; }
+        .checkout-legal-consent input { margin-top: 2px; accent-color: #009EE3; }
+        .checkout-legal-consent a { color: #0369a1; font-weight: 700; }
+        .btn-mp:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-reserve-transfer { margin-top: -2px; }
+        .checkout-deposit-note { font-size: 12px; color: #475569; background: #f8fafc; border-radius: 9px; padding: 8px 10px; margin: 0; line-height: 1.45; }
+        .checkout-unavailable { font-size: 12.5px; font-weight: 800; color: #b91c1c; margin: 0; }
+        .total-strip { display: flex; justify-content: space-between; font-size: 13px; font-weight: 900; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+
+        /* Panel de transferencia */
+        .transfer-payment-box { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; color: #0f172a; text-align: left; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+        .transfer-qr-wrap { width: 104px; height: 104px; background: white; border: 1px solid #e2e8f0; border-radius: 10px; display: grid; place-items: center; font-size: 62px; color: #0f172a; }
+        .transfer-copy { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: #334155; }
+        .transfer-copy strong { font-size: 16px; color: #0f172a; }
+        .transfer-copy em { font-size: 11.5px; color: #047857; font-weight: 800; font-style: normal; }
+        .transfer-copy b { color: #047857; font-size: 11px; }
+        .transfer-copy small { color: #64748b; }
+        .transfer-holder-check { font-size: 11px; color: #1d4ed8; margin: 4px 0 0; }
+        .transfer-actions { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+        .transfer-actions span { min-height: 34px; border-radius: 9px; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid #cbd5e1; background: white; color: #334155; }
+        .transfer-actions .confirm { grid-column: 1 / -1; background: #10b981; border-color: #10b981; color: white; }
+        .cents { display: flex; flex-direction: column; gap: 10px; }
+        .cents-input { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--text-soft); }
+        .cents-input input { width: 140px; background: #0b1222; color: var(--text-main); border: 1px solid var(--border-soft); border-radius: 8px; padding: 7px 9px; font: 800 14px ui-monospace, monospace; }
+        .cents-input button { border: 1px solid rgba(16,185,129,.4); background: rgba(16,185,129,.12); color: #6ee7b7; border-radius: 8px; padding: 7px 11px; font: 800 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .band { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .band div { border: 1px solid var(--border-soft); background: var(--bg-panel); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; color: var(--text-muted); }
+        .band b { display: block; color: var(--text-main); font-size: 14px; margin-bottom: 2px; }
+        .band code { font: 700 12px ui-monospace, monospace; color: #e9d5ff; }
+        .picked { font-size: 13.5px; }
+        .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .step { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 13px; padding: 12px; text-align: left; }
+        .step .n { font-size: 11px; font-weight: 900; color: #6ee7b7; letter-spacing: .06em; text-transform: uppercase; }
+        .step strong { display: block; font-size: 14px; margin: 3px 0; }
+        .step span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+
+        /* WhatsApp */
+        .wa-chat { background: #e5ddd5; border-radius: 16px; padding: 14px; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+        .wa-bubble { background: #dcf8c6; color: #111827; border-radius: 10px 10px 2px 10px; padding: 10px 12px; font: 500 12.5px/1.45 system-ui, sans-serif; white-space: pre-wrap; margin-left: 30px; box-shadow: 0 1px 1px rgba(0,0,0,.12); }
+        .after { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .after-card { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 13px; padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 6px; }
+        .after-card strong { font-size: 14px; display: flex; gap: 7px; align-items: center; }
+        .after-card span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+        .after-card q { font-size: 12px; color: #a7f3d0; font-style: italic; }
+
+        @media (max-width: 1024px) {
+            .pay-demo, .band, .steps, .after { grid-template-columns: minmax(0, 1fr); }
+            .btn-row { flex-wrap: wrap; }
+            .transfer-payment-box { grid-template-columns: 88px minmax(0, 1fr); }
+            .transfer-qr-wrap { width: 88px; height: 88px; font-size: 52px; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-blue"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #93c5fd;">Experiencia de compra</h3>
+                <h1>Los <span>medios de pago</span></h1>
+                <p>La sede elige con qué se le puede pagar, y el checkout muestra solo esos botones. Cada uno deja el pedido en un estado distinto: pagado, esperando la transferencia, señado o reservado para pagar en el local.</p>
+            </div>
+
+            <div class="visual-block flow">
+                <div class="flow-card">
+                    <strong><i class="fas fa-credit-card" style="color:#38bdf8;"></i> Online</strong>
+                    <span>Mercado Pago, o una transferencia con el comprobante adjunto.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-store" style="color:#d8b4fe;"></i> En el local o al recibir</strong>
+                    <span>Con una seña online si la sede la pide, y el resto al retirar o cuando llega el envío propio.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fab fa-whatsapp" style="color:#4ade80;"></i> Por WhatsApp</strong>
+                    <span>El pedido armado en un mensaje, para cerrarlo conversando.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: LOS BOTONES -->
+    <section class="slide">
+        <div class="glow-green" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #6ee7b7;">Los botones del checkout</h3>
+                <h2>Lo que la sede habilita es lo que el cliente ve</h2>
+                <p>Probalo: cambiá la configuración de la sede y mirá cómo cambian los botones.</p>
+            </div>
+
+            <div class="visual-block pay-demo demo" data-pay>
+                <div class="config">
+                    <span class="group">Medios habilitados</span>
+                    <label><input type="checkbox" data-o="mp" checked> Mercado Pago</label>
+                    <label><input type="checkbox" data-o="wa" checked> WhatsApp</label>
+                    <label><input type="checkbox" data-o="transfer" checked> Transferencia (con alias)</label>
+                    <label><input type="checkbox" data-o="local" checked> Pagar en el local</label>
+                    <span class="group">Seña del pago en el local</span>
+                    <div class="row">Seña <select data-o="deposit"><option value="0">Sin seña</option><option value="30" selected>30 %</option></select></div>
+                    <div class="row">Se deja con <select data-o="via"><option value="mp">Mercado Pago</option><option value="transfer">Transferencia</option><option value="both" selected>Los dos</option></select></div>
+                    <span class="group">Cómo lo recibe el cliente</span>
+                    <div class="row">Entrega <select data-o="ship"><option value="pickup">Retiro en el local</option><option value="own">Envío propio</option><option value="carrier">Correo</option></select></div>
+                </div>
+                <div class="form-mock" data-form aria-live="polite"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: TRANSFERENCIA -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">Transferencia</h3>
+                <h2>Los centavos del importe identifican el pedido</h2>
+                <p>Una transferencia no trae ningún dato del pedido. Por eso no se pide el total exacto: se pide uno con centavos libres, y esos centavos lo encuentran en el extracto del banco.</p>
+            </div>
+
+            <div class="visual-block split">
+                <div class="transfer-payment-box">
+                    <div class="transfer-qr-wrap"><i class="fas fa-qrcode"></i></div>
+                    <div class="transfer-copy">
+                        <strong data-ask>Transferi $ 15.234,71</strong>
+                        <em>Los centavos identifican tu pedido: transferi el importe exacto.</em>
+                        <span>Titular: Lumen Velas S.R.L.</span>
+                        <span>CUIT: 30-71234567-9 <b title="Coincide con el de su cuenta de Mercado Pago"><i class="fas fa-circle-check"></i> Verificado</b></span>
+                        <span>Alias/CVU/CBU: lumen.velas.mp</span>
+                        <small>El pedido queda pendiente hasta que el local confirme el pago.</small>
+                        <p class="transfer-holder-check"><i class="fas fa-shield-halved"></i> Antes de confirmar, tu banco te muestra el titular y el CUIT de la cuenta. Si no son estos, no transfieras.</p>
+                    </div>
+                    <div class="transfer-actions">
+                        <span><i class="fas fa-copy"></i> Copiar datos</span>
+                        <span><i class="fas fa-camera"></i> Adjuntar comprobante</span>
+                        <span class="confirm">Confirmar pago</span>
+                    </div>
+                </div>
+
+                <div class="cents demo" data-cents>
+                    <div class="cents-input">Total del pedido: <input value="15234,56" data-total aria-label="Total del pedido"><button type="button" data-pick>Pedir importe</button></div>
+                    <div class="band" data-band></div>
+                    <div class="note ok picked" data-picked></div>
+                    <div class="note"><i class="fas fa-arrow-up"></i><span><b>El recargo siempre sube</b>, nunca baja: cobrar de menos la mitad de las veces sería un agujero. Primero se usan los centavos del mismo peso, que es lo que lo mantiene en unos 26 centavos de promedio.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: SE CONFIRMA SOLA -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Del comprobante al extracto</h3>
+                <h2>La transferencia se confirma sola cuando aparece en el banco</h2>
+            </div>
+
+            <div class="visual-block steps">
+                <div class="step"><span class="n">1 · Al abrir el panel</span><strong>Se pide el importe</strong><span>La tienda pide uno libre para ese total, y lo vuelve a pedir si el total cambia (por ejemplo, al cotizar el envío).</span></div>
+                <div class="step"><span class="n">2 · El cliente</span><strong>Transfiere y adjunta</strong><span>El comprobante es una foto JPG, PNG o WebP de hasta 5 MB. Sin comprobante, "Confirmar pago" no se habilita.</span></div>
+                <div class="step"><span class="n">3 · El pedido</span><strong>Entra pendiente</strong><span>Se crea recién al adjuntar el comprobante, con ese importe como total. Un importe que el total no podía pedir se descarta.</span></div>
+                <div class="step"><span class="n">4 · El extracto</span><strong>Lo confirma</strong><span>Al importar el extracto de la cuenta, o con "Buscar en el extracto" en el pedido, la línea con ese importe confirma el pedido.</span></div>
+            </div>
+
+            <div class="visual-block rules-grid mt">
+                <div class="rule"><i class="fas fa-code-compare" style="color:#fcd34d;"></i><div><strong>El empate no se adivina</strong><span>Si dos pedidos podrían ser esa línea, no se confirma ninguno: va a revisión manual. Lo mismo si alguien transfirió dos veces el mismo importe.</span></div></div>
+                <div class="rule"><i class="fas fa-calendar-days" style="color:#93c5fd;"></i><div><strong>Cinco días de margen</strong><span>Los extractos suelen traer la fecha sin hora y algunos bancos acreditan al día siguiente. La tolerancia del importe, en cambio, es de un centavo.</span></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: WHATSAPP Y DESPUÉS -->
+    <section class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #93c5fd;">Qué pasa después de tocar</h3>
+                <h2>Cada botón termina en un lugar distinto</h2>
+            </div>
+
+            <div class="visual-block split wide-right">
+                <div class="wa-chat">
+                    <div class="wa-bubble">Hola, me interesa hacer el siguiente pedido:
+
+==== VELAS ====
+- 12x Vela de soja 200 g Vainilla - $ 60.840
+- 2x Vela en lata Cedro - $ 12.400
+
+*Entrega:* Envio a domicilio
+*Direccion:* Honduras 4800, Palermo
+*Envio estimado:* $ 2.750
+
+*TOTAL APROX: $ 75.990*</div>
+                </div>
+                <div class="after">
+                    <div class="after-card"><strong><i class="fas fa-credit-card" style="color:#38bdf8;"></i> Mercado Pago</strong><span>Se crea el pedido y el cliente pasa a pagar a Mercado Pago. La seña del pago en el local también va por ahí.</span></div>
+                    <div class="after-card"><strong><i class="fas fa-qrcode" style="color:#c4b5fd;"></i> Transferencia</strong><span>Se crea el pedido con el comprobante.</span><q>Recibimos el comprobante del pedido y quedó pendiente de revisión.</q></div>
+                    <div class="after-card"><strong><i class="fas fa-store" style="color:#fcd34d;"></i> En el local</strong><span>Se crea el pedido para cobrar al retirar o al recibir.</span><q>Tu pedido fue recibido y sus condiciones quedaron registradas.</q></div>
+                    <div class="after-card"><strong><i class="fab fa-whatsapp" style="color:#4ade80;"></i> WhatsApp</strong><span>Se abre el chat con el mensaje armado y el carrito se vacía. <b>No se crea un pedido</b> en la app: se cierra conversando.</span></div>
+                </div>
+            </div>
+
+            <div class="note purple mt">
+                <i class="fas fa-pen"></i>
+                <span>El mensaje lo arma la tienda: agrupado por tipo, por categoría o en una sola lista, con el saludo que la sede escriba y, si lo pide, un resumen por tipo, marca y línea. Con los precios ocultos, el mensaje tampoco los lleva.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #93c5fd;">Seguir explorando</h3>
+                <h2>Del pago al seguimiento</h2>
+                <p>¿Seguimos por "Mis compras" o volvemos al checkout?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
+                </a>
+                <a href="ordenes.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-receipt"></i></div>
+                    <div class="qa-text">Mis<br>compras</div>
+                </a>
+                <a href="checkout.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-lock"></i></div>
+                    <div class="qa-text">Finalizar<br>compra</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Los botones de CheckoutForm.vue con la misma lógica: seña del pago en el
+        // local, medios de la seña, "pagar al recibir" solo con envío propio y el
+        // teléfono con su etiqueta de para qué se pide.
+        (() => {
+            const root = document.querySelector('[data-pay]');
+            if (!root) return;
+            const money2 = n => '$ ' + n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const money = n => '$ ' + Math.round(n).toLocaleString('es-AR');
+            let consent = false;
+            const val = k => { const el = root.querySelector(`[data-o="${k}"]`); return el.type === 'checkbox' ? el.checked : el.value; };
+            function render() {
+                const mp = val('mp'), wa = val('wa'), transfer = val('transfer'), local = val('local');
+                const ship = val('ship');
+                const isDelivery = ship !== 'pickup';
+                const carrier = ship === 'carrier';
+                const total = 48300 + (ship === 'own' ? 2750 : ship === 'carrier' ? 9800 : 0);
+                const pct = Number(val('deposit'));
+                const deposit = pct > 0 ? Math.round(total * pct) / 100 : 0;
+                const via = val('via');
+                const depositMethods = deposit > 0 ? (via === 'both' ? ['mercadopago', 'transfer'] : [via === 'mp' ? 'mercadopago' : 'transfer']) : [];
+                const byMp = depositMethods.includes('mercadopago');
+                const byTransfer = depositMethods.includes('transfer') && transfer;
+                const canPayOnReceipt = !(isDelivery && carrier);
+                const hasLocal = local && canPayOnReceipt;
+                const showPhone = hasLocal || transfer || (mp && isDelivery);
+                const reasons = [hasLocal && 'Reserva local', transfer && 'Transferencia', mp && isDelivery && 'Envío con pago online'].filter(Boolean).join(' / ');
+                const needsConsent = mp || byMp;
+                const label = v => ['Señar', v, isDelivery ? 'y pagar al recibir' : 'y pagar en el local'].filter(Boolean).join(' ');
+                let html = `<div class="total-strip"><span>Total${isDelivery ? ' con envío' : ''}</span><span>${money(total)}</span></div>`;
+                if (showPhone) html += `<div class="cm-input-group"><label>Teléfono <span class="requirement-chip">${reasons}</span></label><input class="cm-input" placeholder="Ej: 1122334455"></div>`;
+                if (needsConsent) html += `<label class="checkout-legal-consent"><input type="checkbox" data-consent ${consent ? 'checked' : ''}><span>Para pagar con Mercado Pago${deposit > 0 ? ' (o dejar la seña)' : ''}, confirmo la operación y acepto las <a>condiciones de venta</a>, la <a>política de devoluciones</a> y la <a>privacidad de la plataforma</a>.</span></label>`;
+                const row = [];
+                if (mp) row.push(`<button type="button" class="btn-mp" ${consent ? '' : 'disabled'}><i class="fas fa-credit-card"></i> Mercado Pago</button>`);
+                if (wa) row.push('<button type="button" class="btn-wa">Enviar WhatsApp&nbsp;<i class="fab fa-whatsapp"></i></button>');
+                if (transfer) row.push('<button type="button" class="btn-transfer"><i class="fas fa-qrcode"></i> Transferencia</button>');
+                if (row.length) html += `<div class="btn-row">${row.join('')}</div>`;
+                if (hasLocal && !(deposit > 0 && !byMp)) {
+                    const txt = deposit > 0 ? label(byTransfer ? 'con Mercado Pago' : '') : (isDelivery ? 'Pedir envío y pagar al recibir' : 'Reservar y pagar en el local');
+                    html += `<button type="button" class="btn-reserve" ${byMp && !consent ? 'disabled style="opacity:.5"' : ''}><i class="fas ${isDelivery ? 'fa-motorcycle' : 'fa-store'}"></i> ${txt}</button>`;
+                }
+                if (hasLocal && byTransfer) html += `<button type="button" class="btn-reserve btn-reserve-transfer"><i class="fas fa-qrcode"></i> ${label(byMp ? 'por transferencia' : '')}</button>`;
+                if (hasLocal && deposit > 0) {
+                    const how = byMp && byTransfer ? 'con Mercado Pago o transferencia' : (byTransfer ? 'por transferencia' : 'con Mercado Pago');
+                    html += `<p class="checkout-deposit-note">Pagás el ${pct}% (${money2(deposit)}) ahora ${how} y el resto (${money2(total - deposit)}) ${isDelivery ? 'al recibir' : 'cuando retirás en el local'}.</p>`;
+                }
+                if (local && !canPayOnReceipt) html += '<p class="checkout-deposit-note">Con envío por correo el pedido se paga online.</p>';
+                if (!mp && !wa && !hasLocal && !transfer) html += '<p class="checkout-unavailable">Este local no tiene métodos de compra habilitados en este momento.</p>';
+                root.querySelector('[data-form]').innerHTML = html;
+            }
+            root.addEventListener('change', e => { if (e.target.matches('[data-consent]')) consent = e.target.checked; render(); });
+            render();
+        })();
+
+        // Los importes que puede pedir un total (sales/orders/domain/transfer_amount.py):
+        // primero los centavos libres del mismo peso, después los del peso siguiente.
+        (() => {
+            const root = document.querySelector('[data-cents]');
+            if (!root) return;
+            const fmt = n => '$ ' + n.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const input = root.querySelector('[data-total]');
+            const ask = document.querySelector('[data-ask]');
+            function pick() {
+                const raw = Number(String(input.value).replace(/\./g, '').replace(',', '.'));
+                if (!Number.isFinite(raw) || raw <= 0) return;
+                const cents = Math.round(raw * 100);
+                const pesos = Math.floor(cents / 100);
+                const own = cents % 100;
+                const same = [];
+                for (let c = own + 1; c <= 99; c += 1) same.push(pesos + c / 100);
+                const nextPeso = [];
+                for (let c = 1; c <= 99; c += 1) nextPeso.push(pesos + 1 + c / 100);
+                const pool = same.length ? same : nextPeso;
+                const chosen = pool[Math.floor(Math.random() * pool.length)];
+                root.querySelector('[data-band]').innerHTML =
+                    `<div><b>Mismo peso · ${same.length} importes</b>${same.length ? `<code>${fmt(same[0])} a ${fmt(same[same.length - 1])}</code>` : 'El total termina en ,99: no queda ninguno.'}</div>` +
+                    `<div><b>Peso siguiente · 99 importes</b><code>${fmt(nextPeso[0])} a ${fmt(nextPeso[98])}</code></div>`;
+                root.querySelector('[data-picked]').innerHTML = `<i class="fas fa-dice"></i><span>Le tocó <b>${fmt(chosen)}</b>: ${(chosen - raw).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} de recargo. Se elige al azar dentro de la tanda barata, así dos clientes del mismo total pagando a la vez casi nunca reciben el mismo número.</span>`;
+                if (ask) ask.textContent = `Transferi ${fmt(chosen)}`;
+            }
+            root.querySelector('[data-pick]').addEventListener('click', pick);
+            pick();
+        })();
+    </script>
+    <script src="presentacion.js"></script>
+</body>
+</html>

@@ -3,637 +3,365 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Público — Tienda Online</title>
+    <title>Catálogo Público</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+    <link rel="stylesheet" href="presentacion.css">
     <style>
-        :root {
-            --bg:     #0f172a;
-            --panel:  rgba(15,23,42,0.65);
-            --muted:  #94a3b8;
-            --border: rgba(255,255,255,0.06);
-            --green:  #10b981;
-            --blue:   #3b82f6;
-            --purple: #a855f7;
-            --orange: #f59e0b;
-            --red:    #ef4444;
-            --pink:   #ec4899;
-        }
+        /* Calcado de StoreCatalog.vue */
+        .catalog-mock { background: #f8fafc; border-radius: 18px; padding: 12px; box-shadow: 0 18px 40px rgba(0,0,0,.4); text-align: left; color: #0f172a; }
+        .catalog-toolbar { background: white; border: 1px solid #e2e8f0; border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        .toolbar-row { display: flex; gap: 10px; align-items: center; }
+        .search-box { flex: 1; display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0 12px; }
+        .search-box i { color: #94a3b8; font-size: 13px; }
+        .search-box input { flex: 1; border: 0; background: transparent; padding: 8px 0; outline: none; font: 600 13px Urbanist, sans-serif; color: #0f172a; }
+        .subtle-switch { display: inline-flex; background: #f1f5f9; border: 1px solid #e2e8f0; padding: 3px; border-radius: 100px; }
+        .subtle-switch span { padding: 6px 11px; border-radius: 100px; color: #64748b; font-weight: 700; font-size: 12px; display: flex; gap: 6px; align-items: center; }
+        .subtle-switch span.active { background: white; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+        .categories-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+        .cat-filter-btn { white-space: nowrap; padding: 6px 13px; border-radius: 50px; background: white; border: 1px solid #cbd5e1; color: #475569; font: 600 12.5px Urbanist, sans-serif; cursor: pointer; }
+        .cat-filter-btn.active { background: #0f172a; border-color: #0f172a; color: white; }
+        .catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+        .search-box { min-width: 0; } .search-box input { min-width: 0; width: 100%; }
+        .product-card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: .2s; }
+        .product-card:hover { border-color: #10b981; }
+        .product-image-container { height: 78px; background: #f1f5f9; position: relative; display: grid; place-items: center; color: #cbd5e1; font-size: 24px; }
+        .product-image-container.sold-out::before { content: ''; position: absolute; inset: 0; background: rgba(15,23,42,.18); }
+        .stock-badge { position: absolute; top: 7px; left: 7px; padding: 3px 7px; border-radius: 6px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; background: white; box-shadow: 0 2px 5px rgba(0,0,0,.1); }
+        .stock-badge.in-stock { color: #10b981; }
+        .stock-badge.on-demand { color: #3b82f6; }
+        .stock-badge.sold-out-badge { color: #f8fafc; background: rgba(15,23,42,.82); }
+        .stock-badge.combo-badge { color: #ef4444; background: #fee2e2; }
+        .stock-badge.options-badge { color: #0f172a; background: #f1f5f9; border: 1px solid #cbd5e1; text-transform: none; }
+        .product-info { padding: 8px 9px 9px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .product-name { font-size: 12.5px; font-weight: 700; line-height: 1.25; min-height: 31px; }
+        .product-price-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; margin-top: auto; }
+        .price-box { display: flex; flex-direction: column; gap: 1px; }
+        .price-reference { font-size: 10px; color: #94a3b8; text-decoration: line-through; font-weight: 700; }
+        .price-value { font-size: 15px; font-weight: 800; color: #10b981; line-height: 1; }
+        .price-unit, .price-minimum { font-size: 9px; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+        .price-minimum { color: #0f766e; font-weight: 800; }
+        .price-promo-note { font-size: 9.5px; color: #047857; font-weight: 800; }
+        .add-btn { background: #10b981; color: white; border: none; min-width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font: 800 12px Urbanist, sans-serif; cursor: pointer; flex-shrink: 0; }
+        .add-btn.variant-btn { padding: 0 9px; background: #0f172a; }
+        .qty-controls { display: flex; align-items: center; background: #f1f5f9; border-radius: 9px; height: 30px; border: 1px solid #e2e8f0; }
+        .qty-btn { background: transparent; border: none; color: #475569; width: 24px; height: 100%; font-weight: 900; cursor: pointer; }
+        .qty-value { min-width: 22px; text-align: center; font-weight: 800; font-size: 13px; }
+        .state-container { grid-column: 1 / -1; text-align: center; padding: 30px 10px; color: #64748b; font-size: 13px; }
+        .controls { display: flex; flex-direction: column; gap: 9px; }
+        .switch-row { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-soft); background: var(--bg-panel); cursor: pointer; font-size: 13px; color: var(--text-soft); line-height: 1.45; }
+        .switch-row input { margin-top: 3px; width: 16px; height: 16px; accent-color: #10b981; flex-shrink: 0; }
+        .switch-row b { color: var(--text-main); display: block; font-size: 14px; }
+        .event-log { min-height: 42px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100vh; width: 100vw; overflow: hidden; background: var(--bg); font-family: 'Urbanist', sans-serif; color: #f8fafc; }
+        /* El orden de la vidriera */
+        .order-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: left; }
+        .order-step { background: var(--bg-panel); border: 1px solid var(--border-soft); border-radius: 14px; padding: 13px; display: flex; flex-direction: column; gap: 6px; }
+        .order-step .n { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: rgba(236,72,153,.18); color: #f9a8d4; font-weight: 900; font-size: 13px; }
+        .order-step strong { font-size: 14px; }
+        .order-step span { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
 
-        .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; z-index: 0; transition: opacity 0.35s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 80px; }
-        .slide.active { opacity: 1; pointer-events: all; z-index: 10; }
-        .inner { width: 100%; max-width: 1360px; position: relative; z-index: 2; display: flex; flex-direction: column; justify-content: center; }
-
-        .g { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
-        .g-green  { background: radial-gradient(circle, rgba(16,185,129,0.10) 0%, transparent 70%); }
-        .g-blue   { background: radial-gradient(circle, rgba(59,130,246,0.09) 0%, transparent 70%); }
-        .g-purple { background: radial-gradient(circle, rgba(168,85,247,0.09) 0%, transparent 70%); }
-        .g-orange { background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%); }
-        .g-pink   { background: radial-gradient(circle, rgba(236,72,153,0.07) 0%, transparent 70%); }
-
-        .controls { position: fixed; bottom: 28px; right: 36px; z-index: 9999; display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(12px); padding: 9px 18px; border-radius: 50px; border: 1px solid var(--border); }
-        .ctrl { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; font-size: 14px; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
-        .ctrl:hover { background: var(--green); }
-        .snum { font-size: 13px; font-weight: 700; color: var(--muted); font-family: monospace; padding: 0 6px; }
-
-        .eyebrow { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 2.5px; color: var(--muted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 6px; height: 6px; border-radius: 50%; }
-        h1 { font-size: 56px; font-weight: 900; line-height: 1.05; letter-spacing: -1.5px; margin-bottom: 18px; }
-        h2 { font-size: 40px; font-weight: 900; line-height: 1.1; letter-spacing: -0.5px; margin-bottom: 14px; }
-        .lead { font-size: 18px; color: var(--muted); line-height: 1.65; }
-        .split { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-        .glass { background: var(--panel); backdrop-filter: blur(14px); border: 1px solid var(--border); border-radius: 18px; }
-
-        /* =========================================
-           SLIDE 1 — DEMO CATÁLOGO FIEL
-        ========================================= */
-        .catalog-demo { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.45); width: 100%; }
-
-        /* toolbar */
-        .cd-toolbar { padding: 10px 14px; background: white; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 10px; }
-        .cd-search { display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0 12px; min-width: 160px; }
-        .cd-search i { color: #94a3b8; font-size: 11px; }
-        .cd-search span { font-size: 12px; color: #94a3b8; padding: 8px 0; }
-        .cd-cats { display: flex; gap: 6px; overflow-x: auto; flex: 1; scrollbar-width: none; }
-        .cd-cat { padding: 6px 12px; border-radius: 50px; font-size: 11px; font-weight: 700; border: 1px solid #cbd5e1; color: #475569; background: white; white-space: nowrap; cursor: pointer; }
-        .cd-cat.active { background: #0f172a; border-color: #0f172a; color: white; }
-        .cd-switch { display: flex; background: #f1f5f9; border-radius: 50px; padding: 3px; gap: 2px; margin-left: auto; flex-shrink: 0; }
-        .cd-sw-btn { padding: 5px 10px; border-radius: 50px; border: none; background: transparent; font-size: 10px; font-weight: 700; color: #64748b; cursor: pointer; }
-        .cd-sw-btn.active { background: white; color: #10b981; }
-
-        /* grid */
-        .cd-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; padding: 12px; }
-
-        .cd-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; transition: 0.2s; }
-        .cd-card:hover { border-color: #10b981; transform: translateY(-2px); }
-
-        .cd-img { height: 90px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; position: relative; font-size: 28px; color: #cbd5e1; }
-        .cd-badge { position: absolute; top: 6px; left: 6px; padding: 3px 7px; border-radius: 5px; font-size: 9px; font-weight: 900; text-transform: uppercase; }
-        .badge-instock  { background: white; color: #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-        .badge-ondemand { background: white; color: #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-        .badge-combo    { background: white; color: #ef4444; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-        .badge-variants { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-        .badge-digital  { background: white; color: #8b5cf6; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
-
-        /* folder carousel */
-        .cd-carousel { height: 90px; background: #f1f5f9; position: relative; overflow: hidden; }
-        .cd-carousel-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
-        .cd-carousel-img:nth-child(1) { animation: fc 5.6s -5.6s infinite ease-in-out; }
-        .cd-carousel-img:nth-child(2) { animation: fc 5.6s -2.8s infinite ease-in-out; }
-        @keyframes fc { 0%,33%{opacity:1;transform:scale(1)} 45%,95%{opacity:0;transform:scale(1.02)} 100%{opacity:1;transform:scale(1)} }
-        .cd-carousel-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #94a3b8; }
-
-        .cd-info { padding: 8px 10px; }
-        .cd-name { font-size: 11px; font-weight: 700; color: #0f172a; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .cd-price-row { display: flex; justify-content: space-between; align-items: center; }
-        .cd-price { font-size: 14px; font-weight: 900; color: #10b981; }
-        .cd-add { width: 28px; height: 28px; border-radius: 8px; background: #10b981; color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 11px; cursor: pointer; }
-        .cd-add.opts { width: auto; padding: 0 8px; background: #0f172a; font-size: 10px; font-weight: 800; }
-
-        /* qty inline */
-        .cd-qty { display: flex; align-items: center; background: #f1f5f9; border-radius: 8px; overflow: hidden; height: 28px; border: 1px solid #e2e8f0; }
-        .cd-qty-btn { width: 26px; height: 100%; border: none; background: transparent; font-weight: 800; color: #475569; font-size: 13px; cursor: pointer; }
-        .cd-qty-val { width: 28px; text-align: center; font-size: 12px; font-weight: 800; color: #0f172a; background: transparent; border: none; }
-
-        /* =========================================
-           SLIDE 2 — TIPOS DE PRODUCTO Y CARPETAS
-        ========================================= */
-        .type-cards { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
-        .tc-card { border-radius: 14px; padding: 16px; border: 1px solid; display: flex; gap: 12px; align-items: flex-start; }
-        .tc-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 15px; }
-        .tc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .tc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .tc-tag { display: inline-block; margin-top: 5px; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 5px; font-family: monospace; }
-
-        .tt-physical{ background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .tt-physical .tc-icon { background: rgba(16,185,129,0.15);  color: #6ee7b7; } .tt-physical .tc-tag { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
-        .tt-folder  { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .tt-folder  .tc-icon { background: rgba(59,130,246,0.15);  color: #93c5fd; } .tt-folder  .tc-tag { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.25); }
-        .tt-combo   { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   } .tt-combo   .tc-icon { background: rgba(239,68,68,0.12);   color: #fca5a5; } .tt-combo   .tc-tag { background: rgba(239,68,68,0.10);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.25); }
-        .tt-digital { background: rgba(139,92,246,0.05);  border-color: rgba(139,92,246,0.2);  } .tt-digital .tc-icon { background: rgba(139,92,246,0.15);  color: #c4b5fd; } .tt-digital .tc-tag { background: rgba(139,92,246,0.12); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.25); }
-
-        .folder-detail {
-            padding: 18px; border-radius: 16px; border: 1px solid rgba(59,130,246,0.2);
-            background: rgba(59,130,246,0.04); display: flex; flex-direction: column; gap: 10px;
-        }
-        .fd-title { font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #93c5fd; }
-        .fd-tree { display: flex; flex-direction: column; gap: 6px; }
-        .fd-folder-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: rgba(59,130,246,0.08); border-radius: 9px; border: 1px solid rgba(59,130,246,0.2); }
-        .fd-folder-icon { color: #3b82f6; font-size: 12px; }
-        .fd-folder-name { font-size: 12px; font-weight: 800; color: white; flex: 1; }
-        .fd-folder-count { font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 5px; background: rgba(59,130,246,0.12); color: #93c5fd; }
-        .fd-children { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; padding-left: 18px; }
-        .fd-child { padding: 6px 10px; border-radius: 7px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); font-size: 11px; color: var(--muted); text-align: center; }
-        .fd-note { font-size: 12px; color: var(--muted); line-height: 1.5; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
-
-        /* =========================================
-           SLIDE 3 — FILTRADO Y ORDENAMIENTO
-        ========================================= */
-        .filter-pipeline { display: flex; flex-direction: column; gap: 10px; }
-        .fp-step { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-radius: 13px; border: 1px solid; }
-        .fp-num { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; color: white; }
-        .fp-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
-        .fp-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .fp-1 { background: rgba(59,130,246,0.05);  border-color: rgba(59,130,246,0.2);  } .fp-1 .fp-num { background: rgba(59,130,246,0.3);  }
-        .fp-2 { background: rgba(245,158,11,0.05);  border-color: rgba(245,158,11,0.2);  } .fp-2 .fp-num { background: rgba(245,158,11,0.3);  }
-        .fp-3 { background: rgba(168,85,247,0.05);  border-color: rgba(168,85,247,0.2);  } .fp-3 .fp-num { background: rgba(168,85,247,0.3);  }
-        .fp-4 { background: rgba(16,185,129,0.05);  border-color: rgba(16,185,129,0.2);  } .fp-4 .fp-num { background: rgba(16,185,129,0.3);  }
-        .fp-5 { background: rgba(239,68,68,0.05);   border-color: rgba(239,68,68,0.2);   } .fp-5 .fp-num { background: rgba(239,68,68,0.3);  }
-
-        .sort-priority { display: flex; flex-direction: column; gap: 0; }
-        .sp-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 10px; }
-        .sp-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .sp-row:last-child { border-bottom: none; }
-        .sp-rank { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; color: white; flex-shrink: 0; }
-        .sp-row:nth-child(1) .sp-rank { background: rgba(239,68,68,0.25); }
-        .sp-row:nth-child(2) .sp-rank { background: rgba(16,185,129,0.25); }
-        .sp-row:nth-child(3) .sp-rank { background: rgba(59,130,246,0.25); }
-        .sp-row:nth-child(4) .sp-rank { background: rgba(255,255,255,0.08); }
-        .sp-text strong { font-size: 13px; font-weight: 800; color: white; display: block; }
-        .sp-text span   { font-size: 11px; color: var(--muted); }
-
-        /* =========================================
-           SLIDE 4 — PRECIOS Y NAVEGACIÓN
-        ========================================= */
-        .price-pipeline { display: flex; flex-direction: column; gap: 12px; }
-        .pp-step { display: flex; gap: 13px; align-items: flex-start; padding: 14px 16px; border-radius: 13px; border: 1px solid; }
-        .pp-icon { width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-        .pp-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 3px; }
-        .pp-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .pp-debounce{ background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .pp-debounce .pp-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
-        .pp-calc    { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .pp-calc     .pp-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
-        .pp-display { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .pp-display  .pp-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-
-        .nav-preview-demo { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
-        .npd-step { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
-        .npd-step:last-child { border-bottom: none; }
-        .npd-step i { font-size: 12px; width: 20px; text-align: center; }
-        .npd-step strong { color: white; }
-        .npd-step code { font-size: 11px; font-family: monospace; background: rgba(0,0,0,0.25); padding: 1px 6px; border-radius: 4px; color: #93c5fd; }
-
-        /* =========================================
-           SLIDE 5 — SEO Y NAV
-        ========================================= */
-        .seo-callouts { display: flex; flex-direction: column; gap: 12px; }
-        .sc-card { display: flex; gap: 12px; align-items: flex-start; padding: 13px 16px; border-radius: 13px; border: 1px solid; }
-        .sc-icon { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
-        .sc-body strong { font-size: 13px; font-weight: 800; color: white; display: block; margin-bottom: 2px; }
-        .sc-body p      { font-size: 12px; color: var(--muted); margin: 0; line-height: 1.4; }
-        .sc-emit   { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.2); } .sc-emit   .sc-icon { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-        .sc-hidden { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.2); } .sc-hidden .sc-icon { background: rgba(245,158,11,0.15); color: #fcd34d; }
-        .sc-inherit{ background: rgba(168,85,247,0.05); border-color: rgba(168,85,247,0.2); } .sc-inherit .sc-icon { background: rgba(168,85,247,0.15); color: #d8b4fe; }
-        .sc-expose { background: rgba(59,130,246,0.05); border-color: rgba(59,130,246,0.2); } .sc-expose  .sc-icon { background: rgba(59,130,246,0.15); color: #93c5fd; }
-
-        /* NAV */
-        .nav-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .nav-btn { width: 185px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 22px 14px; display: flex; flex-direction: column; align-items: center; gap: 12px; transition: 0.3s; cursor: pointer; text-decoration: none; }
-        .nav-btn:hover { background: rgba(255,255,255,0.05); transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .nav-icon { width: 50px; height: 50px; border-radius: 13px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
-        .nav-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-        .nav-btn.c-green:hover  { border-color: var(--green);  } .nav-btn.c-green:hover  .nav-icon { color: #6ee7b7; }
-        .nav-btn.c-blue:hover   { border-color: var(--blue);   } .nav-btn.c-blue:hover   .nav-icon { color: #93c5fd; }
-        .nav-btn.c-purple:hover { border-color: var(--purple); } .nav-btn.c-purple:hover .nav-icon { color: #d8b4fe; }
-        .nav-btn.c-orange:hover { border-color: var(--orange); } .nav-btn.c-orange:hover .nav-icon { color: #fcd34d; }
-        .nav-btn.c-pink:hover   { border-color: var(--pink);   } .nav-btn.c-pink:hover   .nav-icon { color: var(--pink); }
+        /* Insignias */
+        .badges { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .badge-card { background: white; color: #0f172a; border-radius: 14px; overflow: hidden; text-align: left; }
+        .badge-card .product-image-container { height: 64px; }
+        .badge-card p { font-size: 12px; color: #475569; margin: 0; padding: 9px 10px; line-height: 1.4; }
 
         @media (max-width: 1024px) {
-            html, body { height: auto; min-height: 100vh; overflow-y: auto; overflow-x: hidden; }
-            .slide { position: relative; height: auto; min-height: 100vh; padding: 36px 20px 130px; display: none; }
-            .slide.active { display: flex; justify-content: flex-start; }
-            .split { grid-template-columns: 1fr; gap: 36px; }
-            .type-cards { grid-template-columns: 1fr; }
-            .cd-grid { grid-template-columns: repeat(2,1fr); }
-            h1 { font-size: 38px; } h2 { font-size: 30px; }
-            .lead { font-size: 16px; }
-            .nav-grid { flex-direction: column; align-items: center; max-width: 340px; }
-            .nav-btn { width: 100%; flex-direction: row; justify-content: flex-start; padding: 14px 18px; }
-            .nav-icon { flex-shrink: 0; } .nav-label { text-align: left; }
+            .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .order-steps, .badges { grid-template-columns: 1fr 1fr; }
+            .toolbar-row { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
 
-    <div class="controls">
-        <button class="ctrl" id="btnPrev"><i class="fas fa-chevron-left"></i></button>
-        <span class="snum"><span id="cur">1</span> / <span id="tot">5</span></span>
-        <button class="ctrl" id="btnNext"><i class="fas fa-chevron-right"></i></button>
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 6</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
-    <!-- =====================================================
-         SLIDE 1 — INTRO + DEMO CATÁLOGO FIEL
-    ====================================================== -->
-    <div class="slide active">
-        <div class="g g-green"  style="width:46vw;height:46vw; top:-12vw; right:-8vw;"></div>
-        <div class="g g-blue"   style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-pink"></div>
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #f9a8d4;">Vidriera</h3>
+                <h1>El <span>catálogo</span> público</h1>
+                <p>Los productos de la sede con su precio de hoy y su stock disponible, agrupados como la sede los ordenó y con un buscador que también encuentra variantes.</p>
+            </div>
 
-        <div class="inner">
-            <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:52px; align-items:center;">
-                <div>
-                    <div class="eyebrow">
-                        <span class="dot" style="background:var(--green);"></span>
-                        Tienda Online · Módulo
-                    </div>
-                    <h1>El catálogo<br>en<br><span style="color:var(--green);">tiempo real.</span></h1>
-                    <p class="lead" style="max-width:420px;">El corazón de la tienda pública. Carga productos y combos, los filtra por categoría, los ordena por prioridad y los muestra con carrusel animado para carpetas de variantes. Todo con precios calculados por el servidor en base al carrito actual.</p>
-                    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:22px;">
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-layer-group" style="color:#6ee7b7;font-size:11px;"></i> Folders con carrusel animado</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-filter" style="color:#93c5fd;font-size:11px;"></i> Filtros de categoría dinámicos</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-calculator" style="color:#fcd34d;font-size:11px;"></i> Precios calculados con debounce</span>
-                        <span style="display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:10px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:var(--muted);"><i class="fas fa-bolt" style="color:#d8b4fe;font-size:11px;"></i> Preload de vista de detalle</span>
-                    </div>
+            <div class="visual-block flow">
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-magnifying-glass" style="color:#d8b4fe;"></i> Busca y filtra</strong>
+                    <span>Por nombre, código, tipo, marca o línea, y por los grupos de la barra.</span>
                 </div>
-
-                <div class="catalog-demo">
-                    <div class="cd-toolbar">
-                        <div class="cd-search"><i class="fas fa-search"></i><span>Buscar productos...</span></div>
-                        <div class="cd-cats">
-                            <div class="cd-cat active">Todos</div>
-                            <div class="cd-cat">🔥 Promos</div>
-                            <div class="cd-cat">Aromatizantes</div>
-                            <div class="cd-cat">Difusores</div>
-                            <div class="cd-cat">☁️ Digitales</div>
-                        </div>
-                        <div class="cd-switch">
-                            <button class="cd-sw-btn active"><i class="fas fa-shopping-bag"></i> Tienda</button>
-                            <button class="cd-sw-btn"><i class="far fa-calendar-check"></i> Servicios</button>
-                        </div>
-                    </div>
-                    <div class="cd-grid">
-                        <!-- Combo -->
-                        <div class="cd-card">
-                            <div class="cd-img" style="background:#fff5f5;color:#ef4444;">
-                                <i class="fas fa-fire"></i>
-                                <span class="cd-badge badge-combo"><i class="fas fa-fire"></i> Promo</span>
-                            </div>
-                            <div class="cd-info">
-                                <div class="cd-name">Combo Verano x3</div>
-                                <div class="cd-price-row">
-                                    <span class="cd-price">$ 14.900</span>
-                                    <button class="cd-add"><i class="fas fa-plus"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Folder con carrusel -->
-                        <div class="cd-card">
-                            <div class="cd-carousel">
-                                <div class="cd-carousel-fallback"><i class="fas fa-spray-can"></i></div>
-                                <span class="cd-badge badge-variants"><i class="fas fa-list"></i> 4 variantes</span>
-                            </div>
-                            <div class="cd-info">
-                                <div class="cd-name">Difusor Premium</div>
-                                <div class="cd-price-row">
-                                    <span class="cd-price" style="color:#0f172a;font-size:12px;">desde $ 6.200</span>
-                                    <button class="cd-add opts">Opciones</button>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Producto con qty -->
-                        <div class="cd-card" style="border-color:#10b981;">
-                            <div class="cd-img" style="background:#ecfdf5;color:#10b981;">
-                                <i class="fas fa-leaf"></i>
-                                <span class="cd-badge badge-instock">3 Disp.</span>
-                            </div>
-                            <div class="cd-info">
-                                <div class="cd-name">Invictus - Menta</div>
-                                <div class="cd-price-row">
-                                    <span class="cd-price">$ 5.070</span>
-                                    <div class="cd-qty">
-                                        <button class="cd-qty-btn">-</button>
-                                        <div class="cd-qty-val">2</div>
-                                        <button class="cd-qty-btn">+</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Digital -->
-                        <div class="cd-card">
-                            <div class="cd-img" style="background:#f5f3ff;color:#8b5cf6;">
-                                <i class="fas fa-file-pdf"></i>
-                                <span class="cd-badge badge-digital"><i class="fas fa-cloud-download-alt"></i> Inmediato</span>
-                            </div>
-                            <div class="cd-info">
-                                <div class="cd-name">Guía de Aromas PDF</div>
-                                <div class="cd-price-row">
-                                    <span class="cd-price" style="color:#8b5cf6;">Gratis</span>
-                                    <button class="cd-add" style="background:#8b5cf6;"><i class="fas fa-cloud-download-alt"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-tag" style="color:#6ee7b7;"></i> Ve precio y disponibilidad</strong>
+                    <span>El precio de la escala que le corresponde, la promo aplicada y si hay stock o se toma a pedido.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-cart-plus" style="color:#93c5fd;"></i> Agrega o abre la ficha</strong>
+                    <span>El "+" lo suma al carrito ahí mismo; tocar la tarjeta abre la página del producto.</span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 2 — TIPOS DE PRODUCTO Y FOLDERS
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner split">
-            <div>
-                <div class="eyebrow">
-                    <span class="dot" style="background:var(--blue);"></span>
-                    Tipos de Ítem
-                </div>
-                <h2>Cuatro tipos.<br>Un solo grid.<br>Cada uno distinto.</h2>
-                <p class="lead" style="max-width:500px;">El catálogo no distingue con lógica condicional enorme — cada tipo tiene su badge, su botón de acción y su comportamiento de imagen ya resueltos como propiedades del objeto. El template solo los renderiza.</p>
-
-                <div class="type-cards" style="margin-top:24px;">
-                    <div class="tc-card tt-physical">
-                        <div class="tc-icon"><i class="fas fa-box"></i></div>
-                        <div class="tc-body">
-                            <strong>Physical</strong>
-                            <p>Producto con stock. Muestra cantidad disponible, permite agregar con + y editar cantidad inline.</p>
-                            <div class="tc-tag">type: 'physical'</div>
-                        </div>
-                    </div>
-                    <div class="tc-card tt-folder">
-                        <div class="tc-icon"><i class="fas fa-layer-group"></i></div>
-                        <div class="tc-body">
-                            <strong>Folder (variantes)</strong>
-                            <p>Agrupa variantes. Muestra carrusel animado con imágenes de sus hijos. Botón "Opciones" abre el VariantSelectorModal.</p>
-                            <div class="tc-tag">type: 'folder'</div>
-                        </div>
-                    </div>
-                    <div class="tc-card tt-combo">
-                        <div class="tc-icon"><i class="fas fa-fire"></i></div>
-                        <div class="tc-body">
-                            <strong>Combo / Promo</strong>
-                            <p>Generado desde promociones. Si tiene reglas de categoría abre el ComboBuilderModal. Si es fijo se agrega automáticamente.</p>
-                            <div class="tc-tag">is_combo: true</div>
-                        </div>
-                    </div>
-                    <div class="tc-card tt-digital">
-                        <div class="tc-icon"><i class="fas fa-cloud-download-alt"></i></div>
-                        <div class="tc-body">
-                            <strong>Digital / Pass</strong>
-                            <p>Si el precio es 0 y tiene URL, el botón descarga directo. Con precio, va a checkout. Badge "Entrega Inmediata".</p>
-                            <div class="tc-tag">type: 'digital'</div>
-                        </div>
-                    </div>
-                </div>
+    <!-- SLIDE 2: EL CATÁLOGO -->
+    <section class="slide">
+        <div class="glow-pink" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #f9a8d4;">El catálogo</h3>
+                <h2>Filtrá, buscá y agregá como en la tienda</h2>
+                <p>Probalo: tocá los grupos, escribí "soja", sumá productos y cambiá las dos opciones de la tienda.</p>
             </div>
 
-            <div>
-                <div class="folder-detail">
-                    <div class="fd-title"><i class="fas fa-layer-group" style="margin-right:6px;"></i>Cómo funciona el Folder</div>
-                    <div class="fd-tree">
-                        <div class="fd-folder-row">
-                            <i class="fas fa-folder-open fd-folder-icon"></i>
-                            <span class="fd-folder-name">Difusor Premium</span>
-                            <span class="fd-folder-count">4 variantes</span>
+            <div class="visual-block split demo" data-catalog>
+                <div class="catalog-mock">
+                    <div class="catalog-toolbar">
+                        <div class="toolbar-row">
+                            <div class="search-box"><i class="fas fa-search"></i><input type="text" placeholder="Buscar productos..." data-search aria-label="Buscar productos"></div>
+                            <div class="subtle-switch"><span><i class="far fa-calendar-check"></i>Servicios</span><span class="active"><i class="fas fa-shopping-bag"></i>Tienda</span></div>
                         </div>
-                        <div class="fd-children">
-                            <div class="fd-child">Lavanda</div>
-                            <div class="fd-child">Vainilla</div>
-                            <div class="fd-child">Menta</div>
-                            <div class="fd-child">Coco</div>
-                        </div>
+                        <div class="categories-scroll" data-cats></div>
                     </div>
-                    <div class="fd-note">
-                        El folder hereda la categoría a sus hijos. Si el hijo no tiene categoría asignada o tiene "Sin Categoría", toma la del folder padre. La herencia corre en <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 4px;border-radius:3px;">loadStoreData</code> al mapear el catálogo.
-                    </div>
+                    <div class="catalog-grid" data-grid></div>
                 </div>
 
-                <div style="margin-top:14px;padding:14px 16px;border-radius:13px;border:1px solid rgba(59,130,246,0.2);background:rgba(59,130,246,0.04);font-size:13px;color:var(--muted);line-height:1.5;">
-                    <strong style="color:white;display:block;margin-bottom:4px;">Carrusel animado del folder</strong>
-                    Las imágenes de los hijos se animan con <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 4px;border-radius:3px;">folderImageStyle(index, total)</code> que calcula <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 4px;border-radius:3px;">animationDelay</code> y <code style="font-size:11px;background:rgba(0,0,0,0.2);padding:1px 4px;border-radius:3px;">animationDuration</code> para crear un crossfade equidistante. Máximo 5 imágenes.
+                <div class="controls">
+                    <label class="switch-row"><input type="checkbox" data-reserve checked><span><b>Acepta pedidos sin stock</b>Con esta opción, lo agotado se vende igual y dice "A Pedido". Sin ella, dice "Sin stock" y el carrito no deja pasar de lo que hay.</span></label>
+                    <label class="switch-row"><input type="checkbox" data-hide><span><b>Ocultar precios</b>La tarjeta se queda sin precio. El pedido se arma igual y el precio se acuerda después.</span></label>
+                    <div class="note event-log" data-log><i class="fas fa-hand-pointer"></i><span>Tocá una tarjeta, un "+" o "Opciones".</span></div>
+                    <div class="note purple"><i class="fas fa-shuffle"></i><span><b>Servicios / Tienda</b> aparece solo si la sede tiene servicios para reservar: alterna entre el catálogo y la agenda.</span></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 3 — FILTRADO Y ORDENAMIENTO
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-orange" style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-green"  style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner split">
-            <div>
-                <div class="eyebrow">
-                    <span class="dot" style="background:var(--orange);"></span>
-                    Filtrado y Orden
-                </div>
-                <h2>El computed<br>filteredProducts<br>hace todo.</h2>
-                <p class="lead" style="max-width:500px;">El computed <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">filteredProducts</code> aplica cinco transformaciones en secuencia sobre el array de productos. Cada paso depende del anterior. El resultado es el array que renderiza el grid.</p>
+    <!-- SLIDE 3: EL ORDEN -->
+    <section class="slide">
+        <div class="glow-purple"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #c4b5fd;">El orden de la vidriera</h3>
+                <h2>Primero lo que el comercio quiere mostrar, al fondo lo que no hay</h2>
+                <p>Cada criterio desempata al anterior, del más fuerte al más débil.</p>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:16px;">
-                <div class="filter-pipeline">
-                    <div class="fp-step fp-1">
-                        <div class="fp-num">1</div>
-                        <div class="fp-body">
-                            <strong>isActiveProduct</strong>
-                            <p>Filtra <code style="font-size:11px;">is_active = false | 0 | 'false'</code>. Incluye combos que siempre son activos.</p>
-                        </div>
-                    </div>
-                    <div class="fp-step fp-2">
-                        <div class="fp-num">2</div>
-                        <div class="fp-body">
-                            <strong>Filtro por categoría activa</strong>
-                            <p>Si es "Todos" oculta servicios. Si es "☁️ Digitales" muestra solo digital/pass. Si es otra, filtra por categoría y oculta folders.</p>
-                        </div>
-                    </div>
-                    <div class="fp-step fp-3">
-                        <div class="fp-num">3</div>
-                        <div class="fp-body">
-                            <strong>Búsqueda local</strong>
-                            <p>Si hay texto en el buscador, filtra por nombre, SKU y variant_name. Oculta folders en búsqueda — muestra las variantes sueltas.</p>
-                        </div>
-                    </div>
-                    <div class="fp-step fp-4">
-                        <div class="fp-num">4</div>
-                        <div class="fp-body">
-                            <strong>Aplanado en "Todos"</strong>
-                            <p>Sin búsqueda y en "Todos", oculta variantes sueltas y muestra solo el folder padre con <code style="font-size:11px;">has_options</code>, <code style="font-size:11px;">variant_count</code> y <code style="font-size:11px;">folder_images</code> calculados.</p>
-                        </div>
-                    </div>
-                    <div class="fp-step fp-5">
-                        <div class="fp-num">5</div>
-                        <div class="fp-body">
-                            <strong>sortStoreProducts</strong>
-                            <p>Combos primero → sort_order del metadata → stock descendente → nombre alfabético.</p>
-                        </div>
-                    </div>
-                </div>
+            <div class="visual-block order-steps">
+                <div class="order-step"><span class="n">1</span><strong>Las promos</strong><span>Los combos van siempre primero, y tienen su propio grupo: "🔥 Promos y Combos".</span></div>
+                <div class="order-step"><span class="n">2</span><strong>El orden manual</strong><span>El que la sede le da a cada producto en el catálogo.</span></div>
+                <div class="order-step"><span class="n">3</span><strong>Lo agotado, al fondo</strong><span>Aunque se pueda pedir igual, lo que no hay hoy va después de lo que hay.</span></div>
+                <div class="order-step"><span class="n">4</span><strong>Tipo, marca y línea</strong><span>Con las prioridades que la sede eligió en el editor de la tienda.</span></div>
+                <div class="order-step"><span class="n">5</span><strong>El nombre</strong><span>Recién al final, en orden alfabético.</span></div>
+            </div>
 
-                <div class="glass" style="padding:16px;">
-                    <div class="sp-title">Prioridad de ordenamiento</div>
-                    <div class="sort-priority">
-                        <div class="sp-row"><div class="sp-rank">1</div><div class="sp-text"><strong>Combos y Promos</strong><span>Siempre primero</span></div></div>
-                        <div class="sp-row"><div class="sp-rank">2</div><div class="sp-text"><strong>sort_order (metadata)</strong><span>Definido por el local</span></div></div>
-                        <div class="sp-row"><div class="sp-rank">3</div><div class="sp-text"><strong>Stock descendente</strong><span>Disponibles antes que agotados</span></div></div>
-                        <div class="sp-row"><div class="sp-rank">4</div><div class="sp-text"><strong>Nombre alfabético</strong><span>Desempate final</span></div></div>
-                    </div>
+            <div class="visual-block split even mt">
+                <div class="note warn"><i class="fas fa-boxes-stacked"></i><span><b>Cuánto stock hay no ordena.</b> Antes lo hacía, y un producto con 30 unidades le ganaba a uno con 2 sin que el cliente viera por qué; además la grilla se reacomodaba sola a medida que se vendía. Solo sobrevive el fondo: lo que no se puede llevar hoy va último.</span></div>
+                <div class="note ok"><i class="fas fa-star"></i><span><b>Líneas promovidas.</b> La sede puede sacar una línea de su tipo y darle su propio grupo en la barra ("Velas Soja"). Ese grupo va pegado a su tipo, y sus productos dejan de repetirse en el grupo del tipo.</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: LAS INSIGNIAS -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Las insignias</h3>
+                <h2>Una etiqueta en la foto dice qué es y si hay</h2>
+            </div>
+
+            <div class="visual-block badges">
+                <div class="badge-card"><div class="product-image-container"><i class="fas fa-image"></i><span class="stock-badge in-stock">12 Disp.</span></div><p>Hay stock: se dice cuántas unidades están disponibles para vender.</p></div>
+                <div class="badge-card"><div class="product-image-container"><i class="fas fa-image"></i><span class="stock-badge on-demand">A Pedido</span></div><p>No hay hoy, pero la tienda acepta reservas: se puede pedir igual.</p></div>
+                <div class="badge-card"><div class="product-image-container sold-out"><i class="fas fa-image"></i><span class="stock-badge sold-out-badge">Sin stock</span></div><p>No hay y la tienda no toma reservas. La foto se oscurece.</p></div>
+                <div class="badge-card"><div class="product-image-container"><i class="fas fa-image"></i><span class="stock-badge combo-badge"><i class="fas fa-fire"></i> Promo</span></div><p>Un combo. Su stock es el de lo que lo compone, no uno propio.</p></div>
+                <div class="badge-card"><div class="product-image-container"><i class="fas fa-image"></i><span class="stock-badge options-badge"><i class="fas fa-list"></i> 4 opciones</span></div><p>Tiene variantes: el botón dice "Opciones" y abre la lista para elegir.</p></div>
+            </div>
+
+            <div class="visual-block split even mt">
+                <div class="note"><i class="fas fa-images"></i><span>Un producto con variantes <b>rota las fotos</b> de hasta cinco de ellas en la tarjeta, sin que nadie toque nada.</span></div>
+                <div class="note purple"><i class="fas fa-tag"></i><span>Debajo del precio, la tarjeta dice <b>por qué</b> es ese: el nombre de la promo vigente (por ejemplo, "Hot Sale"), "Promo aplicada", o el mínimo de compra cuando el producto se vende desde varias unidades ("Minimo 6").</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5: LO QUE CONVIENE SABER -->
+    <section class="slide">
+        <div class="glow-orange"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-orange);">Lo que conviene saber</h3>
+                <h2>Detalles que evitan una compra equivocada</h2>
+            </div>
+
+            <div class="visual-block rules-grid">
+                <div class="rule">
+                    <i class="fas fa-ruler" style="color:#fcd34d;"></i>
+                    <div><strong>Solo se escribe una fracción si se vende por fracción</strong><span>En un producto por unidad, tipear una coma avisa "Este producto no se vende por fracción o medida." y no la deja escribir.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-arrow-up-1-9" style="color:#34d399;"></i>
+                    <div><strong>El mínimo se respeta solo</strong><span>Si un producto se vende desde 6 y alguien escribe 3, el carrito lo sube a 6 y avisa por qué. Bajar con el "−" desde 6 lo saca del carrito.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-magnifying-glass" style="color:#c4b5fd;"></i>
+                    <div><strong>El buscador mira adentro de las variantes</strong><span>Buscar "lavanda" encuentra el difusor que tiene una variante de lavanda, aunque la tarjeta diga solo "Difusor bambú".</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-link" style="color:#93c5fd;"></i>
+                    <div><strong>Un enlace puede abrir algo puntual</strong><span>Un enlace con un código de producto abre la tienda con ese producto buscado, y uno con un combo abre directamente el armador de ese combo.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-box-open" style="color:#f87171;"></i>
+                    <div><strong>Si nada coincide, se ofrece volver a todo</strong><span>"No encontramos nada que coincida con tu búsqueda o filtro." con un botón para ver todos los productos.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-calendar-check" style="color:#22d3ee;"></i>
+                    <div><strong>Los servicios no se mezclan</strong><span>Turnos, clases y pases no están en la grilla de productos: tienen su propia vista, del otro lado del selector Servicios / Tienda.</span></div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- =====================================================
-         SLIDE 4 — PRECIOS Y NAVEGACIÓN AL DETALLE
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-blue"   style="width:46vw;height:46vw; top:-10vw; right:-8vw;"></div>
-        <div class="g g-purple" style="width:36vw;height:36vw; bottom:-10vw; left:-6vw;"></div>
-
-        <div class="inner split">
-            <div>
-                <div class="eyebrow">
-                    <span class="dot" style="background:var(--blue);"></span>
-                    Precios en Vivo
-                </div>
-                <h2>Los precios<br>los calcula<br>el servidor.</h2>
-                <p class="lead" style="max-width:500px;">El catálogo no calcula precios localmente para el carrito. Cada vez que el carrito cambia, llama a <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">api.calculateStoreCartPrices</code> con los items actuales. El resultado va a <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">calculatedPrices</code> y de ahí al composable <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">useCart</code>.</p>
-                <p class="lead" style="max-width:500px; margin-top:14px;">La llamada tiene un debounce de <strong style="color:white;">60ms</strong> para no disparar una request por cada incremento de cantidad.</p>
+    <!-- SLIDE 6: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #f9a8d4;">Seguir explorando</h3>
+                <h2>De la tarjeta a la ficha o al carrito</h2>
+                <p>¿Seguimos por la página de producto o por el carrito que aparece al agregar?</p>
             </div>
 
-            <div style="display:flex;flex-direction:column;gap:16px;">
-                <div class="price-pipeline">
-                    <div class="pp-step pp-debounce">
-                        <div class="pp-icon"><i class="fas fa-clock-rotate-left"></i></div>
-                        <div class="pp-body">
-                            <strong>Watch con debounce 60ms</strong>
-                            <p><code style="font-size:11px;">watch([cart, products])</code> resetea el timeout en cada cambio. Solo ejecuta la request si el carrito no cambió en 60ms.</p>
-                        </div>
-                    </div>
-                    <div class="pp-step pp-calc">
-                        <div class="pp-icon"><i class="fas fa-server"></i></div>
-                        <div class="pp-body">
-                            <strong>calculateStoreCartPrices</strong>
-                            <p>Envía los items con su <code style="font-size:11px;">product_id</code> y <code style="font-size:11px;">quantity</code>. El servidor aplica tiers, mix&match y promociones automáticas y devuelve el precio final por SKU.</p>
-                        </div>
-                    </div>
-                    <div class="pp-step pp-display">
-                        <div class="pp-icon"><i class="fas fa-eye"></i></div>
-                        <div class="pp-body">
-                            <strong>getItemPricing en la card</strong>
-                            <p>Cada card usa <code style="font-size:11px;">getItemPricing(product, cartMap[sku] || 1)</code> para mostrar el precio actualizado según la cantidad en el carrito. El precio tachado aparece si hay promo activa.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nav-preview-demo glass">
-                    <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);">Navegación al detalle de producto</div>
-                    <div class="npd-step"><i class="fas fa-mouse-pointer" style="color:#93c5fd;"></i> Cliente toca una card en el catálogo</div>
-                    <div class="npd-step"><i class="fas fa-bolt" style="color:#fcd34d;"></i> <code>preloadProductDetailView()</code> — import() async simultáneo</div>
-                    <div class="npd-step"><i class="fas fa-save" style="color:#d8b4fe;"></i> <code>saveStorefrontPreview()</code> — guarda perfil + producto + catálogo</div>
-                    <div class="npd-step"><i class="fas fa-arrow-right" style="color:#6ee7b7;"></i> <code>router.push('/store/:ref/product/:sku')</code></div>
-                    <div class="npd-step"><i class="fas fa-rocket" style="color:#6ee7b7;"></i> StoreProduct.vue muestra datos al instante desde el preview cache</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- =====================================================
-         SLIDE 5 — SEO EMIT Y NAV
-    ====================================================== -->
-    <div class="slide">
-        <div class="g g-green" style="width:55vw;height:55vw; top:-15vw; left:50%; transform:translateX(-50%);"></div>
-        <div class="inner">
-            <div class="eyebrow">
-                <span class="dot" style="background:var(--green);"></span>
-                SEO y Cierre
-            </div>
-            <h2 style="margin-bottom:10px;">El catálogo alimenta<br>el JSON-LD de la tienda.</h2>
-            <p class="lead" style="max-width:760px; margin-bottom:28px;">El catálogo emite <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">@seo-products</code> con los primeros 24 productos físicos activos hacia <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">StoreFront.vue</code>, que los convierte en nodos <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">Product</code> dentro del schema <code style="font-size:14px;background:rgba(255,255,255,0.07);padding:2px 7px;border-radius:5px;">ItemList</code> de JSON-LD para que Google los indexe como productos del local.</p>
-
-            <div class="seo-callouts" style="max-width:900px;margin:0 auto 28px;width:100%;">
-                <div class="sc-card sc-emit">
-                    <div class="sc-icon"><i class="fas fa-satellite-dish"></i></div>
-                    <div class="sc-body">
-                        <strong>emit('seo-products', buildSeoProducts(activeProds))</strong>
-                        <p>Se emite al terminar la carga. Solo incluye <code style="font-size:11px;">type = 'physical'</code>, activos y con nombre. Máximo 24 items para no sobrecargar el schema.</p>
-                    </div>
-                </div>
-                <div class="sc-card sc-hidden">
-                    <div class="sc-icon"><i class="fas fa-eye-slash"></i></div>
-                    <div class="sc-body">
-                        <strong>hidePrices en el SEO</strong>
-                        <p>Si la tienda tiene precios ocultos, <code style="font-size:11px;">buildSeoProducts</code> envía <code style="font-size:11px;">price: 0</code> para que el schema no exponga precios que la tienda eligió no mostrar.</p>
-                    </div>
-                </div>
-                <div class="sc-card sc-inherit">
-                    <div class="sc-icon"><i class="fas fa-code-branch"></i></div>
-                    <div class="sc-body">
-                        <strong>hidden_products del manual config</strong>
-                        <p>Al cargar, filtra los SKUs que estén en <code style="font-size:11px;">manualConfig.hidden_products</code>. El local puede ocultar productos puntualmente sin desactivarlos.</p>
-                    </div>
-                </div>
-                <div class="sc-card sc-expose">
-                    <div class="sc-icon"><i class="fas fa-plug"></i></div>
-                    <div class="sc-body">
-                        <strong>addProductBySku / focusProductBySku</strong>
-                        <p>Métodos expuestos con <code style="font-size:11px;">defineExpose</code> para que <code style="font-size:11px;">StoreProduct.vue</code> pueda agregar al carrito o enfocar un producto directamente desde la vista de detalle embebida.</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="nav-grid">
-                <a href="index.html" class="nav-btn c-purple" style="border-color:rgba(168,85,247,0.35);">
-                    <div class="nav-icon" style="color:#d8b4fe;"><i class="fas fa-map"></i></div>
-                    <div class="nav-label" style="color:white;">Índice<br>Tienda</div>
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
                 </a>
-                <a href="StoreProduct.html" class="nav-btn c-blue">
-                    <div class="nav-icon"><i class="fas fa-tag"></i></div>
-                    <div class="nav-label">Página de<br>Producto</div>
+                <a href="producto.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-tag"></i></div>
+                    <div class="qa-text">Página de<br>producto</div>
                 </a>
-                <a href="StoreFront.html" class="nav-btn c-green">
-                    <div class="nav-icon"><i class="fas fa-store"></i></div>
-                    <div class="nav-label">Vidriera<br>Completa</div>
-                </a>
-                <a href="CheckoutModal.html" class="nav-btn c-orange">
-                    <div class="nav-icon"><i class="fas fa-lock"></i></div>
-                    <div class="nav-label">Checkout</div>
-                </a>
-                <a href="FloatingCart.html" class="nav-btn c-pink">
-                    <div class="nav-icon"><i class="fas fa-cart-arrow-down"></i></div>
-                    <div class="nav-label">Carrito<br>Flotante</div>
+                <a href="carrito.html" class="qa-btn" style="border-color: var(--kpi-green);">
+                    <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-cart-arrow-down"></i></div>
+                    <div class="qa-text">El<br>carrito</div>
                 </a>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
-        const PAGE = 'tienda_storecatalog';
-        let cur = parseInt(localStorage.getItem('slide_' + PAGE)) || 0;
-        const slides = document.querySelectorAll('.slide');
-        const curEl = document.getElementById('cur');
-        const totEl = document.getElementById('tot');
-
-        function go(n) {
-            cur = Math.max(0, Math.min(slides.length - 1, n));
-            slides.forEach((s, i) => s.classList.toggle('active', i === cur));
-            curEl.innerText = cur + 1;
-            localStorage.setItem('slide_' + PAGE, cur);
-            setTimeout(() => window.scrollTo(0, 0), 40);
-        }
-        function next() {
-            if (cur < slides.length - 1) go(cur + 1);
-            else { localStorage.setItem('slide_' + PAGE, 0); window.location.href = 'index.html'; }
-        }
-        function prev() { if (cur > 0) go(cur - 1); }
-
-        document.getElementById('btnNext').addEventListener('click', next);
-        document.getElementById('btnPrev').addEventListener('click', prev);
-        document.addEventListener('keydown', e => {
-            if (['INPUT','TEXTAREA'].includes(document.activeElement?.tagName)) return;
-            if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-            if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-        });
-
-        totEl.innerText = slides.length;
-        go(cur);
+        // El catálogo: mismos grupos, orden, insignias y botones que StoreCatalog.vue.
+        (() => {
+            const root = document.querySelector('[data-catalog]');
+            if (!root) return;
+            const money = n => '$ ' + Math.round(n).toLocaleString('es-AR');
+            const products = [
+                { sku: 'PROMO-3', name: '3 velas a elección', combo: true, type: '🔥 Promos y Combos', price: 18000 },
+                { sku: 'VS-200', name: 'Vela de soja 200 g', type: 'Velas', line: 'Soja', stock: 12, price: 7475 },
+                { sku: 'VS-400', name: 'Vela de soja 400 g', type: 'Velas', line: 'Soja', stock: 0, price: 11900 },
+                { sku: 'VL-01', name: 'Vela en lata', type: 'Velas', stock: 3, price: 6200, list: 7000, event: 'Hot Sale' },
+                { sku: 'VL-C6', name: 'Vela en lata · caja', type: 'Velas', stock: 40, price: 6900, min: 6, tierPrice: 5400 },
+                { sku: 'DB-120', name: 'Difusor bambú 120 ml', type: 'Difusores', options: 4, variants: 'lavanda vainilla cedro limón' },
+            ];
+            const promoted = 'Soja';
+            const groups = [
+                { key: 'all', label: 'Todos' },
+                { key: 'promo', label: '🔥 Promos y Combos', test: p => p.combo },
+                { key: 'line', label: 'Velas Soja', test: p => p.line === promoted },
+                { key: 'velas', label: 'Velas', test: p => p.type === 'Velas' && p.line !== promoted },
+                { key: 'dif', label: 'Difusores', test: p => p.type === 'Difusores' },
+            ];
+            let active = 'all';
+            const cart = {};
+            const search = root.querySelector('[data-search]');
+            const reserve = root.querySelector('[data-reserve]');
+            const hide = root.querySelector('[data-hide]');
+            const log = root.querySelector('[data-log]');
+            const say = (t) => { log.innerHTML = `<i class="fas fa-hand-pointer"></i><span>${t}</span>`; };
+            const out = p => !p.combo && !p.options && (p.stock || 0) <= 0;
+            function sorted(list) {
+                return [...list].sort((a, b) => (b.combo ? 1 : 0) - (a.combo ? 1 : 0) || (out(a) ? 1 : 0) - (out(b) ? 1 : 0) || a.name.localeCompare(b.name, 'es'));
+            }
+            function card(p) {
+                const soldOut = out(p) && !reserve.checked;
+                let badge;
+                if (soldOut) badge = '<span class="stock-badge sold-out-badge">Sin stock</span>';
+                else if (p.combo) badge = '<span class="stock-badge combo-badge"><i class="fas fa-fire"></i> Promo</span>';
+                else if (p.options) badge = `<span class="stock-badge options-badge"><i class="fas fa-list"></i> ${p.options} opciones</span>`;
+                else badge = p.stock > 0 ? `<span class="stock-badge in-stock">${p.stock} Disp.</span>` : '<span class="stock-badge on-demand">A Pedido</span>';
+                let price = '';
+                if (!p.options && !hide.checked) {
+                    const final = p.min ? p.tierPrice : p.price;
+                    price = '<div class="price-box">' +
+                        (p.list ? `<span class="price-reference">${money(p.list)}</span>` : '') +
+                        `<span class="price-value">${money(final)}</span><span class="price-unit">por unidad</span>` +
+                        (p.min ? `<span class="price-minimum">Minimo ${p.min}</span>` : '') +
+                        (p.event ? `<span class="price-promo-note"><i class="fas fa-tag"></i> ${p.event}</span>` : '') + '</div>';
+                }
+                const qty = cart[p.sku] || 0;
+                const action = qty > 0
+                    ? `<div class="qty-controls"><button type="button" class="qty-btn" data-minus="${p.sku}">-</button><span class="qty-value">${qty}</span><button type="button" class="qty-btn" data-plus="${p.sku}">+</button></div>`
+                    : `<button type="button" class="add-btn ${p.options ? 'variant-btn' : ''}" data-add="${p.sku}">${p.options ? 'Opciones' : '<i class="fas fa-plus"></i>'}</button>`;
+                return `<div class="product-card" data-card="${p.sku}"><div class="product-image-container ${soldOut ? 'sold-out' : ''}"><i class="fas fa-image"></i>${badge}</div><div class="product-info"><h3 class="product-name">${p.name}</h3><div class="product-price-row">${price}${action}</div></div></div>`;
+            }
+            function render() {
+                root.querySelector('[data-cats]').innerHTML = groups.map(g => `<button type="button" class="cat-filter-btn ${g.key === active ? 'active' : ''}" data-cat="${g.key}">${g.label}</button>`).join('');
+                const q = search.value.trim().toLowerCase();
+                const g = groups.find(x => x.key === active);
+                let list = products.filter(p => !g.test || g.test(p));
+                if (q) list = list.filter(p => [p.name, p.sku, p.type, p.line, p.variants].some(v => String(v || '').toLowerCase().includes(q)));
+                root.querySelector('[data-grid]').innerHTML = list.length
+                    ? sorted(list).map(card).join('')
+                    : '<div class="state-container"><i class="fas fa-search"></i><p>No encontramos nada que coincida con tu búsqueda o filtro.</p></div>';
+            }
+            function add(p, delta) {
+                const min = p.min || 1;
+                let next = (cart[p.sku] || 0) + delta;
+                if (delta > 0 && next < min) { next = min; say(`El producto se vende desde ${min}: el carrito arranca en ${min}.`); }
+                else if (delta < 0 && next < min) { next = 0; say('Bajar desde el mínimo lo saca del carrito.'); }
+                else if (!reserve.checked && next > (p.stock || 0)) { next = p.stock || 0; say('No hay más stock disponible para este producto.'); }
+                else say(`${p.name}: ${next} en el carrito.`);
+                if (next <= 0) delete cart[p.sku]; else cart[p.sku] = next;
+                render();
+            }
+            root.addEventListener('click', e => {
+                const cat = e.target.closest('[data-cat]');
+                if (cat) { active = cat.dataset.cat; render(); return; }
+                const plus = e.target.closest('[data-add],[data-plus]');
+                const minus = e.target.closest('[data-minus]');
+                const sku = (plus || minus)?.dataset.add || (plus || minus)?.dataset.plus || minus?.dataset.minus;
+                if (sku) {
+                    const p = products.find(x => x.sku === sku);
+                    if (p.options) { say('Se abre el selector con las 4 variantes, cada una con su precio y su stock.'); return; }
+                    if (p.combo) { say('Si el combo tiene opciones para elegir, se abre el armador; si es fijo, entra directo: "Promo agregada al carrito".'); add(p, 1); return; }
+                    if (out(p) && !reserve.checked && plus) { say('No hay más stock disponible para este producto.'); return; }
+                    add(p, minus ? -1 : 1);
+                    return;
+                }
+                const c = e.target.closest('[data-card]');
+                if (c) {
+                    const p = products.find(x => x.sku === c.dataset.card);
+                    say(p.options ? 'Una tarjeta con variantes abre el selector, igual que "Opciones".' : `Se abre la página de "${p.name}".` + (out(p) && !reserve.checked ? ' Como está agotado, al dueño le llega el aviso de que alguien lo quiso.' : ''));
+                }
+            });
+            search.addEventListener('input', render);
+            reserve.addEventListener('change', render);
+            hide.addEventListener('change', render);
+            render();
+        })();
     </script>
-
+    <script src="presentacion.js"></script>
 </body>
 </html>

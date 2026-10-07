@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Vitrina del Local</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="presentacion.css">
+    <style>
+        /* Calcado de StoreShowcase.vue */
+        .tv { background: #020617; border: 10px solid #1e293b; border-radius: 18px; box-shadow: 0 24px 50px rgba(0,0,0,.5); padding: 16px 18px 12px; display: flex; flex-direction: column; gap: 12px; min-height: 360px; --showcase-accent: #f59e0b; }
+        .showcase-header { display: flex; align-items: center; gap: 12px; }
+        .showcase-header .logo { width: 40px; height: 40px; border-radius: 10px; background: #fef3c7; color: #b45309; display: grid; place-items: center; font-weight: 900; }
+        .showcase-header h4 { font-size: 24px; font-weight: 900; color: white; }
+        .showcase-grid { display: grid; gap: 10px; flex: 1; }
+        .showcase-card { background: #0f172a; border-radius: 14px; padding: 8px; display: flex; flex-direction: column; gap: 6px; text-align: left; border-top: 3px solid var(--showcase-accent); }
+        .showcase-photo { position: relative; border-radius: 10px; height: 74px; display: grid; place-items: center; color: rgba(255,255,255,.4); font-size: 22px; }
+        .showcase-tag { position: absolute; top: 6px; left: 6px; font-size: 9.5px; font-weight: 900; text-transform: uppercase; background: rgba(15,23,42,.85); color: white; border-radius: 5px; padding: 2px 6px; }
+        .showcase-card h5 { font-size: 13px; color: white; font-weight: 800; }
+        .showcase-card b { font-size: 17px; color: var(--showcase-accent); }
+        .showcase-dots { display: flex; gap: 6px; justify-content: center; }
+        .showcase-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); }
+        .showcase-dots span.active { background: var(--showcase-accent); }
+        .showcase-state { flex: 1; display: grid; place-items: center; color: #94a3b8; font-size: 15px; }
+        .stand { width: 120px; height: 14px; margin: 0 auto; background: #1e293b; border-radius: 0 0 10px 10px; }
+
+        .settings { display: flex; flex-direction: column; gap: 8px; }
+        .field { display: flex; flex-direction: column; gap: 4px; }
+        .field label { font-size: 10.5px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+        .field select, .field input[type=text] { background: #0b1222; color: var(--text-main); border: 1px solid var(--border-soft); border-radius: 9px; padding: 7px 9px; font: 700 13px Urbanist, sans-serif; }
+        .toggle { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; border-radius: 11px; border: 1px solid var(--border-soft); background: var(--bg-panel); cursor: pointer; }
+        .toggle input { accent-color: #f59e0b; margin-top: 3px; }
+        .toggle b { display: block; font-size: 13px; color: var(--text-main); }
+        .toggle small { font-size: 11.5px; color: var(--text-muted); }
+
+        .vitrina-demo { display: grid; grid-template-columns: minmax(0, 1fr) 290px; gap: 20px; align-items: start; text-align: left; }
+
+        @media (max-width: 1024px) {
+            .vitrina-demo { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <a class="home-link" href="index.html">← Mapa de la tienda</a>
+
+    <div class="presentation-controls">
+        <button class="ctrl-btn" id="btnPrev" aria-label="Diapositiva anterior"><i class="fas fa-chevron-left"></i></button>
+        <span class="slide-indicator" id="slideCounter">1 / 4</span>
+        <button class="ctrl-btn" id="btnNext" aria-label="Diapositiva siguiente"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <section class="slide active">
+        <div class="glow-orange"></div>
+        <div class="glow-cyan"></div>
+        <div class="slide-content-wide">
+            <div class="cover text-block">
+                <h3 style="color: #fcd34d;">Infraestructura</h3>
+                <h1>La <span>vitrina</span> del local</h1>
+                <p>El catálogo de la tienda en el televisor o la tablet del mostrador. Le habla a alguien que ya está adentro y la mira de reojo desde tres metros: rota sola, no tiene un solo botón y la letra es grande.</p>
+            </div>
+
+            <div class="visual-block flow">
+                <div class="flow-card">
+                    <strong><i class="fas fa-link" style="color:#fcd34d;"></i> Una dirección</strong>
+                    <span>La sede la copia de sus ajustes y la abre en la pantalla. No pide usuario ni contraseña.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card lead">
+                    <strong><i class="fas fa-tv" style="color:#d8b4fe;"></i> Rota de a tandas</strong>
+                    <span>Los productos pasan en grupos, con su foto, su nombre y su precio.</span>
+                </div>
+                <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="flow-card">
+                    <strong><i class="fas fa-rotate" style="color:#6ee7b7;"></i> Se mantiene al día</strong>
+                    <span>Vuelve a leer el catálogo entero cada tanto, con los precios y el stock nuevos.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 2: LA PANTALLA -->
+    <section class="slide">
+        <div class="glow-orange" style="left: 50%; transform: translateX(-50%); top: -300px;"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: #fcd34d;">La pantalla</h3>
+                <h2>Lo que se cambia en los ajustes, la pantalla lo toma sola</h2>
+                <p>Probalo: cambiá los ajustes; la pantalla rota mientras tanto.</p>
+            </div>
+
+            <div class="visual-block vitrina-demo demo" data-vitrina>
+                <div>
+                    <div class="tv" data-tv aria-live="polite"></div>
+                    <div class="stand"></div>
+                </div>
+                <div class="settings">
+                    <label class="toggle"><input type="checkbox" data-s="enabled" checked><span><b>La pantalla del local</b><small>Apagada, la vitrina lo dice en vez de mostrar el catálogo.</small></span></label>
+                    <div class="field"><label>Titulo en pantalla</label><input type="text" placeholder="El nombre del local" data-s="headline" maxlength="80"></div>
+                    <div class="field"><label>Productos por tanda</label><select data-s="perPage"><option value="2">2 productos</option><option value="3">3 productos</option><option value="4" selected>4 productos</option><option value="6">6 productos</option></select></div>
+                    <div class="field"><label>Cambia de tanda</label><select data-s="rotation"><option value="5" selected>Cada 5 segundos</option><option value="10">Cada 10 segundos</option><option value="20">Cada 20 segundos</option></select></div>
+                    <label class="toggle"><input type="checkbox" data-s="price" checked><span><b>Precio</b><small>Apagalo si preferis que el precio lo diga el mostrador.</small></span></label>
+                    <label class="toggle"><input type="checkbox" data-s="oos"><span><b>Lo agotado</b><small>De fabrica no se muestra: promocionar lo que no hay incomoda al mostrador.</small></span></label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 3: LO QUE CONVIENE SABER -->
+    <section class="slide">
+        <div class="glow-green"></div>
+        <div class="slide-content-wide">
+            <div class="text-block">
+                <h3 style="color: var(--kpi-green);">Lo que conviene saber</h3>
+                <h2>Un precio viejo en la pared es la falla que importa</h2>
+            </div>
+
+            <div class="visual-block rules-grid">
+                <div class="rule">
+                    <i class="fas fa-rotate" style="color:#34d399;"></i>
+                    <div><strong>Se reemplaza el catálogo entero</strong><span>No solo el stock, como en la tienda: nadie está mirando una lista que se pueda mover bajo el dedo, y un precio viejo es exactamente lo que no tiene que pasar. Se puede elegir cada 30 segundos, cada minuto, 5 o 15.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-power-off" style="color:#fcd34d;"></i>
+                    <div><strong>Al prenderse, se actualiza</strong><span>Un televisor que se apagó a la noche no se queda con el catálogo de ayer esperando el próximo turno: vuelve a leer al ponerse visible.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-sliders" style="color:#c4b5fd;"></i>
+                    <div><strong>Los ajustes viajan con el catálogo</strong><span>Cambiar la rotación o el título desde la sede no obliga a ir hasta el local a recargar la pantalla: lo toma en el próximo refresco.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-filter" style="color:#93c5fd;"></i>
+                    <div><strong>Solo productos físicos con nombre</strong><span>Activos y vendibles: sin combos, que no tienen stock propio, ni carpetas de variantes. Con una sola tanda, la pantalla no rota.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-lock-open" style="color:#22d3ee;"></i>
+                    <div><strong>Pública, pero sin nada nuevo</strong><span>Un televisor no tiene con quién iniciar sesión. Muestra lo mismo que la tienda pública, y una tienda no publicada no tiene vitrina.</span></div>
+                </div>
+                <div class="rule">
+                    <i class="fas fa-wifi" style="color:#f87171;"></i>
+                    <div><strong>Si se corta la red, sigue</strong><span>Un error de red no se muestra en la pared: la vitrina se queda con lo último que tenía y vuelve a intentar en el próximo turno.</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 4: NAVEGACIÓN -->
+    <section class="slide">
+        <div class="glow-purple" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px;"></div>
+        <div class="slide-content-wide" style="align-items: center;">
+            <div class="text-block">
+                <h3 style="color: #fcd34d;">Seguir explorando</h3>
+                <h2>De la pantalla del local al resto de las puertas</h2>
+                <p>¿Volvemos a las direcciones de la tienda o al catálogo?</p>
+            </div>
+
+            <div class="visual-block quick-actions-grid">
+                <a href="index.html" class="qa-btn" style="border-color: var(--kpi-blue);">
+                    <div class="qa-icon" style="color: var(--kpi-blue);"><i class="fas fa-map"></i></div>
+                    <div class="qa-text">Mapa de<br>la tienda</div>
+                </a>
+                <a href="direcciones.html" class="qa-btn" style="border-color: var(--kpi-purple);">
+                    <div class="qa-icon" style="color: var(--kpi-purple);"><i class="fas fa-signs-post"></i></div>
+                    <div class="qa-text">Las puertas<br>de la tienda</div>
+                </a>
+                <a href="catalogo.html" class="qa-btn" style="border-color: var(--kpi-pink);">
+                    <div class="qa-icon" style="color: var(--kpi-pink);"><i class="fas fa-th-large"></i></div>
+                    <div class="qa-text">Catálogo<br>público</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // La vitrina: tandas, rotación, precio y agotados según los ajustes
+        // (StoreShowcase.vue y sales/storefront/domain/showcase.py).
+        (() => {
+            const root = document.querySelector('[data-vitrina]');
+            if (!root) return;
+            const items = [
+                { name: 'Vela de soja 200 g', price: 7475, stock: 12, color: '#78350f' },
+                { name: 'Vela en lata Cedro', price: 6200, stock: 3, color: '#14532d' },
+                { name: 'Difusor bambú Lavanda', price: 8200, stock: 9, color: '#4c1d95' },
+                { name: 'Vela de soja 400 g', price: 11900, stock: 0, color: '#7c2d12' },
+                { name: 'Sahumerio Palo Santo', price: 2900, stock: 40, color: '#713f12' },
+                { name: 'Difusor bambú Cedro', price: 8900, stock: 4, color: '#064e3b' },
+                { name: 'Vela de masaje Coco', price: 9800, stock: 6, color: '#0c4a6e' },
+            ];
+            let page = 0, timer = null;
+            const tv = root.querySelector('[data-tv]');
+            const val = k => { const el = root.querySelector(`[data-s="${k}"]`); return el.type === 'checkbox' ? el.checked : el.value; };
+            const money = n => '$ ' + n.toLocaleString('es-AR');
+            function pages() {
+                const visible = items.filter(i => val('oos') || i.stock > 0);
+                const per = Number(val('perPage'));
+                const out = [];
+                for (let i = 0; i < visible.length; i += per) out.push(visible.slice(i, i + per));
+                return out;
+            }
+            function render() {
+                if (!val('enabled')) { tv.innerHTML = '<div class="showcase-state"><p>La vitrina de este local esta apagada.</p></div>'; return; }
+                const ps = pages();
+                if (page >= ps.length) page = 0;
+                const current = ps[page] || [];
+                const cols = Math.min(current.length, 4);
+                tv.innerHTML = `<header class="showcase-header"><span class="logo">LV</span><h4>${(val('headline') || 'Lumen Velas').replace(/</g, '&lt;')}</h4></header><main class="showcase-grid" style="grid-template-columns:repeat(${cols},1fr)">${current.map(i => `<article class="showcase-card"><div class="showcase-photo" style="background:${i.color}"><i class="fas fa-box-open"></i>${i.stock <= 0 ? '<span class="showcase-tag">Sin stock</span>' : ''}</div><h5>${i.name}</h5>${val('price') ? `<b>${money(i.price)}</b>` : ''}</article>`).join('')}</main>${ps.length > 1 ? `<footer class="showcase-dots">${ps.map((_, i) => `<span class="${i === page ? 'active' : ''}"></span>`).join('')}</footer>` : ''}`;
+            }
+            function restart() {
+                clearInterval(timer);
+                timer = null;
+                render();
+                if (pages().length > 1) timer = setInterval(() => { page = (page + 1) % Math.max(pages().length, 1); render(); }, Number(val('rotation')) * 1000);
+            }
+            root.addEventListener('change', restart);
+            root.addEventListener('input', e => { if (e.target.matches('[data-s="headline"]')) render(); });
+            restart();
+        })();
+    </script>
+    <script src="presentacion.js"></script>
+</body>
+</html>
