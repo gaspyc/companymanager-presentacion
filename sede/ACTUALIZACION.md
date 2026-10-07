@@ -23,6 +23,12 @@ Para todas, en este orden:
 5. **Enlaces**: los nombres de archivo coinciden en mayúsculas y minúsculas, que en un servidor sensible a mayúsculas es la diferencia entre navegar y un 404.
 6. **Aritmética**: donde una diapositiva afirma que los números cierran, se recalcularon con `Decimal` siguiendo la fórmula del backend. Eso cambió cifras en Presupuestos, Impuestos, Alquileres y Fabricación.
 
+## Agregado el 7 de octubre de 2026: Proyectos y Obras
+
+`Obras.html` se escribió leyendo `frontend/src/modules/features/projects` entero y el módulo `companymanager/modules/projects` (commit `c0ea4380`). Sumó un apartado al mapa, que pasa a 26, y 31 fuentes al registro, con su huella de ese día. Las huellas de las otras 25 presentaciones siguen siendo las del 15 de septiembre.
+
+Se verificó igual que las demás: altura a 1440 × 860 con las demos en su estado más alto, ancho a 1440 y a 375 px, íconos, y las seis demos recorridas sin errores. Los números de los ejemplos siguen las fórmulas del backend: el resultado y el saldo del tope (`store_sqlmodel.py`), el costo al terminar y el desvío de una partida (`budgets.py`), el avance ponderado (`tasks.py`), el límite del 100% y el cierre con centavos (`certificates.py`), y los totales de facturas y cobros.
+
 ## Alcance
 
 Esta carpeta es una presentación HTML, no una copia ejecutable de la aplicación Vue. Los ejemplos visuales contienen datos ficticios y no reproducen píxel por píxel la interfaz actual. No conectan con APIs, no cobran ni emiten comprobantes. Las prestaciones descritas se revisaron contra el código local; la disponibilidad en una instalación depende de permisos, configuración e integraciones.
@@ -37,7 +43,7 @@ Fabricación es un módulo que la sede puede sumar: desde que el menú es un cat
 python verificar-vigencia.py --proyecto C:\Proyectos\CompanyManager
 ```
 
-Son **93 fuentes** y el script nombra qué presentación revisar por cada una que cambió. Un cambio de fuente indica que hay que mirar ese contenido, no que toda la presentación esté desactualizada. Las rutas nuevas del proyecto también deben compararse con el mapa: una pantalla que no está en `index.html` no la va a señalar ningún hash.
+Son **124 fuentes** y el script nombra qué presentación revisar por cada una que cambió. Un cambio de fuente indica que hay que mirar ese contenido, no que toda la presentación esté desactualizada. Las rutas nuevas del proyecto también deben compararse con el mapa: una pantalla que no está en `index.html` no la va a señalar ningún hash.
 
 Los scripts antiguos `patch_missing.js`, `precision_fix.js`, `precision_fix_safe.js` y `add_f_shortcut.js` son parches históricos: no forman parte de la ejecución de las páginas y no deben reaplicarse sobre esta revisión.
 
