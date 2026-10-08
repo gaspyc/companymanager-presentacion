@@ -1,0 +1,157 @@
+{
+  "reviewed_at": "2026-10-08",
+  "project_commit": "b017de0deef6ffe3284625776a8753f444913117",
+  "hashed_from": "commit",
+  "modules": [
+    {
+      "file": "index.html",
+      "id": "mapa",
+      "name": "Mapa de plugins",
+      "sources": [
+        "frontend/src/modules/portals/plugins-store/views/Home.vue"
+      ]
+    },
+    {
+      "file": "concepto.html",
+      "id": "concepto",
+      "name": "Qué es un plugin",
+      "sources": [
+        "companymanager/adapters/base.py",
+        "companymanager/adapters/registry.py",
+        "companymanager/modules/system/marketplace/domain/rules.py",
+        "frontend/src/modules/features/settings/constants/branchSettingsCatalog.js"
+      ]
+    },
+    {
+      "file": "catalogo.html",
+      "id": "catalogo",
+      "name": "La tienda de plugins",
+      "sources": [
+        "companymanager/modules/system/marketplace/api/router.py",
+        "frontend/src/modules/portals/plugins-store/components/MarketCard.vue",
+        "frontend/src/modules/portals/plugins-store/components/MarketHero.vue",
+        "frontend/src/modules/portals/plugins-store/components/MarketSideBar.vue",
+        "frontend/src/modules/portals/plugins-store/components/PluginDetailPanel.vue",
+        "frontend/src/modules/portals/plugins-store/composables/usePluginMarketplace.js",
+        "frontend/src/modules/portals/plugins-store/views/Home.vue"
+      ]
+    },
+    {
+      "file": "gestion.html",
+      "id": "gestion",
+      "name": "Usar un plugin en una sede",
+      "sources": [
+        "companymanager/modules/system/marketplace/application/adapter_access.py",
+        "frontend/src/modules/features/catalog/components/ImportModal.vue",
+        "frontend/src/modules/features/catalog/composables/useCatalogFileImport.js",
+        "frontend/src/modules/features/settings/components/AdapterSelectorModal.vue",
+        "frontend/src/modules/features/settings/components/AdapterSlot.vue",
+        "frontend/src/modules/features/settings/constants/branchSettingsCatalog.js"
+      ]
+    },
+    {
+      "file": "manifest.html",
+      "id": "manifest",
+      "name": "Armar el paquete",
+      "sources": [
+        "companymanager/modules/system/marketplace/application/plugins.py",
+        "companymanager/modules/system/marketplace/infrastructure/loader.py",
+        "companymanager/shared/uploads.py",
+        "frontend/src/modules/portals/plugins-store/components/SubmissionDropZone.vue"
+      ]
+    },
+    {
+      "file": "api.html",
+      "id": "api",
+      "name": "Escribir el código",
+      "sources": [
+        "companymanager/adapters/base.py",
+        "companymanager/modules/core/pricing/adapters/base.py",
+        "companymanager/modules/core/pricing/application/plugin_runtime.py",
+        "companymanager/modules/core/pricing/infrastructure/plugin_runner.py",
+        "companymanager/modules/system/marketplace/infrastructure/runtime_executor.py",
+        "companymanager/modules/system/marketplace/infrastructure/runtime_runner.py"
+      ]
+    },
+    {
+      "file": "sandbox.html",
+      "id": "sandbox",
+      "name": "Seguridad y aislamiento",
+      "sources": [
+        "companymanager/modules/system/marketplace/infrastructure/loader.py",
+        "companymanager/modules/system/marketplace/infrastructure/policy.py",
+        "companymanager/modules/system/marketplace/infrastructure/runtime_executor.py",
+        "companymanager/modules/system/marketplace/infrastructure/runtime_runner.py"
+      ]
+    },
+    {
+      "file": "auditoria.html",
+      "id": "auditoria",
+      "name": "Enviar a revisión",
+      "sources": [
+        "companymanager/modules/system/marketplace/api/router.py",
+        "companymanager/modules/system/marketplace/domain/rules.py",
+        "frontend/src/modules/portals/plugins-store/components/ReviewQueueCard.vue",
+        "frontend/src/modules/portals/plugins-store/components/SubmissionCard.vue",
+        "frontend/src/modules/portals/plugins-store/components/SubmissionDropZone.vue",
+        "frontend/src/modules/portals/plugins-store/composables/usePluginMarketplace.js",
+        "frontend/src/modules/portals/plugins-store/views/Home.vue"
+      ]
+    },
+    {
+      "file": "lanzamiento.html",
+      "id": "lanzamiento",
+      "name": "Ya publicado",
+      "sources": [
+        "companymanager/modules/system/marketplace/api/router.py",
+        "companymanager/modules/system/marketplace/application/plugin_payloads.py",
+        "companymanager/modules/system/marketplace/infrastructure/loader.py",
+        "frontend/src/modules/portals/plugins-store/components/AdminUploadZone.vue",
+        "frontend/src/modules/portals/plugins-store/components/PluginDetailPanel.vue"
+      ]
+    },
+    {
+      "file": "monetizacion.html",
+      "id": "monetizacion",
+      "name": "Precio y cobro",
+      "sources": [
+        "companymanager/modules/system/marketplace/api/router.py",
+        "companymanager/modules/system/marketplace/infrastructure/loader.py",
+        "frontend/src/modules/portals/plugins-store/components/MarketCard.vue",
+        "frontend/src/modules/portals/plugins-store/components/PluginDetailPanel.vue"
+      ]
+    }
+  ],
+  "source_sha256": {
+    "companymanager/adapters/base.py": "367cff2f4992d8ec2701b2a3bfbdf513e5c3069ac1b85fc1bd7299f160008a28",
+    "companymanager/adapters/registry.py": "13af72f29831212e1ab5b21a2bcb506d8f49f53cda79893c9d42dd4fe860e522",
+    "companymanager/modules/core/pricing/adapters/base.py": "70fdc5c70aa3f3680ad6527b908097d78fea82433961f8f5e10a4dc3af576d7f",
+    "companymanager/modules/core/pricing/application/plugin_runtime.py": "1651bb83d11869e634dc237695f1bcc347d86187692686cab637e265bb31797c",
+    "companymanager/modules/core/pricing/infrastructure/plugin_runner.py": "a8c7d484e2c68973f4c915455f431edb49ff3534c6ac5ee5a7e6e9815fe6410f",
+    "companymanager/modules/system/marketplace/api/router.py": "a3b029d163ab069974015c259ab6aeebee6574437f5d8e354de66eba20166e73",
+    "companymanager/modules/system/marketplace/application/adapter_access.py": "911c31a219002f6b87d954d763f049c3790a9afbc7477a5d541a1b13084261cf",
+    "companymanager/modules/system/marketplace/application/plugin_payloads.py": "c4b4de6d1b0877e2e1bb8cfe0ab3e9a5f7cb81b326fa8743a2d489ee6aa480a6",
+    "companymanager/modules/system/marketplace/application/plugins.py": "9e17de222ae9f0d76860bfa1b7149dd59db20b1418361f49a0d58d8a89d56d9e",
+    "companymanager/modules/system/marketplace/domain/rules.py": "58032f845d63352d5c2ca1a33708fdde26cf8b40b1c4726da6607598cef24a1f",
+    "companymanager/modules/system/marketplace/infrastructure/loader.py": "6650b7391b6d04c41ede70ef1bc24de38dcc58e0543b058bab1310df29deef84",
+    "companymanager/modules/system/marketplace/infrastructure/policy.py": "53d464a2ad36d2b019f48ebbadfaf6c1ba78ae6ad726c17ff7497d1ff7d573d4",
+    "companymanager/modules/system/marketplace/infrastructure/runtime_executor.py": "37b0cbd42073d719c7107e9204a121d8a4fd9d89c462423728088f66d9db6b82",
+    "companymanager/modules/system/marketplace/infrastructure/runtime_runner.py": "a20e7cc8c9f719673a50cf0dc069055d555a271e5db75265759962da0ab7f9f6",
+    "companymanager/shared/uploads.py": "c9198d69dccf874d8d1e4cf7bbff40844c3fb48641f849a41c3ee1b1514dd863",
+    "frontend/src/modules/features/catalog/components/ImportModal.vue": "3f7d69bc562b0bf13736f057d3d8075cef67f5ae6f2d22ef4f417b7ad4ccf1ef",
+    "frontend/src/modules/features/catalog/composables/useCatalogFileImport.js": "cee493d0b4e60d1b49444cdf81346d88cce7e4062a4a2c6882c099a75c61c244",
+    "frontend/src/modules/features/settings/components/AdapterSelectorModal.vue": "f0be4200b8689b44dff2ef2b8695b3f899c6a9b418a2d8683675363135947c46",
+    "frontend/src/modules/features/settings/components/AdapterSlot.vue": "7ef35094e04a171316fc01f7bff82dca005fa359d962295cfc5e5bb701f3fbee",
+    "frontend/src/modules/features/settings/constants/branchSettingsCatalog.js": "066779cc92aa69d7102895c7289b16d579b546ca6848db6a3352bbf6c6edf4f8",
+    "frontend/src/modules/portals/plugins-store/components/AdminUploadZone.vue": "a4ac7c117a503f9ff0ad67e7e51eeff6860758b0e23e759d89c3ebe6cfe32643",
+    "frontend/src/modules/portals/plugins-store/components/MarketCard.vue": "73691c83c7e4414aa746426ab6f47da1ff2f69c0feaa7dbdb8b3598b698c0a6f",
+    "frontend/src/modules/portals/plugins-store/components/MarketHero.vue": "ff4df9b204e1b6faa1683befafc09ac9f367fd82cdfaf68f22983d7394ce6b65",
+    "frontend/src/modules/portals/plugins-store/components/MarketSideBar.vue": "4464fe20e7b4dd039e31d3064cbe571671e2b46a44642ca436c8c0bbc5953229",
+    "frontend/src/modules/portals/plugins-store/components/PluginDetailPanel.vue": "b26185a77532c2dde74896caff4c8d5a759da018efe0b6f8c705dd38874dd6fa",
+    "frontend/src/modules/portals/plugins-store/components/ReviewQueueCard.vue": "f9377d4386d3c8c0a947d776f0741ae39cbd8f74e05a04fac4c5de80842a1327",
+    "frontend/src/modules/portals/plugins-store/components/SubmissionCard.vue": "fb4d26c5c5b17099d22bc3fcba0ca0295af5a84ce50fda3fa6d4c633eb7750de",
+    "frontend/src/modules/portals/plugins-store/components/SubmissionDropZone.vue": "8f9311525be20d61c87586e3889b0586572a0cadf16a93b434842a5fed613e7f",
+    "frontend/src/modules/portals/plugins-store/composables/usePluginMarketplace.js": "0966da41cbccffc8c14aff009a0fbf08cbd2397af36fbd696ac5421784100a29",
+    "frontend/src/modules/portals/plugins-store/views/Home.vue": "c3146912d8c78080567d9742b1fc7e2161e890a45906ca776e1b074f87e0fa0f"
+  }
+}
