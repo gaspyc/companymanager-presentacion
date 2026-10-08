@@ -183,9 +183,12 @@
       "id": "agenda",
       "name": "Mis Servicios",
       "sources": [
+        "companymanager/modules/core/bookings/application/consumer_references.py",
         "companymanager/modules/identity/users/api/router.py",
+        "frontend/src/apps/companymarket/utils/agendaSuggestions.js",
         "frontend/src/apps/companymarket/views/Agenda.vue"
-      ]
+      ],
+      "revised_against": "a9541230 (main, 2026-10-08)"
     },
     {
       "file": "politicas.html",
@@ -210,9 +213,10 @@
     }
   ],
   "source_sha256": {
+    "companymanager/modules/core/bookings/application/consumer_references.py": "9bfb9e0895699c684b91c2d317fbe81b9f998e932e25a2c872be974209518a5d",
     "companymanager/modules/identity/organizations/application/brand_page.py": "abf431ac278cc209ec6b866628e8db3fe602db27090451a44af75de984dab0ad",
     "companymanager/modules/identity/reputation/api/router.py": "08825bba4e7a97f6d5268695a4bd3d08e2dc36c85fba40fa54d936a2d8da1609",
-    "companymanager/modules/identity/users/api/router.py": "3475c3eaf4e7025a3a12e8a62db974f803c36ddee935dae22fa6413a0ab62fc7",
+    "companymanager/modules/identity/users/api/router.py": "9d2753733c07263d6a51286b700471789af5ce272b55af31d09f6d5de34c84df",
     "companymanager/modules/marketing/campaigns/application/audience.py": "9eb6f5041d2f3e6c992a8edad057e4140f79bb58d7b29ef0095a7482fea2ec4a",
     "companymanager/modules/sales/checkout/application/service.py": "281c290ea4c2acf1e53ecfadbb0ca3850c357f7daf642cf4c992d035f18f60e9",
     "companymanager/modules/sales/orders/application/local_deposit.py": "7714c255aac95d974c16ec918381579b06e8887e8e5ae696303fd68df86152aa",
@@ -248,13 +252,14 @@
     "frontend/src/apps/companymarket/composables/useCart.js": "dd7d646ff667c87c68829a1560906113be630e9b87183d2a3f9b832e865e827a",
     "frontend/src/apps/companymarket/composables/useStorefrontCarriers.js": "dfa4f1a6aaf2603855fc539993078de67c4307aa84ebde97ed19ea70ff9a8bdb",
     "frontend/src/apps/companymarket/composables/useStorefrontStockSync.js": "c9505bfaf9ecf5f14f0804c94141c768b48b3d46c989790157067133fa5a9579",
+    "frontend/src/apps/companymarket/utils/agendaSuggestions.js": "eabe7f0b8892ec5d043b7015ec69b4af3bf0af3764fa7a94876c5d7a003a59c3",
     "frontend/src/apps/companymarket/utils/minimumPurchase.js": "07eed27b90e9640e2772dbf8c79c356ecac916a714745a519bf6492b5869e8df",
     "frontend/src/apps/companymarket/utils/mixAndMatch.js": "8736f98406edaf594c2bc9bc37cc8c5eeae873f55a985c579de0dd73b62ab57e",
     "frontend/src/apps/companymarket/utils/stockShortageReport.js": "dd28968c3e72e33426efe884cc3859a72402ef26af43c5e2ef65c0ec86d52e7d",
     "frontend/src/apps/companymarket/utils/storefrontCheckout.js": "b2a92ba4de980293f62682e6bdfca076400a090d2268a69a913907edace90c3b",
     "frontend/src/apps/companymarket/utils/storefrontLegalLabels.js": "d9961597c0eff67c5569cda74bc406f5f793df274be1b863ba6ab6f8e5a31a3c",
     "frontend/src/apps/companymarket/utils/storefrontProviders.js": "ee5460d949c303c8b5812328c916eba2b590d0e297f5b33e32722ca4b392804c",
-    "frontend/src/apps/companymarket/views/Agenda.vue": "d2027fac62d9608922be6e959cb627c341275956ca2d857c12e378a6a4871792",
+    "frontend/src/apps/companymarket/views/Agenda.vue": "f7e1fec5b5bfcfe479476f08488ba215cfc7d6471ab677b08ebb3d939a5aabe4",
     "frontend/src/apps/companymarket/views/BrandPage.vue": "c96cde090caef6b3e5503b9bd7b5bb9f43769522afbd3ef451603b48a6dd3997",
     "frontend/src/apps/companymarket/views/MyOrders.vue": "4cbfeb3c4b1fa27481a2d4c096b59f668e4e3ca1c8c77d3967ce9267ded3deec",
     "frontend/src/apps/companymarket/views/PublicDomainRoot.vue": "f7aae05468379c2cfdd5fa6ca09742818fe3c417f4f48dd363ce5629e53f1162",

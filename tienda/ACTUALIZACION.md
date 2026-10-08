@@ -20,11 +20,15 @@ Revisión: **7 de octubre de 2026**. Proyecto local: `CompanyManager`, commit `c
 5. **Enlaces**: todos los `href` relativos llevan a un archivo que existe.
 6. **Textos**: los de las maquetas son los del componente, con sus tildes o la falta de ellas ("Iniciar sesion", "Calificar", "Minimo 6"). Los números de los ejemplos se recalcularon con la regla del código: escalas, porcentaje del combo, seña, centavos de la transferencia, precio sin impuestos y precio por kilo.
 
+## Agregado después de la revisión
+
+- **`agenda.html` suma la diapositiva de los pases y su QR** (ahora son cinco). Se revisó contra el commit `a9541230` de `main`, donde "Activos" empezó a cargar los pases (`/users/me/passes`): antes la solapa decía "Sin suscripciones" a quien había comprado uno. El QR de la maqueta es uno real, generado con las opciones de `utils/qr.js` y el color del modal. La diapositiva dice que **nadie lo escanea**: ninguna pantalla del local lee `customer_pass`. Las huellas de sus cuatro fuentes son las de ese commit.
+
 ## Lo que se dejó afuera a propósito
 
 Tres cosas que el código tiene pero no hacen lo que parece. No se presentan como si anduvieran:
 
-- **"Mis servicios › Activos" no lista pases.** `Agenda.vue` declara `passes` y nunca lo carga, y `/users/me/agenda` devuelve solo turnos. Lo mismo las "Sugerencias" y el filtro de días: son un prototipo sobre `localStorage` que filtra una lista siempre vacía. La presentación muestra los turnos.
+- **Las "Sugerencias" y el filtro de días de "Mis servicios" no se presentan todavía.** Desde `a9541230` son reales —clases con lugar de los negocios donde el cliente ya es cliente, y restricciones guardadas en la cuenta—, pero la presentación no las muestra aún.
 - **Una sede bajo el dominio de su marca se ve con la Tienda Clásica.** `docs/marca-y-sedes-en-un-dominio.md` dice "con su diseño", pero `shouldUseAssignedStorefrontDesign` no contempla las rutas `BrandBranchDomainStoreFront` ni `BrandBranchStoreFront`. La presentación no afirma ninguna de las dos cosas.
 - **Los productos digitales no salen en el catálogo clásico.** `digital` está en `CATALOG_EXCLUDED_TYPES`, así que la insignia "Entrega Inmediata", el botón "Descargar" y el checkout de solo digitales no se alcanzan desde ahí.
 
@@ -42,4 +46,4 @@ Lo que la sede configura de su tienda (diseño, medios de pago, envíos, textos)
 python verificar-vigencia.py --proyecto C:\Proyectos\CompanyManager
 ```
 
-Son **70 fuentes**, y el script nombra qué presentación revisar por cada una que cambió. Que una fuente cambie indica que hay que mirar ese contenido, no que toda la presentación esté desactualizada. Las rutas públicas nuevas (`app/router/index.js`) también hay que compararlas con el mapa: una pantalla que no está en `index.html` no la va a señalar ningún hash.
+Son **72 fuentes**, y el script nombra qué presentación revisar por cada una que cambió. Que una fuente cambie indica que hay que mirar ese contenido, no que toda la presentación esté desactualizada. Las rutas públicas nuevas (`app/router/index.js`) también hay que compararlas con el mapa: una pantalla que no está en `index.html` no la va a señalar ningún hash.
