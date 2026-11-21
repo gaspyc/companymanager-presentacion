@@ -40,7 +40,7 @@ Dos apartados nuevos y dos corregidos, a partir de lo que el ecosistema público
 
 El mapa pasa a 28 apartados. En `revision-proyecto.json` se registraron solo las fuentes **nuevas**, con su huella de este día: las que ya estaban conservan la del 15 de septiembre, porque el resto de Impuestos y Fabricación no se volvió a revisar contra ellas, y `verificar-vigencia.py` las sigue señalando.
 
-Estas cuatro no pasaron todavía por la verificación visual de altura y ancho de la lista de abajo.
+Las cuatro se midieron con Firefox headless por WebDriver: a 1440 × 860 la diapositiva más alta mide 681 px (Fabricación, que ya estaba así) y la más alta de lo nuevo 572 px, todas dentro de 780. El `scrollWidth` de 1584 px que aparece a 1440 lo dan las luces de fondo con `right: -10vw`; el `overflow: hidden` del body las recorta y no hay scroll. En el modo celular Firefox no achica la ventana por debajo de unos 488 px, así que el ancho de 375 px queda por mirar en un teléfono o con el modo responsive del navegador.
 
 ## Alcance
 
