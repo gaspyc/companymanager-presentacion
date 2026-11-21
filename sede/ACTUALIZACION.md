@@ -29,6 +29,19 @@ Para todas, en este orden:
 
 Se verificó igual que las demás: altura a 1440 × 860 con las demos en su estado más alto, ancho a 1440 y a 375 px, íconos, y las seis demos recorridas sin errores. Los números de los ejemplos siguen las fórmulas del backend: el resultado y el saldo del tope (`store_sqlmodel.py`), el costo al terminar y el desvío de una partida (`budgets.py`), el avance ponderado (`tasks.py`), el límite del 100% y el cierre con centavos (`certificates.py`), y los totales de facturas y cobros.
 
+## Agregado el 21 de noviembre de 2026: Contabilidad y Mercado Libre
+
+Dos apartados nuevos y dos corregidos, a partir de lo que el ecosistema público de CompanyManager (`tensorData.json`) empezó a anunciar:
+
+- **`Contabilidad.html`** (nuevo): partida doble, asientos automáticos proyectados, estados contables con anexos y notas, ajuste por inflación, cierre del ejercicio y el puesto «Contador». El ejemplo de la venta de $121.000 sigue las cuentas de `domain/automatic.py`.
+- **`MercadoLibre.html`** (nuevo): publicación y barrido, la comisión exacta (el ejemplo sigue `precio_que_compensa` de `domain/fees.py`), combos, descuentos, catálogo, la venta como pedido con sus tres filas en el libro, las preguntas y lo que todavía no hace.
+- **`Impuestos.html`**: la diapositiva de alcance decía que retenciones y archivo digital estaban «Todavía no»; las dos están hechas. Se sumaron las solapas Declaración, Retenciones e Ingresos Brutos a la maqueta y una diapositiva con lo que se presenta.
+- **`Fabricacion.html`**: una diapositiva para «fabricar al vender».
+
+El mapa pasa a 28 apartados. En `revision-proyecto.json` se registraron solo las fuentes **nuevas**, con su huella de este día: las que ya estaban conservan la del 15 de septiembre, porque el resto de Impuestos y Fabricación no se volvió a revisar contra ellas, y `verificar-vigencia.py` las sigue señalando.
+
+Estas cuatro no pasaron todavía por la verificación visual de altura y ancho de la lista de abajo.
+
 ## Alcance
 
 Esta carpeta es una presentación HTML, no una copia ejecutable de la aplicación Vue. Los ejemplos visuales contienen datos ficticios y no reproducen píxel por píxel la interfaz actual. No conectan con APIs, no cobran ni emiten comprobantes. Las prestaciones descritas se revisaron contra el código local; la disponibilidad en una instalación depende de permisos, configuración e integraciones.
@@ -73,6 +86,8 @@ Rutas relativas a la raíz de CompanyManager. Se nombra la fuente principal; el 
 | [Auditoría de rentabilidad](Auditoria.html) | `frontend/src/modules/workspaces/branch/views/Auditor.vue` |
 | [Gastos e Inversiones](Inversiones.html) | `frontend/src/modules/workspaces/branch/views/Investments.vue` |
 | [Impuestos](Impuestos.html) | `frontend/src/modules/workspaces/branch/views/TaxBooks.vue` |
+| [Contabilidad](Contabilidad.html) | `frontend/src/modules/workspaces/branch/views/AccountingBooks.vue` |
+| [Mercado Libre](MercadoLibre.html) | `frontend/src/modules/features/settings/components/MarketplaceListingsPanel.vue` |
 | [Actividad](Actividad.html) | `frontend/src/modules/workspaces/branch/views/Activity.vue` |
 | [Campañas](Campanas.html) | `frontend/src/modules/workspaces/brand/views/Campaigns.vue` |
 | [Contestadora](Contestadora.html) | `frontend/src/modules/workspaces/brand/components/campaigns/AutoResponderPanel.vue` |

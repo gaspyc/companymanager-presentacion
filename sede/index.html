@@ -257,11 +257,11 @@
 
     <div class="map-header">
         <h1>Sistema a nivel sede</h1>
-        <p>Hacé clic en cualquier módulo para abrir la presentación interactiva correspondiente. Tu navegador recordará cuáles ya visitaste. Contenido revisado el 14 de septiembre de 2026; los módulos marcados <em>en preparación</em> todavía no tienen su presentación.</p>
+        <p>Hacé clic en cualquier módulo para abrir la presentación interactiva correspondiente. Tu navegador recordará cuáles ya visitaste. Contenido revisado el 14 de septiembre de 2026, con Contabilidad, Mercado Libre, Impuestos y Fabricación actualizados el 21 de noviembre; los módulos marcados <em>en preparación</em> todavía no tienen su presentación.</p>
         
         <div class="progress-container">
             <div class="progress-text">
-                <strong id="progressCount">0 / 26</strong>
+                <strong id="progressCount">0 / 28</strong>
                 <span>Módulos Explorados</span>
             </div>
             <div class="progress-bar-bg">
@@ -492,16 +492,34 @@
             {
                         "id": "impuestos",
                         "name": "Impuestos",
-                        "desc": "El registro de comprobantes por alícuota, con los huecos que impiden declararlo a la vista.",
+                        "desc": "Libros de IVA por alícuota, Libro de IVA Digital y F.2002, retenciones con SICORE e Ingresos Brutos con SIFERE.",
                         "file": "Impuestos.html",
                         "target": "col-finance",
                         "color": "#60a5fa",
                         "icon": "fas fa-receipt"
             },
             {
+                        "id": "contabilidad",
+                        "name": "Contabilidad",
+                        "desc": "Partida doble con asientos automáticos, estados contables, bienes de uso, ajuste por inflación y cierre del ejercicio.",
+                        "file": "Contabilidad.html",
+                        "target": "col-finance",
+                        "color": "#60a5fa",
+                        "icon": "fas fa-balance-scale"
+            },
+            {
+                        "id": "mercadolibre",
+                        "name": "Mercado Libre",
+                        "desc": "Publicaciones con el mismo catálogo y stock, comisión exacta compensada, combos, descuentos y ventas que entran como pedidos.",
+                        "file": "MercadoLibre.html",
+                        "target": "col-sales",
+                        "color": "#10b981",
+                        "icon": "fas fa-store"
+            },
+            {
                         "id": "fabricacion",
                         "name": "Fabricación",
-                        "desc": "Recetas por corrida, capacidad según el insumo más ajustado, costo del lote y remitos internos hacia el resto de la red.",
+                        "desc": "Recetas por corrida o al vender, capacidad según el insumo más ajustado, costo del lote y remitos internos hacia el resto de la red.",
                         "file": "Fabricacion.html",
                         "target": "col-ops",
                         "color": "#f59e0b",

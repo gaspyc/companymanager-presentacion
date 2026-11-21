@@ -254,6 +254,7 @@
       "name": "Impuestos",
       "target": "col-finance",
       "sources": [
+        "docs/libros-fiscales-y-impuestos.md",
         "frontend/src/modules/workspaces/branch/views/TaxBooks.vue"
       ]
     },
@@ -272,6 +273,7 @@
         "companymanager/modules/core/production/domain/rules.py",
         "companymanager/modules/core/production/infrastructure/models.py",
         "companymanager/modules/identity/organizations/domain/node_types.py",
+        "docs/fabricar-al-vender.md",
         "frontend/src/domain/productionRoles.js",
         "frontend/src/modules/core/ui/constants/workspaceMenu.js",
         "frontend/src/modules/features/settings/components/ManualPlantEditor.vue",
@@ -341,6 +343,38 @@
         "frontend/src/modules/features/projects/components/TaskEditor.vue",
         "frontend/src/modules/features/projects/utils/projectReport.js",
         "frontend/src/modules/features/projects/views/Projects.vue"
+      ]
+    },
+    {
+      "file": "Contabilidad.html",
+      "id": "contabilidad",
+      "name": "Contabilidad",
+      "target": "col-finance",
+      "sources": [
+        "companymanager/modules/finance/accounting/domain/automatic.py",
+        "docs/contabilidad-partida-doble.md",
+        "docs/pendientes-contables-frente-a-xubio.md",
+        "frontend/src/modules/workspaces/branch/views/AccountingBooks.vue"
+      ]
+    },
+    {
+      "file": "MercadoLibre.html",
+      "id": "mercadolibre",
+      "name": "Mercado Libre",
+      "target": "col-sales",
+      "sources": [
+        "companymanager/modules/sales/marketplace/application/intake.py",
+        "companymanager/modules/sales/marketplace/application/ledger_entries.py",
+        "companymanager/modules/sales/marketplace/application/tasks.py",
+        "companymanager/modules/sales/marketplace/domain/fees.py",
+        "docs/catalogo-de-mercado-libre.md",
+        "docs/combos-en-mercado-libre.md",
+        "docs/comision-exacta-de-mercado-libre.md",
+        "docs/descuentos-en-mercado-libre.md",
+        "docs/preguntas-de-mercado-libre.md",
+        "docs/publicaciones-previas-de-mercado-libre.md",
+        "docs/salud-de-publicaciones-de-mercado-libre.md",
+        "frontend/src/modules/features/settings/components/MarketplaceListingsPanel.vue"
       ]
     }
   ],
@@ -468,6 +502,24 @@
     "frontend/src/modules/workspaces/brand/components/campaigns/AutoResponderPanel.vue": "943fe6eb61b98f219170a5f60f162018ed2c0e69861c830685e22dbc008022e8",
     "frontend/src/modules/workspaces/brand/views/Campaigns.vue": "977f241d6d0729894a08e96189ad6537d4ae8ec3542d98af8f722ebe6d17883f",
     "frontend/src/modules/workspaces/factory/views/Production.vue": "51f4a2db6a81141232117588aee9d1bf47d7a89ddf53e454dc34d3742bea4ee9",
-    "frontend/src/shared/storefront/storefrontDesigns.js": "5b8d8d8a26fd5d0254268ef4fcd8979ad272712144f657a1618bc32b11ba6e2b"
+    "frontend/src/shared/storefront/storefrontDesigns.js": "5b8d8d8a26fd5d0254268ef4fcd8979ad272712144f657a1618bc32b11ba6e2b",
+    "docs/catalogo-de-mercado-libre.md": "64dadbb8a10bbcb29919e04e26566c70c899954ab9ed5d56551251d283623b92",
+    "companymanager/modules/sales/marketplace/domain/fees.py": "00b30c38f8de6a476085b8c11286c8562dc3509f53b0a7334a6441826be60f38",
+    "docs/pendientes-contables-frente-a-xubio.md": "48d7bea433b321d69e947a47513c18963c9e936ff289a790209063c3fc98a5c7",
+    "docs/combos-en-mercado-libre.md": "e4d696a8fba4f3c130ab6af68c4e616dfeeddce998d4db3bf3e838af15fd2deb",
+    "companymanager/modules/sales/marketplace/application/intake.py": "d6ac79adb3182445ff6eb30635dd65fe2ec73d2ac9abcac1b9dbd860168d2814",
+    "frontend/src/modules/features/settings/components/MarketplaceListingsPanel.vue": "b756b34b0b7d4d1250d2b71b55c6818cdcd3e34edb2d705c6246302efd62d090",
+    "docs/salud-de-publicaciones-de-mercado-libre.md": "6b4745571b8bc3d044a210f104423a1358b01b5856a50df17833faa328b01945",
+    "docs/publicaciones-previas-de-mercado-libre.md": "4570e7ec8fc24d5fbda74992af73fd1282918ef6da450d85a92d5702151b9ee6",
+    "companymanager/modules/sales/marketplace/application/ledger_entries.py": "bac45888fb55620808b6a284cd05c3d8d9675c61f09ea2a47440e4e9400e01ec",
+    "docs/contabilidad-partida-doble.md": "cd165276e65658ad22fe26d930754d13af50ccf81e03a6ebcc67d8cfa8942ec7",
+    "docs/preguntas-de-mercado-libre.md": "7f92872f341ca5d9e53ff6dde4fb0028b9326791575adea385e801793e7de89a",
+    "companymanager/modules/sales/marketplace/application/tasks.py": "fab58bb966e24ceb18c82b34c1726e7cddf9ec309ac3a0c0cc97713090055de8",
+    "docs/fabricar-al-vender.md": "d9a2ed25c23f3fa6324b2af034baf0392b0f786e777f855f860c85bf0e21d98f",
+    "docs/libros-fiscales-y-impuestos.md": "294cf396e4fc8971d65afa89fd6c9bd458234c13da4c9edba3518769e756ada0",
+    "docs/descuentos-en-mercado-libre.md": "f84db3c032b945ea0d5b62bb337a6efa65eaec618e0790fe11de5a9306124958",
+    "companymanager/modules/finance/accounting/domain/automatic.py": "e4bdf07c86d0decc16222a2e374be1b39feae408f5d2ab447a906c2a5ae8811d",
+    "docs/comision-exacta-de-mercado-libre.md": "a73bb5551ead82c9c238116cb677c04e7024283e821e95aa2dc56032d3a76062",
+    "frontend/src/modules/workspaces/branch/views/AccountingBooks.vue": "20f4c62dd12771c32210a7b8e8aa5136a1fbc6b6bcc5b6ad6758ca56d6039282"
   }
 }

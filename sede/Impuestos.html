@@ -294,7 +294,7 @@
 
     <div class="presentation-controls">
         <button class="ctrl-btn" id="btnPrev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
-        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">7</span></span>
+        <span class="slide-indicator"><span id="currentSlideNum">1</span> / <span id="totalSlides">8</span></span>
         <button class="ctrl-btn" id="btnNext" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
     </div>
 
@@ -357,7 +357,7 @@
         <div class="slide-content-wide">
             <div class="text-block" style="text-align: center; margin-bottom: 18px; max-width: 1040px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-blue); text-align: center;">La pantalla</h3>
-                <h2 style="text-align: center;">Dos libros, un mes calendario</h2>
+                <h2 style="text-align: center;">Cinco solapas, un mes calendario</h2>
                 <p style="text-align: center; font-size: 18px;">El período no es un rango libre: así se declara. Dejar elegir "del 12 al 27" daría un libro que no se puede presentar contra ningún vencimiento, y el que lo mire va a creer que sí.</p>
             </div>
 
@@ -366,6 +366,9 @@
                     <div class="book-tabs">
                         <span class="tab-btn active"><i class="fas fa-file-invoice"></i> IVA Ventas</span>
                         <span class="tab-btn"><i class="fas fa-receipt"></i> IVA Compras</span>
+                        <span class="tab-btn"><i class="fas fa-file-signature"></i> Declaración</span>
+                        <span class="tab-btn"><i class="fas fa-hand-holding-dollar"></i> Retenciones</span>
+                        <span class="tab-btn"><i class="fas fa-map-location-dot"></i> Ingresos Brutos</span>
                     </div>
                     <div class="period-pick">
                         <i class="fas fa-chevron-left" style="font-size:10px;"></i>
@@ -578,7 +581,7 @@
         <div class="slide-content-wide">
             <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
                 <h3 style="color: var(--kpi-indigo); text-align: center;">Hasta dónde llega</h3>
-                <h2 style="text-align: center;">Lo que el libro resuelve, y lo que todavía no</h2>
+                <h2 style="text-align: center;">Lo que el libro resuelve</h2>
             </div>
 
             <div class="visual-block scope-grid">
@@ -592,15 +595,15 @@
                     <strong>Jurisdicción de la venta</strong>
                     <p>Se deduce del código postal, sin agregar una columna "provincia".</p>
                 </div>
-                <div class="scope-card todo">
-                    <span class="scope-tag todo">Todavía no</span>
+                <div class="scope-card done">
+                    <span class="scope-tag done">Resuelto</span>
                     <strong>Retenciones</strong>
-                    <p>No hay modelo ni catálogo, y hay un obstáculo: una retención cancela deuda <b>sin que entre plata a ninguna cuenta</b>, y hoy un pago exige cuenta.</p>
+                    <p>Sufridas y practicadas. Cancelan deuda con un crédito de cuenta corriente, <b>sin mover tesorería</b>, y las practicadas salen en SICORE.</p>
                 </div>
-                <div class="scope-card todo">
-                    <span class="scope-tag todo">Todavía no</span>
-                    <strong>Archivo digital</strong>
-                    <p>El libro se mira en pantalla. Exportarlo en el formato del régimen digital es el paso siguiente: el dato ya está.</p>
+                <div class="scope-card done">
+                    <span class="scope-tag done">Resuelto</span>
+                    <strong>Libro de IVA Digital</strong>
+                    <p>El ZIP con los cuatro archivos para importar en ARCA, que no se arma con renglones que ARCA rechazaría.</p>
                 </div>
             </div>
 
@@ -618,7 +621,42 @@
         </div>
     </div>
 
-    <!-- SLIDE 7: NAVEGACIÓN -->
+    <!-- SLIDE 7: DECLARACIÓN, RETENCIONES E INGRESOS BRUTOS -->
+    <div class="slide">
+        <div class="glow-blue"></div>
+        <div class="slide-content-wide">
+            <div class="text-block" style="text-align: center; margin-bottom: 22px; max-width: 1040px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: var(--kpi-blue); text-align: center;">Lo que se presenta</h3>
+                <h2 style="text-align: center;">Del libro a los archivos de ARCA</h2>
+                <p style="text-align: center; font-size: 17px;">Las tres solapas nuevas salen de los dos libros. Ninguna arma un archivo con renglones incompletos: los lista con lo que les falta, para corregirlos donde se cargaron.</p>
+            </div>
+
+            <div class="visual-block scope-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="scope-card done">
+                    <span class="scope-tag done">Declaración</span>
+                    <strong>Libro de IVA Digital y F.2002</strong>
+                    <p>El ZIP de la RG 4597 —ventas y compras, comprobantes y alícuotas— y el papel de trabajo del F.2002: débito y crédito por alícuota, saldo técnico, percepciones y retenciones de IVA, y lo que queda a pagar o a favor. El libro es del CUIT: pedido desde la marca, junta todas sus sedes.</p>
+                </div>
+                <div class="scope-card done">
+                    <span class="scope-tag done">Retenciones</span>
+                    <strong>Sufridas, practicadas y SICORE</strong>
+                    <p>La sufrida se registra con su certificado y cancela esa parte de la factura. La practicada numera el certificado sola y queda a depositar hasta que se registra el pago. Con un régimen cargado, «Sugerir» calcula el importe con lo pagado al proveedor en el mes.</p>
+                </div>
+                <div class="scope-card done">
+                    <span class="scope-tag done">Ingresos Brutos</span>
+                    <strong>Percepciones y SIFERE</strong>
+                    <p>Percepciones en las ventas en cuenta corriente, con la alícuota del padrón por cliente. Coeficientes del Convenio Multilateral por provincia y año, y el papel de trabajo del CM03 con lo sufrido que se descuenta en cada provincia.</p>
+                </div>
+            </div>
+
+            <div class="note indigo" style="margin-top: 18px;">
+                <i class="fas fa-book"></i>
+                <span>Todo se asienta solo en <b>Contabilidad</b>: la retención sufrida contra Deudores, la practicada contra Proveedores, y el depósito contra Retenciones a depositar. Los regímenes no vienen de fábrica: cambian por resolución general, y un mínimo viejo calcularía mal sin avisar.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: NAVEGACIÓN -->
     <div class="slide">
         <div class="glow-sky" style="left: 50%; transform: translateX(-50%); top: -300px; width: 800px; height: 800px; right: auto;"></div>
         <div class="slide-content-wide" style="align-items: center; text-align: center; justify-content: center;">
@@ -637,6 +675,11 @@
                 <a href="Facturacion.html" class="qa-btn green" style="border-color: var(--kpi-green);">
                     <div class="qa-icon" style="color: var(--kpi-green);"><i class="fas fa-file-invoice"></i></div>
                     <div class="qa-text" style="color: white;">Facturación<br>y Comprobantes</div>
+                </a>
+
+                <a href="Contabilidad.html" class="qa-btn sky" style="border-color: var(--kpi-indigo);">
+                    <div class="qa-icon" style="color: var(--kpi-indigo);"><i class="fas fa-balance-scale"></i></div>
+                    <div class="qa-text" style="color: white;">Contabilidad<br>y Balances</div>
                 </a>
 
                 <a href="Proveedores.html" class="qa-btn orange" style="border-color: var(--kpi-orange);">
